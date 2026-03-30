@@ -77,7 +77,7 @@ This runs the full pipeline on `batchnorm_running_mean` — a numerical bug in a
 To run the demo **with live LLM inference** (requires an API key):
 
 ```bash
-export OPENAI_API_KEY="sk-..."
+export OPENAI_API_KEY="..."
 semloc demo --model gpt-4o --program batchnorm_running_mean
 ```
 
@@ -85,7 +85,7 @@ semloc demo --model gpt-4o --program batchnorm_running_mean
 
 ```bash
 # Set your LLM API key (OpenAI, Gemini, or Claude via Vertex AI)
-export OPENAI_API_KEY="sk-..."   # → use --model gpt-4o
+export OPENAI_API_KEY="..."   # → use --model gpt-4o
 # export GEMINI_API_KEY="..."    # → use --model gemini-2.5-pro
 # (Claude on Vertex AI uses gcloud application-default credentials)
 
