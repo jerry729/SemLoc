@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SemLoc: Semantic Spectra for Fault Localization</title>
+  <link rel="stylesheet" href="static/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ─── Hero ─────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <p class="venue-badge">ASE 2026 &nbsp;·&nbsp; To Appear</p>
+    <h1 class="title">SemLoc</h1>
+    <h2 class="subtitle">Structured Grounding of Free-Form LLM Reasoning<br>for Fault Localization</h2>
+
+    <div class="authors">
+      <a href="#" class="author">Zhaorui Yang</a><sup>1</sup>,
+      <a href="#" class="author">Haichao Zhu</a><sup>3</sup>,
+      <a href="#" class="author">Qian Zhang</a><sup>1</sup>,
+      <a href="#" class="author">Rajiv Gupta</a><sup>1</sup>,
+      <a href="#" class="author">Ashish Kundu</a><sup>2</sup>
+    </div>
+    <div class="affiliations">
+      <span><sup>1</sup> University of California, Riverside</span>
+      &nbsp;&nbsp;
+      <span><sup>2</sup> Cisco Research</span>
+      <span><sup>2</sup> Meta</span>
+    </div>
+
+    <div class="links">
+      <a href="#" class="btn btn-primary">📄 Paper</a>
+      <a href="https://github.com/your-org/semloc" class="btn btn-outline">💻 Code</a>
+      <a href="#benchmark" class="btn btn-outline">🗂️ Benchmark</a>
+      <a href="#quickstart" class="btn btn-outline">🚀 Quick Start</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Teaser figure ────────────────────────────────────────────────────── -->
+<section class="section bg-light">
+  <div class="container">
+    <!-- Export figures/ASE26_Workflow.pdf → docs/figures/workflow.png -->
+    <figure class="teaser">
+      <img src="figures/workflow.png" alt="SemLoc workflow diagram" />
+      <figcaption>
+        SemLoc infers semantic constraints anchored to program structures,
+        builds a constraint-by-test violation matrix (semantic spectrum),
+        and applies counterfactual verification to localize faults causally.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ─── Abstract ────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container narrow">
+    <h3 class="section-title">Abstract</h3>
+    <p>
+      Fault localization identifies program locations responsible for observed failures.
+      Existing techniques rank suspicious code using <em>syntactic spectra</em> — signals derived
+      from execution structure such as statement coverage, control-flow divergence, or dependency
+      reachability. These signals collapse for semantic bugs, where failing and passing executions
+      traverse identical code paths and differ only in whether semantic intent is honored.
+    </p>
+    <p>
+      We present <strong>SemLoc</strong>, a fault localization framework built on
+      <em>structured semantic grounding</em>: converting free-form LLM semantic reasoning into a
+      closed intermediate representation that binds each inferred property to a specific, typed
+      program anchor, making it checkable at runtime and attributable to a concrete statement.
+      SemLoc executes instrumented programs and constructs a <em>semantic violation spectrum</em> —
+      a constraint-by-test violation matrix from which suspiciousness scores are derived analogously
+      to coverage-based fault localization. A counterfactual verification step further prunes
+      over-approximate constraints, distinguishing primary causal violations from cascading effects.
+    </p>
+    <p>
+      We evaluate SemLoc on 250 Python programs spanning financial systems, rate limiting, cache
+      management, stream processing, and machine learning — each containing a single semantic fault.
+      SemLoc achieves <strong>42.8% Acc@1</strong> and <strong>68% Acc@3</strong>, outperforming
+      spectrum-based fault localization and delta debugging while flagging only
+      <strong>7.3%</strong> of executable lines as suspicious.
+    </p>
+  </div>
+</section>
+
+<!-- ─── Key results ──────────────────────────────────────────────────────── -->
+<section class="section bg-light" id="results">
+  <div class="container">
+    <h3 class="section-title">Results</h3>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">42.8%</div>
+        <div class="stat-label">Acc@1</div>
+        <div class="stat-sub">Top-1 fault localization accuracy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">68%</div>
+        <div class="stat-label">Acc@3</div>
+        <div class="stat-sub">Top-3 fault localization accuracy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">7.3%</div>
+        <div class="stat-label">% Suspicious</div>
+        <div class="stat-sub">Lines flagged (vs. 44% for SBFL)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">6×</div>
+        <div class="stat-label">Reduction</div>
+        <div class="stat-sub">Fewer suspicious lines vs. SBFL</div>
+      </div>
+    </div>
+
+    <!-- Export figures/rq1_acc_compact.pdf → docs/figures/results.png -->
+    <figure class="result-figure">
+      <img src="figures/results.png" alt="RQ1 accuracy comparison across methods" />
+      <figcaption>
+        Acc@1 / Acc@3 / Acc@5 comparison across SemLoc, SBFL (Ochiai, Tarantula),
+        Delta Debugging, and ablation configurations on SemFault-250.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ─── How it works ─────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <h3 class="section-title">How It Works</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Semantic Constraint Inference</h4>
+          <p>An LLM analyzes the buggy program and failing tests to infer typed behavioral
+          constraints — bound to specific program anchors (entries, def-use sites, loop
+          boundaries, return points) in a closed, checkable schema.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Program Instrumentation</h4>
+          <p>SemLoc uses a tree-sitter AST to inject lightweight runtime checks at each
+          constraint anchor. Instrumented programs behave identically to originals but emit
+          per-test violation events.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Semantic Spectrum Analysis</h4>
+          <p>Running the full test suite produces a constraint-by-test violation matrix.
+          Suspiciousness scores are computed via the Ochiai coefficient — analogous to
+          coverage-based SBFL, but operating on semantic properties.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Counterfactual Verification</h4>
+          <p>Minimal hypothetical patches toggle each violated constraint and re-execute the
+          test suite. Primary causal violations are distinguished from cascading downstream
+          effects, yielding a causally-grounded final ranking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Quick Start ──────────────────────────────────────────────────────── -->
+<section class="section bg-light" id="quickstart">
+  <div class="container">
+    <h3 class="section-title">Quick Start</h3>
+
+    <div class="code-group">
+      <div class="code-label">Install</div>
+      <pre><code>pip install git+https://github.com/your-org/semloc</code></pre>
+    </div>
+
+    <div class="code-group">
+      <div class="code-label">Try the demo (no API key needed)</div>
+      <pre><code>semloc demo --skip-llm</code></pre>
+      <p class="code-note">
+        Runs the full pipeline on a bundled benchmark example using pre-computed constraints
+        and prints ranked suspicious lines with the ground truth fault highlighted.
+      </p>
+    </div>
+
+    <div class="code-group">
+      <div class="code-label">Localize a bug in your own program</div>
+      <pre><code>export OPENAI_API_KEY="sk-..."   # or GEMINI_API_KEY / Vertex AI credentials
+
+semloc locate \
+  --program  my_module.py \
+  --tests    test_my_module.py \
+  --model    gpt-4o \
+  --out-dir  run1</code></pre>
+    </div>
+
+    <div class="code-group">
+      <div class="code-label">Run individual steps</div>
+      <pre><code># Re-run only scoring (reuse prior violations)
+semloc locate --program my_module.py --tests test_my_module.py \
+              --out-dir run1 --steps score,locate
+
+# Use pre-computed constraints, skip LLM
+semloc locate --program my_module.py --tests test_my_module.py \
+              --constraints constraints.json --out-dir run1</code></pre>
+    </div>
+
+    <p class="more-link">
+      See the <a href="https://github.com/your-org/semloc#readme">full documentation</a>
+      for the complete pipeline reference, model selection guide, and experiment reproduction scripts.
+    </p>
+  </div>
+</section>
+
+<!-- ─── Benchmark ────────────────────────────────────────────────────────── -->
+<section class="section" id="benchmark">
+  <div class="container">
+    <h3 class="section-title">SemFault-250 Benchmark</h3>
+    <p class="section-intro">
+      250 Python programs each containing a single semantic fault, spanning five application domains:
+    </p>
+    <div class="domain-grid">
+      <div class="domain-card">💰 Financial Systems</div>
+      <div class="domain-card">⏱️ Rate Limiting</div>
+      <div class="domain-card">🗄️ Cache Management</div>
+      <div class="domain-card">🌊 Stream Processing</div>
+      <div class="domain-card">🤖 ML Operations</div>
+    </div>
+    <p>
+      Each program comes with a pytest test suite (passing + failing tests) and a ground truth
+      fault line. The benchmark is included in the repository under <code>benchmark/</code>.
+    </p>
+  </div>
+</section>
+
+<!-- ─── Citation ─────────────────────────────────────────────────────────── -->
+<section class="section bg-light" id="citation">
+  <div class="container narrow">
+    <h3 class="section-title">Citation</h3>
+    <pre class="bibtex"><code>@inproceedings{semloc2026,
+  title     = {SemLoc: Structured Grounding of Free-Form LLM Reasoning
+               for Fault Localization},
+  author    = {Yang, Zhaorui and Zhu, Haichao and Zhang, Qian
+               and Gupta, Rajiv and Kundu, Ashish},
+  booktitle = {Proceedings of the ... International Conference on ...},
+  year      = {2026},
+  doi       = {10.1145/nnnnnnn.nnnnnnn},
+}</code></pre>
+  </div>
+</section>
+
+<!-- ─── Footer ───────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <p>
+      SemLoc &nbsp;·&nbsp;
+      <a href="https://github.com/your-org/semloc">GitHub</a> &nbsp;·&nbsp;
+      <a href="#">Paper</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
