@@ -167,7 +167,7 @@ Pre-computed results are included and require no API keys:
 ```bash
 semloc report --all        # print all RQ1–RQ3 tables
 semloc report --rq1        # RQ1: Acc@1/3/5, Med.Rank, %Susp
-semloc report --rq2        # RQ2: constraint quality statistics
+semloc report --rq2        # RQ2: constraint statistics
 semloc report --rq3        # RQ3: BugsInPy real-world evaluation
 ```
 
@@ -217,7 +217,7 @@ Core source files in `src/`:
 |------|------|
 | `cli.py` | `semloc` command-line interface |
 | `instrumentation.py` | tree-sitter AST parser; injects runtime checks |
-| `constraint_inference.py` | LLM workflow; produces cbfl-ir-0.1 JSON constraints |
+| `constraint_inference.py` | LLM workflow; produces cbfl-ir JSON constraints |
 | `cbfl_runtime.py` | Lightweight runtime library; tracks per-test violations |
 | `conftest.py` | Pytest plugin (`--inst` flag) |
 | `spectrum.py` | Ochiai / Tarantula scoring over violation matrices |
