@@ -246,9 +246,3 @@ convert -density 200 semloc-paper/figures/rq1_acc_compact.pdf docs/figures/resul
 ```
 
 The same PNG files are referenced in both this README and the webpage.
-
----
-
-## 📜 License
-
-[License placeholder]
