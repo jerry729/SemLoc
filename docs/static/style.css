@@ -35,6 +35,7 @@ a:hover { text-decoration: underline; }
   padding: 0 24px;
 }
 .container.narrow { max-width: 720px; }
+.container.narrow p { text-align: justify; }
 
 .section { padding: 72px 0; }
 .bg-light { background: var(--bg-light); }
