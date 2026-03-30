@@ -222,27 +222,3 @@ Core source files in `src/`:
 | `conftest.py` | Pytest plugin (`--inst` flag) |
 | `spectrum.py` | Ochiai / Tarantula scoring over violation matrices |
 | `counterfactual.py` | Constraint toggle + delta verification |
-
----
-
-## 🌐 Project Webpage
-
-The project webpage lives in `docs/` and is served via GitHub Pages.
-
-**To enable GitHub Pages:**
-1. Go to your repo → **Settings → Pages**
-2. Set source to **Deploy from a branch**, branch `main`, folder `/docs`
-3. The page will be live at `https://your-org.github.io/semloc/`
-
-**To add figures** (required — PDFs don't render in browsers or the README):
-```bash
-# Requires poppler-utils: sudo apt install poppler-utils
-pdftoppm -r 200 -png -singlefile semloc-paper/figures/ASE26_Workflow.pdf  docs/figures/workflow
-pdftoppm -r 200 -png -singlefile semloc-paper/figures/rq1_acc_compact.pdf docs/figures/results
-
-# Or with ImageMagick: sudo apt install imagemagick
-convert -density 200 semloc-paper/figures/ASE26_Workflow.pdf  docs/figures/workflow.png
-convert -density 200 semloc-paper/figures/rq1_acc_compact.pdf docs/figures/results.png
-```
-
-The same PNG files are referenced in both this README and the webpage.
