@@ -49,7 +49,7 @@
     <div class="container">
       <!-- Export figures/ASE26_Workflow.pdf → docs/figures/workflow.png -->
       <figure class="teaser">
-        <img src="figures/workflow.png" alt="SemLoc workflow diagram" />
+        <img src="figures/workflow.pdf" alt="SemLoc workflow diagram" />
         <figcaption>
           SemLoc infers semantic constraints anchored to program structures,
           builds a constraint-by-test violation matrix (semantic spectrum),
@@ -65,7 +65,7 @@
       <h3 class="section-title">Abstract</h3>
       <p>
         Fault localization identifies program locations responsible for observed failures. Existing techniques rank
-        suspicious code using <em>syntactic spectra</em>---signals derived from execution structure such as statement
+        suspicious code using <em>syntactic spectra</em>--signals derived from execution structure such as statement
         coverage, control-flow divergence, or dependency reachability. These signals collapse for semantic bugs, where
         failing and passing executions traverse identical code paths and differ only in whether semantic intent is
         honored. Recent LLM-based approaches extend localization with semantic reasoning, but they produce stochastic,
@@ -124,10 +124,10 @@
 
       <!-- Export figures/rq1_acc_compact.pdf → docs/figures/results.png -->
       <figure class="result-figure">
-        <img src="figures/results.png" alt="RQ1 accuracy comparison across methods" />
+        <img src="figures/results.pdf" alt="RQ1 accuracy comparison across methods" />
         <figcaption>
           Acc@1 / Acc@3 / Acc@5 comparison across SemLoc, SBFL (Ochiai, Tarantula),
-          Delta Debugging, and ablation configurations on SemFault-250.
+          Delta Debugging, and ablation configurations.
         </figcaption>
       </figure>
     </div>
