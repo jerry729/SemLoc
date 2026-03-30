@@ -58,7 +58,7 @@ SemLoc achieves **42.8% Acc@1** and **68% Acc@3** on the SemFault-250 benchmark,
 **Requirements:** Python ≥ 3.10
 
 ```bash
-git clone https://github.com/your-org/semloc
+git clone https://github.com/jerry729/semloc
 cd semloc
 pip install -e .
 ```
