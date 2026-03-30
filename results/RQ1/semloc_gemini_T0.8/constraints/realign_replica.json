@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_replica",
+  "fault_hypothesis": "The function calculates blended allocations but omits the crucial final step of normalizing the list so its elements sum to 1.0. This causes the function at line 60 to return an unnormalized list, which violates the function's documented contract.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of allocations must be normalized to sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "all(0.0 <= x <= 1.0 for x in adjusted__1)"
+      },
+      "intent": "All final allocation values must be valid fractions between 0 and 1.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(x <= 1.0 for x in adjusted__1)"
+      },
+      "intent": "Individual allocations being collected should not exceed 1.0, which is violated when inputs are not pre-normalized.",
+      "confidence": 0.8
+    }
+  ]
+}

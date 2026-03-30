@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cluster_rebalance_weights",
+  "fault_hypothesis": "Line 64 returns `updated` without normalizing it so the weights sum to 1.0. The docstring says the result is normalized, but the code simply returns the interpolated values, which fail when inputs don't already sum to 1.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list about to be returned must sum to 1.0 as promised by the docstring; this fails when inputs are not already normalized.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "Immediately after computing the interpolated list, it should sum to 1.0 if normalization were applied; it won't when raw inputs don't sum to 1.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) / len(updated__1) - sum(updated__1) / len(updated__1)) < 1e-9 and abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "Before returning updated__1, verify its sum is 1.0; large-magnitude inputs expose the missing normalization step.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned weight vector must always sum to 1.0 per the function contract.",
+      "confidence": 0.85
+    }
+  ]
+}

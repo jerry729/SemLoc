@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_traffic",
+  "fault_hypothesis": "The function fails to normalize the updated weights before returning them, causing the output not to sum to 1.0 when the input 'current' is not normalized. The bug is the missing normalization step at the return statement on line 69.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list of weights must be a valid probability distribution summing to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(current) - 1.0) < 1e-9"
+      },
+      "intent": "The loop calculation assumes the input 'current' weights are normalized, which holds for passing tests but not the failing one.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The computed weights should form a probability distribution before being used or returned.",
+      "confidence": 0.9
+    }
+  ]
+}

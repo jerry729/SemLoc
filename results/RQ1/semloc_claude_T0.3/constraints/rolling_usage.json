@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_usage",
+  "fault_hypothesis": "On line 67, the average is computed by dividing `total` by `window` instead of `len(tail)`. When the series is shorter than the window, this produces an incorrectly small average because it divides by the window size rather than the actual number of samples.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "The average must equal total divided by the actual number of tail samples, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing avg, verify it is consistent with total and actual tail length rather than window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before using avg in the return, confirm it was computed over actual tail length not window.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or (total__1 / len(tail__1) >= min(tail__1) and total__1 / len(tail__1) <= max(tail__1))"
+      },
+      "intent": "The correct mean (total/len(tail)) must lie within the range of tail values.",
+      "confidence": 0.88
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "bug_id": "ansible_2",
+  "function": "__gt__",
+  "src_path": "lib/ansible/playbook/attribute.py",
+  "fn_begin": 108,
+  "fn_end": 109,
+  "n_constraints": 4,
+  "n_tests_passing": 130,
+  "n_tests_failing": 2,
+  "line_scores": [],
+  "fault_line": 109,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/ansible_2/__gt___constraints.json",
+  "report_path": "/tmp/bip_semloc/ansible_2/violations.jsonl"
+}

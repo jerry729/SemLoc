@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_121",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.managers.BlockManager.replace_list",
+    "buggy_methods": [
+      "pandas.core.internals.managers.BlockManager.replace_list"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.managers.BlockManager.replace_list",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/internals/managers.py": [
+      632
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

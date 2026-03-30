@@ -1,0 +1,72 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_build",
+  "fault_hypothesis": "The counter is incorrectly clamped to `cap - 1` instead of `cap`. This occurs on line 53 when the counter value exceeds the specified cap.",
+  "fault_line": 53,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 53
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "The value assigned for clamping should be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 52,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After the clamping logic branch, the counter's value must equal the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "TEMPORAL_CALL_SNAPSHOT",
+      "instrument": {
+        "region": "ON_EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "guard": "True",
+        "snapshot": [
+          {
+            "name": "initial_val",
+            "expr": "counters.get(key, 0)"
+          }
+        ],
+        "require": "__cbfl_result >= initial_val"
+      },
+      "intent": "The counter value should never decrease as a result of a call.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The returned metric value must never exceed the specified cap.",
+      "confidence": 0.9
+    }
+  ]
+}

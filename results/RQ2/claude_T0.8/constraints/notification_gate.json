@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "notification_gate",
+  "fault_hypothesis": "On line 63, the condition uses `>` (strictly greater than) instead of `>=` (greater than or equal to), so when `len(recent) == limit` the function incorrectly allows the notification instead of blocking it.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or (len(recent__1) >= limit)"
+      },
+      "intent": "When len(recent) equals limit, the condition should be true (i.e., the branch should be taken), but with > it is not.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), recent count must be strictly less than limit; if equal to limit we should have blocked.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or True"
+      },
+      "intent": "Capture the value of recent__1 length relative to limit immediately after definition to verify boundary condition handling.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) or (__cbfl_result[1] >= 0)"
+      },
+      "intent": "When allowed is False, remaining must be 0; this catches cases where the wrong branch is taken at the limit boundary.",
+      "confidence": 0.7
+    }
+  ]
+}

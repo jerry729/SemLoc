@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_metric",
+  "fault_hypothesis": "The bug is on line 61. The expiry check `now > effective_expiry` is incorrect because it does not consider an entry expired when the current time is exactly equal to the expiry time. The condition should be `now >= effective_expiry`.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now < effective_expiry__1"
+      },
+      "intent": "An item should only be considered valid if the current time is strictly less than its expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_expiry__1"
+      },
+      "intent": "A payload should only be returned if the current time is strictly before the item's effective expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_expiry__1 <= ttl__1"
+      },
+      "intent": "The effective expiry time, after adjustments, must not be later than the original TTL.",
+      "confidence": 0.9
+    }
+  ]
+}

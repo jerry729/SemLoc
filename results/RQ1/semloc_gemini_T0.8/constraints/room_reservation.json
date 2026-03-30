@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "room_reservation",
+  "fault_hypothesis": "The overlap detection logic on line 70 is incorrect. It uses non-strict inequalities (`<=`, `>=`) which fails to detect conflicts when intervals touch at their boundaries, whereas the specification requires treating touching intervals as overlaps.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (start__1 == e or end__1 == s) or not (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "If intervals touch at a boundary, the non-overlap check must evaluate to false.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "Any checked interval that does not cause an early exit must be strictly non-overlapping.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all((end__1 < s or start__1 > e) for s, e in existing)"
+      },
+      "intent": "An interval should only be added to the schedule if it does not conflict with any existing reservations.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == False or all((end__1 < s or start__1 > e) for s, e in existing)"
+      },
+      "intent": "If an interval is accepted, it must not have had a boundary-touching conflict with any existing one.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "energy_window_avg",
+  "fault_hypothesis": "The average on line 74 is calculated by dividing by the requested `window` size instead of the actual number of values being averaged. This is incorrect when `len(values)` is less than `window`.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "The calculated mean, when multiplied by the count of recent items, must equal the total sum.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "window == len(recent__1)"
+      },
+      "intent": "The divisor 'window' must match the number of samples in 'recent' for the mean calculation to be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_window__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_window__1 == window"
+      },
+      "intent": "The effective window size must equal the requested window size for the subsequent division by 'window' to be correct.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_traffic",
+  "fault_hypothesis": "The function fails to normalize the `updated` weights before returning them on line 69. This violates the documented postcondition that the output must sum to 1.0, which occurs when the input `current` weights are not already normalized.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of weights returned to the caller must sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The computed weights should form a valid probability distribution before being returned.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The computed weights should form a valid probability distribution before being returned.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "Any value returned by the function must be a list of weights that sums to 1.0.",
+      "confidence": 0.9
+    }
+  ]
+}

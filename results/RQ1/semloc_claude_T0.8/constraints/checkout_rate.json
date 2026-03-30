@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "checkout_rate",
+  "fault_hypothesis": "The condition on line 66 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when the number of recent events exactly equals the limit the function incorrectly returns allowed=True with remaining=0 instead of blocking the checkout.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) > limit)"
+      },
+      "intent": "When recent event count equals the limit, the condition should evaluate to True (blocking), but with > it evaluates to False, causing the wrong branch.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the else branch (not blocked), the number of recent events must be strictly less than the limit; if equal to limit, the checkout should have been blocked.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= limit or len(recent__1) > limit"
+      },
+      "intent": "Sanity check that recent count is comparable to limit; the real issue is how equality is handled in the branch condition.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and __cbfl_result[1] == 0)"
+      },
+      "intent": "The function should never return (True, 0) \u2014 allowed with zero remaining is contradictory and indicates the boundary condition is mishandled.",
+      "confidence": 0.85
+    }
+  ]
+}

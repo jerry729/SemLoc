@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_depths",
+  "fault_hypothesis": "Lines 77-78 incorrectly pop the last merged element when the last element of left, right, and merged are all equal. This erroneously removes a valid duplicate entry that should be preserved in the output.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition on line 77 should never be true because popping a valid duplicate entry is incorrect; this expression is false whenever the bug triggers.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) <= (i__1 + j)"
+      },
+      "intent": "After each loop iteration the merged list should have at most i+j elements (one per consumed element from either stream).",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) >= len(left) + len(right) - 1"
+      },
+      "intent": "After popping, the merged list should still contain at least len(left)+len(right)-1 elements, but the bug causes it to have fewer than expected.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "Before any post-processing, merged should contain exactly len(left)+len(right) elements since every element from both inputs must be preserved.",
+      "confidence": 0.8
+    }
+  ]
+}

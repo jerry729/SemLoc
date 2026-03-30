@@ -1,0 +1,61 @@
+{
+  "bug_id": "thefuck_15",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.git_add.match",
+    "buggy_methods": [
+      "thefuck.rules.git_add.match"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.git_add.match",
+  "autofl_matched_info": [],
+  "semloc_error": "Unsupported version: None",
+  "faulty_lines": {
+    "tests/rules/test_git_add.py": [
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36,
+      38,
+      39
+    ],
+    "thefuck/rules/git_add.py": [
+      8,
+      9,
+      15,
+      16
+    ]
+  },
+  "semloc": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 555, in run_semloc_on_bip\n    _fn_name_parsed, constraints = parse_constraints(json.dumps(constraints_obj))\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/instrumentation.py\", line 601, in parse_constraints\n    raise ValueError(f\"Unsupported version: {obj.get('version')}\")\nValueError: Unsupported version: None\n"
+  },
+  "semloc_detail": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 555, in run_semloc_on_bip\n    _fn_name_parsed, constraints = parse_constraints(json.dumps(constraints_obj))\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/instrumentation.py\", line 601, in parse_constraints\n    raise ValueError(f\"Unsupported version: {obj.get('version')}\")\nValueError: Unsupported version: None\n"
+  }
+}

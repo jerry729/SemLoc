@@ -1,0 +1,25 @@
+{
+  "bug_id": "spacy_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "spacy.errors.ErrorsWithCodes.__getattribute__",
+    "buggy_methods": [
+      "spacy.errors.ErrorsWithCodes.__getattribute__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "spacy.errors.ErrorsWithCodes.__getattribute__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "spacy/errors.py": [
+      10,
+      11
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warm_cache_loader",
+  "fault_hypothesis": "The function calculates the new expiration time on line 75 but only assigns it to a local variable. It fails to update the entry in the `cache` dictionary with this new expiration time before returning.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "cache[key][1] == expires_at__2"
+      },
+      "intent": "The cache entry's expiration timestamp must be updated with the newly calculated value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__2 > now"
+      },
+      "intent": "The new expiration time must be greater than the current time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "value__1 == item__1[0]"
+      },
+      "intent": "The value being returned must be the same as the value component of the cached item.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or key in cache"
+      },
+      "intent": "If a value is successfully retrieved, the key must remain in the cache.",
+      "confidence": 0.7
+    }
+  ]
+}

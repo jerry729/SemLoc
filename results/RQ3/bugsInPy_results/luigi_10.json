@@ -1,0 +1,24 @@
+{
+  "bug_id": "luigi_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.scheduler.Worker.get_pending_tasks",
+    "buggy_methods": [
+      "luigi.scheduler.Worker.get_pending_tasks"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.scheduler.Worker.get_pending_tasks",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/scheduler.py": [
+      305
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

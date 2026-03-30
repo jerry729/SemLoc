@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_demand",
+  "fault_hypothesis": "Line 64 returns `adjusted__2` from `_clamp_allocations` without normalising it to sum to 1. The docstring says the result is normalised, but no normalisation step is applied after clamping.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The value about to be returned must sum to 1.0 (normalisation requirement).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After clamping, adjusted__2 must already be normalised to sum to 1.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "all(v >= 0 for v in adjusted__1)"
+      },
+      "intent": "After the smoothing step, all values in adjusted__1 should be non-negative (valid for normalisation).",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must always sum to 1.0 regardless of input magnitudes.",
+      "confidence": 0.9
+    }
+  ]
+}

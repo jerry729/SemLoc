@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tiers_stream",
+  "fault_hypothesis": "Lines 65-66 incorrectly remove the last element when both lists end with the same value, but this deduplication logic is wrong \u2014 the merged result should always contain len(left)+len(right) elements. The entire if-block on line 65 is a spurious post-processing step that corrupts valid output.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After the merge loop and extends, merged must have exactly len(left)+len(right) elements before any pop.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After the pop inside the if-branch, the count is wrong \u2014 it should still equal len(left)+len(right).",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == li__1 + ri"
+      },
+      "intent": "At each loop iteration, the number of merged elements equals the sum of left and right pointers.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned merged list must contain exactly all elements from both inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

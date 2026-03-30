@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "versions_stream",
+  "fault_hypothesis": "The code on line 81 incorrectly removes the last element from the merged list if both input streams end with the same version. This violates the documented behavior that all copies of a version should be kept.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The length of the merged list must equal the sum of the input lengths after any potential modification.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 80,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The branch that removes a shared tail element should not be taken, as it violates the length invariant.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(merged__1[k] <= merged__1[k+1] for k in range(len(merged__1) - 1))"
+      },
+      "intent": "The merged list must remain sorted throughout the merge process.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final returned list must contain exactly the sum of elements from the inputs.",
+      "confidence": 1.0
+    }
+  ]
+}

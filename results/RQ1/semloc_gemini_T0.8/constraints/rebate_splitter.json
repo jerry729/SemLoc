@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rebate_splitter",
+  "fault_hypothesis": "The fee is incorrectly deducted from each recipient's share after the split (line 64), rather than from the total amount before the split (line 62). The error originates on line 62, where the split is calculated based on the full `amount` instead of `amount - fee`.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(amount <= fee) or (abs(sum(base__1) - (amount - fee)) < 1e-9)"
+      },
+      "intent": "When the fee is less than the amount, the sum of the calculated base shares must equal the distributable amount (amount - fee).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "(fee <= 0) or (amount <= fee) or (len(ratios) == 1)"
+      },
+      "intent": "The calculated shares are only correct if there's no fee, the fee is prohibitive, or there's just one recipient.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "(fee <= 0) or (amount <= fee)"
+      },
+      "intent": "The logic for splitting the base amount is only correct if there is no fee or the fee is greater than or equal to the amount.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of final payouts must equal the initial amount minus the fee, clamped at zero.",
+      "confidence": 0.9
+    }
+  ]
+}

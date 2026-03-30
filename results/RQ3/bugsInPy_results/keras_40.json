@@ -1,0 +1,26 @@
+{
+  "bug_id": "keras_40",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.layers.recurrent.RNN.compute_output_shape",
+    "buggy_methods": [
+      "keras.layers.recurrent.RNN.compute_output_shape"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.layers.recurrent.RNN.compute_output_shape",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/layers/recurrent.py": [
+      398,
+      400,
+      408
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

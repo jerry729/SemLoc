@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "session_memo",
+  "fault_hypothesis": "The expiration check on line 71 uses a strict `>` comparison, causing sessions to be considered valid when `now` is exactly equal to `deadline`. The check should be `now >= deadline` to correctly expire sessions at the boundary.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "now != deadline__2"
+      },
+      "intent": "The strict inequality check fails to expire sessions exactly at their deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__2"
+      },
+      "intent": "If the session is considered valid (i.e., this branch is taken), the current time must be strictly less than the deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "deadline__2"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__2 or now > deadline__2"
+      },
+      "intent": "Just before the comparison, the current time should not be exactly equal to the deadline, as this boundary case is handled incorrectly.",
+      "confidence": 0.9
+    }
+  ]
+}

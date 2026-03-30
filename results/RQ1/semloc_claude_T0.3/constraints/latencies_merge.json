@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "latencies_merge",
+  "fault_hypothesis": "Lines 86-87 contain a spurious post-processing step that removes the last element when both streams end with the same value, incorrectly discarding a valid duplicate observation that should be preserved.",
+  "fault_line": 86,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 86
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the pop should never be true for valid inputs; when it fires it incorrectly removes a duplicate that must be preserved.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 86,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After the conditional pop, the merged list length must still equal the sum of both input lengths; the pop violates this invariant.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == i__1 + j"
+      },
+      "intent": "At the end of each merge loop iteration the merged list length must equal the sum of the two pointers, confirming no elements are dropped inside the loop.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__2"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__2) == len(left) + len(right)"
+      },
+      "intent": "The final merged result must contain exactly as many elements as both inputs combined; the erroneous pop causes this to be one short.",
+      "confidence": 0.9
+    }
+  ]
+}

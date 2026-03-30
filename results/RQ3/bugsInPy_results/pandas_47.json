@@ -1,0 +1,30 @@
+{
+  "bug_id": "pandas_47",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.frame.DataFrame._setitem_array",
+    "buggy_methods": [
+      "pandas.core.frame.DataFrame._setitem_array"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.frame.DataFrame._setitem_array",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/tests/frame/indexing/test_indexing.py": [
+      462,
+      463,
+      464,
+      465,
+      466,
+      467,
+      468
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

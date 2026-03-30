@@ -1,0 +1,44 @@
+{
+  "function": "tasks_allocator",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, the main issue is in the integer allocation step. When distributing tasks proportionally and converting to integers, simply using `int()` (which truncates) loses the remainder without redistributing it. This means the sum of allocations may be less than `total`.\n\nThe correct approach for proportional integer allocation is the \"largest remainder method\" - compute floors, then distribute remaining units to those with the largest fractional parts. The current code just truncates with `int(x)` on line 70, losing the fractional remainders without compensating.\n\n{\n  \"function_name\": \"tasks_allocator\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"Using `int(x)` (truncation) on line 70 discards fractional remainders without redistributing them, so the sum of allocations can be less than `total`. The correct approach is the largest-remainder method: floor each value, then award remaining units to recipients with the largest fractional parts.\",\n  \"confidence\": 0.82\n}",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

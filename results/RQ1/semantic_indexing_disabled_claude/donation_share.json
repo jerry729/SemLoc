@@ -1,0 +1,47 @@
+{
+  "function": "donation_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    59
+  ],
+  "total_source_lines": 61,
+  "runs": [
+    {
+      "faulty_lines": [
+        58,
+        60
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the issue is on line 58: the fee should be deducted from the total amount before distribution, not from each individual payout. The current implementation deducts the fee from each recipient's share, which means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe correct approach should be to compute `net = amount - fee` first, then distribute `net` proportionally. Instead, line 58 distributes the full `amount` and line 60 subtracts `fee` from each individual payout.\n\n{\n  \"function_name\": \"donation_share\",\n  \"faulty_lines\": [58, 60],\n  \"explanation\": \"The fee should be deducted from the total amount before distribution (net = amount - fee), but instead the full amount is distributed on line 58 and the fee is subtracted from each recipient's share on line 60, causing the total fee deducted to be fee * len(ratios) rather than fee.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        58,
+        60
+      ],
+      "valid_preds": [
+        58,
+        60
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 58,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

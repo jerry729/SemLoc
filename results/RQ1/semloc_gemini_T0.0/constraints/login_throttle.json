@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "login_throttle",
+  "fault_hypothesis": "The condition on line 69 uses a strict greater-than comparison (`>`) instead of greater-than-or-equal (`>=`), allowing login attempts when the number of recent attempts exactly matches the limit.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) == (len(recent__1) >= limit)"
+      },
+      "intent": "The check for exceeding the limit should be inclusive, denying access when the count equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If access is allowed (by taking this branch), the number of recent attempts must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent attempts should not be exactly at the limit, as this is the ambiguous case handled incorrectly.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == (sum(1 for t in timestamps if t > now - window) < limit))"
+      },
+      "intent": "The final decision to allow a login must correspond to the number of recent attempts being strictly under the limit.",
+      "confidence": 0.7
+    }
+  ]
+}

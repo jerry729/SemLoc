@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "credit_share",
+  "fault_hypothesis": "The bug is on line 68. The share calculation uses the total `amount` instead of the distributable amount (`amount - fee`). This causes the fee to be effectively deducted once per participant in line 70, rather than once from the total pool before distribution.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "amount <= fee or abs(shares[-1] - (r / total_ratio__1) * (amount - fee)) < 1e-9"
+      },
+      "intent": "A participant's share should be calculated based on the net amount after the fee is deducted.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all final shares must equal the total amount less the fee, clamped at zero.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "amount <= fee or all(abs(s * total_ratio__1 - r * (amount - fee)) < 1e-9 for s, r in zip(shares__1, ratios))"
+      },
+      "intent": "Before fee deduction, each calculated share should be proportional to the distributable amount, not the gross amount.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "fee == 0.0 or len(ratios) == 1 or shares[-1] < amount"
+      },
+      "intent": "A single share should not be equal to the entire pool if a fee needs to be paid by multiple participants.",
+      "confidence": 0.7
+    }
+  ]
+}

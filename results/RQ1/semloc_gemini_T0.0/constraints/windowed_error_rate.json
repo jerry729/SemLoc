@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "windowed_error_rate",
+  "fault_hypothesis": "The error rate calculation on line 69 is incorrect. It divides the error count by the window duration (`window`) instead of the total number of events in the window (`len(recent)`).",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(__cbfl_result - (errors__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The returned rate must be the ratio of errors to the number of recent events.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "errors__1"
+        }
+      },
+      "spec": {
+        "expr": "errors__1 <= len(recent__1)"
+      },
+      "intent": "The count of errors cannot exceed the total number of events considered.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0"
+      },
+      "intent": "If the main logic is executed, there must be events to process.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(cutoff__1 <= ts for ts, _ in recent__1)"
+      },
+      "intent": "All events in the 'recent' list must have timestamps greater than or equal to the cutoff time.",
+      "confidence": 0.7
+    }
+  ]
+}

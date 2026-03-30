@@ -1,0 +1,44 @@
+{
+  "function": "kv_snapshot_reader",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "The early termination condition `k < key` is inverted. Since the snapshot is sorted in ascending order, the loop should break when `k > key` (we've passed the target), not when `k < key` (we haven't reached it yet).",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "The early termination condition is wrong. Since the snapshot is sorted in ascending order by key, the search should stop when `k > key` (i.e., we've passed where the key would be). The current code breaks when `k < key`, meaning it stops searching before it even reaches the target key.\n\n```json\n{\n  \"function_name\": \"kv_snapshot_reader\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"The early termination condition `k < key` is inverted. Since the snapshot is sorted in ascending order, the loop should break when `k > key` (we've passed the target), not when `k < key` (we haven't reached it yet).\",\n  \"confidence\": 0.97\n}\n```",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

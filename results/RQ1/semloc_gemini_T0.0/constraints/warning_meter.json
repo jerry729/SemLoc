@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warning_meter",
+  "fault_hypothesis": "When a counter exceeds its cap, it is incorrectly set to `cap - 1` instead of `cap`. The bug is on line 65, where the value should be assigned to `cap` directly.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "cap__1 == 2"
+      },
+      "intent": "This condition separates the passing test that executes this line from the failing tests that execute it.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters[key__3] == cap__1"
+      },
+      "intent": "After capping, the counter's value should be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result > 0"
+      },
+      "intent": "The counter value returned should always be positive.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "cap__1"
+        }
+      },
+      "spec": {
+        "expr": "cap__1 is None or cap__1 >= 1"
+      },
+      "intent": "A valid cap, if provided, must be at least 1.",
+      "confidence": 0.9
+    }
+  ]
+}

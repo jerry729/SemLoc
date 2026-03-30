@@ -1,0 +1,42 @@
+{
+  "bug_id": "keras_36",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.backend.tensorflow_backend.separable_conv1d",
+    "buggy_methods": [
+      "keras.backend.tensorflow_backend.separable_conv1d"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.backend.tensorflow_backend.separable_conv1d",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/backend/tensorflow_backend.py": [
+      3419,
+      3422
+    ],
+    "tests/keras/layers/convolutional_test.py": [
+      241,
+      242,
+      243,
+      244,
+      245,
+      246,
+      247,
+      248,
+      249,
+      250,
+      251,
+      252,
+      253,
+      254,
+      255
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

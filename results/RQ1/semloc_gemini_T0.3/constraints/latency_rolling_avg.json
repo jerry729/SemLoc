@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "latency_rolling_avg",
+  "fault_hypothesis": "The rolling average on line 69 is calculated by dividing the total by the fixed `window` size, instead of the actual number of samples in the `tail` (`len(tail)`). This leads to an incorrect average when the series is shorter than the window.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated average must be the sum of the tail divided by the number of elements in the tail.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(tail__1) < window) or (len(tail__1) < warmup_min__1)"
+      },
+      "intent": "If the number of samples is less than the window size, the warmup threshold should not yet be met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "An average returned to the user must be correctly calculated from the available tail samples.",
+      "confidence": 1.0
+    }
+  ]
+}

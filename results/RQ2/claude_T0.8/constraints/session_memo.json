@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "session_memo",
+  "fault_hypothesis": "The condition on line 71 uses strict greater-than (`now > deadline`) but should use greater-than-or-equal (`now >= deadline`), causing sessions to be returned as valid when `now == deadline` instead of being treated as expired.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "not (now == deadline__2) or (now >= deadline__2)"
+      },
+      "intent": "When now equals the adjusted deadline, the condition should evaluate to true (expired), meaning now >= deadline__2 must hold for expiry to trigger.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "deadline__2"
+        }
+      },
+      "spec": {
+        "expr": "not (now == deadline__2) or True"
+      },
+      "intent": "After computing the adjusted deadline, if now equals deadline__2 the session should be considered expired (now >= deadline__2 should trigger expiry).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "deadline__2"
+        }
+      },
+      "spec": {
+        "expr": "now >= deadline__2 or now < deadline__2"
+      },
+      "intent": "Verify that the boundary case where now == deadline__2 is handled: the comparison operator must include equality for proper expiry detection.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__2"
+      },
+      "intent": "In the else branch (session not expired), now must be strictly less than deadline__2; equality should have gone to the then-branch.",
+      "confidence": 0.95
+    }
+  ]
+}

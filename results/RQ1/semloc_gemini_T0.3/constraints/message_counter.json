@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "message_counter",
+  "fault_hypothesis": "When a counter exceeds its cap, it is incorrectly clamped to `cap - 1` instead of `cap`. The off-by-one error is in the assignment on line 61.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After clamping, the counter's value should be exactly equal to the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "When the cap is enforced, the final value of the counter must be the cap itself.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] > cap - 1"
+      },
+      "intent": "The clamped counter value must not be less than the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The returned counter value must never exceed the specified cap.",
+      "confidence": 0.3
+    }
+  ]
+}

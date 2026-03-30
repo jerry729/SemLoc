@@ -1,0 +1,70 @@
+{
+  "bug_id": "black_14",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.get_future_imports",
+    "buggy_methods": [
+      "black.get_future_imports"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.get_future_imports",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      2913,
+      2932,
+      2933,
+      2934,
+      2935,
+      2936,
+      2937,
+      2938,
+      2939,
+      2940
+    ],
+    "tests/data/python2_unicode_literals.py": [
+      2,
+      12
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      2913,
+      2932,
+      2933,
+      2934,
+      2935,
+      2936,
+      2937,
+      2938,
+      2939,
+      2940
+    ],
+    "best_rank": null,
+    "fn_lines": 33,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 2932,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "black_14",
+    "function": "get_future_imports",
+    "src_path": "black.py",
+    "fn_begin": 2911,
+    "fn_end": 2943,
+    "n_constraints": 4,
+    "n_tests_passing": 61,
+    "n_tests_failing": 9,
+    "line_scores": [],
+    "fault_line": 2932,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/black_14/get_future_imports_constraints.json",
+    "report_path": "/tmp/bip_semloc/black_14/violations.jsonl"
+  }
+}

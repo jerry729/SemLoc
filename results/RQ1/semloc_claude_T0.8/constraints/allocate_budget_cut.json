@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_budget_cut",
+  "fault_hypothesis": "The fee is being deducted per-participant (s - fee) in the list comprehension on line 67, but the docstring says the total fee should be deducted from the pool before distribution. The fee should be deducted once from the total amount, not from each individual share.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(s - fee) for s in shares__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts should equal amount minus the single fee deduction, not amount minus fee*len(ratios).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before applying fee deduction, shares should sum to the full amount (fee not yet deducted).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) >= 1 and shares__1[-1] >= 0"
+      },
+      "intent": "Each appended share (before fee deduction) should be non-negative since ratios and amount are non-negative.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The total returned payouts must equal the pool minus the single flat fee, not minus fee per participant.",
+      "confidence": 0.93
+    }
+  ]
+}

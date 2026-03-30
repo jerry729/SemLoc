@@ -1,0 +1,27 @@
+{
+  "bug_id": "pandas_148",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.apply.FrameApply.apply_empty_result",
+    "buggy_methods": [
+      "pandas.core.apply.FrameApply.apply_empty_result"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.apply.FrameApply.apply_empty_result",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/apply.py": [
+      207,
+      208,
+      210,
+      217
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

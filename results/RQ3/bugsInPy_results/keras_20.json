@@ -1,0 +1,53 @@
+{
+  "bug_id": "keras_20",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.backend.tensorflow_backend._preprocess_conv2d_input",
+    "buggy_methods": [
+      "keras.backend.tensorflow_backend._preprocess_conv2d_input"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.backend.tensorflow_backend._preprocess_conv2d_input",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/backend/cntk_backend.py": [
+      2189,
+      2211
+    ],
+    "keras/backend/tensorflow_backend.py": [
+      3436,
+      3452,
+      3589,
+      3613,
+      3630,
+      3631,
+      3632
+    ],
+    "keras/backend/theano_backend.py": [
+      2137,
+      2147,
+      2180
+    ],
+    "keras/layers/convolutional.py": [
+      823,
+      827,
+      839,
+      870,
+      875,
+      880
+    ],
+    "keras/utils/conv_utils.py": [
+      138
+    ],
+    "tests/keras/layers/convolutional_test.py": [
+      167
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

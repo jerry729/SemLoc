@@ -1,0 +1,47 @@
+{
+  "function": "txn_dedup_merge",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    75
+  ],
+  "total_source_lines": 78,
+  "runs": [
+    {
+      "faulty_lines": [
+        77,
+        76
+      ],
+      "explanation": "The function incorrectly removes the last element of the merged list if it happens to be the last element of both input lists. This logic is a flawed and incomplete attempt at deduplication, making the function's behavior inconsistent with the main merge loop which correctly preserves all elements.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"txn_dedup_merge\",\n  \"faulty_lines\": [\n    77,\n    76\n  ],\n  \"explanation\": \"The function incorrectly removes the last element of the merged list if it happens to be the last element of both input lists. This logic is a flawed and incomplete attempt at deduplication, making the function's behavior inconsistent with the main merge loop which correctly preserves all elements.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        77,
+        76
+      ],
+      "valid_preds": [
+        77,
+        76
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_pressure",
+  "fault_hypothesis": "The conditional on line 70 is inverted. Clamping is performed when `clamp` is False and skipped when `clamp` is True, which is the opposite of the documented behavior.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__3 == min(max(y__1, min(y0, y1)), max(y0, y1)))) or ((not clamp) and (y__3 == y__1))"
+      },
+      "intent": "The value of y after the conditional should be correctly clamped or unclamped based on the clamp flag.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic block should only be executed when clamping is enabled.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If the clamping logic is skipped, the interpolated value must already be within the clamping bounds.",
+      "confidence": 1.0
+    }
+  ]
+}

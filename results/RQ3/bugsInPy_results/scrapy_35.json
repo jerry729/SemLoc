@@ -1,0 +1,25 @@
+{
+  "bug_id": "scrapy_35",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.crawler._get_spider_loader",
+    "buggy_methods": [
+      "scrapy.crawler._get_spider_loader"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.crawler._get_spider_loader",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/crawler.py": [
+      195,
+      196
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

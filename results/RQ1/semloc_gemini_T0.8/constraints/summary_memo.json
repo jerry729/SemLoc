@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "summary_memo",
+  "fault_hypothesis": "The expiry check on line 73 uses a strict greater-than comparison (`>`), which fails to treat an entry as expired when the current time is exactly equal to the expiration time. The comparison should be greater-than-or-equal (`>=`).",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(adjusted_now__1 > expires_at__1) == (adjusted_now__1 >= expires_at__1)"
+      },
+      "intent": "The result of the expiry comparison should be the same as if it correctly handled the boundary case.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 < expires_at__1"
+      },
+      "intent": "If an entry is considered valid and returned, the current time must be strictly before its expiry time.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_now__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 <= now"
+      },
+      "intent": "The time adjusted for clock skew should not be after the original time.",
+      "confidence": 0.9
+    }
+  ]
+}

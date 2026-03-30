@@ -1,0 +1,26 @@
+{
+  "bug_id": "ansible_14",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.galaxy.api.GalaxyAPI.fetch_role_related",
+    "buggy_methods": [
+      "lib.ansible.galaxy.api.GalaxyAPI.fetch_role_related"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.galaxy.api.GalaxyAPI.fetch_role_related",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/galaxy/api.py": [
+      293,
+      298,
+      299
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

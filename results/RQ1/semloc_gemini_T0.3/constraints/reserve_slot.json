@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_slot",
+  "fault_hypothesis": "The overlap check on line 65 is incorrect for intervals that touch at their boundaries. The `overlaps` function, defined on line 61, uses non-strict inequalities (`<=`, `>=`), causing it to incorrectly return `False` (no overlap) when two intervals share a boundary point.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (effective_candidate[1] == slot[0] or effective_candidate[0] == slot[1])"
+      },
+      "intent": "A candidate considered non-overlapping with a slot should not be merely touching it at a boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "effective_candidate[1] < slot[0] or effective_candidate[0] > slot[1]"
+      },
+      "intent": "If the `if` condition for an overlap is false, the candidate and slot must be strictly disjoint.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the candidate is merged into the schedule, it must be strictly disjoint from all previously existing slots.",
+      "confidence": 0.9
+    }
+  ]
+}

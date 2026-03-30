@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "royalty_payout",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 69, instead of being deducted from the total amount before distribution. This results in the fee being effectively multiplied by the number of participants.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts should equal the total amount minus the fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(ratios) <= 1 or amount <= fee"
+      },
+      "intent": "The fee logic is only correct if the fee is zero, there's only one recipient, or the fee is larger than the amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0 or len(ratios) <= 1 or amount <= fee) or (abs(sum(shares__1) - (amount - fee)) < 1e-9)"
+      },
+      "intent": "The sum of shares should be based on the distributable amount (amount - fee), unless in a case where the bug has no effect.",
+      "confidence": 0.8
+    }
+  ]
+}

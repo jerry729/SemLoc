@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_fuel",
+  "fault_hypothesis": "The function fails to conserve the total fuel when converting continuous shares to integers. The list comprehension on line 66 uses `int()`, which truncates fractional parts, leading to a shortfall in the total allocation whenever the planned shares are not whole numbers.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The sum of integer allocations must equal the total fuel available.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of continuous planned shares must equal the total fuel.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The total allocation must be conserved within the integer allocation branch.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not _INTEGER_ALLOCATION or sum(__cbfl_result) == total"
+      },
+      "intent": "The final returned sum of allocations must equal the total fuel for integer allocations.",
+      "confidence": 0.8
+    }
+  ]
+}

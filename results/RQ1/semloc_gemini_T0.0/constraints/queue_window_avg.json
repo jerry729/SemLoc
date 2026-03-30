@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "queue_window_avg",
+  "fault_hypothesis": "The average on line 66 is calculated by dividing by the requested `window` size instead of the actual number of samples in the `tail`. This is incorrect when the number of values is less than the window size.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (window == len(tail__1))"
+      },
+      "intent": "The divisor `window` is only correct if it equals the sample count, unless the result is discarded due to warmup.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (abs(mean__1 * len(tail__1) - total__1) < 1e-9)"
+      },
+      "intent": "The computed mean must be consistent with the sum and actual sample count, unless discarded during warmup.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "If a numeric result is returned, the window must have been full for the calculation to be valid.",
+      "confidence": 1.0
+    }
+  ]
+}

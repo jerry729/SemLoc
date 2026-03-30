@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "slots_apportion",
+  "fault_hypothesis": "The function incorrectly converts planned fractional allocations to integers using simple truncation on line 70. This fails to preserve the total number of slots, as the sum of truncated values is often less than the sum of the planned allocations.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "The sum of final integer allocations must equal the rounded sum of the planned fractional allocations.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "len(planned__1) == len(weights)"
+      },
+      "intent": "The number of planned allocations must match the number of initial weights.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "all(p >= minimum for p in planned__1)"
+      },
+      "intent": "Each planned allocation must respect the specified minimum value before being converted to an integer.",
+      "confidence": 0.9
+    }
+  ]
+}

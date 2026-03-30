@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "log_sampling_decider",
+  "fault_hypothesis": "The sampling decision on line 67 should use `bucket < rate` but incorrectly uses `bucket > rate`. This inverts the sampling logic, causing higher rates to sample fewer items.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "rate == 0.5"
+      },
+      "intent": "This condition separates the passing tests (which use rate=0.5) from the failing tests for this specific bug.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "0 <= bucket__1 < 1"
+      },
+      "intent": "The bucket value must be in the standard [0, 1) range for fractional sampling.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_CALL",
+        "anchor": {
+          "callee": "_validate_rate"
+        }
+      },
+      "spec": {
+        "expr": "rate >= 0 and rate <= 1"
+      },
+      "intent": "After validation, the rate must be within the legal [0, 1] range.",
+      "confidence": 0.9
+    }
+  ]
+}

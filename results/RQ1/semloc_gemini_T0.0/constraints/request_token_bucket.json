@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "request_token_bucket",
+  "fault_hypothesis": "The `last` access timestamp is not updated when a request is denied (line 62). This causes subsequent refill calculations to be based on a stale timestamp, leading to incorrect throttling.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "tokens.get(TOKEN_KEY_LAST__1) == now"
+      },
+      "intent": "The last-access timestamp must be updated to the current time before returning, even on denial.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "tokens.get(TOKEN_KEY_LAST__1) == now"
+      },
+      "intent": "When a request is denied because the bucket is empty, the last-access timestamp must be updated.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "last__1"
+        }
+      },
+      "spec": {
+        "expr": "not (tokens.get(TOKEN_KEY_AVAILABLE__1, capacity) <= 0) or (now - last__1 < 1.0)"
+      },
+      "intent": "If the bucket is known to be empty, the last access time must be recent.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "tokens.get(TOKEN_KEY_LAST) == now"
+      },
+      "intent": "The last-access timestamp in the state dictionary should always reflect the time of the most recent call.",
+      "confidence": 0.8
+    }
+  ]
+}

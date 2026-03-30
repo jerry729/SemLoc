@@ -1,0 +1,45 @@
+{
+  "bug_id": "pandas_123",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.numeric.NumericIndex.__new__",
+    "buggy_methods": [
+      "pandas.core.indexes.numeric.NumericIndex.__new__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.numeric.NumericIndex.__new__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      384
+    ],
+    "pandas/core/indexes/numeric.py": [
+      48
+    ],
+    "pandas/core/indexes/range.py": [
+      17,
+      168,
+      169,
+      170,
+      171,
+      172,
+      173
+    ],
+    "pandas/tests/indexes/test_range.py": [
+      113,
+      143,
+      181
+    ],
+    "pandas/tests/series/indexing/test_numeric.py": [
+      89,
+      90
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

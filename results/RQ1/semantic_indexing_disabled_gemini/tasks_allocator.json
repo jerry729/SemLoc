@@ -1,0 +1,47 @@
+{
+  "function": "tasks_allocator",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        30,
+        70
+      ],
+      "explanation": "The logic on line 30 incorrectly applies the `minimum` constraint, which can cause the sum of planned tasks to exceed the `total`. Subsequently, line 70 uses simple integer truncation, which discards fractional parts and causes the final sum of allocations to be less than the `total`.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"tasks_allocator\",\n  \"faulty_lines\": [\n    30,\n    70\n  ],\n  \"explanation\": \"The logic on line 30 incorrectly applies the `minimum` constraint, which can cause the sum of planned tasks to exceed the `total`. Subsequently, line 70 uses simple integer truncation, which discards fractional parts and causes the final sum of allocations to be less than the `total`.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        30,
+        70
+      ],
+      "valid_preds": [
+        30,
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 30,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

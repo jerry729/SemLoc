@@ -1,0 +1,30 @@
+{
+  "bug_id": "keras_6",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.training_utils.weighted_masked_objective",
+    "buggy_methods": [
+      "keras.engine.training_utils.weighted_masked_objective"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.training_utils.weighted_masked_objective",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/training_utils.py": [
+      413
+    ],
+    "tests/test_loss_masking.py": [
+      15,
+      16,
+      17,
+      18
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

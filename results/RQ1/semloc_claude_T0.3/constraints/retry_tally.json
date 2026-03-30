@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "retry_tally",
+  "fault_hypothesis": "On line 55, when the counter exceeds the cap, it is set to `cap - 1` instead of `cap`, causing the counter to be clamped one below the intended maximum.",
+  "fault_line": 55,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 55
+        }
+      },
+      "spec": {
+        "expr": "cap is None or counters[key] <= cap"
+      },
+      "intent": "After the capping assignment, the counter must not exceed the cap value.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "counters__1"
+        }
+      },
+      "spec": {
+        "expr": "cap is None or counters__1[key__1] == cap"
+      },
+      "intent": "After capping, the counter should equal cap exactly (not cap - 1).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 55,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters[key] == cap"
+      },
+      "intent": "Inside the capping branch, the counter must be set to cap, not cap - 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The returned value must never exceed the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

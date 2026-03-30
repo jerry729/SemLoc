@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_desk_slot",
+  "fault_hypothesis": "The overlap condition on line 76 uses strict inequalities (`end <= s` and `start >= e`), which allows adjacent intervals (touching at endpoints) to be accepted. The condition should use strict inequalities in the opposite sense so that touching endpoints are treated as overlapping/conflicting.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or e == start__1) or not (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "When new interval touches an existing one at exactly one endpoint, the non-overlap condition should NOT hold (the slot should be rejected), so touching endpoints must be treated as overlapping.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) and not (e == start__1)"
+      },
+      "intent": "After each iteration, if the new interval is adjacent (touching) to an existing slot, the function should have already returned False \u2014 so this condition should never be true at loop tail when the interval is adjacent.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "all((end__1 < s or start__1 > e) for s, e in existing) or any((end__1 == s or e == start__1) for s, e in existing) == False"
+      },
+      "intent": "Before using end__1 in the overlap check, verify that the adjacency cases (end==s or e==start) are not incorrectly passing through as non-overlapping.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and any(end == s or e == start for s, e in existing))"
+      },
+      "intent": "The function must never return accepted=True when the new interval is adjacent (touching) to any existing booking.",
+      "confidence": 0.88
+    }
+  ]
+}

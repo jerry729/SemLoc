@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_budgeter",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers by simple truncation on line 65. This discards the fractional parts, causing the sum of the final allocations to be less than the total budget.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "The sum of integer allocations must equal the integer part of the total budget.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of planned shares from the helper function must equal the total budget.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(planned__1) - sum(allocations__1) < 1.0"
+      },
+      "intent": "The total value lost during integer truncation must be less than one unit.",
+      "confidence": 0.9
+    }
+  ]
+}

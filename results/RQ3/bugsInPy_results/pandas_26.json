@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_26",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.categorical.Categorical.min",
+    "buggy_methods": [
+      "pandas.core.arrays.categorical.Categorical.min"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.categorical.Categorical.min",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/categorical.py": [
+      2146,
+      2181
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

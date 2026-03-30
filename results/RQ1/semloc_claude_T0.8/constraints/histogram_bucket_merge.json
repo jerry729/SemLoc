@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "histogram_bucket_merge",
+  "fault_hypothesis": "Lines 77-78 incorrectly remove one copy of the shared terminal edge when both left and right end with the same value, violating the requirement that both copies be retained. The condition on line 77 and the pop() on line 78 should not exist.",
+  "fault_line": 78,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(merged__1) + 1"
+      },
+      "intent": "The pop() on line 78 always makes the merged list shorter than it should be \u2014 this expr is always false after the pop, signalling the bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) >= len(left) + len(right)"
+      },
+      "intent": "After the then-branch pops an element, the merged list length should still equal len(left)+len(right), but it falls one short.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__2"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "Before clamping, the pre-clamp merged list must contain exactly len(left)+len(right) elements since both inputs are fully consumed.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) >= min(len(left) + len(right), 1)"
+      },
+      "intent": "The returned merged list must not be shorter than what the merge algorithm should produce for non-empty inputs.",
+      "confidence": 0.75
+    }
+  ]
+}

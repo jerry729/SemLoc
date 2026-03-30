@@ -1,0 +1,47 @@
+{
+  "function": "payment_split_rebate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        62,
+        66
+      ],
+      "explanation": "The rebate should be subtracted from the total pool before distribution, but instead the shares are computed from the full total (line 62) and then the rebate is incorrectly subtracted from each individual share (line 66), effectively multiplying the rebate by the number of participants.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the function, the rebate should be subtracted from the total before splitting (as stated in the docstring: \"The rebate is subtracted from the total pool before distribution\"), but instead it's being subtracted from each individual share after the split.\n\nThe correct implementation should compute `pool = max(0, total - rebate)` and then split `pool` among participants. Instead, line 62 computes shares based on the full `total`, and line 66 subtracts `rebate` from each individual share (which multiplies the rebate effect by the number of participants).\n\n```\n{\n  \"function_name\": \"payment_split_rebate\",\n  \"faulty_lines\": [62, 66],\n  \"explanation\": \"The rebate should be subtracted from the total pool before distribution, but instead the shares are computed from the full total (line 62) and then the rebate is incorrectly subtracted from each individual share (line 66), effectively multiplying the rebate by the number of participants.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        62,
+        66
+      ],
+      "valid_preds": [
+        62,
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

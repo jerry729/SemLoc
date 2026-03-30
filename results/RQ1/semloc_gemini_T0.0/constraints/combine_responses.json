@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_responses",
+  "fault_hypothesis": "The function incorrectly removes an element on line 72 if both input lists share the same final value. This violates the postcondition that the output size must equal the sum of the input sizes.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The list length must equal the sum of input lengths after the pop operation.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "This branch, which incorrectly removes an element, should never be executed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the erroneous removal of an element should not be met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain all elements from both inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

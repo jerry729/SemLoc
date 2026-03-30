@@ -1,0 +1,44 @@
+{
+  "function": "job_queue_priority",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        67
+      ],
+      "explanation": "The admission control logic incorrectly admits job batches that exactly meet the capacity limit, because the condition uses a strict greater-than (`>`) instead of a greater-than-or-equal (`>=`) comparison, contradicting the documented behavior.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"job_queue_priority\",\n  \"faulty_lines\": [\n    67\n  ],\n  \"explanation\": \"The admission control logic incorrectly admits job batches that exactly meet the capacity limit, because the condition uses a strict greater-than (`>`) instead of a greater-than-or-equal (`>=`) comparison, contradicting the documented behavior.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        67
+      ],
+      "valid_preds": [
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

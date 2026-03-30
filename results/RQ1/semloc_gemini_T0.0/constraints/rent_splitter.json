@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rent_splitter",
+  "fault_hypothesis": "The fee is incorrectly deducted from each participant's share on line 65, rather than once from the total amount before splitting. This results in the fee being effectively multiplied by the number of participants.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all shares after deduction and clamping should equal the distributable amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of the final returned shares must equal the total amount minus the fee, floored at zero.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The base shares should be calculated from the amount remaining after the fee is deducted.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((sum(base__1) - sum(shares__1)) - min(amount, fee)) < 1e-9"
+      },
+      "intent": "The total amount deducted from the base shares should equal the fee, capped by the total amount.",
+      "confidence": 0.8
+    }
+  ]
+}

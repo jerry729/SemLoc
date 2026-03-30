@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "event_gate",
+  "fault_hypothesis": "The condition on line 62 uses a strict greater-than comparison (`>`), incorrectly allowing a new event when the number of recent events is exactly equal to the limit. The check should be greater-than-or-equal-to (`>=`) to correctly close the gate when the limit is reached.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "The decision point should not proceed to allow an event if the number of recent events is already exactly at the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If an event is allowed, the count of prior recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts >= window_start__1 for ts in recent__1)"
+      },
+      "intent": "All events considered 'recent' must have timestamps at or after the calculated window start time.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] and __cbfl_result[1] == 0)"
+      },
+      "intent": "If an event is allowed (returns True), the number of remaining slots cannot be zero.",
+      "confidence": 0.9
+    }
+  ]
+}

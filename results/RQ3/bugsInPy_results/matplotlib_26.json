@@ -1,0 +1,24 @@
+{
+  "bug_id": "matplotlib_26",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axis.setter",
+    "buggy_methods": [
+      "lib.matplotlib.axis.setter"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axis.setter",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/axis.py": [
+      1909
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

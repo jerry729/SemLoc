@@ -1,0 +1,47 @@
+{
+  "function": "replica_sync_offsets",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        71
+      ],
+      "explanation": "The main algorithm correctly calculates the missing offsets, but the subsequent conditional block incorrectly removes a valid missing offset if it happens to equal the last offset in the replica list.",
+      "confidence": 0.8,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"replica_sync_offsets\",\n  \"faulty_lines\": [\n    70,\n    71\n  ],\n  \"explanation\": \"The main algorithm correctly calculates the missing offsets, but the subsequent conditional block incorrectly removes a valid missing offset if it happens to equal the last offset in the replica list.\",\n  \"confidence\": 0.8\n}\n```",
+      "predicted": [
+        70,
+        71
+      ],
+      "valid_preds": [
+        70,
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

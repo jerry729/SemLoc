@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "dataloader_shard_merge",
+  "fault_hypothesis": "The code on line 74 incorrectly removes an element from the merged list. This happens when both input lists end with the same value, breaking the expectation that all duplicates from the inputs are preserved.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left_ids) + len(right_ids)"
+      },
+      "intent": "The total number of elements in the merged list must equal the sum of elements from the input lists.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "merged__1.count(left_ids[-1]) >= 2"
+      },
+      "intent": "If both lists end with the same element, the merged list must retain at least two copies of that element.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(merged__1[k] <= merged__1[k+1] for k in range(len(merged__1)-1))"
+      },
+      "intent": "The merged list must remain sorted at the end of each loop iteration.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shares_apportion",
+  "fault_hypothesis": "On line 68, `int(x)` truncates each planned value toward zero, discarding fractional remainders without redistributing them, so the sum of allocations is less than `total` when shares don't divide evenly.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "After truncation, the sum of integer allocations must still equal total (fails when fractional parts are discarded without redistribution).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == sum(int(x) for x in planned__1) and sum(allocations__1) == int(total)"
+      },
+      "intent": "The truncated allocations list must sum to total, not to floor(total) minus lost remainders.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "At the end of the integer-allocation branch, the sum of allocations must equal total.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned allocations must sum exactly to total.",
+      "confidence": 0.85
+    }
+  ]
+}

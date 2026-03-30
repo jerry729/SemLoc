@@ -1,0 +1,20 @@
+{
+  "bug_id": "pandas_45",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.construction.sanitize_array",
+    "buggy_methods": [
+      "pandas.core.construction.sanitize_array"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.construction.sanitize_array",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

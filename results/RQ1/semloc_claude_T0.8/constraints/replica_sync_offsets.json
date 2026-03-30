@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "replica_sync_offsets",
+  "fault_hypothesis": "Line 70 contains a spurious post-processing step that removes the last element of `missing` when it equals `replica[-1]`, but this condition can be true when the element is legitimately missing (e.g., a trailing duplicate in primary added via `extend`), causing valid offsets to be incorrectly removed.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (missing__1 and replica and missing__1[-1] == replica[-1])"
+      },
+      "intent": "The condition on line 70 should never be true for valid inputs; when it fires it incorrectly removes a legitimately missing offset.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "missing__1"
+        }
+      },
+      "spec": {
+        "expr": "all(v not in replica for v in missing__1)"
+      },
+      "intent": "Every offset in missing should not be present in replica (merge correctness invariant).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(v not in replica for v in missing__1)"
+      },
+      "intent": "At each loop iteration, no element added to missing should appear in replica.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(missing__1) >= 0"
+      },
+      "intent": "After the spurious pop, missing should not have lost a legitimate offset \u2014 this branch should never execute for correct inputs.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(v not in replica for v in __cbfl_result)"
+      },
+      "intent": "All returned offsets must truly be absent from replica.",
+      "confidence": 0.9
+    }
+  ]
+}

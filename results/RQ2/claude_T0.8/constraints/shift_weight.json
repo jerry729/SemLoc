@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_weight",
+  "fault_hypothesis": "The function _compute_shifted_values does not renormalize the result to sum to 1.0, so when inputs don't sum to 1 the output is also not normalized. Line 60 returns un-normalized weights.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "After computing shifted values, the result must already be normalized to sum to 1.0",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The computed shifted values must sum to 1.0 immediately after assignment",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "Before returning updated, verify it is normalized regardless of input sums",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned weight vector must always sum to 1.0",
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_split_rebate",
+  "fault_hypothesis": "On line 66, the rebate is subtracted from each individual share rather than from the total pool before distribution. The correct approach is to compute shares from (total - rebate) instead of subtracting rebate from each share separately.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([s - rebate for s in shares__1]) - max(0.0, total - rebate)) < 1e-6"
+      },
+      "intent": "The sum of returned payouts must equal total minus rebate (clamped to zero), which fails when rebate is subtracted per-share instead of from the pool.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "After computing raw shares from total (without rebate deduction), their sum should equal total, confirming the rebate has not yet been applied.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == len(ratios) and abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "Before using shares in the return expression, verify shares sum to total (not total-rebate), so the rebate should be applied to the pool, not per-share.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, total - rebate)) < 1e-6"
+      },
+      "intent": "The sum of all returned payouts must equal max(0, total - rebate).",
+      "confidence": 0.85
+    }
+  ]
+}

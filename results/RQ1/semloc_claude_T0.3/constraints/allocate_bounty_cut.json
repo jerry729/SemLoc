@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_bounty_cut",
+  "fault_hypothesis": "On line 64, the fee is subtracted from each individual share rather than from the total amount before splitting. The fee should be deducted once from `amount` before computing proportional shares (or equivalently, deducted once from the total pool), not once per recipient.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(share - fee) for share in base__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "After line 64, the sum of payouts should equal amount minus fee (one deduction), not amount minus fee*len(ratios).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "After computing base shares, their sum should equal the full amount (fee not yet deducted from base).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "len(base__1) == len(ratios) and abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "Before using base__1 in the return expression, verify shares sum to amount so the fee deduction logic can be checked.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "fee == 0.0 or abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "When a fee is present, total payouts must equal amount minus the fee deducted once, not once per recipient.",
+      "confidence": 0.9
+    }
+  ]
+}

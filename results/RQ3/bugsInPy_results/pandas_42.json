@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_42",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas._testing.assert_series_equal",
+    "buggy_methods": [
+      "pandas._testing.assert_series_equal"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas._testing.assert_series_equal",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/_testing.py": [
+      1163,
+      1173
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

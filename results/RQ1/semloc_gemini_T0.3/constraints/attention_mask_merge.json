@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "attention_mask_merge",
+  "fault_hypothesis": "The function uses a logical OR (`or`) on line 67 to merge the masks, but the specification requires a logical AND (`and`). This causes the merged mask to incorrectly keep positions where only one of the input masks is True.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "merged[-1] == (a and b)"
+      },
+      "intent": "The value appended to the merged list must be the logical conjunction of the corresponding elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(merged[i] == (mask_a[i] and mask_b[i]) for i in range(len(merged)))"
+      },
+      "intent": "At the end of each iteration, the merged list must be consistent with a logical AND operation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(__cbfl_result[i] == (mask_a[i] and mask_b[i]) for i in range(len(mask_a)))"
+      },
+      "intent": "The final returned mask must be the element-wise logical conjunction of the inputs.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(merged__1[i] == (mask_a[i] and mask_b[i]) for i in range(len(merged__1)))"
+      },
+      "intent": "The partially built mask must be correct before appending the next element.",
+      "confidence": 0.9
+    }
+  ]
+}

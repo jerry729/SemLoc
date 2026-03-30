@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_write",
+  "fault_hypothesis": "The check at line 70 uses `>` instead of `>=`, allowing a write when the number of recent events is exactly at the limit, which should be denied.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The bug only manifests at the boundary where the number of recent events equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (len(recent) < limit)"
+      },
+      "intent": "A write is allowed if and only if the number of recent events is strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the write is allowed (i.e., the 'if' condition is false), the number of recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "window_start__1"
+        }
+      },
+      "spec": {
+        "expr": "window_start__1 < now"
+      },
+      "intent": "The start of the time window must be before the current time.",
+      "confidence": 0.9
+    }
+  ]
+}

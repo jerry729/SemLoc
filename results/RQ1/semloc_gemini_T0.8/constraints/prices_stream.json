@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prices_stream",
+  "fault_hypothesis": "The condition on line 81 incorrectly identifies when the last elements of both input streams are identical, leading to the erroneous removal of a valid duplicate price on line 82.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition to detect and remove a supposed extraneous trailing element should never be true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 81,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "Executing this branch, which removes an element, violates the invariant that the merged list's size is the sum of the inputs' sizes.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "Before returning, the final merged list must contain a number of elements exactly equal to the sum of the lengths of the input lists.",
+      "confidence": 0.9
+    }
+  ]
+}

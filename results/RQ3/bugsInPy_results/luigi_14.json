@@ -1,0 +1,32 @@
+{
+  "bug_id": "luigi_14",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.scheduler.Task.has_excessive_failures",
+    "buggy_methods": [
+      "luigi.scheduler.Task.has_excessive_failures"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.scheduler.Task.has_excessive_failures",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/scheduler.py": [
+      93,
+      95,
+      202,
+      203,
+      213,
+      214,
+      215,
+      216,
+      386
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

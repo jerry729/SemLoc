@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_inventory",
+  "fault_hypothesis": "The conversion from float to int on line 66 uses simple truncation, which causes the sum of the allocated units to be less than the total inventory when fractional shares exist. The remainders are discarded instead of being distributed.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The sum of integer allocations must equal the total inventory.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the computed float allocations should be virtually equal to the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "len(planned__1) == len(weights)"
+      },
+      "intent": "The number of planned allocations must match the number of recipients.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(x >= minimum for x in __cbfl_result)"
+      },
+      "intent": "Every final allocation must meet the specified minimum.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_route",
+  "fault_hypothesis": "On line 68, the condition `now > effective` uses strict greater-than, but the docstring says a route is valid only when `now` is *strictly before* the expiration, meaning `now >= effective` should also be treated as expired. The boundary case (now == effective) incorrectly returns the value instead of None.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1 or (now == effective__1 and now > effective__1)"
+      },
+      "intent": "At the expiry check, when now equals effective the condition now > effective is False but should trigger expiry; this constraint is False at the boundary case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1 or (now >= effective__1)"
+      },
+      "intent": "After computing effective expiry, verify that the boundary condition now >= effective__1 will be correctly handled as expired (i.e., the subsequent check uses >= not just >).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1 or now >= effective__1"
+      },
+      "intent": "Before using effective__1 in the comparison, both strict-less and greater-or-equal cases should be covered; the bug is that now == effective__1 is not treated as expired.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "In the else branch (entry not expired), now must be strictly less than effective__1; if now == effective__1 this is False, revealing the boundary bug.",
+      "confidence": 0.92
+    }
+  ]
+}

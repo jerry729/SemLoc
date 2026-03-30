@@ -1,0 +1,47 @@
+{
+  "function": "revenue_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        72,
+        70
+      ],
+      "explanation": "The platform fee is incorrectly deducted from each participant's individual share after distribution, rather than from the total amount before distribution as specified in the documentation. This causes the total fee deducted to be multiplied by the number of participants.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"revenue_share\",\n  \"faulty_lines\": [\n    72,\n    70\n  ],\n  \"explanation\": \"The platform fee is incorrectly deducted from each participant's individual share after distribution, rather than from the total amount before distribution as specified in the documentation. This causes the total fee deducted to be multiplied by the number of participants.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        72,
+        70
+      ],
+      "valid_preds": [
+        72,
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

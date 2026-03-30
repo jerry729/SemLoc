@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_43",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.ops.__init__._should_reindex_frame_op",
+    "buggy_methods": [
+      "pandas.core.ops.__init__._should_reindex_frame_op"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.ops.__init__._should_reindex_frame_op",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/ops/__init__.py": [
+      714,
+      782
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

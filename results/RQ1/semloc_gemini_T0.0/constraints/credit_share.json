@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "credit_share",
+  "fault_hypothesis": "The platform fee is incorrectly subtracted from each participant's share on line 70, instead of from the total amount before distribution. This causes the total fee to be effectively multiplied by the number of participants.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all shares must equal the total amount less the fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of shares before the per-share fee deduction must equal the gross amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(total_ratio__1 - sum(ratios)) < 1e-9"
+      },
+      "intent": "The calculated total ratio must equal the sum of the input ratios.",
+      "confidence": 0.9
+    }
+  ]
+}

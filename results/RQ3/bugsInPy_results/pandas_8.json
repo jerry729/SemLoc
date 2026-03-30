@@ -1,0 +1,28 @@
+{
+  "bug_id": "pandas_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.blocks.Block.replace",
+    "buggy_methods": [
+      "pandas.core.internals.blocks.Block.replace"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.blocks.Block.replace",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/internals/blocks.py": [
+      731,
+      732,
+      733,
+      734,
+      735
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

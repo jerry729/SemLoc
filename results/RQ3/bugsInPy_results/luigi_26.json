@@ -1,0 +1,24 @@
+{
+  "bug_id": "luigi_26",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.contrib.hadoop_jar.HadoopJarJobRunner.run_job",
+    "buggy_methods": [
+      "luigi.contrib.hadoop_jar.HadoopJarJobRunner.run_job"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.contrib.hadoop_jar.HadoopJarJobRunner.run_job",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/contrib/hadoop_jar.py": [
+      86
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

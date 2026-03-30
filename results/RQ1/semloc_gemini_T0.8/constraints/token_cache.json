@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "token_cache",
+  "fault_hypothesis": "The expiration check on line 67 uses a strict greater-than comparison (`>`), which incorrectly validates a token when the current time is exactly equal to its effective TTL. The comparison operator should be greater-than-or-equal-to (`>=`).",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "now != effective_ttl__1"
+      },
+      "intent": "A token should be considered expired when 'now' is exactly equal to its effective TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_ttl__1"
+      },
+      "intent": "If a token is considered valid, the current time must be strictly less than its effective TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_ttl__1"
+      },
+      "intent": "A token's payload should only be accessed if the token is strictly unexpired.",
+      "confidence": 0.9
+    }
+  ]
+}

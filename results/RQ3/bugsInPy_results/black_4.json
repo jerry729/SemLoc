@@ -1,0 +1,24 @@
+{
+  "bug_id": "black_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.EmptyLineTracker.maybe_empty_lines",
+    "buggy_methods": [
+      "black.EmptyLineTracker.maybe_empty_lines"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.EmptyLineTracker.maybe_empty_lines",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      1483
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

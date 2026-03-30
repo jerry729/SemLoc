@@ -1,0 +1,49 @@
+{
+  "bug_id": "tornado_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.ioloop.IOLoop.run_in_executor",
+    "buggy_methods": [
+      "tornado.ioloop.IOLoop.run_in_executor"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.ioloop.IOLoop.run_in_executor",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/ioloop.py": [
+      47,
+      658,
+      659
+    ],
+    "tornado/test/ioloop_test.py": [
+      607,
+      609,
+      610,
+      614,
+      615,
+      625,
+      627,
+      628,
+      633,
+      634,
+      635,
+      636,
+      637,
+      638,
+      640,
+      643,
+      645,
+      649,
+      652,
+      655,
+      656
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

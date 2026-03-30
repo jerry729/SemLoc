@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_score",
+  "fault_hypothesis": "The bug is on line 65. The condition `if not clamp:` should be `if clamp:`, which causes the clamping logic to be applied when it should be skipped and vice-versa.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "The interpolation parameter t is within [0, 1] for all passing tests, but outside this range for all failing extrapolation tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lo__1"
+        }
+      },
+      "spec": {
+        "expr": "(t__1 < 0 or t__1 > 1) == clamp"
+      },
+      "intent": "The clamping logic should only be applied to extrapolated values if clamping is enabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "((not clamp) and (y__5 == y__1)) or (clamp and y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "The final result must be the raw value if clamping is off, or within the anchor range if clamping is on.",
+      "confidence": 0.95
+    }
+  ]
+}

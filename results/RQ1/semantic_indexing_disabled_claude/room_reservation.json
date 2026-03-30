@@ -1,0 +1,47 @@
+{
+  "function": "room_reservation",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        8
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify what's faulty. The function checks for conflicts with `not (end <= s or start >= e)`. This is the standard overlap detection: two intervals [start, end) and [s, e) conflict if NOT (end <= s OR start >= e), which is correct for half-open intervals.\n\nHowever, the issue depends on what the tests expect. Let me think about the `_CONFLICT_STRICT` flag defined at line 8 but never used. This suggests there might be intended behavior around strict vs non-strict conflict checking that was never implemented.\n\nThe conflict check at line 70 uses `not (end <= s or start >= e)` which means intervals that touch (e.g., [0,60] and [60,120]) do NOT conflict (end <= s is True when end=60, s=60). This is the standard behavior for non-overlapping intervals.\n\nBut wait - looking more carefully at `_CONFLICT_STRICT = False` being defined but unused, the real bug might be that the conflict condition should use strict inequalities when `_CONFLICT_STRICT` is True, or that the current condition is wrong.\n\nActually, the most likely fault is at line 70. The condition `end <= s` allows touching intervals (where end == s) to be considered non-conflicting. If tests expect that touching intervals ARE conflicts (strict mode), then the condition should be `end < s` instead of `end <= s`. But `_CONFLICT_STRICT = False` suggests touching should be allowed.\n\nAnother possibility: the `_check_capacity` at line 65 checks capacity BEFORE adding, but should it check after? No, that's fine.\n\nThe unused `_CONFLICT_STRICT` variable strongly suggests the overlap check at line 70 should incorporate it. The bug is that `_CONFLICT_STRICT` is defined but never used - the conflict check should be `not (end <= s or start >= e)` when strict=False, and `not (end < s or start > e)` when strict=True.\n\n{\n  \"function_name\": \"room_reservation\",\n  \"faulty_lines\": [70, 8],\n  \"explanation\": \"The `_CONFLICT_STRICT` flag is defined at line 8 but never used in the conflict check at line 70. The overlap condition should incorporate `_CONFLICT_STRICT` to determine whether touching intervals (end == s) are considered conflicts, but the current code always uses the same condition regardless of this flag.\",\n  \"confidence\": 0.5\n}",
+      "predicted": [
+        70,
+        8
+      ],
+      "valid_preds": [
+        70,
+        8
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

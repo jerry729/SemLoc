@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_interpolate",
+  "fault_hypothesis": "The condition on line 68 is `if not clamp:` when it should be `if clamp:`. This inverts the program's logic, causing it to clamp the output when it should not, and vice-versa.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))) or (not clamp and y__5 == y__1)"
+      },
+      "intent": "The final value should be clamped if and only if clamping is enabled; otherwise it should equal the raw interpolated value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "(0.0 <= t__1 <= 1.0) implies (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "If the query is within the domain anchors (t is in [0,1]), the interpolated value must be within the range anchors.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= lo__1 and y__1 <= hi__1"
+      },
+      "intent": "In passing tests, when the (buggy) clamping block is entered, the value must have already been within the clamping bounds.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "t__1"
+        }
+      },
+      "spec": {
+        "expr": "(min(x0, x1) <= x <= max(x0, x1)) == (0.0 <= t__1 <= 1.0)"
+      },
+      "intent": "The interpolation parameter t should be in the range [0, 1] if and only if the query point x is within the domain [x0, x1].",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_expiry",
+  "fault_hypothesis": "The function uses a strict greater-than comparison (`>`) on line 77 to check for expiry. This causes entries to be considered valid when the current time is exactly equal to the expiration time, whereas they should be considered expired.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "(now > adjusted_expiry__1) == (now >= adjusted_expiry__1)"
+      },
+      "intent": "The strict inequality check for expiry should behave like an inclusive one.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "A cached value should be returned only if the current time is strictly before its expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= 0"
+      },
+      "intent": "The expiration timestamp from a valid entry must be non-negative.",
+      "confidence": 0.8
+    }
+  ]
+}

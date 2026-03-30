@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_ping",
+  "fault_hypothesis": "The comparison on line 70 is an off-by-one error. The condition should be `len(recent) >= limit` to deny requests when the ping count is exactly at the limit, but it is currently `len(recent) > limit`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent pings should not be exactly at the limit, as this boundary case is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the request is allowed, the count of recent pings must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(t >= window_start__1 for t in recent__1)"
+      },
+      "intent": "All timestamps considered 'recent' must be at or after the calculated window start time.",
+      "confidence": 0.9
+    }
+  ]
+}

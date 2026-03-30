@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "signals_stream",
+  "fault_hypothesis": "The conditional on line 69 incorrectly identifies cases where a value should be removed, causing the `pop()` on line 70 to erroneously delete an element when both input streams end with the same value.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain the sum of elements from both input lists.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The length invariant must hold even if the special-case branch for duplicate tails is taken.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The length invariant must hold when the special-case branch for duplicate tails is not taken.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_requests",
+  "fault_hypothesis": "The code on line 75 incorrectly removes an element from the merged list. This is caused by a flawed conditional on line 74 that triggers when the largest element is shared by both input streams, violating the invariant that the output length should be the sum of input lengths.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After the pop operation, the merged list must still contain the total number of elements from both inputs.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that removes a duplicate element from the end of the list should never be executed.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that leads to an incorrect element removal should not be met before the check on line 74.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned list must contain all elements from both input streams.",
+      "confidence": 0.8
+    }
+  ]
+}

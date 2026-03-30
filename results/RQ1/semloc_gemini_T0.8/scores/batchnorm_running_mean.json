@@ -1,0 +1,54 @@
+{
+  "n_passing": 3,
+  "n_failing": 7,
+  "constraint_scores": {
+    "C1": {
+      "ef": 0,
+      "ep": 1,
+      "nf": 7,
+      "np": 2,
+      "ochiai": 0.0,
+      "tarantula": 0.0
+    },
+    "C2": {
+      "ef": 6,
+      "ep": 0,
+      "nf": 1,
+      "np": 3,
+      "ochiai": 0.9258200997725514,
+      "tarantula": 1.0
+    },
+    "C3": {
+      "ef": 0,
+      "ep": 0,
+      "nf": 7,
+      "np": 3,
+      "ochiai": 0.0,
+      "tarantula": 0.0
+    }
+  },
+  "ranked_constraints": [
+    [
+      "C2",
+      0.9258200997725514
+    ],
+    [
+      "C1",
+      0.0
+    ],
+    [
+      "C3",
+      0.0
+    ]
+  ],
+  "line_scores": {
+    "70": 2.125820099772551
+  },
+  "ranked_lines": [
+    [
+      70,
+      2.125820099772551
+    ]
+  ],
+  "fault_line_pred": 70
+}

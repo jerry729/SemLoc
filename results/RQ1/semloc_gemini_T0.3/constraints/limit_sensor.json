@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_sensor",
+  "fault_hypothesis": "The condition on line 64 should be `len(active) >= limit` instead of `len(active) > limit`. This off-by-one error allows an action when the sensor is exactly at capacity.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The check should correctly handle the boundary case where the number of active actions equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If an action is allowed, the number of active timestamps must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The number of active timestamps should not be exactly at the limit, as this is the problematic boundary case.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and __cbfl_result[1] == 0)"
+      },
+      "intent": "An action cannot be allowed if there are zero remaining slots.",
+      "confidence": 0.8
+    }
+  ]
+}

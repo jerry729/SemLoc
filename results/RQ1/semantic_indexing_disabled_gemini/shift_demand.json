@@ -1,0 +1,44 @@
+{
+  "function": "shift_demand",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        64
+      ],
+      "explanation": "The function's docstring states that the result is normalized to sum to 1, but the implementation is missing this normalization step. The function returns the vector after clamping, which can cause its sum to deviate from 1.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"shift_demand\",\n  \"faulty_lines\": [\n    64\n  ],\n  \"explanation\": \"The function's docstring states that the result is normalized to sum to 1, but the implementation is missing this normalization step. The function returns the vector after clamping, which can cause its sum to deviate from 1.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        64
+      ],
+      "valid_preds": [
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 64,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

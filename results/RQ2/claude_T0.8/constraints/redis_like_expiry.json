@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "redis_like_expiry",
+  "fault_hypothesis": "The expiry comparison on line 83 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now == effective` the key is incorrectly treated as still valid and its value is returned instead of None.",
+  "fault_line": 83,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 83
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or (now >= effective__1)"
+      },
+      "intent": "At the boundary where now equals effective, the condition must treat the key as expired (now >= effective should trigger expiry).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or True"
+      },
+      "intent": "Verify that when now equals effective the subsequent branch will correctly return None (i.e., the comparison uses >=).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If the expiry branch was not taken, now must be strictly less than effective; equality should have triggered expiry.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (now >= effective__1 and item__1 is not None) or __cbfl_result is None"
+      },
+      "intent": "When now is at or past the expiry, the function must always return None.",
+      "confidence": 0.88
+    }
+  ]
+}

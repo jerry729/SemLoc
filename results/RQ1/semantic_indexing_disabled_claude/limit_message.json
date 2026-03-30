@@ -1,0 +1,44 @@
+{
+  "function": "limit_message",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        73
+      ],
+      "explanation": "The condition `len(recent) > limit` should be `len(recent) >= limit`. When the number of recent messages equals the limit, the message should be denied (allowed=False), but the current code incorrectly allows it and returns remaining=0.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the code, the issue is on line 73. The condition `if len(recent) > limit` should be `if len(recent) >= limit`. \n\nWhen `len(recent) == limit`, the message should NOT be allowed (the limit has been reached), but the current code returns `True, 0` instead of `False, 0`. The remaining count would be `limit - len(recent) = 0`, which correctly indicates no messages are available, but the `allowed` flag is incorrectly set to `True`.\n\n```json\n{\n  \"function_name\": \"limit_message\",\n  \"faulty_lines\": [73],\n  \"explanation\": \"The condition `len(recent) > limit` should be `len(recent) >= limit`. When the number of recent messages equals the limit, the message should be denied (allowed=False), but the current code incorrectly allows it and returns remaining=0.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        73
+      ],
+      "valid_preds": [
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_booking",
+  "fault_hypothesis": "On line 67, the overlap check does not incorporate the `buffer` variable (which accounts for `_CONFLICT_STRICT` adjacency), so touching-boundary intervals are incorrectly allowed instead of being rejected.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 <= s - buffer__1 or start__1 >= e + buffer__1) == (not (end__1 <= s or start__1 >= e))"
+      },
+      "intent": "When _CONFLICT_STRICT is enabled, the condition must use buffer to detect touching boundaries; without buffer the check is wrong for adjacent intervals.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (_CONFLICT_STRICT and ((end__1 == s) or (start__1 == e)))"
+      },
+      "intent": "After each iteration, if _CONFLICT_STRICT is on and the new interval touches an existing one at a boundary, a conflict should have been returned already.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buffer__1"
+        }
+      },
+      "spec": {
+        "expr": "buffer__1 == (_ADJACENCY_BUFFER if _CONFLICT_STRICT else 0) and (_CONFLICT_STRICT == False or buffer__1 > 0)"
+      },
+      "intent": "buffer__1 must be positive when _CONFLICT_STRICT is True so that the adjacency check can actually widen the conflict zone.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "not (_CONFLICT_STRICT) or (end__1 + buffer__1 > end__1)"
+      },
+      "intent": "Before end__1 is used in the overlap condition, when strict mode is on the effective end boundary must be extended by buffer__1.",
+      "confidence": 0.8
+    }
+  ]
+}

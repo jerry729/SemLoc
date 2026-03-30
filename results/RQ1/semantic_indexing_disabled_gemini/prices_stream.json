@@ -1,0 +1,47 @@
+{
+  "function": "prices_stream",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    80
+  ],
+  "total_source_lines": 85,
+  "runs": [
+    {
+      "faulty_lines": [
+        82,
+        81
+      ],
+      "explanation": "The code incorrectly removes the last element from the merged list if it's the largest value and common to both input streams. This violates the documented behavior of preserving duplicates that appear in separate streams.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"prices_stream\",\n  \"faulty_lines\": [\n    82,\n    81\n  ],\n  \"explanation\": \"The code incorrectly removes the last element from the merged list if it's the largest value and common to both input streams. This violates the documented behavior of preserving duplicates that appear in separate streams.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        82,
+        81
+      ],
+      "valid_preds": [
+        82,
+        81
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 82,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

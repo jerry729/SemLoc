@@ -1,0 +1,65 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "time_range_filter",
+  "fault_hypothesis": "The list comprehension on line 75 incorrectly includes points whose timestamp is exactly equal to the `end` boundary. The condition should use `< end` instead of `<= end` to implement the documented half-open interval.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "all(p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "All points in the result must have timestamps strictly less than the end time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == sum(1 for p in points if start <= p[0] < end)"
+      },
+      "intent": "The number of returned points must equal the count satisfying the correct half-open interval.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(p[0] == end for p in points if start <= p[0])"
+      },
+      "intent": "Of all points that pass the lower bound check, none should have a timestamp exactly at the end boundary.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "ENTRY",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(isinstance(p, (tuple, list)) and len(p) == 2 for p in points)"
+      },
+      "intent": "All elements in the input 'points' should be pairs (tuples or lists of length 2).",
+      "confidence": 0.8
+    }
+  ]
+}

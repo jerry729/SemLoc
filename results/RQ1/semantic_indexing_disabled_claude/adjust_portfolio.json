@@ -1,0 +1,44 @@
+{
+  "function": "adjust_portfolio",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        68
+      ],
+      "explanation": "The function returns `adjusted` without normalizing the weights to sum to 1.0, contradicting the docstring which states 'The result is normalized so that the returned weights always sum to 1.' A normalization step (dividing each element by the total sum) is missing before the return.",
+      "confidence": 0.75,
+      "parse_ok": true,
+      "raw": "Looking at the function, the docstring says \"The result is normalized so that the returned weights always sum to 1.\" However, the implementation at line 68 returns `adjusted` without any normalization step. The blended weights `c + (t - c) * damping` should still sum to 1 if both `current` and `target` sum to 1, but the function is missing the normalization that the docstring promises.\n\nMore critically, the function is missing the final normalization/return of normalized weights. The `adjusted` list is returned directly without dividing by the total sum, which means if inputs don't perfectly sum to 1, the output won't either.\n\n```json\n{\n  \"function_name\": \"adjust_portfolio\",\n  \"faulty_lines\": [68],\n  \"explanation\": \"The function returns `adjusted` without normalizing the weights to sum to 1.0, contradicting the docstring which states 'The result is normalized so that the returned weights always sum to 1.' A normalization step (dividing each element by the total sum) is missing before the return.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [
+        68
+      ],
+      "valid_preds": [
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 68,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

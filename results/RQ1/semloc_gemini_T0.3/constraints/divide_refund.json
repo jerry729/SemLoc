@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_refund",
+  "fault_hypothesis": "The bug is on line 61. The processing `fee` is incorrectly subtracted from each participant's payout, which results in the fee being deducted multiple times (once per participant) instead of once from the total `amount` before distribution.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts after this line must equal the initial amount less a single processing fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((sum(base__1) - sum(payouts__1)) - fee) < 1e-9"
+      },
+      "intent": "The total amount deducted for fees across all payouts must equal the single fee value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of the base amounts, before fee deduction, should equal the total initial amount.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of the final returned payouts must equal the total amount minus the single fee.",
+      "confidence": 0.7
+    }
+  ]
+}

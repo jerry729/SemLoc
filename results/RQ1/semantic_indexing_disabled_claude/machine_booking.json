@@ -1,0 +1,38 @@
+{
+  "function": "machine_booking",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify what's buggy. Let me analyze the conflict detection logic.\n\nThe overlap check on line 61:\n```python\nif any(not (b <= s or a >= e) for s, e in timeline):\n```\n\nThis checks: \"is there any slot where NOT (b <= s OR a >= e)\"\n- `b <= s` means the new window ends before or when the slot starts (no overlap)\n- `a >= e` means the new window starts at or after the slot ends (no overlap)\n\nSo `not (b <= s or a >= e)` means there IS an overlap. This seems correct for strict overlap.\n\nBut wait - let me think about edge cases. If `b == s` (new window ends exactly when existing starts), `b <= s` is True, so no overlap detected - correct. If `a == e` (new window starts exactly when existing ends), `a >= e` is True, so no overlap - correct.\n\nThe issue might be with `_MIN_WINDOW_DURATION = 0` and `a >= b` check. The check `if a >= b` raises ValueError for zero-duration windows, but `_MIN_WINDOW_DURATION = 0` suggests zero duration should be the minimum (exclusive). That seems consistent.\n\nLooking more carefully at `_SORT_KEY_INDEX = 0` - this is used as the sort key index, which sorts by start time. That's correct.\n\nWait, let me reconsider the overlap condition. For a standard half-open interval [a, b), two intervals [a,b) and [s,e) overlap if `a < e AND b > s`. The current check `not (b <= s or a >= e)` = `b > s AND a < e`. This is correct for strict overlap.\n\nBut what if the test expects `b < s` (strict) instead of `b <= s`? The condition `b <= s` means touching intervals (b==s) are NOT considered overlapping. This could be a bug if the tests expect touching intervals to conflict.\n\nActually, re-reading: `_CONFLICT_STRICT = False` is defined but never used! The conflict detection should probably use this variable to determine whether touching intervals conflict. With `_CONFLICT_STRICT = False`, touching intervals should be considered conflicts (non-strict), meaning we should use `b < s` instead of `b <= s`.\n\nThe bug is on line 61: the condition uses `b <= s` but should use `b < s` (and `a > e` instead of `a >= e`) when `_CONFLICT_STRICT` is False.\n\n{\n  \"function_name\": \"machine_booking\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The variable `_CONFLICT_STRICT` is defined but never used in the conflict detection logic. When `_CONFLICT_STRICT = False`, touching intervals (where b==s or a==e) should be considered conflicts, requiring `b < s` and `a > e` instead of `b <= s` and `a >= e`.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

@@ -1,0 +1,34 @@
+{
+  "bug_id": "pandas_147",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.dtypes.dtypes.DatetimeTZDtype.__init__",
+    "buggy_methods": [
+      "pandas.core.dtypes.dtypes.DatetimeTZDtype.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.dtypes.dtypes.DatetimeTZDtype.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/dtypes/dtypes.py": [
+      688,
+      740,
+      741,
+      742,
+      743,
+      745,
+      746,
+      747
+    ],
+    "pandas/tests/dtypes/test_dtypes.py": [
+      251
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

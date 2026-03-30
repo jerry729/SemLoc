@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "coupons_apportion",
+  "fault_hypothesis": "The conversion of floating-point shares to integers on line 81 uses simple truncation via `int()`, which fails to preserve the sum of allocations. This causes the total distributed amount to be less than the input `total` when shares have fractional parts.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of final integer allocations must equal the total amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the intermediate floating-point shares should equal the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 80,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "When rounding to integers, the sum of allocations must still equal the total.",
+      "confidence": 0.9
+    }
+  ]
+}

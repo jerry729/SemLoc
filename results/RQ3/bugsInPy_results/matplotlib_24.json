@@ -1,0 +1,25 @@
+{
+  "bug_id": "matplotlib_24",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axis.setter",
+    "buggy_methods": [
+      "lib.matplotlib.axis.setter"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axis.setter",
+  "autofl_matched_info": [],
+  "semloc_error": "Command '['/usr/bin/python', '-m', 'pytest', '-v', '--tb=short', '--no-header', '--disable-warnings', 'lib/matplotlib/tests/test_axes.py']' timed out after 120 seconds",
+  "faulty_lines": {
+    "lib/matplotlib/axis.py": [
+      1895
+    ]
+  },
+  "semloc": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 518, in run_semloc_on_bip\n    passing, failing = run_tests_for_bip(checkout_dir, test_file)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 146, in run_tests_for_bip\n    result = subprocess.run(\n             ^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.11/subprocess.py\", line 550, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.11/subprocess.py\", line 1209, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.11/subprocess.py\", line 2116, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.11/subprocess.py\", line 1253, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['/usr/bin/python', '-m', 'pytest', '-v', '--tb=short', '--no-header', '--disable-warnings', 'lib/matplotlib/tests/test_axes.py']' timed out after 120 seconds\n"
+  },
+  "semloc_detail": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 518, in run_semloc_on_bip\n    passing, failing = run_tests_for_bip(checkout_dir, test_file)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 146, in run_tests_for_bip\n    result = subprocess.run(\n             ^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.11/subprocess.py\", line 550, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.11/subprocess.py\", line 1209, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.11/subprocess.py\", line 2116, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.11/subprocess.py\", line 1253, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['/usr/bin/python', '-m', 'pytest', '-v', '--tb=short', '--no-header', '--disable-warnings', 'lib/matplotlib/tests/test_axes.py']' timed out after 120 seconds\n"
+  }
+}

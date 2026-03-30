@@ -1,0 +1,46 @@
+{
+  "bug_id": "matplotlib_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.projections.polar.PolarAxes.draw",
+    "buggy_methods": [
+      "lib.matplotlib.projections.polar.PolarAxes.draw"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.projections.polar.PolarAxes.draw",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/tests/test_polar.py": [
+      194
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [],
+    "best_rank": null,
+    "fn_lines": 44,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 967,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "matplotlib_9",
+    "function": "draw",
+    "src_path": "lib/matplotlib/projections/polar.py",
+    "fn_begin": 951,
+    "fn_end": 994,
+    "n_constraints": 4,
+    "n_tests_passing": 0,
+    "n_tests_failing": 3,
+    "line_scores": [],
+    "fault_line": 967,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/matplotlib_9/draw_constraints.json",
+    "report_path": "/tmp/bip_semloc/matplotlib_9/violations.jsonl"
+  }
+}

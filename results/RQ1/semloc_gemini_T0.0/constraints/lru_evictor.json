@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lru_evictor",
+  "fault_hypothesis": "The loop condition on line 56 is `len(order) > capacity`, but it should be `len(order) >= capacity`. This off-by-one error prevents the loop from running when the number of items is exactly equal to the capacity, failing to evict items to get strictly under capacity.",
+  "fault_line": 56,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 56
+        }
+      },
+      "spec": {
+        "expr": "len(order) != capacity"
+      },
+      "intent": "The loop should not terminate when the number of items equals the capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "If no evictions occurred, the list size must have already been strictly under capacity.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "If evictions did occur, the final list size must be strictly under capacity.",
+      "confidence": 0.9
+    }
+  ]
+}

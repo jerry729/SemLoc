@@ -1,0 +1,29 @@
+{
+  "bug_id": "thefuck_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.man.get_new_command",
+    "buggy_methods": [
+      "thefuck.rules.man.get_new_command"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.man.get_new_command",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_man.py": [
+      26
+    ],
+    "thefuck/rules/man.py": [
+      21,
+      22,
+      24
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

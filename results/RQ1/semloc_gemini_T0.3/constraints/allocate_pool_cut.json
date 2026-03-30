@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_pool_cut",
+  "fault_hypothesis": "The bug is on line 68. The proportional shares are calculated based on the total `amount` before the `fee` is deducted, instead of subtracting the fee from the pool first as the documentation requires.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or amount <= fee"
+      },
+      "intent": "Checks if the fee is zero or the distributable amount is non-positive, cases where the buggy share calculation produces a correct final result.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive for a meaningful distribution.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or amount <= fee"
+      },
+      "intent": "Re-asserts the condition for correctness at the end of each loop iteration where shares are calculated.",
+      "confidence": 0.9
+    }
+  ]
+}

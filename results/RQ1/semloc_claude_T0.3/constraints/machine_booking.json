@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "machine_booking",
+  "fault_hypothesis": "The overlap condition on line 61 uses strict inequalities (`b <= s` and `a >= e`), which treats adjacent/touching windows (where b==s or a==e) as non-conflicting. It should use `b < s` and `a > e` (or equivalently `not (b < s or a > e)`) to also reject touching boundaries.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) == (not (b__1 <= s or a__1 >= e)) for s, e in timeline) == False or len(timeline) == 0"
+      },
+      "intent": "Detect that the strict-vs-non-strict boundary check differs when window end equals an existing start or window start equals an existing end.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "not any((b__1 == s or a__1 == e) and not (not (b__1 <= s or a__1 >= e)) for s, e in timeline)"
+      },
+      "intent": "Check that touching-boundary cases (b==s or a==e) are correctly identified as conflicts by the overlap expression.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) for s, e in timeline) or any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "Verify that using strict inequalities (< and >) would correctly flag adjacent-touching windows as conflicts.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and any(b == s or a == e for s, e in timeline for a, b in [window]))"
+      },
+      "intent": "Ensure that a booking touching an existing boundary is never accepted (returned True).",
+      "confidence": 0.75
+    }
+  ]
+}

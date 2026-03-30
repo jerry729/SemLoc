@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tensor_slice_pad",
+  "fault_hypothesis": "On line 63, the condition `missing >= 0` should be `missing > 0`; when missing==0 (no padding needed) it still extends by one extra pad element due to `missing + 1` on line 64.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "missing__1 > 0 or len(result__1) == requested_length__1"
+      },
+      "intent": "After the branch condition is evaluated, if missing is 0 we should not enter the branch (no padding needed).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "missing__1"
+        }
+      },
+      "spec": {
+        "expr": "missing__1 == requested_length__1 - len(result__1)"
+      },
+      "intent": "missing should equal exactly the number of elements still needed to reach the requested length.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(result__1) == requested_length__1"
+      },
+      "intent": "After padding is applied the result length must equal the requested window size.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == end - start"
+      },
+      "intent": "The returned list must always have length equal to end - start.",
+      "confidence": 0.85
+    }
+  ]
+}

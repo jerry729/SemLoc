@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_slot",
+  "fault_hypothesis": "The overlap detection logic on line 61 is incorrect for boundary conditions. It treats slots that merely touch at their boundaries as non-overlapping, whereas the specification requires them to conflict.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "(b[1] <= a[0] or b[0] >= a[1]) == (b[1] < a[0] or b[0] > a[1])"
+      },
+      "intent": "The non-overlap condition should use strict inequalities, so that touching boundaries are considered overlaps.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (effective_candidate[1] == slot[0] or effective_candidate[0] == slot[1])"
+      },
+      "intent": "After checking an existing slot, the candidate must not be touching its boundary.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (s[1] == candidate[0] or s[0] == candidate[1]) for s in existing)"
+      },
+      "intent": "If the loop finishes without finding a conflict, the candidate must truly not touch any existing slot.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == False) or all((__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0]) for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a reservation is successful, the returned schedule must not contain any overlapping or touching slots.",
+      "confidence": 0.9
+    }
+  ]
+}

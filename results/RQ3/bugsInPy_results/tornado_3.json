@@ -1,0 +1,28 @@
+{
+  "bug_id": "tornado_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.httpclient.AsyncHTTPClient.close",
+    "buggy_methods": [
+      "tornado.httpclient.AsyncHTTPClient.close"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.httpclient.AsyncHTTPClient.close",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/httpclient.py": [
+      236,
+      238
+    ],
+    "tornado/test/httpclient_test.py": [
+      14
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

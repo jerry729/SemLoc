@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_rolling_avg",
+  "fault_hypothesis": "The average on line 68 is calculated by dividing by the fixed `window` size. It should instead divide by the actual number of samples in the `tail`, `len(tail)`, which can be smaller than `window`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The average must be the total sum divided by the actual number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or (min(tail__1) <= avg__1 and avg__1 <= max(tail__1))"
+      },
+      "intent": "The computed average must fall within the range of the samples it was computed from.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "If an average is returned, it must be correctly calculated from the tail's sum and length.",
+      "confidence": 0.9
+    }
+  ]
+}

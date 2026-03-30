@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tiers_stream",
+  "fault_hypothesis": "Lines 65-66 incorrectly remove the last element when both lists end with the same value, but this deduplication logic is wrong \u2014 the merged result should always contain len(left)+len(right) elements and no element should be popped.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the erroneous pop should never be true for valid inputs; this constraint is FALSE on failing tests where both lists share a last element.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After the pop branch executes, the merged list should still have len(left)+len(right) elements, which it does not because the pop incorrectly removes one element.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == li__1 + ri"
+      },
+      "intent": "At the end of each merge loop iteration, the number of merged elements must equal the sum of the two pointer positions.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned merged list must always contain exactly len(left)+len(right) elements.",
+      "confidence": 0.98
+    }
+  ]
+}

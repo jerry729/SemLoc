@@ -1,0 +1,25 @@
+{
+  "bug_id": "tornado_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.websocket.WebSocketHandler.set_nodelay",
+    "buggy_methods": [
+      "tornado.websocket.WebSocketHandler.set_nodelay"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.websocket.WebSocketHandler.set_nodelay",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/websocket.py": [
+      561,
+      562
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_temperature",
+  "fault_hypothesis": "The condition on line 68 is inverted. It should be `if clamp:` to apply clamping when requested, but it is currently `if not clamp:`, causing clamping to be skipped when enabled.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))"
+      },
+      "intent": "After the conditional block, the resulting temperature `y` must be within the sensor range if clamping is enabled.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "clamp"
+        }
+      },
+      "spec": {
+        "expr": "not (t__1 < 0.0 or t__1 > 1.0) or (not clamp)"
+      },
+      "intent": "The buggy code only works for extrapolation cases (t outside [0,1]) if clamping is disabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "The value of y after the conditional should be clamped if and only if clamp is true.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (__cbfl_result >= min(y0, y1) - 0.01 and __cbfl_result <= max(y0, y1) + 0.01)"
+      },
+      "intent": "The returned temperature must be within the sensor range (plus rounding tolerance) if clamping is on.",
+      "confidence": 0.8
+    }
+  ]
+}

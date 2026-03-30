@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_cpu",
+  "fault_hypothesis": "The mean on line 68 is calculated by dividing by `window`, which is incorrect when fewer samples are available. It should divide by the actual number of samples, `len(tail)`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the total sum divided by the actual number of samples averaged.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "The number of samples in the tail should match the window size for the simple division by `window` to be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "If a mean is returned, it must be correctly calculated based on the available samples.",
+      "confidence": 0.9
+    }
+  ]
+}

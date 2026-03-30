@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "file_chunk_stitch",
+  "fault_hypothesis": "The function incorrectly truncates the last byte of the concatenated data on line 80. The return statement should return the `data` variable unmodified instead of `data[:-1]`.",
+  "fault_line": 80,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == sum(len(c[1]) for c in chunks)"
+      },
+      "intent": "The length of the returned payload must equal the sum of the lengths of all input chunk data.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(data) == sum(len(c[1]) for c in chunk_list__2)"
+      },
+      "intent": "After concatenation, the data variable must hold all bytes from all chunks before the return.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "chunk_list__2"
+        }
+      },
+      "spec": {
+        "expr": "sum(len(c[1]) for c in chunk_list__2) == sum(len(c[1]) for c in chunks)"
+      },
+      "intent": "Sorting the chunks must not alter the total length of the data to be stitched.",
+      "confidence": 1.0
+    }
+  ]
+}

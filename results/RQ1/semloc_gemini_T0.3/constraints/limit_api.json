@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_api",
+  "fault_hypothesis": "The condition on line 66 uses `>` instead of `>=`, incorrectly allowing a request when the number of recent requests is exactly equal to the limit.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "The number of recent requests should not be exactly at the limit, as this boundary case is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a request is allowed, the number of recent requests must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == sum(1 for t in timestamps if t >= cutoff__1)"
+      },
+      "intent": "The 'recent' list must contain exactly the timestamps that fall within the time window.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "fee_splitter",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's payout on line 61, causing it to be deducted multiple times. It should be deducted once from the total amount before splitting.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of payouts should equal the net amount after deducting the single fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of the gross base payouts must equal the total initial amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(abs(p - (r / sum(ratios)) * max(0, amount - fee)) < 1e-9 for p, r in zip(__cbfl_result, ratios))"
+      },
+      "intent": "Each individual payout must be proportional to its ratio of the net amount.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "versions_stream",
+  "fault_hypothesis": "Lines 80-81 incorrectly pop the last element when both streams end with the same version, but the spec requires both copies to be kept. This post-processing block should not exist.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The pop() call at line 81 should never execute; it incorrectly removes a duplicate that must be kept.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == i__1 + j"
+      },
+      "intent": "After each merge iteration, the merged list length must equal the total number of elements consumed from both streams.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 80,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right) - 1"
+      },
+      "intent": "After the conditional pop, the merged length should still equal the sum of both inputs; if it is one less, the pop was wrong.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The merged result must always contain exactly as many elements as the sum of both input streams.",
+      "confidence": 0.95
+    }
+  ]
+}

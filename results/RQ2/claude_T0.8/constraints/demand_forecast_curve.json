@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_forecast_curve",
+  "fault_hypothesis": "The condition on line 66 is inverted: clamping is applied when `clamp` is False (i.e., `not clamp`) instead of when `clamp` is True, causing extrapolation when clamping is requested and clamping when it is not.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True the branch body (which performs clamping) should be entered, not when clamp is False.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 >= min(y0, y1) and y__4 <= max(y0, y1)"
+      },
+      "intent": "After the clamping branch executes, the output should be within the anchor demand range.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "low__1"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "The bounds should only be computed when clamping is disabled; if clamp is True this code should not execute.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or ((__cbfl_result >= min(y0, y1)) and (__cbfl_result <= max(y0, y1)))"
+      },
+      "intent": "When clamp is True the returned value must lie within the anchor demand range.",
+      "confidence": 0.88
+    }
+  ]
+}

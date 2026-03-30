@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_allocator_service",
+  "fault_hypothesis": "The function incorrectly truncates floating-point shares to integers on line 71 using `int()`, which discards fractional remainders. This causes the sum of allocations to be less than the total quota, violating the conservation principle.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "sum(int(x) for x in raw__1) == int(total)"
+      },
+      "intent": "The sum of integer allocations must equal the total available integer quota.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(raw__1) - total) < 1e-9"
+      },
+      "intent": "The sum of raw floating-point shares must be nearly equal to the total quota.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "len(raw__1) == len(weights)"
+      },
+      "intent": "The number of raw allocations must match the number of consumers.",
+      "confidence": 0.8
+    }
+  ]
+}

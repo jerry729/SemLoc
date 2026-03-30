@@ -1,0 +1,35 @@
+{
+  "bug_id": "ansible_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.module_utils.facts.hardware.linux.LinuxHardware.get_cpu_facts",
+    "buggy_methods": [
+      "lib.ansible.module_utils.facts.hardware.linux.LinuxHardware.get_cpu_facts"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.module_utils.facts.hardware.linux.LinuxHardware.get_cpu_facts",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/module_utils/facts/hardware/linux.py": [
+      245,
+      246
+    ],
+    "test/units/module_utils/facts/hardware/linux_data.py": [
+      498,
+      500,
+      534,
+      536
+    ],
+    "test/units/module_utils/facts/hardware/test_linux_get_cpu_info.py": [
+      29,
+      35
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

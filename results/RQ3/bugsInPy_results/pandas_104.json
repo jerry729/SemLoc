@@ -1,0 +1,35 @@
+{
+  "bug_id": "pandas_104",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.groupby.GroupBy.quantile",
+    "buggy_methods": [
+      "pandas.core.groupby.groupby.GroupBy.quantile"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.groupby.GroupBy.quantile",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/groupby.py": [
+      1940,
+      1941,
+      1942,
+      1944,
+      1945,
+      1946,
+      1947,
+      1949,
+      1950,
+      1951,
+      1953,
+      1954
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

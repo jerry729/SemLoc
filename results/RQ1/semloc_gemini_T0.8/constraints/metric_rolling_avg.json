@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "metric_rolling_avg",
+  "fault_hypothesis": "The rolling average calculation on line 70 incorrectly divides the sum of values by the fixed `window` size. It should instead divide by `len(tail)`, the actual number of values being averaged, which can be less than `window`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < min_samples) or (abs(avg__1 - (total__1 / len(tail__1))) < 1e-9)"
+      },
+      "intent": "If an average is computed and is not suppressed by min_samples, it must be the total sum divided by the actual number of elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "When an average is about to be returned, it must have been calculated correctly using the actual number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(tail__1) < window) or (len(tail__1) < min_samples)"
+      },
+      "intent": "If the tail has fewer items than the window, it should only be because there are not enough samples for a valid average.",
+      "confidence": 0.9
+    }
+  ]
+}

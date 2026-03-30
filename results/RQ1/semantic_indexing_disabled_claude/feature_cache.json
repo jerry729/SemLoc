@@ -1,0 +1,44 @@
+{
+  "function": "feature_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    31
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        30
+      ],
+      "explanation": "The expiry check on line 30 uses strict greater-than (`effective_now > ttl`), meaning entries exactly at their TTL boundary are incorrectly treated as still valid. The condition should be `>=` so that entries at exactly their TTL expiry time are considered expired.",
+      "confidence": 0.72,
+      "parse_ok": true,
+      "raw": "Looking at the `_is_expired` function, the bug is on line 30. The condition `effective_now > ttl` means an entry is only considered expired when `now` is strictly greater than `ttl`. This means entries where `now == ttl` (exactly at the boundary) are treated as valid (not expired). The correct behavior for a TTL cache is typically that entries at or past their TTL should be expired, so the condition should be `effective_now >= ttl`.\n\n```json\n{\n  \"function_name\": \"feature_cache\",\n  \"faulty_lines\": [30],\n  \"explanation\": \"The expiry check on line 30 uses strict greater-than (`effective_now > ttl`), meaning entries exactly at their TTL boundary are incorrectly treated as still valid. The condition should be `>=` so that entries at exactly their TTL expiry time are considered expired.\",\n  \"confidence\": 0.72\n}\n```",
+      "predicted": [
+        30
+      ],
+      "valid_preds": [
+        30
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 30,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

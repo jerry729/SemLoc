@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_cache",
+  "fault_hypothesis": "The `_is_expired` function uses a strict greater-than comparison (`now > ttl`) instead of greater-than-or-equal (`now >= ttl`), so when `now == ttl` the entry is incorrectly treated as valid rather than expired. The bug manifests at line 66 where `_is_expired(now, ttl)` is called.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "_is_expired(now, ttl__1) == (now >= ttl__1)"
+      },
+      "intent": "When now equals ttl, _is_expired must return True (expired), meaning the comparison must be >= not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1 or _is_expired(now, ttl__1)"
+      },
+      "intent": "Before using ttl in the expiry check, if now >= ttl then _is_expired must return True.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "If we did not take the expired branch, now must be strictly less than ttl (not equal).",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or (now < ttl__1 if 'ttl__1' in dir() else True)"
+      },
+      "intent": "The function should only return a non-None payload when now is strictly less than ttl.",
+      "confidence": 0.8
+    }
+  ]
+}

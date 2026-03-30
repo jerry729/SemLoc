@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "download_rate",
+  "fault_hypothesis": "The bug is on line 75. The condition `len(active) > limit` should be `len(active) >= limit` to correctly block new downloads when the number of active downloads is exactly equal to the specified limit.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "The check should correctly handle the edge case where the number of active downloads is exactly the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If a download is allowed (i.e., this branch is taken), the count of active downloads must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (limit - len(active__1) == 0)"
+      },
+      "intent": "If a download is permitted, the number of remaining slots must be greater than zero.",
+      "confidence": 0.9
+    }
+  ]
+}

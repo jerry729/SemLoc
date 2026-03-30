@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_search",
+  "fault_hypothesis": "The check on line 74 uses a strict greater-than comparison (`>`), which incorrectly allows a new request when the number of active requests is exactly at the limit. It should use a greater-than-or-equal-to comparison (`>=`) to deny requests when the limit has been reached.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) == limit) == False"
+      },
+      "intent": "The number of active requests should not be exactly equal to the limit at this decision point, as that case should be denied.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the request is allowed (i.e., this branch is taken), the number of active requests must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) <= len(timestamps)"
+      },
+      "intent": "The number of active timestamps cannot exceed the total number of timestamps provided.",
+      "confidence": 0.9
+    }
+  ]
+}

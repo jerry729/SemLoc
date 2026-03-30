@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "room_reservation",
+  "fault_hypothesis": "The overlap condition on line 70 uses strict inequalities (`end <= s` and `start >= e`), which incorrectly allows adjacent intervals that share an endpoint to pass through as non-overlapping. The boundary check should use strict less-than (`end < s` or `start > e`) to treat touching endpoints as conflicts.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e) or not (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "When the new interval touches an existing one at exactly one endpoint, the condition should detect a conflict (return False), but the strict-inequality check lets it pass.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) and not (start__1 == e)"
+      },
+      "intent": "At the end of each loop iteration, if the new interval shares an endpoint with the existing one (s,e), the loop should have already returned False, so this condition should never be true here.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "all((end__1 < s or start__1 > e) for s, e in existing)"
+      },
+      "intent": "Before end__1 is used in the overlap check, verify that the correct non-overlapping condition (strict less-than) holds for all existing intervals when the function is expected to accept.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "In the else branch (no conflict detected for this iteration), the strict non-overlap condition must hold; if only touching at boundary, the strict condition fails revealing the bug.",
+      "confidence": 0.88
+    }
+  ]
+}

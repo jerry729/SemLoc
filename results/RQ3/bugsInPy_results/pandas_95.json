@@ -1,0 +1,35 @@
+{
+  "bug_id": "pandas_95",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.period._period_array_cmp",
+    "buggy_methods": [
+      "pandas.core.arrays.period._period_array_cmp"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.period._period_array_cmp",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/period.py": [
+      76,
+      84,
+      85,
+      86,
+      87,
+      88
+    ],
+    "pandas/tests/arithmetic/test_period.py": [
+      130
+    ],
+    "pandas/tests/indexes/period/test_period.py": [
+      465
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

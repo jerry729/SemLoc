@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_throughput",
+  "fault_hypothesis": "On line 61, the average is computed by dividing `total` by `window` instead of `len(tail)`. When the series is shorter than the window, this produces an incorrectly small result because the divisor is larger than the number of actual samples.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "After computing avg, it should equal total divided by the actual tail length, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) >= window or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "When tail is shorter than window, avg must be total/len(tail), not total/window.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "Before using avg in the return, verify it represents the mean of the actual tail elements.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(__cbfl_result - round(total__1 / len(tail__1), _PRECISION_DIGITS)) < 1e-9"
+      },
+      "intent": "The returned value should be the mean of the tail elements, not total divided by window.",
+      "confidence": 0.85
+    }
+  ]
+}

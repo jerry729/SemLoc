@@ -1,0 +1,50 @@
+{
+  "function": "plan_delivery_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        67,
+        8,
+        9
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify what's buggy.\n\nThe function `plan_delivery_slot` is supposed to check for overlaps and insert a window in sorted order. Let me analyze the key lines:\n\n1. **Line 67**: `if any(not (b <= s or a >= e) for s, e in timeline)` - This checks if there's a conflict. `b <= s` means the new window ends before the existing slot starts, and `a >= e` means the new window starts after the existing slot ends. So `not (b <= s or a >= e)` means there IS an overlap. This logic seems correct.\n\n2. **Line 70**: `result = sorted(timeline + [window], key=lambda slot: slot[_SLOT_SORT_KEY])` - `_SLOT_SORT_KEY = 0` (line 11), so this sorts by the first element (start time). This seems correct.\n\n3. **Line 8**: `_CONFLICT_STRICT = False` - defined but not used.\n\n4. **Line 9**: `_MIN_SLOT_DURATION = 0` - defined but not used. The check on line 60 is `if a >= b` which catches zero-duration windows (a == b), but the docstring says \"zero or negative duration\". This seems correct.\n\nWait, let me look more carefully at the overlap check on line 67. The condition `b <= s or a >= e` means \"no overlap\". So `not (b <= s or a >= e)` means \"overlap exists\". This is correct.\n\nActually, let me reconsider line 60: `if a >= b` raises ValueError for \"empty window\". This correctly catches cases where duration \u2264 0.\n\nThe `_MIN_SLOT_DURATION = 0` on line 9 is defined but never used - the check uses a hardcoded comparison instead.\n\nThe main suspicious issue is line 67 - the overlap detection. Let me reconsider: two intervals [a,b) and [s,e) overlap if NOT (b <= s OR a >= e). This is the standard non-overlap condition. The logic looks correct.\n\nWait - what about `_CONFLICT_STRICT = False` on line 8? This is defined but unused. If it were meant to control whether touching slots (b == s) are considered conflicts, the current code treats touching slots as non-conflicting (b <= s includes equality), which might be the intended behavior.\n\nThe most likely bug is on line 9 (`_MIN_SLOT_DURATION = 0`) being unused, or line 60 where the check should involve `_MIN_SLOT_DURATION`. But actually, looking at line 60: `if a >= b` is equivalent to duration \u2264 0, which matches the docstring.\n\nThe real bug is likely that `_MIN_SLOT_DURATION` on line 9 is supposed to be used in the validation but isn't, or `_CONFLICT_STRICT` on line 8 should affect the overlap check on line 67.\n\nLine 67: with `_CONFLICT_STRICT = False`, touching intervals (b == s) should NOT conflict, and `b <= s` correctly handles this. If strict, `b < s` would be needed. Since `_CONFLICT_STRICT` is unused, this is the bug.\n\n{\n  \"function_name\": \"plan_delivery_slot\",\n  \"faulty_lines\": [67, 8, 9],\n  \"explanation\": \"The `_CONFLICT_STRICT` flag defined on line 8 is never used in the overlap check on line 67; the condition should vary based on `_CONFLICT_STRICT` (using strict `<` vs `<=` for boundary comparisons). Additionally, `_MIN_SLOT_DURATION` on line 9 is defined but never used in validation.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [
+        67,
+        8,
+        9
+      ],
+      "valid_preds": [
+        67,
+        8,
+        9
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 3,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 3.0
+}

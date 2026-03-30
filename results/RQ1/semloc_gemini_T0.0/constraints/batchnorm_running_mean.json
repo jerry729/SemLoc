@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batchnorm_running_mean",
+  "fault_hypothesis": "The exponential moving average formula on line 70 incorrectly swaps the weights for `current_mean` and `batch_mean`. The weight for `current_mean` should be `momentum`, not `1 - momentum`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9"
+      },
+      "intent": "The updated mean must be calculated using the correct exponential moving average formula.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "not (momentum >= 0.8) or (abs(updated__1 - current_mean) <= (1.0 - momentum + 0.01) * abs(batch_mean - current_mean))"
+      },
+      "intent": "A high momentum should result in the running mean staying close to its previous value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "not (momentum <= 0.2) or (abs(updated__1 - batch_mean) <= (momentum + 0.01) * abs(batch_mean - current_mean))"
+      },
+      "intent": "A low momentum should result in the running mean moving close to the new batch mean.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(momentum * abs(__cbfl_result - batch_mean) - (1 - momentum) * abs(__cbfl_result - current_mean)) < 1e-9"
+      },
+      "intent": "The final returned mean's distance to the inputs must be proportional to the momentum weights.",
+      "confidence": 0.8
+    }
+  ]
+}

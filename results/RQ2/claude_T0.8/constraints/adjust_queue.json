@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_queue",
+  "fault_hypothesis": "The function does not normalize the adjusted weights before returning, so when current or target do not sum to 1.0, the result will not sum to 1.0 either. The return statement on line 66 should divide each element by the total sum.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The adjusted list must sum to 1.0 before it is returned; this fails when inputs don't sum to 1 and no normalization is applied.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(v >= 0.0 for v in adjusted__1)"
+      },
+      "intent": "Each appended weight should be non-negative throughout the loop.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0"
+      },
+      "intent": "Immediately after initialization, adjusted__1 must be an empty list before elements are appended.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must always sum to 1.0 as stated in the docstring.",
+      "confidence": 0.9
+    }
+  ]
+}

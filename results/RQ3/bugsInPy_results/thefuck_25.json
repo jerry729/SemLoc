@@ -1,0 +1,55 @@
+{
+  "bug_id": "thefuck_25",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.mkdir_p.get_new_command",
+    "buggy_methods": [
+      "thefuck.rules.mkdir_p.get_new_command"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.mkdir_p.get_new_command",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_mkdir_p.py": [
+      6,
+      7,
+      8,
+      9,
+      20,
+      21,
+      22
+    ],
+    "thefuck/rules/mkdir_p.py": [
+      13
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [],
+    "best_rank": null,
+    "fn_lines": 2,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 11,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "thefuck_25",
+    "function": "get_new_command",
+    "src_path": "thefuck/rules/tsuru_login.py",
+    "fn_begin": 10,
+    "fn_end": 11,
+    "n_constraints": 4,
+    "n_tests_passing": 0,
+    "n_tests_failing": 3,
+    "line_scores": [],
+    "fault_line": 11,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/thefuck_25/get_new_command_constraints.json",
+    "report_path": "/tmp/bip_semloc/thefuck_25/violations.jsonl"
+  }
+}

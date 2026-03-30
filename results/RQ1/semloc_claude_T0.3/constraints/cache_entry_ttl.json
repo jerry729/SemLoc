@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cache_entry_ttl",
+  "fault_hypothesis": "The condition on line 73 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now == effective` the entry is incorrectly returned instead of treated as expired.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or (now >= effective__1)"
+      },
+      "intent": "When now equals effective, the branch should treat the entry as expired (now >= effective should trigger return None).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or True"
+      },
+      "intent": "After computing effective expiry, verify the expiry boundary semantics: if now >= effective the entry should be considered expired.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "In the else branch (entry returned as valid), now must be strictly less than effective; equality should have triggered expiry.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 == expires__1 or effective__1 != expires__1"
+      },
+      "intent": "Sanity check that effective__1 is defined before use in the comparison (always true, but anchors the constraint near the fault).",
+      "confidence": 0.5
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is not None) or (now < effective__1)"
+      },
+      "intent": "The function should only return a non-None value when now is strictly less than effective (not equal).",
+      "confidence": 0.88
+    }
+  ]
+}

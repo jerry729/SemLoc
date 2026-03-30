@@ -1,0 +1,47 @@
+{
+  "function": "demands_union",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        66,
+        67
+      ],
+      "explanation": "Lines 66-67 incorrectly remove the last element when both lists share the same last value, causing duplicates to be dropped only in this specific case while failing to handle all duplicates generally. The sorted merge should include all elements from both lists without any post-processing removal.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"demands_union\",\n  \"faulty_lines\": [66, 67],\n  \"explanation\": \"Lines 66-67 incorrectly remove the last element when both lists share the same last value, causing duplicates to be dropped only in this specific case while failing to handle all duplicates generally. The sorted merge should include all elements from both lists without any post-processing removal.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        66,
+        67
+      ],
+      "valid_preds": [
+        66,
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

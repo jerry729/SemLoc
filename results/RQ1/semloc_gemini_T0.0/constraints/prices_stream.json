@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prices_stream",
+  "fault_hypothesis": "The code on line 82 incorrectly removes a duplicate element from the `merged` list when both input lists end with the same value. This violates the requirement to preserve all duplicates.",
+  "fault_line": 82,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 82
+        }
+      },
+      "spec": {
+        "expr": "not (left and right and left[-1] == right[-1]) or (len(merged__1) >= 2 and merged__1[-1] == merged__1[-2])"
+      },
+      "intent": "If inputs end with the same price, the merged list must have two copies at its tail.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 81,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The list length must be the sum of input lengths after this branch.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 81,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The list length must be correct when the special-case check is not triggered.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final list must contain all elements from both inputs.",
+      "confidence": 1.0
+    }
+  ]
+}

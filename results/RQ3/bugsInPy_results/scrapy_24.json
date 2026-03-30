@@ -1,0 +1,28 @@
+{
+  "bug_id": "scrapy_24",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.core.downloader.handlers.http11.TunnelingTCP4ClientEndpoint.requestTunnel",
+    "buggy_methods": [
+      "scrapy.core.downloader.handlers.http11.TunnelingTCP4ClientEndpoint.requestTunnel"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.core.downloader.handlers.http11.TunnelingTCP4ClientEndpoint.requestTunnel",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/core/downloader/handlers/http11.py": [
+      81,
+      95,
+      96,
+      98,
+      99
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

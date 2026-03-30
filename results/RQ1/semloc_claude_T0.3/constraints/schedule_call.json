@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_call",
+  "fault_hypothesis": "The `overlaps` function on line 72 uses strict inequalities (`b[1] <= a[0]` and `b[0] >= a[1]`), which means adjacent (touching) slots are not considered overlapping. The condition should use strict inequalities in the opposite sense so that touching slots are treated as conflicts.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] <= a[0] or b[0] >= a[1]) == (not (b[1] < a[0] or b[0] > a[1]))"
+      },
+      "intent": "The overlaps function should treat touching slots as overlapping; the current strict-inequality boundary check incorrectly excludes adjacent slots from being flagged as conflicts.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[0] == slot[1] or candidate[1] == slot[0]) or (overlaps(slot, candidate) == True)"
+      },
+      "intent": "When candidate touches an existing slot at exactly one boundary point, overlaps should return True (conflict), but the current implementation returns False for such adjacent cases.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(merged__1[i][1] < merged__1[i+1][0] for i in range(len(merged__1)-1))"
+      },
+      "intent": "If adjacent slots are correctly treated as conflicts, no two consecutive slots in the merged schedule should touch or overlap; a gap must exist between them.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (candidate[0] == slot[1] or candidate[1] == slot[0]) for slot in existing)"
+      },
+      "intent": "Before building the merged list, verify that the candidate does not touch any existing slot at a boundary, which should have been caught as a conflict.",
+      "confidence": 0.8
+    }
+  ]
+}

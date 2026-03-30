@@ -1,0 +1,27 @@
+{
+  "bug_id": "pandas_108",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.dtypes.cast.infer_dtype_from_scalar",
+    "buggy_methods": [
+      "pandas.core.dtypes.cast.infer_dtype_from_scalar"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.dtypes.cast.infer_dtype_from_scalar",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/dtypes/cast.py": [
+      44
+    ],
+    "pandas/tests/dtypes/cast/test_infer_dtype.py": [
+      13
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

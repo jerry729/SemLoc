@@ -1,0 +1,47 @@
+{
+  "function": "ids_merge",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        67,
+        68
+      ],
+      "explanation": "The code incorrectly removes the final element of the merged list if that element is present at the end of both input lists. This violates the function's documented behavior to return a list containing every element from both inputs.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"ids_merge\",\n  \"faulty_lines\": [\n    67,\n    68\n  ],\n  \"explanation\": \"The code incorrectly removes the final element of the merged list if that element is present at the end of both input lists. This violates the function's documented behavior to return a list containing every element from both inputs.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        67,
+        68
+      ],
+      "valid_preds": [
+        67,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

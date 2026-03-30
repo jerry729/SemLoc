@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_reliability",
+  "fault_hypothesis": "The condition on line 68 incorrectly checks `not clamp` instead of `clamp`. This inverts the logic, causing the result to be clamped when clamping is disabled, and not clamped when it is enabled.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The bug only manifests when the interpolated value falls outside the calibrated y-range, which is when the clamping logic is needed.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp and y__4 == y__1) or (clamp and y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "The value of y after the conditional block must correctly reflect whether clamping was applied.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "ratio__1 >= 0.0 and ratio__1 <= 1.0"
+      },
+      "intent": "All passing tests operate within the interpolation range (ratio in [0,1]), while all failing tests involve extrapolation.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "model_confidence_clamp",
+  "fault_hypothesis": "The condition on line 76 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) == (y__1 != min(max(y__1, min(y0, y1)), max(y0, y1)) or True)"
+      },
+      "intent": "When clamp is True the branch that performs clamping should be entered, not skipped; the condition `if not clamp` is backwards.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of the if-statement should only execute when clamp is False (i.e., clamping is disabled), confirming the condition is inverted.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp and min(y0, y1) <= y__2 <= max(y0, y1)"
+      },
+      "intent": "After clamping, y__2 should be within [min(y0,y1), max(y0,y1)], and this block should only run when clamp is False.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__3 == min(max(y__1, min(y0, y1)), max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "Before y__3 is used, it should equal the clamped value when clamp=True and the raw interpolated value when clamp=False.",
+      "confidence": 0.9
+    }
+  ]
+}

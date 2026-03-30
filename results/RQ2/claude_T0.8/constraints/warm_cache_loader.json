@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warm_cache_loader",
+  "fault_hypothesis": "Line 75 computes the new expiration but never writes it back to the cache dict. The cache entry is never updated with the new expires_at, so the warm-cache TTL extension is silently discarded.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "cache.get(key) is not None and cache[key][1] == now + ttl__1"
+      },
+      "intent": "After computing the new expiration, the cache must already be updated with the new expires_at value.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "cache[key][1] == expires_at__2"
+      },
+      "intent": "After assigning the new expiration, the cache entry should reflect the updated expiration timestamp.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "cache[key][1] >= now + ttl__1"
+      },
+      "intent": "After confirming the entry is not expired, the cache must have been updated so the stored expiration is at least now + ttl.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or (key in cache and cache[key][1] >= now + ttl)"
+      },
+      "intent": "When a valid value is returned, the cache entry must have been refreshed with the new expiration.",
+      "confidence": 0.8
+    }
+  ]
+}

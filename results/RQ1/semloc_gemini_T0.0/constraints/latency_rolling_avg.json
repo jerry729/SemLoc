@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "latency_rolling_avg",
+  "fault_hypothesis": "The average on line 69 is calculated by dividing the total by `window`, but it should be divided by the actual number of samples in `tail`, which can be smaller. This results in an incorrect average when the series has fewer samples than the window size.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) >= window) or (len(tail__1) < warmup_min__1)"
+      },
+      "intent": "The divisor `window` is correct only if it equals the tail length, unless the result is discarded due to not meeting the warmup threshold.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "If an average is computed and returned, it must be based on a full window of samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) <= window and len(tail__1) <= len(series)"
+      },
+      "intent": "The extracted tail length must not exceed the window size or the original series length.",
+      "confidence": 0.8
+    }
+  ]
+}

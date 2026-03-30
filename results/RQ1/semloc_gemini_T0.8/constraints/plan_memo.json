@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_memo",
+  "fault_hypothesis": "The expiry check on line 65 uses a strict greater-than comparison (`>`), which incorrectly treats an entry as valid when the current time is exactly equal to its expiry time. The check should be inclusive (`>=`) to correctly invalidate entries at the moment they expire.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(now > expires_at__1) == (now >= expires_at__1)"
+      },
+      "intent": "The strict expiry check's result should match the result of the correct inclusive (>=) check.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "If an entry is considered not expired, the current time must be strictly before its expiry time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "A cached value should only be used (i.e., returned) if it is not expired.",
+      "confidence": 0.9
+    }
+  ]
+}

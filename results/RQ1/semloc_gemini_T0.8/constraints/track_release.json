@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_release",
+  "fault_hypothesis": "When the updated counter exceeds the cap, it is incorrectly set to `cap - 1` instead of `cap`. The bug is on line 60, which should assign `cap` directly to `updated`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The updated counter should be clamped to the cap value, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The value assigned when capping should be exactly the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 59,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 == cap"
+      },
+      "intent": "After applying the cap, the resulting value must be the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

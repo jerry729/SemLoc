@@ -1,0 +1,25 @@
+{
+  "bug_id": "youtube-dl_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.js_to_json",
+    "buggy_methods": [
+      "youtube_dl.utils.js_to_json"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.js_to_json",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/utils.py": [
+      1704,
+      1705
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Invalid \\escape: line 28 column 32 (char 1036)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Invalid \\escape: line 28 column 32 (char 1036)"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "function": "reserve_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    60
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `overlaps` function:\n\n```python\ndef overlaps(a: Tuple[int, int], b: Tuple[int, int]) -> bool:\n    return not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nTwo slots overlap if one starts before the other ends. The standard overlap check is: `a[0] < b[1] and b[0] < a[1]`, which means NOT overlapping is `b[1] <= a[0] or b[0] >= a[1]`.\n\nThis looks correct for strict overlap (touching endpoints are not considered overlapping). However, the issue might be that adjacent slots (where one ends exactly where another starts) should typically be considered non-overlapping, and this implementation treats them as non-overlapping \u2014 which is correct.\n\nWait, let me reconsider. The condition `b[1] <= a[0] or b[0] >= a[1]` means \"b ends at or before a starts, OR b starts at or after a ends.\" This is the standard non-overlap condition. So `not (...)` gives overlap when they actually overlap. This seems correct.\n\nBut looking more carefully at the `merged.sort()` on line 70 \u2014 sorting tuples works correctly by start time then end time, so that's fine.\n\nThe issue might be subtle: the `overlaps` function uses `b[1] <= a[0]` (strict: touching is NOT overlap) and `b[0] >= a[1]` (touching is NOT overlap). This is the correct behavior for half-open intervals or point-touching slots.\n\nActually, re-examining: if we have slot `(1, 3)` and candidate `(3, 5)`, they don't overlap (one ends where other begins). The check: `b[1] <= a[0]` \u2192 `5 <= 1` false; `b[0] >= a[1]` \u2192 `3 >= 3` true \u2192 not overlapping. Correct.\n\nIf `(1, 3)` and `(2, 4)`: `4 <= 1` false; `2 >= 3` false \u2192 overlapping. Correct.\n\nThe logic seems correct. Let me look at the `_ADJACENCY_BUFFER` condition on line 57: `_CONFLICT_STRICT and _ADJACENCY_BUFFER > _MIN_SLOT_DURATION`. Both are 0, so `0 > 0` is False \u2014 buffer is never applied. This seems intentional given the defaults.\n\nThe most suspicious line is 61, where the overlap condition might be wrong for certain edge cases \u2014 specifically if slots that share an endpoint should be considered overlapping (using `<` instead of `<=` and `>` instead of `>=`).\n\n```python\nreturn not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nShould perhaps be:\n```python\nreturn not (b[1] < a[0] or b[0] > a[1])\n```\n\nThis would make touching endpoints count as overlapping. The current implementation allows adjacent bookings, which might be the bug.\n\n{\n  \"function_name\": \"reserve_slot\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The overlaps function uses `b[1] <= a[0] or b[0] >= a[1]` which treats slots that share an endpoint as non-overlapping. If the intended behavior is that adjacent slots (touching at a single point) should be considered overlapping, the condition should use strict inequalities `b[1] < a[0] or b[0] > a[1]`.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

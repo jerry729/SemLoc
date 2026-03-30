@@ -1,0 +1,37 @@
+{
+  "bug_id": "pandas_23",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.datetimelike.DatetimeTimedeltaMixin.intersection",
+    "buggy_methods": [
+      "pandas.core.indexes.datetimelike.DatetimeTimedeltaMixin.intersection"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.datetimelike.DatetimeTimedeltaMixin.intersection",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/datetimelike.py": [
+      727,
+      730
+    ],
+    "pandas/tests/indexes/datetimes/test_indexing.py": [
+      78,
+      105
+    ],
+    "pandas/tests/indexes/datetimes/test_setops.py": [
+      272,
+      274
+    ],
+    "pandas/tests/indexes/timedeltas/test_setops.py": [
+      185,
+      203
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

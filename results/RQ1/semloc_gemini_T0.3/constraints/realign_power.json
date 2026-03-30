@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_power",
+  "fault_hypothesis": "The function computes the interpolated weights correctly but fails to renormalize them to sum to 1.0 before returning the result at line 59, as required by the docstring.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of weights must be normalized to sum to 1.0 before being returned.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The fully populated list of weights, just before being returned, must sum to 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "idx < len(current) - 1 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "After the final iteration, the accumulated list of weights must sum to 1.0.",
+      "confidence": 0.9
+    }
+  ]
+}

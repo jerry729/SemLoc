@@ -1,0 +1,24 @@
+{
+  "bug_id": "sanic_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "sanic.app.Sanic.url_for",
+    "buggy_methods": [
+      "sanic.app.Sanic.url_for"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "sanic.app.Sanic.url_for",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "sanic/app.py": [
+      865
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

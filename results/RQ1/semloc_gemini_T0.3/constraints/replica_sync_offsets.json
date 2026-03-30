@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "replica_sync_offsets",
+  "fault_hypothesis": "The condition on line 70 incorrectly removes a valid missing offset if it matches the replica's last offset. This occurs with duplicate offsets in `primary` (allowed when validation is skipped), causing line 71 to corrupt the result.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (missing and replica and missing[-1] == replica[-1])"
+      },
+      "intent": "The condition that triggers removal of a missing offset is faulty and should not be met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(x == primary[i] for x in primary[i+1:])"
+      },
+      "intent": "A matched element should not be a duplicate that also appears later in `primary`.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(1 for x in missing if x == replica[-1]) == sum(1 for x in primary if x == replica[-1]) - sum(1 for x in replica if x == replica[-1])"
+      },
+      "intent": "Even after the pop, the multiplicity of the removed element in `missing` should be correct.",
+      "confidence": 0.9
+    }
+  ]
+}

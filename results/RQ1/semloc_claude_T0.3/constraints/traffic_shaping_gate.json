@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "traffic_shaping_gate",
+  "fault_hypothesis": "The condition on line 71 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(active) == limit` the gate incorrectly allows the request instead of denying it.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit) or (len(active__1) >= limit)"
+      },
+      "intent": "When active count equals limit the condition must evaluate to True (deny), but with > it evaluates to False (allow), violating the boundary case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "After the else branch (gate allows), active count must be strictly less than limit; if equal to limit we should not reach here.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) >= limit) or len(active__1) > limit or len(active__1) == limit"
+      },
+      "intent": "Before using active in the comparison, verify that the boundary case (len==limit) is handled as a denial condition.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True) or len(active__1) < limit"
+      },
+      "intent": "The gate should only return allowed=True when active count is strictly less than limit, not equal to it.",
+      "confidence": 0.88
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_replica",
+  "fault_hypothesis": "The function fails to normalize the `adjusted` list of allocations before returning it. The docstring promises a normalized output summing to 1.0, but the implementation on line 60 returns the raw, unnormalized values.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9 or sum(adjusted__1) == 0.0"
+      },
+      "intent": "The final list of allocations must be normalized to sum to 1.0 before being returned.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9 or sum(adjusted__1) == 0.0"
+      },
+      "intent": "The fully computed list of allocations should sum to 1.0 before being returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__1) <= 1.0 + 1e-9"
+      },
+      "intent": "The partial sum of allocations should not exceed 1.0 during construction, assuming inputs are normalized.",
+      "confidence": 0.8
+    }
+  ]
+}

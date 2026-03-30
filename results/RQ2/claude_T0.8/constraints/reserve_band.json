@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_band",
+  "fault_hypothesis": "The `overlaps` function on line 68 uses strict inequalities (`b[1] <= a[0]` and `b[0] >= a[1]`), which means touching/adjacent bands (where candidate end equals existing start, or candidate start equals existing end) are incorrectly classified as non-overlapping. The condition should use strict less-than (`<`) instead of `<=`/`>=` to treat touching as overlap.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] < a[0] or b[0] > a[1])"
+      },
+      "intent": "The overlaps return value should treat touching boundaries as overlapping; with the strict inequalities the function returns False for adjacent bands when it should return True.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "When overlaps returns True for adjacent bands (touching boundary), the branch should be entered and return False; if the branch is never entered for adjacent bands the overlap function is wrong.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0] or candidate[1] == slot[0]) or overlaps(slot, candidate)"
+      },
+      "intent": "At each loop iteration, if slot and candidate are adjacent (touching at a boundary), overlaps must return True; this is violated when the strict inequality bug is present.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(merged__1[i][1] < merged__1[i+1][0] for i in range(len(merged__1)-1))"
+      },
+      "intent": "If adjacent bands are incorrectly allowed through, the merged list may contain touching or overlapping entries; this should never happen when the overlap check is correct.",
+      "confidence": 0.75
+    }
+  ]
+}

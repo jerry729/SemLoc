@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "message_counter",
+  "fault_hypothesis": "The counter is incorrectly capped to `cap - 1` instead of `cap` on line 61. When the incremented counter exceeds the cap, it should be set equal to the cap.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == 0"
+      },
+      "intent": "A counter that exceeds its cap should be reset to zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "When a counter is capped, its value should be set exactly to the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] <= cap if cap is not None else True"
+      },
+      "intent": "If the counter does not exceed the cap, its value must be at or below the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_demo",
+  "fault_hypothesis": "On line 67, the overlap condition uses strict inequalities (`end <= s` and `start >= e`), which incorrectly allows adjacent intervals (where end==s or start==e) to pass through without being rejected. The boundary-touching cases should be treated as overlapping.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s and not (end__1 < s)) or not (start__1 == e and not (start__1 > e))"
+      },
+      "intent": "The non-overlap condition must use strict inequalities that reject adjacent (touching) intervals; when end==s or start==e the condition should detect overlap.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "start__1"
+        }
+      },
+      "spec": {
+        "expr": "start__1 < end__1"
+      },
+      "intent": "After unpacking the validated interval, start must be strictly less than end.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e) or False"
+      },
+      "intent": "At each loop iteration tail, if end touches s or start touches e, the loop body should have returned False (adjacent slots must be rejected as overlapping).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True) or all(not (interval[1] == s or interval[0] == e) for s, e in existing)"
+      },
+      "intent": "If the function returns accepted=True, no existing slot should be adjacent (touching) to the new interval.",
+      "confidence": 0.85
+    }
+  ]
+}

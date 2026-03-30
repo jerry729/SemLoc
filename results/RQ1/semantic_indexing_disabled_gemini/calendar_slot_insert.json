@@ -1,0 +1,47 @@
+{
+  "function": "calendar_slot_insert",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [
+        73,
+        70
+      ],
+      "explanation": "The overlap check on line 73 is faulty because it hardcodes a lenient check, failing to use the `_CONFLICT_STRICT` flag to enable strict checking as described in the docstring. Consequently, the `boundary` variable initialized on line 70 is never used, indicating incomplete or incorrect logic.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"calendar_slot_insert\",\n  \"faulty_lines\": [\n    73,\n    70\n  ],\n  \"explanation\": \"The overlap check on line 73 is faulty because it hardcodes a lenient check, failing to use the `_CONFLICT_STRICT` flag to enable strict checking as described in the docstring. Consequently, the `boundary` variable initialized on line 70 is never used, indicating incomplete or incorrect logic.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        73,
+        70
+      ],
+      "valid_preds": [
+        73,
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

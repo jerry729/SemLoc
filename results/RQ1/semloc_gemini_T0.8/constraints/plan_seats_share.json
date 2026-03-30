@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_seats_share",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers by simple truncation on line 82. This causes the sum of the allocated integer seats to be less than the total available seats when there are fractional remainders.",
+  "fault_line": 82,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 82
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of allocated integer seats must equal the total seats available.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(int(v) for v in shares__1) == total"
+      },
+      "intent": "If integer conversion is planned, the truncated sum of raw shares must equal the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(int(v) for v in shares__1) == round(sum(shares__1))"
+      },
+      "intent": "The sum of truncated shares should equal the rounded sum of the original float shares.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lr_warmup_schedule",
+  "fault_hypothesis": "The learning rate calculation on line 59 incorrectly uses `step + 1` instead of `step`. This off-by-one error causes the warmup schedule to start at a non-zero value and be consistently ahead of the intended linear ramp.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "warmup_steps < 100"
+      },
+      "intent": "The calculation only produces a correct result for configurations with fewer than 100 warmup steps, based on the provided test suite.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lr__1"
+        }
+      },
+      "spec": {
+        "expr": "lr__1 > base_lr * step / warmup_steps"
+      },
+      "intent": "The calculated learning rate is always greater than the correct value, which should be proportional to `step`.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 57,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "warmup_steps < 100"
+      },
+      "intent": "This execution path, for steps within the warmup period, is only exercised by passing tests when warmup_steps is small.",
+      "confidence": 0.8
+    }
+  ]
+}

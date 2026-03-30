@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "email_send_quota",
+  "fault_hypothesis": "The check on line 66 uses a strict inequality `len(recent) > limit`, which incorrectly permits sending when the number of recent emails is exactly equal to the limit. The condition should be `len(recent) >= limit` to correctly enforce the quota.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent emails should not be exactly equal to the limit when this check is performed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts >= cutoff__1 for ts in recent__1)"
+      },
+      "intent": "All timestamps considered 'recent' must be after or at the cutoff time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= len(sent)"
+      },
+      "intent": "The list of recent timestamps must be a subset of all sent timestamps.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result == True and len(recent__1) < limit) or (__cbfl_result == False and len(recent__1) >= limit)"
+      },
+      "intent": "The function should only return True if the number of recent emails is strictly less than the limit.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_message",
+  "fault_hypothesis": "The rate limit check on line 73 uses a strict greater-than comparison (>), which incorrectly allows one more message than the specified limit. The check should be greater-than-or-equal-to (>=) to deny new messages when the number of recent messages is exactly at the limit.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The logic fails for the specific boundary case where the number of recent messages is exactly equal to the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the rate limit check passes (the 'else' branch), it must be because the number of recent messages is strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent messages should not be exactly equal to the limit immediately after being computed, as this boundary case triggers the bug.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_31",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.groupby.GroupBy.quantile",
+    "buggy_methods": [
+      "pandas.core.groupby.groupby.GroupBy.quantile"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.groupby.GroupBy.quantile",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/groupby.py": [
+      1870,
+      1872
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

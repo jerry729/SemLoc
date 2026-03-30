@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_expiry",
+  "fault_hypothesis": "Line 77 uses a strict greater-than comparison (`now > adjusted_expiry`) instead of greater-than-or-equal (`now >= adjusted_expiry`), so when `now` exactly equals `adjusted_expiry` the entry is incorrectly returned as valid instead of expired.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1) or (now >= adjusted_expiry__1)"
+      },
+      "intent": "At the expiry check, when now equals adjusted_expiry the condition must trigger expiry (i.e., >= not just >).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_expiry__1 == expires_at__1 + _CLOCK_SKEW_TOLERANCE"
+      },
+      "intent": "Verify adjusted_expiry is correctly computed so the boundary comparison uses the right value.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1)"
+      },
+      "intent": "Flag the exact-boundary case before the comparison so the strict inequality bug is visible.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "After the else branch (entry not expired), now must be strictly less than adjusted_expiry; equality should have gone to the then branch.",
+      "confidence": 0.9
+    }
+  ]
+}

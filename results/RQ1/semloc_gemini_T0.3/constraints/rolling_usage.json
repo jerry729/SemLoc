@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_usage",
+  "fault_hypothesis": "The average calculation on line 67 incorrectly divides by the `window` size instead of the actual number of samples in the `tail`. This is wrong when the series is shorter than the window.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) > 0 and abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated average must be the total sum divided by the actual number of samples in the tail.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "The code incorrectly assumes the tail length always equals the window size, which is only true for passing tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) > 0 and abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The average, when multiplied by the number of samples in the tail, must equal the total sum.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "donation_share",
+  "fault_hypothesis": "On line 60, the fee is subtracted per-recipient from each individual share (b - fee) instead of being deducted once from the gross amount before splitting. The fee should be applied to the total amount before computing base shares, not subtracted from each recipient's share.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - max(_MIN_PAYOUT * len(ratios), amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of payouts should equal amount minus fee (or the minimum payout floor), not amount minus fee*n_recipients.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "The base shares before fee deduction should sum to the gross amount, confirming fee has not yet been applied.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "all((b - fee) >= 0 or fee > amount for b in base__1) or fee <= 0"
+      },
+      "intent": "If fee is positive and smaller than amount, subtracting fee from each individual share b (which is a fraction of amount) will over-deduct the fee across all recipients.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "fee <= 0 or len(ratios) <= 1 or abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "When fee > 0 and there are multiple recipients, the total payout must equal amount minus fee (deducted once), not amount minus fee*n.",
+      "confidence": 0.88
+    }
+  ]
+}

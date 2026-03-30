@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batch_tally",
+  "fault_hypothesis": "The bug is on line 62. When clamping the counter to `max_value`, the code incorrectly sets it to `max_value - 1` instead of `max_value`.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value should be exactly max_value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__3 == max_value"
+      },
+      "intent": "After clamping because the value was too high, the new value must equal the ceiling.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "(max_value is None or new_value__1 <= max_value) or new_value__3 == max_value"
+      },
+      "intent": "If the pre-clamped value exceeded the ceiling, the final value must be exactly the ceiling.",
+      "confidence": 0.9
+    }
+  ]
+}

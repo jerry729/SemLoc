@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "audit_window_filter",
+  "fault_hypothesis": "The bug is on line 68. The list comprehension uses an inclusive comparison (`>=`) which incorrectly includes timestamps exactly at the cutoff boundary, whereas the specification requires a strict exclusion (`>`).",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == sum(1 for t in timestamps if t > cutoff__1)"
+      },
+      "intent": "The number of returned timestamps should match the count of input timestamps strictly greater than the cutoff.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 == now - window"
+      },
+      "intent": "The cutoff time must be correctly calculated as the current time minus the window duration.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(t > now - window for t in __cbfl_result)"
+      },
+      "intent": "All returned timestamps must be strictly after the start of the audit window.",
+      "confidence": 0.9
+    }
+  ]
+}

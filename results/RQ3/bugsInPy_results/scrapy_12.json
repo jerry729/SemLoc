@@ -1,0 +1,20 @@
+{
+  "bug_id": "scrapy_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.selector.unified.Selector.__init__",
+    "buggy_methods": [
+      "scrapy.selector.unified.Selector.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.selector.unified.Selector.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

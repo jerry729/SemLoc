@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "token_cache",
+  "fault_hypothesis": "The expiration check on line 67 uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal-to (`>=`). This causes a token to be considered valid when the current time is exactly equal to its effective TTL, when it should be considered expired.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "now < effective_ttl__1"
+      },
+      "intent": "A token should only be considered valid if the current time is strictly less than its effective TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_ttl__1 >= ttl__1"
+      },
+      "intent": "The effective TTL, including clock skew, should not be earlier than the base TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "item__1"
+        }
+      },
+      "spec": {
+        "expr": "len(item__1) == 2"
+      },
+      "intent": "A valid cache item must be a tuple of two elements (payload, ttl) before it is unpacked.",
+      "confidence": 0.9
+    }
+  ]
+}

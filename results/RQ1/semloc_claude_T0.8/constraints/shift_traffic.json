@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_traffic",
+  "fault_hypothesis": "The function does not normalize the output weights to sum to 1.0. Line 69 returns `updated` without dividing each element by the total sum, so when inputs don't already sum to 1 the output won't either.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 (normalized) before being returned.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0 or True"
+      },
+      "intent": "Placeholder \u2014 real check: after the loop completes, updated__1 must eventually be normalized so its sum equals 1.0.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(w >= 0 for w in updated__1)"
+      },
+      "intent": "Each appended weight must remain non-negative throughout the loop.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned list must always sum to 1.0 regardless of input magnitudes.",
+      "confidence": 0.9
+    }
+  ]
+}

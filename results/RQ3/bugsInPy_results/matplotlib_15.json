@@ -1,0 +1,49 @@
+{
+  "bug_id": "matplotlib_15",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.colors.SymLogNorm.__init__",
+    "buggy_methods": [
+      "lib.matplotlib.colors.SymLogNorm.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.colors.SymLogNorm.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "examples/userdemo/colormap_normalizations.py": [
+      72
+    ],
+    "examples/userdemo/colormap_normalizations_symlognorm.py": [
+      32
+    ],
+    "lib/matplotlib/colors.py": [
+      1205,
+      1206,
+      1216,
+      1217,
+      1218,
+      1219,
+      1223,
+      1258,
+      1268
+    ],
+    "lib/matplotlib/tests/test_colors.py": [
+      401,
+      411,
+      420,
+      431,
+      908,
+      910
+    ],
+    "tutorials/colors/colormapnorms.py": [
+      101
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

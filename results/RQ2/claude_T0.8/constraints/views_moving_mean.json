@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "views_moving_mean",
+  "fault_hypothesis": "On line 62, the mean is computed by dividing total by `window` (the requested window size) instead of `len(recent)` (the actual number of available samples), producing a wrong result when fewer samples exist than the window size.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "The computed mean should equal total divided by the actual number of recent samples, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "After defining mean, verify it equals total over the actual sample count, not window.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "Before using mean in round(), confirm mean * len(recent) == total, not mean * window == total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - round(total / len(recent), _PRECISION_DIGITS)) < 1e-9"
+      },
+      "intent": "The returned value should be the mean over available samples, not over the full window size.",
+      "confidence": 0.8
+    }
+  ]
+}

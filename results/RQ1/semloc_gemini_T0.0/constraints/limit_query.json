@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_query",
+  "fault_hypothesis": "The condition at line 69 should be `len(active) >= limit` instead of `len(active) > limit`. This off-by-one error incorrectly allows a query when the number of active queries is exactly equal to the limit.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The logic fails at the boundary where active queries exactly equal the limit; this condition separates passing from failing tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If a query is allowed by falling through to this path, the number of active queries must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts > cutoff__1 for ts in active__1)"
+      },
+      "intent": "All timestamps considered active must be more recent than the cutoff time.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and __cbfl_result[1] == 0) or limit == 0"
+      },
+      "intent": "If a query is allowed, the number of remaining queries should not be zero unless the limit itself is zero.",
+      "confidence": 0.3
+    }
+  ]
+}

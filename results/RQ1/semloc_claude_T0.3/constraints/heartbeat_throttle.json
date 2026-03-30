@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "heartbeat_throttle",
+  "fault_hypothesis": "The condition on line 73 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(active) == limit` the function incorrectly returns `True` (allowed) instead of `False` (throttled).",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) >= limit"
+      },
+      "intent": "When active count equals the limit the branch condition should be true (deny), but the buggy `>` makes it false.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "The else branch (allowed=True) should only be reached when active count is strictly less than the limit.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) <= limit or len(active__1) > limit"
+      },
+      "intent": "Sanity check that the throttle decision covers the equality case: active == limit must map to denied.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) or (len(active__1) < limit)"
+      },
+      "intent": "If the action is allowed (True), the active count must be strictly less than the limit; equality should produce denied.",
+      "confidence": 0.92
+    }
+  ]
+}

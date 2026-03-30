@@ -1,0 +1,33 @@
+{
+  "bug_id": "pandas_79",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.datetimes.DatetimeIndex.get_value",
+    "buggy_methods": [
+      "pandas.core.indexes.datetimes.DatetimeIndex.get_value"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.datetimes.DatetimeIndex.get_value",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/grouper.py": [
+      568
+    ],
+    "pandas/core/indexes/datetimes.py": [
+      30
+    ],
+    "pandas/core/indexes/multi.py": [
+      2781
+    ],
+    "pandas/tests/indexes/datetimes/test_indexing.py": [
+      700
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

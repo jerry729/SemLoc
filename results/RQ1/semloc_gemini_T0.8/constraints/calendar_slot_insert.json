@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calendar_slot_insert",
+  "fault_hypothesis": "The non-overlap check on line 73 uses `>=` and `<=`, which incorrectly permits adjacent slots. To reject adjacent slots as conflicts, as the tests require, it should use strict inequality (`>` and `<`).",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "Asserts that slots are not perfectly adjacent, which the buggy code incorrectly permits.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "The loop invariant should be that slots have a clear gap, not merely being non-overlapping.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1) - 1))"
+      },
+      "intent": "A successfully generated schedule must not contain any adjacent slots.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a slot is successfully inserted, the resulting schedule must not have any adjacent or overlapping slots.",
+      "confidence": 0.8
+    }
+  ]
+}

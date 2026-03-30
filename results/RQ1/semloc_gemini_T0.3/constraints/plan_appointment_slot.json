@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_appointment_slot",
+  "fault_hypothesis": "The conflict detection on line 65 is incorrect. It uses non-strict inequalities (`<=`, `>=`) which fails to detect conflicts for adjacent (touching) time slots, but the tests expect touching slots to be considered conflicts.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 <= s or a__1 >= e) for s, e in timeline) == any(b__1 >= s and a__1 <= e for s, e in timeline)"
+      },
+      "intent": "The buggy overlap detection logic should be equivalent to the correct logic that handles touching intervals.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "If no conflict is detected, the new window must not touch or overlap any existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1) - 1))"
+      },
+      "intent": "The updated timeline must consist of strictly non-overlapping slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not any(window[1] == s or window[0] == e for s, e in timeline) or __cbfl_result[0] == False"
+      },
+      "intent": "If the new window touches an existing slot, the operation should be reported as a failure.",
+      "confidence": 0.8
+    }
+  ]
+}

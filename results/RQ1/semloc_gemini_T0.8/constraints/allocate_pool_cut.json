@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_pool_cut",
+  "fault_hypothesis": "The fee is not deducted from the total amount before calculating shares. On line 68, the split is based on the gross `amount` instead of the correct distributable amount, `amount - fee`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or amount < fee"
+      },
+      "intent": "The buggy share calculation is only correct if there is no fee to deduct, or if the fee exceeds the total amount (where clamping masks the error).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == len(ratios)"
+      },
+      "intent": "The number of calculated shares must match the number of ratios provided.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "r >= 0"
+      },
+      "intent": "Individual ratios are expected to be non-negative for distribution.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - ((amount - fee) if amount > fee else 0)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the distributable amount, clamped at zero.",
+      "confidence": 0.9
+    }
+  ]
+}

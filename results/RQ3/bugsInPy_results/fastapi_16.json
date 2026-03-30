@@ -1,0 +1,39 @@
+{
+  "bug_id": "fastapi_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.encoders.jsonable_encoder",
+    "buggy_methods": [
+      "fastapi.encoders.jsonable_encoder"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.encoders.jsonable_encoder",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/encoders.py": [
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "tests/test_datetime.py": [
+      1,
+      21,
+      35
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

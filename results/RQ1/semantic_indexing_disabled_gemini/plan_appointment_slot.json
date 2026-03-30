@@ -1,0 +1,44 @@
+{
+  "function": "plan_appointment_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "The conflict detection logic hardcodes non-strict interval comparison, where adjacent slots are not considered conflicts, and completely ignores the `_CONFLICT_STRICT` configuration flag which is intended to control this behavior.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"plan_appointment_slot\",\n  \"faulty_lines\": [\n    65\n  ],\n  \"explanation\": \"The conflict detection logic hardcodes non-strict interval comparison, where adjacent slots are not considered conflicts, and completely ignores the `_CONFLICT_STRICT` configuration flag which is intended to control this behavior.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

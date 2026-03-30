@@ -1,0 +1,47 @@
+{
+  "function": "traffic_shaping_gate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        71,
+        73
+      ],
+      "explanation": "The logic is off-by-one; it fails to account for the current request being evaluated. The condition on line 71 should be `>=` instead of `>`, which allows one more request than the limit, and the remaining quota calculation on line 73 is consequently also incorrect.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"traffic_shaping_gate\",\n  \"faulty_lines\": [\n    71,\n    73\n  ],\n  \"explanation\": \"The logic is off-by-one; it fails to account for the current request being evaluated. The condition on line 71 should be `>=` instead of `>`, which allows one more request than the limit, and the remaining quota calculation on line 73 is consequently also incorrect.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        71,
+        73
+      ],
+      "valid_preds": [
+        71,
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 71,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

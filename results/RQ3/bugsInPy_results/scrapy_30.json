@@ -1,0 +1,37 @@
+{
+  "bug_id": "scrapy_30",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.utils.testproc.TestProcessProtocol.__init__",
+    "buggy_methods": [
+      "scrapy.utils.testproc.TestProcessProtocol.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.utils.testproc.TestProcessProtocol.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/cmdline.py": [
+      21,
+      23,
+      24
+    ],
+    "scrapy/utils/testproc.py": [
+      38,
+      39
+    ],
+    "tests/test_cmdline/__init__.py": [
+      16,
+      17
+    ],
+    "tests/test_command_version.py": [
+      15
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

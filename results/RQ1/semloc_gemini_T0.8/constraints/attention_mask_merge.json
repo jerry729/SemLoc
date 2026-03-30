@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "attention_mask_merge",
+  "fault_hypothesis": "The function uses logical OR (`a or b`) on line 67 to combine mask elements, but the specification requires logical AND (`a and b`). This results in `True` when only one input is `True`, violating the conjunction requirement.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "merged[-1] == (a and b)"
+      },
+      "intent": "The element just appended must be the logical AND of the corresponding input elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "merged[len(merged) - 1] == (mask_a[len(merged) - 1] and mask_b[len(merged) - 1])"
+      },
+      "intent": "Each element in the merged list must be the logical AND of the elements from the input masks at the same position.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "sum(1 for x in merged if x) == sum(1 for i in range(len(merged)) if mask_a[i] and mask_b[i])"
+      },
+      "intent": "The count of True values in the merged prefix must match the count of positions where both inputs were True.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(__cbfl_result[i] == (mask_a[i] and mask_b[i]) for i in range(len(mask_a)))"
+      },
+      "intent": "The final returned mask must be the element-wise conjunction of the two input masks.",
+      "confidence": 1.0
+    }
+  ]
+}

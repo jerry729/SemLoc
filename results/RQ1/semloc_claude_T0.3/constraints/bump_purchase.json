@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_purchase",
+  "fault_hypothesis": "On line 64, when the incremented value exceeds the cap, the code sets `updated = cap - 1` instead of `updated = cap`, causing the counter to be clamped one below the cap rather than at the cap.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "After clamping, updated should equal cap, not cap - 1.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The clamped value must equal the cap, not be one less than it.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 <= cap and updated__2 == cap"
+      },
+      "intent": "After the capping branch, updated should be exactly cap when it exceeded cap.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The returned counter value must never exceed the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

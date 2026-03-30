@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_rolling_avg",
+  "fault_hypothesis": "The average on line 68 is calculated by dividing by the fixed `window` size instead of the actual number of samples in `tail`. This is incorrect when the length of the series is less than the window size.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The average must be the total divided by the actual number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "If an average is returned, the sample window must have been full.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) >= window or len(tail__1) < warmup_min__1"
+      },
+      "intent": "The number of samples must either fill the window or be too few to pass warmup.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "session_memo",
+  "fault_hypothesis": "The bug is on line 71. The condition `now > deadline` incorrectly handles the boundary case where `now == deadline`, treating the session as valid when it should be expired. The comparison should be `now >= deadline`.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "now != deadline__2"
+      },
+      "intent": "The current time should not be exactly equal to the session deadline, as this boundary case is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__2"
+      },
+      "intent": "If the non-expired path is taken, the current time must be strictly before the deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__2"
+      },
+      "intent": "A cached value should only be returned if its deadline has not yet been reached.",
+      "confidence": 0.9
+    }
+  ]
+}

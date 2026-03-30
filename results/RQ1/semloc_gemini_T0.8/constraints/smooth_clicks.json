@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_clicks",
+  "fault_hypothesis": "The calculation of the mean on line 58 incorrectly uses `window` as the denominator. It should use `len(tail)`, the actual number of samples, which can be less than `window`.",
+  "fault_line": 58,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 58
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) == 0) or abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must equal the total divided by the number of elements summed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "window == len(tail__1)"
+      },
+      "intent": "The window size must match the number of samples for the division by `window` to be correct.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) == 0) or abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The mean should be correct before it is rounded and returned.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "pages_union",
+  "fault_hypothesis": "Lines 79-80 incorrectly remove the last element when both streams share the same last value, but the union should preserve both copies (duplicates should not be removed). The pop() logic is entirely wrong for a union that keeps duplicates.",
+  "fault_line": 79,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 79
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers pop() should never be true for a correct union \u2014 when both streams share the last element, both copies must appear in merged, so this branch should not execute.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == i__1 + j"
+      },
+      "intent": "After each loop iteration the number of elements appended should equal the sum of both pointer advances, ensuring no element is added or skipped incorrectly.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 79,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "Execution should never enter the pop() branch for a correct union that preserves all duplicates \u2014 this branch body is always wrong.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The result length must equal the sum of both input lengths since all elements (including duplicates) must be preserved in a union.",
+      "confidence": 0.9
+    }
+  ]
+}

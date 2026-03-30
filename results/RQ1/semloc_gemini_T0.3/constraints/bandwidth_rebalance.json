@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_rebalance",
+  "fault_hypothesis": "The function calculates the new weights but omits the required normalization step before returning. The return statement on line 65 returns the list of weights without ensuring they sum to 1.0, as documented.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "sum(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of weights must be normalized to sum to 1.0 before being returned.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of weights about to be returned must be a valid probability distribution.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "sum(updated) <= idx + 1"
+      },
+      "intent": "The running sum of weights should not grow disproportionately large if inputs are not normalized.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == 0 or sum(__cbfl_result) == 0 or abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The function must return a list of weights that sums to 1.0.",
+      "confidence": 0.7
+    }
+  ]
+}

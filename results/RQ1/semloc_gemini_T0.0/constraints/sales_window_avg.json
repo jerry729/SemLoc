@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sales_window_avg",
+  "fault_hypothesis": "The mean on line 71 is calculated by dividing by the fixed `window` size. It should instead divide by the actual number of recent samples, `len(recent)`, which can be smaller than the window size.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "window == len(recent__1)"
+      },
+      "intent": "The code implicitly assumes the number of recent samples equals the window size, which is not always true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The calculated mean should be the total divided by the actual number of recent samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "The calculated mean, when scaled by the number of samples, should equal the total sum.",
+      "confidence": 0.9
+    }
+  ]
+}

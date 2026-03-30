@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "retry_backoff_window",
+  "fault_hypothesis": "The function incorrectly adds `base` to `max_delay` on line 66 when capping the delay. It should simply assign `max_delay` to `delay`, ensuring the result never exceeds the cap.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "delay__2 == max_delay"
+      },
+      "intent": "When the delay is capped, it should be set to exactly max_delay.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "delay__3 <= max_delay"
+      },
+      "intent": "After the capping logic is applied, the resulting delay must not exceed max_delay.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "delay__1"
+        }
+      },
+      "spec": {
+        "expr": "delay__1 == base * (2 ** attempts)"
+      },
+      "intent": "The raw delay should be calculated using the standard exponential backoff formula.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result <= max_delay"
+      },
+      "intent": "The final returned delay must never exceed the specified maximum.",
+      "confidence": 0.8
+    }
+  ]
+}

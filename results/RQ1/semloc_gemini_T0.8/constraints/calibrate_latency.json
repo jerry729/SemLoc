@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_latency",
+  "fault_hypothesis": "The condition on line 70 should be `if clamp:` instead of `if not clamp:`. This causes clamping to be applied when it should not be, and vice-versa.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(not clamp and y__3 == y__1) or (clamp and y__3 >= (y0 if y0 <= y1 else y1) and y__3 <= (y0 if y0 >= y1 else y1))"
+      },
+      "intent": "Checks that the computed latency y is clamped if and only if the clamp flag is set.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= (y0 if y0 <= y1 else y1) and y__1 <= (y0 if y0 >= y1 else y1)"
+      },
+      "intent": "When clamping is (wrongly) skipped for clamp=True cases, this checks if the extrapolated value is out of bounds.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "y__2 == y__1"
+      },
+      "intent": "When clamping is (wrongly) applied for clamp=False cases, this checks if the value was altered.",
+      "confidence": 0.95
+    }
+  ]
+}

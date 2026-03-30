@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_cache",
+  "fault_hypothesis": "The function never normalizes the adjusted values to sum to 1.0; it only clamps negatives but does not divide by the total sum, so inputs that do not already sum to 1.0 produce an output whose sum differs from 1.0.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 before being returned, which fails when inputs have large unnormalized weights.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After _clamp_negative, the adjusted values should already be normalized to sum to 1.0, but they are not when inputs do not sum to 1.0.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The value used in the return statement must be a valid probability distribution summing to 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9 or sum(adjusted__1) > 0"
+      },
+      "intent": "After interpolation, if inputs are normalized the sum should stay 1.0; large unnormalized inputs break this invariant showing normalization is needed downstream.",
+      "confidence": 0.6
+    }
+  ]
+}

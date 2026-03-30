@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "volume_moving_mean",
+  "fault_hypothesis": "The mean on line 60 is calculated by dividing the total by the fixed `window` size, not the actual number of samples in `recent`, which can be smaller than `window`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The mean must be the total sum divided by the number of samples used.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or (min(recent__1) <= mean__1 <= max(recent__1))"
+      },
+      "intent": "The calculated mean should fall within the range of the sample values.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= window"
+      },
+      "intent": "The number of recent samples cannot exceed the window size.",
+      "confidence": 0.8
+    }
+  ]
+}

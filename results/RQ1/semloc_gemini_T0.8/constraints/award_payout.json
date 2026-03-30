@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "award_payout",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 69. This is because the shares calculated on line 67 were based on the gross `amount`, not the net amount after the fee was deducted.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the initial amount minus the fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (fee > 0 and len(ratios) > 1 and amount > fee)"
+      },
+      "intent": "The buggy payout logic produces a correct result only under specific conditions which are violated in the failing tests.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive to avoid division by zero and ensure meaningful distribution.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_retries",
+  "fault_hypothesis": "On line 62, the mean is computed by dividing by `window` instead of `len(tail)`. When the number of available values is less than the window size, this produces an incorrect (too small) mean.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "The mean should be total divided by the actual number of tail elements, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) >= window or abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "When tail is shorter than window, mean must equal total/len(tail), not total/window.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before returning mean, it must equal total divided by actual tail length.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(__cbfl_result - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "The returned mean must equal total divided by actual tail length, not window.",
+      "confidence": 0.88
+    }
+  ]
+}

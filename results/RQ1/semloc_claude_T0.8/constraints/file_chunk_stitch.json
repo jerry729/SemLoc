@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "file_chunk_stitch",
+  "fault_hypothesis": "Line 80 incorrectly slices off the last byte with `data[:-1]`, truncating the result. The return should be `data` (the fully accumulated payload) without any slicing.",
+  "fault_line": 80,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == sum(len(part) for _, part in chunk_list)"
+      },
+      "intent": "The returned bytes length must equal the total length of all chunk data, not one byte less.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(data) == sum(len(p) for _, p in chunk_list[:chunk_list.index((_, part)) + 1])"
+      },
+      "intent": "After each iteration data should accumulate all bytes seen so far without any truncation.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "data__1"
+        }
+      },
+      "spec": {
+        "expr": "data__1 == b''"
+      },
+      "intent": "data starts as EMPTY_PAYLOAD (b'') before the loop accumulates chunks.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == sum(len(part) for _, part in chunks) or not chunks or separator"
+      },
+      "intent": "Final result must contain all bytes from all chunks when separator is empty.",
+      "confidence": 0.9
+    }
+  ]
+}

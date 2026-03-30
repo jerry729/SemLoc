@@ -1,0 +1,24 @@
+{
+  "bug_id": "luigi_19",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.scheduler.SimpleTaskState.set_status",
+    "buggy_methods": [
+      "luigi.scheduler.SimpleTaskState.set_status"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.scheduler.SimpleTaskState.set_status",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/scheduler.py": [
+      408
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

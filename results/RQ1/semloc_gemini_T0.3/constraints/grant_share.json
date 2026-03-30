@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "grant_share",
+  "fault_hypothesis": "The bug is on line 65. The fee is subtracted from each recipient's share individually, which incorrectly multiplies the total fee by the number of recipients, instead of deducting it from the total pool once before distribution.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all final payouts must equal the total grant amount minus the single fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(ratios) > 1 and fee > 0.0) or (abs(sum(base__1) - (amount - fee)) < 1e-9)"
+      },
+      "intent": "The sum of pre-fee shares should equal the net distributable amount, unless the buggy logic is benign (no fee or single recipient).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of the calculated base shares (before fee deduction) must equal the total initial amount.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0.0"
+      },
+      "intent": "The sum of ratios must be positive for distribution to be possible.",
+      "confidence": 0.7
+    }
+  ]
+}

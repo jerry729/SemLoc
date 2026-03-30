@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "weights_union",
+  "fault_hypothesis": "The code on line 75 incorrectly removes an element from the `merged` list when the last elements of both input streams are identical. This violates the documented requirement to preserve all duplicates.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The total number of merged elements must equal the sum of elements from both input streams.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that removes a shared final element should never be executed, as it violates the function's contract.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The merged list must contain the sum of elements from both inputs before final filtering.",
+      "confidence": 1.0
+    }
+  ]
+}

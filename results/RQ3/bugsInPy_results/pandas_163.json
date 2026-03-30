@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_163",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.window._Window._prep_values",
+    "buggy_methods": [
+      "pandas.core.window._Window._prep_values"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.window._Window._prep_values",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/window.py": [
+      249,
+      250
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

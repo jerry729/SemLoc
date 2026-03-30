@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_ping",
+  "fault_hypothesis": "The condition on line 70 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly returns `True` with `remaining=0` instead of `False, 0`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) > limit)"
+      },
+      "intent": "When recent pings equal the limit, the condition must be true so the function returns False; the strict > causes it to be false at this line.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) >= limit) or (len(recent__1) > limit)"
+      },
+      "intent": "Checks that the guard correctly handles the equality boundary before recent__1 is used in the comparison.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), recent pings must be strictly less than limit; equality should have been caught by the if-branch.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and __cbfl_result[1] == 0)"
+      },
+      "intent": "A return of (True, 0) is semantically inconsistent \u2014 allowed but no remaining capacity \u2014 which is the symptom produced by the off-by-one bug.",
+      "confidence": 0.85
+    }
+  ]
+}

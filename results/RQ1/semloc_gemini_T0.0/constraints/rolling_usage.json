@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_usage",
+  "fault_hypothesis": "The average on line 67 is calculated by dividing `total` by `window`. This is incorrect when the number of samples in the `tail` is less than `window`, as it should divide by `len(tail)`.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (len(tail__1) >= warmup_min) or (len(tail__1) == window)"
+      },
+      "intent": "The divisor `window` is only correct if it matches the actual tail length, unless the result is discarded during warmup.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(tail__1) >= warmup_min) or (abs(avg__1 * len(tail__1) - total__1) < 1e-9)"
+      },
+      "intent": "If the average is not discarded due to warmup, it must be correctly computed from the total and the actual tail length.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "When returning a computed average, the number of samples must match the window size for the division to have been correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - (sum(series[-window:]) / len(series[-window:]))) < 1e-9"
+      },
+      "intent": "The returned average must be correctly calculated based on the actual number of samples in the tail.",
+      "confidence": 0.8
+    }
+  ]
+}

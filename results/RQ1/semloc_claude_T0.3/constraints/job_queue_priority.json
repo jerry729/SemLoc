@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "job_queue_priority",
+  "fault_hypothesis": "Line 67 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so a batch whose size exactly equals max_jobs is incorrectly admitted instead of rejected.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(len(job_list__1) >= max_jobs) == (len(job_list__1) > max_jobs or len(job_list__1) == max_jobs)"
+      },
+      "intent": "When batch_size equals max_jobs the condition must be True (reject), but the strict > makes it False, so the return value will be wrong.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "batch_size__1"
+        }
+      },
+      "spec": {
+        "expr": "not (batch_size__1 == max_jobs) or batch_size__1 >= max_jobs"
+      },
+      "intent": "When batch_size equals max_jobs it should satisfy the >= threshold used for rejection.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "job_list__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(job_list__1) == max_jobs) or len(job_list__1) >= max_jobs"
+      },
+      "intent": "Immediately before the capacity check, a batch of exactly max_jobs should be treated as at-or-over capacity.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(job_list__1) < max_jobs"
+      },
+      "intent": "In the else branch (batch accepted), the batch size must be strictly less than max_jobs; equality should have triggered rejection.",
+      "confidence": 0.92
+    }
+  ]
+}

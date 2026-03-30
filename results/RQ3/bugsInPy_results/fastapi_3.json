@@ -1,0 +1,31 @@
+{
+  "bug_id": "fastapi_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.routing.serialize_response",
+    "buggy_methods": [
+      "fastapi.routing.serialize_response"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.routing.serialize_response",
+  "autofl_matched_info": [],
+  "semloc_error": "Unsupported version: None",
+  "faulty_lines": {
+    "fastapi/routing.py": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ]
+  },
+  "semloc": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 555, in run_semloc_on_bip\n    _fn_name_parsed, constraints = parse_constraints(json.dumps(constraints_obj))\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/instrumentation.py\", line 601, in parse_constraints\n    raise ValueError(f\"Unsupported version: {obj.get('version')}\")\nValueError: Unsupported version: None\n"
+  },
+  "semloc_detail": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 555, in run_semloc_on_bip\n    _fn_name_parsed, constraints = parse_constraints(json.dumps(constraints_obj))\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/instrumentation.py\", line 601, in parse_constraints\n    raise ValueError(f\"Unsupported version: {obj.get('version')}\")\nValueError: Unsupported version: None\n"
+  }
+}

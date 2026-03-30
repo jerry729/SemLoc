@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "traffic_shaping_gate",
+  "fault_hypothesis": "The condition on line 71 uses `>` instead of `>=`. When the number of active requests is exactly equal to the limit, a new request should be denied, but the code incorrectly allows it.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The boundary case where active requests equals the limit must be handled as an 'over limit' condition.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the gate allows traffic (by taking the else branch), there must have been fewer active requests than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) == sum(1 for t in timestamps if t >= cutoff__1)"
+      },
+      "intent": "The count of active timestamps must correctly reflect the number of timestamps falling within the computed time window.",
+      "confidence": 0.8
+    }
+  ]
+}

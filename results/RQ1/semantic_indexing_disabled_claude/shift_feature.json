@@ -1,0 +1,44 @@
+{
+  "function": "shift_feature",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    59
+  ],
+  "total_source_lines": 61,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "The function is supposed to return a normalized vector (elements sum to 1.0), but it's missing the normalization step before returning.\n\n{\n  \"function_name\": \"shift_feature\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The function is supposed to normalize the adjusted values so they sum to 1.0, but it returns `adjusted` without dividing by the total sum. The normalization step is completely missing before the return statement.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,81 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "storage_mix",
+  "fault_hypothesis": "On line 62, `_clamp_allocation` is called instead of a normalization function, so when inputs don't sum to 1 the output is not normalized to sum to 1 as documented.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After _clamp_allocation, the result must sum to 1 (normalization requirement).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The adjusted allocation after processing must be normalized to sum to 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "Before returning, the adjusted vector must sum to 1 regardless of input magnitudes.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == len(current)"
+      },
+      "intent": "The blended allocation must have the same length as the inputs.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation must always sum to 1 as documented.",
+      "confidence": 0.9
+    }
+  ]
+}

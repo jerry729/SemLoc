@@ -1,0 +1,47 @@
+{
+  "function": "allocate_pool_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        68
+      ],
+      "explanation": "The fee should be deducted from the total pool before distribution (net = amount - fee), but instead the full fee is subtracted from each participant's individual share on line 70, and line 68 distributes the full amount rather than the fee-adjusted amount.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at this function, the fee is supposed to be deducted from the pool **before** the proportional split, so every participant bears a fair share. The correct approach would be:\n\n1. Deduct fee from the total amount first: `net_amount = amount - fee`\n2. Then distribute `net_amount` proportionally among participants\n\nBut the current implementation:\n1. Distributes the full `amount` proportionally (line 68)\n2. Then subtracts the full `fee` from each participant's share (line 70)\n\nThis means each participant is being charged the entire fee rather than their fair share of it. The fee should be deducted once from the total pool, not subtracted from each individual share.\n\n```json\n{\n  \"function_name\": \"allocate_pool_cut\",\n  \"faulty_lines\": [70, 68],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution (net = amount - fee), but instead the full fee is subtracted from each participant's individual share on line 70, and line 68 distributes the full amount rather than the fee-adjusted amount.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        70,
+        68
+      ],
+      "valid_preds": [
+        70,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

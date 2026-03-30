@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_memory",
+  "fault_hypothesis": "On line 72, `int(x)` truncates fractional allocations, causing the sum of allocations to be less than `total` when weights don't divide evenly. The fix should use proper rounding (e.g., largest-remainder method) instead of simple truncation.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "sum([int(x) for x in planned__1]) == int(total)"
+      },
+      "intent": "After truncating planned values to int, their sum must still equal total \u2014 this fails when fractional parts are lost.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "After the integer allocation list is built, its sum must equal the total to detect truncation loss.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "Before returning, the final allocations must sum to total regardless of which branch was taken.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "At the end of the integer-allocation branch, the sum of truncated values must equal total.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned allocations must always sum to total.",
+      "confidence": 0.8
+    }
+  ]
+}

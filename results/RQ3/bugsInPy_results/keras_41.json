@@ -1,0 +1,50 @@
+{
+  "bug_id": "keras_41",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.utils.data_utils.OrderedEnqueuer.get",
+    "buggy_methods": [
+      "keras.utils.data_utils.OrderedEnqueuer.get"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.utils.data_utils.OrderedEnqueuer.get",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/utils/data_utils.py": [
+      556,
+      634,
+      639,
+      641,
+      645,
+      689,
+      690,
+      691,
+      707,
+      708,
+      709
+    ],
+    "tests/keras/utils/data_utils_test.py": [
+      185,
+      194
+    ],
+    "tests/test_multiprocessing.py": [
+      235,
+      244,
+      250,
+      266,
+      273,
+      275,
+      276,
+      279,
+      302,
+      308
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

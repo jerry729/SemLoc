@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "embedding_lookup_cache",
+  "fault_hypothesis": "Line 72 uses a strict greater-than comparison (`now > cached_at + validated_ttl`) instead of greater-than-or-equal (`now >= cached_at + validated_ttl`), so an entry at exactly the TTL boundary is incorrectly treated as still valid rather than expired.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "not (now == cached_at__1 + validated_ttl__1) or (now >= cached_at__1 + validated_ttl__1)"
+      },
+      "intent": "At the TTL boundary (now == cached_at + ttl), the condition must treat the entry as expired; the strict > comparison fails this check.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < cached_at__1 + validated_ttl__1"
+      },
+      "intent": "After the expiry branch is not taken, now must be strictly less than the expiry boundary; equality should have triggered expiry.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "cached_at__1"
+        }
+      },
+      "spec": {
+        "expr": "now != cached_at__1 + validated_ttl__1 or True"
+      },
+      "intent": "Capture the boundary condition: when now equals cached_at + validated_ttl the entry should be expired, so the comparison operator must include equality.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "validated_ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "validated_ttl__1 > 0"
+      },
+      "intent": "Validated TTL must be positive so that the expiry boundary is meaningful.",
+      "confidence": 0.7
+    }
+  ]
+}

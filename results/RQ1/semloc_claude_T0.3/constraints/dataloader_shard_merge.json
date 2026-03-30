@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "dataloader_shard_merge",
+  "fault_hypothesis": "Lines 73-74 incorrectly remove the last element when both lists share the same last value, but the docstring says duplicates must be preserved. This pop() logic is entirely wrong and should not exist.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left_ids and right_ids and merged__1[-1] == left_ids[-1] == right_ids[-1])"
+      },
+      "intent": "The condition that triggers the pop should never be true when inputs share a tail value, because duplicates must be preserved.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == 0"
+      },
+      "intent": "After initialization, merged must be empty.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The then-branch of line 73 (which pops an element) should never execute, as it incorrectly removes a duplicate.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left_ids) + len(right_ids)"
+      },
+      "intent": "Before applying stride, merged must contain exactly len(left)+len(right) elements (no elements removed).",
+      "confidence": 0.9
+    }
+  ]
+}

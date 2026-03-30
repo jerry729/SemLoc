@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_inventory",
+  "fault_hypothesis": "The expiry check on line 70 uses a strict greater-than comparison (>), causing entries accessed exactly at their deadline to be considered valid when they should be expired. The comparison should be greater-than-or-equal-to (>=).",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_deadline__1)"
+      },
+      "intent": "The expiry comparison is incorrect for entries accessed exactly at their deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_deadline__1 <= deadline__1"
+      },
+      "intent": "The adjusted deadline, accounting for clock skew, should not be after the original deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_deadline__1"
+      },
+      "intent": "If a cached value is returned, the current time must be strictly before the adjusted deadline.",
+      "confidence": 1.0
+    }
+  ]
+}

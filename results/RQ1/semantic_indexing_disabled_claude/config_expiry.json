@@ -1,0 +1,44 @@
+{
+  "function": "config_expiry",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    78
+  ],
+  "total_source_lines": 79,
+  "runs": [
+    {
+      "faulty_lines": [
+        77
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify what's faulty.\n\nThe function `config_expiry` should return a cached value if it hasn't expired. The expiry check is on line 77: `if now > adjusted_expiry`. This uses strict greater-than, meaning when `now == adjusted_expiry`, it returns the value (not expired). This is a boundary condition that could be argued either way.\n\nHowever, the more likely bug is on line 72: `adjusted_expiry = expires_at + _CLOCK_SKEW_TOLERANCE`. For clock skew tolerance, the idea is that we should be more lenient about expiry - meaning we should allow entries that are slightly past their expiration to still be considered valid. This means the effective expiry should be `expires_at + _CLOCK_SKEW_TOLERANCE` (extending the expiry window), which is what's done.\n\nBut wait - clock skew tolerance for distributed systems typically means: if a clock is ahead by `_CLOCK_SKEW_TOLERANCE`, we should subtract from the expiry to be conservative, OR add to allow for skew. The direction depends on the use case.\n\nActually, looking more carefully at line 77: `if now > adjusted_expiry` - this returns None (expired) when `now > adjusted_expiry`. But the typical pattern would be `if now >= adjusted_expiry` to return None when the time has exactly reached expiry. Using `>` means the entry is served at the exact expiry moment, which might be the bug.\n\nThe condition `now > adjusted_expiry` should likely be `now >= adjusted_expiry` since at the exact expiry time, the entry should be considered expired.\n\n{\n  \"function_name\": \"config_expiry\",\n  \"faulty_lines\": [77],\n  \"explanation\": \"The expiry check `if now > adjusted_expiry` uses strict greater-than, meaning an entry is still served when `now == adjusted_expiry`. The correct check should be `if now >= adjusted_expiry` to treat the entry as expired when the current time has reached (not just exceeded) the expiration time.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [
+        77
+      ],
+      "valid_preds": [
+        77
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

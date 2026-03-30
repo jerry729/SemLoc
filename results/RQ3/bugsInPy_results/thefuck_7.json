@@ -1,0 +1,34 @@
+{
+  "bug_id": "thefuck_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.php_s.match",
+    "buggy_methods": [
+      "thefuck.rules.php_s.match"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.php_s.match",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_php_s.py": [
+      6,
+      7,
+      18,
+      19,
+      20
+    ],
+    "thefuck/rules/php_s.py": [
+      6,
+      11,
+      12,
+      13
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

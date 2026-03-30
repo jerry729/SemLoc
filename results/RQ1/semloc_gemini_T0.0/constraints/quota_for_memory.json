@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_memory",
+  "fault_hypothesis": "The function incorrectly converts floating-point allocations to integers using truncation on line 72. This causes the sum of the final allocations to be less than the total available memory when the planned allocations have fractional parts.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The sum of integer allocations must equal the total available memory.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the planned floating-point allocations must equal the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == total"
+      },
+      "intent": "The sum of allocations must be preserved after integer conversion.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of the returned allocations must equal the total.",
+      "confidence": 1.0
+    }
+  ]
+}

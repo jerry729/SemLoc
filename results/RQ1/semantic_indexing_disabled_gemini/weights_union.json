@@ -1,0 +1,47 @@
+{
+  "function": "weights_union",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 80,
+  "runs": [
+    {
+      "faulty_lines": [
+        74,
+        75
+      ],
+      "explanation": "The conditional logic on line 74 incorrectly identifies a case to remove a duplicate element, and line 75 performs the removal. This logic is flawed because if both input lists end with the same value, one instance of that value is erroneously removed from the result, contradicting the function's documentation to preserve duplicates.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"weights_union\",\n  \"faulty_lines\": [\n    74,\n    75\n  ],\n  \"explanation\": \"The conditional logic on line 74 incorrectly identifies a case to remove a duplicate element, and line 75 performs the removal. This logic is flawed because if both input lists end with the same value, one instance of that value is erroneously removed from the result, contradicting the function's documentation to preserve duplicates.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        74,
+        75
+      ],
+      "valid_preds": [
+        74,
+        75
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

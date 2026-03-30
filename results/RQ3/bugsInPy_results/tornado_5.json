@@ -1,0 +1,28 @@
+{
+  "bug_id": "tornado_5",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.ioloop.PeriodicCallback._update_next",
+    "buggy_methods": [
+      "tornado.ioloop.PeriodicCallback._update_next"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.ioloop.PeriodicCallback._update_next",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/ioloop.py": [
+      1221
+    ],
+    "tornado/test/ioloop_test.py": [
+      796,
+      797
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

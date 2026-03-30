@@ -1,0 +1,37 @@
+{
+  "bug_id": "black_16",
+  "function": "gen_python_files_in_dir",
+  "src_path": "black.py",
+  "fn_begin": 2934,
+  "fn_end": 2962,
+  "n_constraints": 4,
+  "n_tests_passing": 60,
+  "n_tests_failing": 8,
+  "line_scores": [
+    {
+      "line": 2947,
+      "score": 0.35856858280031806
+    },
+    {
+      "line": 2949,
+      "score": 0.35856858280031806
+    },
+    {
+      "line": 2950,
+      "score": 0.35856858280031806
+    },
+    {
+      "line": 2951,
+      "score": 0.35856858280031806
+    },
+    {
+      "line": 2956,
+      "score": 0.35856858280031806
+    }
+  ],
+  "fault_line": 2948,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/black_16/gen_python_files_in_dir_constraints.json",
+  "report_path": "/tmp/bip_semloc/black_16/violations.jsonl"
+}

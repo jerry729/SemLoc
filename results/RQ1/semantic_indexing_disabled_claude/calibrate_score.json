@@ -1,0 +1,44 @@
+{
+  "function": "calibrate_score",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "The clamping logic is inverted: the code clamps when `not clamp` is True (i.e., when clamp=False), but it should clamp when clamp=True. The condition on line 65 should be `if clamp:` instead of `if not clamp:`.",
+      "confidence": 0.98,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"calibrate_score\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The clamping logic is inverted: the code clamps when `not clamp` is True (i.e., when clamp=False), but it should clamp when clamp=True. The condition on line 65 should be `if clamp:` instead of `if not clamp:`.\",\n  \"confidence\": 0.98\n}",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

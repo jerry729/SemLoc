@@ -1,0 +1,38 @@
+{
+  "function": "quota_for_memory",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify the bug in `quota_for_memory`.\n\nThe function is supposed to allocate memory units proportionally. The key issue I can see is in the integer allocation step at line 72:\n\n```python\nallocations = [int(x) for x in planned]\n```\n\n`int()` in Python truncates toward zero (floor for positive numbers). This means the sum of allocations will typically be less than `total`. The standard approach for proportional integer allocation is to use `round()` or a more sophisticated algorithm (like largest remainder method).\n\nHowever, looking more carefully at the test failure context - the function uses `int()` which truncates. For example, if planned = [1.7, 1.7, 1.6], the allocations would be [1, 1, 1] = 3, but total might be 5. This is a clear bug.\n\nThe faulty line is 72 where `int(x)` should likely be `round(x)` or some rounding approach to properly distribute the total.\n\nAlso, there's another potential issue: when `minimum` is set and the sum of minimums exceeds `total`, the function doesn't raise an error but silently over-allocates.\n\nThe most obvious bug is line 72 using `int()` (truncation) instead of `round()` for integer allocation.\n\n```json\n{\n  \"function_name\": \"quota_for_memory\",\n  \"faulty_lines\": [72],\n  \"explanation\": \"Line 72 uses `int(x)` which truncates (floors) the planned allocations, causing the sum of allocations to be less than `total`. It should use `round(x)` or a proper rounding strategy to ensure correct integer allocation.\",\n  \"confidence\": 0.72\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

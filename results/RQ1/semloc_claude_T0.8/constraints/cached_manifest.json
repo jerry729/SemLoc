@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_manifest",
+  "fault_hypothesis": "The condition on line 65 uses `now > effective` (strictly greater than), but the specification requires that an entry is expired when `now >= effective` (i.e., when `now` equals the expiry it should also be considered expired). The boundary case where `now == effective` incorrectly returns the cached value instead of None.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1 or (now >= effective__1)"
+      },
+      "intent": "At the boundary where now equals effective, the condition should treat the entry as expired; the strict > allows equal timestamps to pass through incorrectly.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "After the else branch (entry not returned as None), now must be strictly less than effective; equality should have caused expiry.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 >= expires_at__1"
+      },
+      "intent": "The effective expiry should be at least as large as expires_at, confirming _effective_expiry adds non-negative tolerance; verifies effective__1 is correctly computed before the comparison.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or now < _effective_expiry(entries.get(key, (None, float('inf')))[1])"
+      },
+      "intent": "The function should only return a non-None value when now is strictly less than the effective expiry.",
+      "confidence": 0.85
+    }
+  ]
+}

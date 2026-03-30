@@ -1,0 +1,47 @@
+{
+  "function": "bandwidth_apportion",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        69,
+        59
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the fault in `bandwidth_apportion`.\n\nThe function is supposed to apportion bandwidth proportionally. Let me trace through the logic:\n\n1. `_compute_raw_shares` computes `max(minimum, (w / total_weight) * total)` for each weight - this looks correct.\n2. The final return `[int(x) for x in raw]` truncates (floors) the values rather than rounding them.\n\nThe key issue: when `_INTEGER_ALLOCATION` is True, the code should likely round values, but the final line uses `int(x)` which truncates. This means the total allocated bandwidth could be significantly less than `total`.\n\nHowever, there's also a potential issue with the `_validate_weights` function - it checks `w < _MIN_WEIGHT_VALUE` where `_MIN_WEIGHT_VALUE = 0`, meaning weights of exactly 0 are allowed. But in `bandwidth_apportion`, `sum(weights) == 0` is checked, so if all weights are 0, it raises an error. Individual zero weights are allowed, which could cause division by zero... but `total_weight` is checked to be non-zero via `sum(weights) == 0`.\n\nThe most obvious bug is line 69: `int(x)` truncates instead of rounding. When `_INTEGER_ALLOCATION` is True, the allocations should be rounded (e.g., using `round(x)`) to properly distribute the total bandwidth as integers. Using `int()` (floor) causes systematic under-allocation.\n\nAlso, the check on line 59 `sum(weights) == 0` doesn't call `_validate_weights` first, so negative weights could slip through and sum to zero without being caught before the sum check. But the real functional fault is the truncation.\n\n{\n  \"function_name\": \"bandwidth_apportion\",\n  \"faulty_lines\": [69, 59],\n  \"explanation\": \"Line 69 uses `int(x)` which truncates (floors) the raw shares instead of rounding them, causing systematic under-allocation when `_INTEGER_ALLOCATION` is True. Additionally, line 59 checks `sum(weights) == 0` before calling `_validate_weights`, so negative weights that sum to zero would incorrectly raise 'invalid weights' rather than the proper negative-weight error.\",\n  \"confidence\": 0.72\n}",
+      "predicted": [
+        69,
+        59
+      ],
+      "valid_preds": [
+        69,
+        59
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

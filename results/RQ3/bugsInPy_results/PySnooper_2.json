@@ -1,0 +1,89 @@
+{
+  "bug_id": "PySnooper_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "pysnooper.tracer.Tracer.__init__",
+    "buggy_methods": [
+      "pysnooper.tracer.Tracer.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pysnooper.tracer.Tracer.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pysnooper/__init__.py": [
+      27
+    ],
+    "pysnooper/tracer.py": [
+      22,
+      26,
+      87,
+      133,
+      139,
+      250,
+      270,
+      310,
+      383
+    ],
+    "pysnooper/utils.py": [
+      7,
+      52,
+      54,
+      71,
+      72,
+      73
+    ],
+    "pysnooper/variables.py": [
+      3
+    ],
+    "setup.py": [
+      23,
+      28
+    ],
+    "tests/test_pysnooper.py": [
+      11,
+      57,
+      58,
+      86,
+      87,
+      209,
+      210,
+      255,
+      256,
+      309,
+      310,
+      354,
+      355,
+      385,
+      386,
+      413,
+      414,
+      503,
+      504,
+      528,
+      618,
+      619,
+      632,
+      633,
+      650,
+      682,
+      724,
+      786,
+      787
+    ],
+    "tests/utils.py": [
+      13,
+      193,
+      257,
+      273,
+      274,
+      276
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

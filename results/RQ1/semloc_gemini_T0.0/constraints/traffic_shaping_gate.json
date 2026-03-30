@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "traffic_shaping_gate",
+  "fault_hypothesis": "The condition on line 71 uses a strict inequality `>` instead of `>=`. This allows a new request when the number of active requests is already at the limit, which should be denied.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The buggy case occurs exactly when the number of active requests equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the gate allows a request (the 'else' branch), the number of active requests must have been strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The number of active requests should not equal the limit, as this is the specific condition that exposes the bug.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == False) == (len(active) >= limit)"
+      },
+      "intent": "A request should be denied if and only if the number of active requests is greater than or equal to the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

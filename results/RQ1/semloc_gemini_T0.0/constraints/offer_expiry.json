@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "offer_expiry",
+  "fault_hypothesis": "The check for an expired offer on line 66 uses a strict greater-than comparison (>), which incorrectly considers an offer valid at the exact moment of its deadline. It should use a greater-than-or-equal-to comparison (>=) to correctly expire offers at their deadline.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective_deadline__1)"
+      },
+      "intent": "An offer should be considered expired at its exact deadline, not just after.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_deadline__1"
+      },
+      "intent": "If the offer value is returned, the current time must be strictly before the deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_deadline__1"
+      },
+      "intent": "The offer value should only be used if the offer has not yet expired.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_slot",
+  "fault_hypothesis": "The overlap detection on line 61 is incorrect. It uses `<=` and `>=` which allows slots to touch at their boundaries, but the requirements state that touching slots should be considered overlapping, requiring strict `<` and `>` comparisons.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "__cbfl_result == (not (b[1] < a[0] or b[0] > a[1]))"
+      },
+      "intent": "The return value of overlaps should correctly identify that touching intervals are overlaps.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == effective_candidate__3[0] or slot[0] == effective_candidate__3[1])"
+      },
+      "intent": "If the loop continues, it means no overlap was found, which implies the candidate and current slot must not be touching at their boundaries.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(s[1] < candidate[0] or s[0] > candidate[1] for s in existing)"
+      },
+      "intent": "If no conflict was found and we are merging, then every existing slot must be strictly non-overlapping with the candidate.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or len(__cbfl_result[1]) < 2 or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a slot was successfully reserved, the resulting sorted schedule must not contain any touching or overlapping slots.",
+      "confidence": 1.0
+    }
+  ]
+}

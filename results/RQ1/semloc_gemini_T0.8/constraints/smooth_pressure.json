@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_pressure",
+  "fault_hypothesis": "The mean calculation on line 68 incorrectly divides by the fixed `window` size instead of the actual number of available samples (`len(recent)`). This is wrong when there are fewer samples than the requested window size.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the total sum divided by the number of samples actually used.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(min(recent__1) <= mean__1) and (mean__1 <= max(recent__1))"
+      },
+      "intent": "The calculated mean must fall within the inclusive range of the sample values.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "window"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) >= warmup_min) or (len(recent__1) == window)"
+      },
+      "intent": "If the result is to be used (i.e., warmup is met), the number of samples should match the window size for the division by `window` to be correct.",
+      "confidence": 0.9
+    }
+  ]
+}

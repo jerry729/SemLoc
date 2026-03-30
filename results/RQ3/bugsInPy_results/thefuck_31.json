@@ -1,0 +1,50 @@
+{
+  "bug_id": "thefuck_31",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.git_diff_staged.get_new_command",
+    "buggy_methods": [
+      "thefuck.rules.git_diff_staged.get_new_command"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.git_diff_staged.get_new_command",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_git_diff_staged.py": [
+      6,
+      21
+    ],
+    "thefuck/rules/git_diff_staged.py": [
+      13
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [],
+    "best_rank": null,
+    "fn_lines": 10,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 20,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "thefuck_31",
+    "function": "get_new_command",
+    "src_path": "thefuck/rules/tmux.py",
+    "fn_begin": 11,
+    "fn_end": 20,
+    "n_constraints": 4,
+    "n_tests_passing": 0,
+    "n_tests_failing": 3,
+    "line_scores": [],
+    "fault_line": 20,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/thefuck_31/get_new_command_constraints.json",
+    "report_path": "/tmp/bip_semloc/thefuck_31/violations.jsonl"
+  }
+}

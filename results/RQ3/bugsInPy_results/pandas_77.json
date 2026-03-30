@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_77",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.ops.array_ops.na_logical_op",
+    "buggy_methods": [
+      "pandas.core.ops.array_ops.na_logical_op"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.ops.array_ops.na_logical_op",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/ops/array_ops.py": [
+      280,
+      301
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

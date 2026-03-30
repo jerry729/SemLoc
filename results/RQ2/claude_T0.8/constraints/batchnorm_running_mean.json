@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batchnorm_running_mean",
+  "fault_hypothesis": "On line 70, the momentum weights are swapped: `(1-momentum)` is applied to `current_mean` and `momentum` to `batch_mean`, but the correct EMA formula should weight `current_mean` by `momentum` and `batch_mean` by `(1-momentum)`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-12"
+      },
+      "intent": "The updated value must equal momentum*current_mean + (1-momentum)*batch_mean, not the swapped version.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "momentum == 0.0 or momentum == 1.0 or abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9"
+      },
+      "intent": "After assignment, updated must reflect the correct EMA with momentum weighting current_mean.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "not (momentum == 1.0) or abs(updated__1 - current_mean) < 1e-9"
+      },
+      "intent": "When momentum=1, updated must equal current_mean (history fully preserved), which fails with the swapped formula.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (momentum == 0.0) or abs(__cbfl_result - batch_mean) < 1e-9"
+      },
+      "intent": "When momentum=0, the return value must equal batch_mean.",
+      "confidence": 0.9
+    }
+  ]
+}

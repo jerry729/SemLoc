@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "latencies_merge",
+  "fault_hypothesis": "The condition on line 86 is incorrect, causing a valid duplicate element to be removed by `merged.pop()` on line 87 when the largest value is shared by both input streams.",
+  "fault_line": 86,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 86
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition to remove a trailing element should not be met if it's a valid duplicate.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The number of merged elements must equal the total number of input elements before capacity capping.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not (left and right and left[-1] == right[-1]) or merged__1.count(left[-1]) == left.count(left[-1]) + right.count(right[-1])"
+      },
+      "intent": "The count of a shared trailing element must be preserved in the merged list.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) >= len(left) + len(right) - (1 if (left and right and left[-1] == right[-1]) else 0)"
+      },
+      "intent": "The final returned list should contain all elements from both inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "search_result_pager",
+  "fault_hypothesis": "The slice on line 72 is incorrect. The upper bound `end + 1` is off-by-one, causing the slice to be one element too long when there are enough results.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size__1"
+      },
+      "intent": "The returned page must not contain more items than the page size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 - start__1 == page_size__1"
+      },
+      "intent": "The calculated slice range (end - start) should exactly equal the page size.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "start__1"
+        }
+      },
+      "spec": {
+        "expr": "start__1 >= 0"
+      },
+      "intent": "The start index for slicing must always be non-negative.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size"
+      },
+      "intent": "A returned page can never be larger than the requested page size.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "timestamps_stream",
+  "fault_hypothesis": "Lines 74-75 incorrectly remove the last element when both inputs share the same final value, which is not a valid deduplication step for a merge \u2014 the merged result should always contain all elements from both inputs.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the pop should never be true for a correct merge; it incorrectly removes a valid duplicate element.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == 0"
+      },
+      "intent": "After initialization, merged must be empty before any elements are added.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The then-branch of the spurious condition at line 74 should never execute in a correct merge implementation.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The merged result must contain exactly as many elements as both inputs combined.",
+      "confidence": 0.99
+    }
+  ]
+}

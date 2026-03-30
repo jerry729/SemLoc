@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_145",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.ops.__init__.dispatch_to_series",
+    "buggy_methods": [
+      "pandas.core.ops.__init__.dispatch_to_series"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.ops.__init__.dispatch_to_series",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/ops/__init__.py": [
+      501,
+      502
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_pool_cut",
+  "fault_hypothesis": "The fee is subtracted per-participant share (s - fee) instead of being deducted from the total pool before splitting. The correct logic should compute shares from (amount - fee) or equivalently deduct fee/n per participant, not subtract the full fee from each share.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(s - fee) for s in shares__1]) - max(amount - fee, 0)) < 1e-6"
+      },
+      "intent": "The sum of payouts should equal pool minus the single fee deduction, not pool minus fee*n_participants.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before fee deduction, the raw shares should sum to the full amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) > 0 and all(s >= 0 for s in shares__1)"
+      },
+      "intent": "Each appended share should be non-negative since ratios and amount are non-negative.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(amount - fee, 0)) < 1e-6"
+      },
+      "intent": "Returned payouts must sum to amount minus fee (the single pool-wide deduction).",
+      "confidence": 0.92
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_payout",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each individual share on line 73. It should be deducted from the total payment pool before the shares are calculated, and the final return value reflects this cumulative error.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the net distributable amount (pool minus fee).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(ratios) == 1 or raw == (r / total_ratio__1) * max(0, amount - fee)"
+      },
+      "intent": "Each raw share must be calculated from the net amount, except in the single-payout case where the bug is masked.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The total ratio must be positive to proceed with share calculation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "ENTRY",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "amount >= 0"
+      },
+      "intent": "The total payment pool must be non-negative.",
+      "confidence": 0.8
+    }
+  ]
+}

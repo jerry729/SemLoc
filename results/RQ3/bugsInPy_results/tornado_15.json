@@ -1,0 +1,26 @@
+{
+  "bug_id": "tornado_15",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.web.StaticFileHandler.validate_absolute_path",
+    "buggy_methods": [
+      "tornado.web.StaticFileHandler.validate_absolute_path"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.web.StaticFileHandler.validate_absolute_path",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/web.py": [
+      2379,
+      2380,
+      2381
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

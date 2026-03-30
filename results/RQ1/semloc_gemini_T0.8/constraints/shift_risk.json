@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_risk",
+  "fault_hypothesis": "The function calculates the adjusted allocation but omits the final normalization step to ensure the weights sum to 1.0. The return statement on line 65 incorrectly returns the unnormalized list.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The list being returned must sum to 1.0, but it is returned without normalization.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After clamping, the sum of weights deviates from 1.0, indicating normalization is required before returning.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "After interpolation, the sum of weights deviates from 1.0, which must be corrected by normalization later.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The function's output must be a valid allocation summing to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

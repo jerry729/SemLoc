@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tip_share",
+  "fault_hypothesis": "On line 62, the fee is subtracted from each individual share rather than from the total amount before splitting. The fee should be deducted once from `amount` before computing proportional shares, not subtracted per-recipient from each share.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee)) < 1e-6 or sum(result__1) == 0.0"
+      },
+      "intent": "After computing result, the sum of payouts should equal amount minus fee (when fee < amount), not amount minus fee*len(ratios).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "Before using base shares, their sum should equal the full amount (fee not yet deducted from base); the fee deduction logic in the next line is where the bug lies.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "fee >= amount or abs(sum(result__1) - (amount - fee)) < 1e-6"
+      },
+      "intent": "After result is defined, its sum should equal amount minus fee (single deduction), not amount minus fee multiplied by number of recipients.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "fee >= amount or abs(sum(__cbfl_result) - (amount - fee)) < 1e-6"
+      },
+      "intent": "The returned payouts should sum to amount minus fee, not amount minus fee times the number of recipients.",
+      "confidence": 0.9
+    }
+  ]
+}

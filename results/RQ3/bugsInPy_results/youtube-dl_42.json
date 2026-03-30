@@ -1,0 +1,39 @@
+{
+  "bug_id": "youtube-dl_42",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.fix_xml_all_ampersand",
+    "buggy_methods": [
+      "youtube_dl.utils.fix_xml_all_ampersand"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.fix_xml_all_ampersand",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/extractor/clipsyndicate.py": [
+      6,
+      36
+    ],
+    "youtube_dl/extractor/metacritic.py": [
+      7,
+      30
+    ],
+    "youtube_dl/extractor/mtv.py": [
+      86,
+      87,
+      88,
+      91
+    ],
+    "youtube_dl/utils.py": [
+      1095,
+      1097
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

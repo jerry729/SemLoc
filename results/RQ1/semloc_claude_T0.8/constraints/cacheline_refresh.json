@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cacheline_refresh",
+  "fault_hypothesis": "Line 70 computes the new expiration timestamp but never writes it back into the store. The store entry is never updated, so sliding-window behaviour is broken.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "store.get(key) is not None and store[key][1] == now + ttl__1"
+      },
+      "intent": "After computing the new expiration, the store must already reflect the updated expires_at value.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "store[key][1] == expires_at__2"
+      },
+      "intent": "The newly computed expires_at must be persisted back into the store immediately after it is computed.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "store[key][1] == now + ttl__1"
+      },
+      "intent": "Before returning the value, the store entry's expiration must have been updated to now+ttl.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or (key in store and abs(store[key][1] - (now + ttl)) < 1e-9)"
+      },
+      "intent": "When a valid value is returned, the store must have the updated expiration timestamp.",
+      "confidence": 0.85
+    }
+  ]
+}

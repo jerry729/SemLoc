@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_lane",
+  "fault_hypothesis": "The overlap check on line 62 uses non-strict inequalities (`<=`, `>=`) which incorrectly classifies touching intervals as non-overlapping. It should use strict inequalities (`<`, `>`) to correctly detect conflicts when intervals touch at a boundary.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(b[1] <= a[0] or b[0] >= a[1]) == (b[1] < a[0] or b[0] > a[1])"
+      },
+      "intent": "The non-overlap condition should treat touching intervals as overlaps, which means using strict inequalities.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "slot[1] < candidate[0] or slot[0] > candidate[1]"
+      },
+      "intent": "Each existing slot must be strictly separate from the candidate for the loop to continue.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "Merging should only occur if the candidate is strictly non-overlapping with all existing slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "An accepted candidate must be strictly non-overlapping with all original slots.",
+      "confidence": 0.8
+    }
+  ]
+}

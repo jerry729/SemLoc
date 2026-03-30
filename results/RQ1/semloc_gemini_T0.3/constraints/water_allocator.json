@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "water_allocator",
+  "fault_hypothesis": "The function truncates floating-point shares to integers on line 29, causing the sum of allocations to be less than the total when fractional parts are discarded.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of the final integer shares must equal the original total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(int(v) for v in shares__1) == total"
+      },
+      "intent": "The sum must be preserved even after the planned integer truncation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or abs(sum(v % 1 for v in shares__1)) < 1e-9"
+      },
+      "intent": "Truncation to integer is only valid if the total fractional part is zero.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of returned allocations must equal the total if integer conversion was done.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "bug_id": "luigi_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.execution_summary._partition_tasks",
+    "buggy_methods": [
+      "luigi.execution_summary._partition_tasks"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.execution_summary._partition_tasks",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/execution_summary.py": [
+      46,
+      49,
+      51,
+      90,
+      380,
+      381,
+      382,
+      383,
+      384
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

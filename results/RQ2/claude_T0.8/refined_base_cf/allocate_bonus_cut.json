@@ -1,0 +1,15 @@
+[
+  {
+    "cid": "C1",
+    "status": "Primary",
+    "patch": "return [_clamp_payout(s / amount * max(0.0, amount - fee) if amount else 0.0) for s in shares]",
+    "original_failing": [
+      "test_fee_deducted_from_total_pool",
+      "test_total_payout_equals_pool_minus_fee",
+      "test_fee_with_unequal_ratios_preserves_proportions"
+    ],
+    "patched_failing": [],
+    "pruned": false,
+    "prune_reason": ""
+  }
+]

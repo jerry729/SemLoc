@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_preference",
+  "fault_hypothesis": "The expiry check on line 85 uses a strict greater-than comparison (>), causing items to be considered valid when the current time is exactly equal to their TTL. It should use a greater-than-or-equal-to comparison (>=) to correctly expire items at their TTL boundary.",
+  "fault_line": 85,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 85
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1 + _CLOCK_SKEW_TOLERANCE"
+      },
+      "intent": "If the item is considered valid (i.e., the expiry check fails), the current time must be strictly less than its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 85,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1 + _CLOCK_SKEW_TOLERANCE"
+      },
+      "intent": "An item is considered valid only if the current time is strictly before its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1 + _CLOCK_SKEW_TOLERANCE"
+      },
+      "intent": "A payload should only be returned if its TTL has not yet been reached.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is not None) ==> (key.strip() in cache and now < cache[key.strip()][1] + _CLOCK_SKEW_TOLERANCE)"
+      },
+      "intent": "If a non-None payload is returned, it must correspond to a valid, unexpired entry in the cache.",
+      "confidence": 0.8
+    }
+  ]
+}

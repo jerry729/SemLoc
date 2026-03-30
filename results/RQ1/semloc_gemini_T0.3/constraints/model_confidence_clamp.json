@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "model_confidence_clamp",
+  "fault_hypothesis": "The clamping logic is incorrectly applied when `clamp` is `False` instead of `True`. The condition `if not clamp:` on line 76 should be `if clamp:`.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "y__3 == (min(max(y__1, min(y0, y1)), max(y0, y1)) if clamp else y__1)"
+      },
+      "intent": "The value after the conditional block must match the correctly clamped (or unclamped) interpolated value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping code block should only be executed when clamping is enabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If clamping is requested but the clamping logic is skipped, the value must already be within bounds.",
+      "confidence": 0.9
+    }
+  ]
+}

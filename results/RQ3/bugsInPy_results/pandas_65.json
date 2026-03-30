@@ -1,0 +1,31 @@
+{
+  "bug_id": "pandas_65",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.io.common.get_handle",
+    "buggy_methods": [
+      "pandas.io.common.get_handle"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.io.common.get_handle",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/io/common.py": [
+      6,
+      362,
+      364,
+      440
+    ],
+    "pandas/io/parsers.py": [
+      8,
+      1875
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

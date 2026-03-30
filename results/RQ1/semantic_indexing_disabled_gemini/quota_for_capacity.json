@@ -1,0 +1,47 @@
+{
+  "function": "quota_for_capacity",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    77
+  ],
+  "total_source_lines": 79,
+  "runs": [
+    {
+      "faulty_lines": [
+        43,
+        42
+      ],
+      "explanation": "The function calculates each share's proportion of the entire total and then enforces the minimum value independently, which can cause the sum of shares to exceed the `total` capacity. Capacity allocated to meet one slot's minimum is not subtracted from the pool available to other slots.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"quota_for_capacity\",\n  \"faulty_lines\": [\n    43,\n    42\n  ],\n  \"explanation\": \"The function calculates each share's proportion of the entire total and then enforces the minimum value independently, which can cause the sum of shares to exceed the `total` capacity. Capacity allocated to meet one slot's minimum is not subtracted from the pool available to other slots.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        43,
+        42
+      ],
+      "valid_preds": [
+        43,
+        42
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 43,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

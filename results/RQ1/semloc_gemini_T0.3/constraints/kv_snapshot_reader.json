@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "kv_snapshot_reader",
+  "fault_hypothesis": "The early termination condition on line 70 is incorrect. It uses `k < key` which causes the loop to break prematurely, when it should use `k > key` to stop after passing the potential location of the key in the sorted snapshot.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (k < key) or not any(sk == key for sk, sv in snapshot)"
+      },
+      "intent": "If the condition for an early break is met, it must be because the target key does not exist in the snapshot.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not any(sk == key for sk, sv in snapshot)"
+      },
+      "intent": "An early termination should only occur if the target key is not present in the entire snapshot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (k < key) or not any(sk == key for sk, sv in snapshot)"
+      },
+      "intent": "When continuing the search (k != key), an early exit should only be considered if the key is not in the snapshot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result == default) != any(k == key for k, v in snapshot)"
+      },
+      "intent": "The function should return the default value if and only if the key is not present in the snapshot.",
+      "confidence": 0.8
+    }
+  ]
+}

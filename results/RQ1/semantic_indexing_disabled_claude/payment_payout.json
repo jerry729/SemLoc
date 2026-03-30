@@ -1,0 +1,47 @@
+{
+  "function": "payment_payout",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        73,
+        70
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the fee deduction logic is incorrect. The fee should be deducted from the total pool before distribution (i.e., `net_amount = amount - fee`), but instead the code deducts the fee from each individual share after distribution (line 73: `return [s - fee for s in shares]`). This means the fee is multiplied by the number of participants, and each participant bears the full fee rather than a proportional share.\n\nAdditionally, line 70 computes the raw share using the full `amount` instead of `amount - fee`, which is the second part of the bug.\n\n{\n  \"function_name\": \"payment_payout\",\n  \"faulty_lines\": [73, 70],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution (net_amount = amount - fee), but line 70 uses the full `amount` and line 73 subtracts the entire fee from each participant's share, effectively multiplying the fee by the number of participants.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        73,
+        70
+      ],
+      "valid_preds": [
+        73,
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

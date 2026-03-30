@@ -1,0 +1,47 @@
+{
+  "function": "task_throttle",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        62,
+        64
+      ],
+      "explanation": "Line 62 uses `> limit` instead of `>= limit`, allowing tasks through when the count exactly equals the limit. Line 64 should return `limit - len(recent)` remaining slots, but due to the wrong comparison, this can return 0 when it should deny, and the remaining calculation is off by one.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the code, the issue is on line 62. The condition checks `if len(recent) > limit` but it should check `if len(recent) >= limit`. \n\nWhen `len(recent) == limit`, the window is already full (at capacity), so a new task should be denied. The current code allows one extra task beyond the limit before denying. Additionally, line 64 returns `limit - len(recent)` which could be negative when the bug allows through the `>` check but the remaining count would be wrong.\n\n```json\n{\n  \"function_name\": \"task_throttle\",\n  \"faulty_lines\": [62, 64],\n  \"explanation\": \"Line 62 uses `> limit` instead of `>= limit`, allowing tasks through when the count exactly equals the limit. Line 64 should return `limit - len(recent)` remaining slots, but due to the wrong comparison, this can return 0 when it should deny, and the remaining calculation is off by one.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        62,
+        64
+      ],
+      "valid_preds": [
+        62,
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

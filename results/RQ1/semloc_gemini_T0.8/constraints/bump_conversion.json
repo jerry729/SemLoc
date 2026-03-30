@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_conversion",
+  "fault_hypothesis": "The counter `updated` is incorrectly decremented to `cap - 1` on line 58 when it exceeds the cap. It should be set to `cap` to correctly clamp the value.",
+  "fault_line": 58,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 58
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "When clamping, the value should be set to the cap, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 57,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 == cap"
+      },
+      "intent": "After applying the cap, the resulting value should equal the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 >= current__1"
+      },
+      "intent": "The counter value should never decrease after being incremented.",
+      "confidence": 0.9
+    }
+  ]
+}

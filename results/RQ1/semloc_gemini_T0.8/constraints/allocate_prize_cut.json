@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_prize_cut",
+  "fault_hypothesis": "The fee is incorrectly deducted from each participant's individual share on line 74, rather than from the total prize pool before distribution. This multiplies the total fee by the number of participants.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or amount <= fee"
+      },
+      "intent": "The buggy fee logic only produces a correct result for the test suite if the fee is zero or if the fee exceeds the total amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "ANY_RETURN",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all final payouts should equal the total amount less a single fee, floored at zero.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0 and abs(sum(result__1) - amount) < 1e-9) or (amount <= fee and abs(sum(result__1) - (amount - len(ratios) * fee)) < 1e-9)"
+      },
+      "intent": "The sum of shares before flooring must match the value produced by the buggy logic under conditions for which tests pass.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-9"
+      },
+      "intent": "A symptom of the bug is that the sum of shares before fee subtraction always equals the gross amount, as the fee has not yet been deducted.",
+      "confidence": 0.7
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_write",
+  "fault_hypothesis": "The condition on line 70 should be `len(recent) >= limit` instead of `len(recent) > limit`. This causes a new write to be incorrectly permitted when the number of recent events is exactly equal to the limit.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not equal the rate limit at the decision point.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the write is allowed (by taking the else branch), the count of prior events must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "limit - len(recent__1) > 0"
+      },
+      "intent": "If a write is allowed, the number of remaining slots calculated must be greater than zero.",
+      "confidence": 0.9
+    }
+  ]
+}

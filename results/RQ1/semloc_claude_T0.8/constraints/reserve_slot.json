@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_slot",
+  "fault_hypothesis": "The `overlaps` function on line 61 uses strict inequalities (`b[1] <= a[0]` and `b[0] >= a[1]`), which means touching boundaries (where end of one equals start of another) are not considered overlapping, but the tests expect touching boundaries to conflict.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] <= a[0] or b[0] >= a[1]) == (not (b[1] < a[0] or b[0] > a[1]))"
+      },
+      "intent": "Check that the overlaps function correctly treats touching boundaries as overlapping (strict vs non-strict inequality bug).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (effective_candidate[0] >= slot[1] or effective_candidate[1] <= slot[0])"
+      },
+      "intent": "When no overlap was detected, verify that the candidate truly does not touch or overlap the slot (using the correct boundary semantics).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == effective_candidate[0] or slot[0] == effective_candidate[1]) or True"
+      },
+      "intent": "At each loop iteration, if a slot boundary touches the candidate boundary, the overlaps function should have returned True (caught the conflict); this checks that touching slots are flagged.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective_candidate__3"
+        }
+      },
+      "spec": {
+        "expr": "effective_candidate__3[0] < effective_candidate__3[1]"
+      },
+      "intent": "Before using effective_candidate in the overlap check, verify it has valid start < end bounds.",
+      "confidence": 0.7
+    }
+  ]
+}

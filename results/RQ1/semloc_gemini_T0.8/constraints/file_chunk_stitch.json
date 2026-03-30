@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "file_chunk_stitch",
+  "fault_hypothesis": "The function incorrectly truncates the last byte from the concatenated result on line 80. The slice `[:-1]` should be removed, and the statement should simply be `return data`.",
+  "fault_line": 80,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "len(data__1[:-1]) == sum(len(p[1]) for p in chunk_list__2)"
+      },
+      "intent": "The length of the data returned from this line must equal the sum of the lengths of all chunk parts.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "chunk_list__2"
+        }
+      },
+      "spec": {
+        "expr": "all(chunk_list__2[i][0] <= chunk_list__2[i+1][0] for i in range(len(chunk_list__2) - 1))"
+      },
+      "intent": "The chunk list must be sorted by index before the concatenation loop begins.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "data.endswith(part)"
+      },
+      "intent": "The data buffer should end with the most recently appended chunk part.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not separator and chunks) implies (len(__cbfl_result) == sum(len(c[1]) for c in chunks))"
+      },
+      "intent": "If no separator is used, the final payload length must equal the sum of all input chunk data lengths.",
+      "confidence": 0.9
+    }
+  ]
+}

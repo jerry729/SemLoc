@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_cache",
+  "fault_hypothesis": "The expiration check on line 66 is incorrect because it does not handle the boundary case where the current time `now` is exactly equal to the expiry time `ttl`. This causes expired items to be returned as if they were still valid.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "now != ttl__1"
+      },
+      "intent": "The function fails only at the exact boundary where the current time equals the TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "If an item is considered not expired, the current time must be strictly less than its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "now > ttl__1"
+      },
+      "intent": "If an item is considered expired, the current time must be strictly greater than its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in cache and now == cache[key][1]) or __cbfl_result is None"
+      },
+      "intent": "If the lookup time exactly matches the TTL, the function must return None.",
+      "confidence": 0.3
+    }
+  ]
+}

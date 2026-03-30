@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "billing_gate",
+  "fault_hypothesis": "The condition at line 72 should use '>=' instead of '>'. When the number of active actions is exactly the limit, the gate should deny a new action, but it currently allows it.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) > limit) == (len(active__1) >= limit)"
+      },
+      "intent": "The buggy condition should be equivalent to the correct one.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts >= cutoff__1 for ts in active__1)"
+      },
+      "intent": "All timestamps in the 'active' list must be more recent than the cutoff time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 < now"
+      },
+      "intent": "The cutoff time must be before the current time, as the window is positive.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] and len(active__1) < limit) or (not __cbfl_result[0] and len(active__1) >= limit)"
+      },
+      "intent": "An action is allowed if and only if the number of active timestamps is strictly less than the limit.",
+      "confidence": 1.0
+    }
+  ]
+}

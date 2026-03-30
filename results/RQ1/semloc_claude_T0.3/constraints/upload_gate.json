@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "upload_gate",
+  "fault_hypothesis": "The condition on line 74 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(active) == limit` the gate incorrectly allows the upload instead of blocking it.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit or len(active__1) >= limit"
+      },
+      "intent": "When len(active) equals limit the condition `len(active) > limit` is False, so the gate stays open \u2014 the condition should be `>=` to block at exactly the limit.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "In the else branch (gate open), the number of active uploads must be strictly less than the limit; if it equals the limit the gate should have been closed.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) <= limit or len(active__1) > limit"
+      },
+      "intent": "Sanity check that active count is compared correctly against limit before the branch decision is made.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) >= 0 and len(active__1) <= len(timestamps)"
+      },
+      "intent": "Active timestamps must be a non-negative subset of all timestamps, confirming filtering is correct before the limit comparison.",
+      "confidence": 0.75
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_cache",
+  "fault_hypothesis": "The expiration check at line 66 is incorrect. It should treat an item as expired when the current time is greater than or equal to the TTL, but it effectively only checks for strictly greater, causing items to be served when `now == ttl`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "now != ttl__1"
+      },
+      "intent": "The expiration check should correctly handle the boundary case where the current time is exactly the TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "If an item is not considered expired, the current time must be strictly less than its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "item__1"
+        }
+      },
+      "spec": {
+        "expr": "item__1 is None or len(item__1) == 2"
+      },
+      "intent": "A retrieved cache item must either be None or a tuple of (payload, ttl).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (__cbfl_result == cache.get(key)[0])"
+      },
+      "intent": "If a non-None value is returned, it must be the payload corresponding to the requested key.",
+      "confidence": 0.8
+    }
+  ]
+}

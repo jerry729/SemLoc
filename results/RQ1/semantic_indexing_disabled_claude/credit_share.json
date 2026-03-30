@@ -1,0 +1,47 @@
+{
+  "function": "credit_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        68
+      ],
+      "explanation": "The fee should be deducted from the total pool before distribution, but instead line 68 computes shares from the full amount and line 70 subtracts the fee from each individual share, effectively multiplying the fee deduction by the number of participants.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the `credit_share` function, the fee is supposed to be deducted from the total pool before distribution, but instead it's being deducted from each individual share after distribution. \n\nThe docstring says \"The optional platform fee is deducted from the pool before distribution,\" but line 68 computes shares from the full `amount` without deducting the fee, and then line 70 subtracts the fee from each individual share. This means the fee is effectively multiplied by the number of participants.\n\nThe correct approach should be to deduct the fee from `amount` first (e.g., `net_amount = amount - fee`) and then distribute `net_amount` proportionally, without subtracting fee from each share.\n\nThe faulty lines are 68 and 70 \u2014 line 68 uses `amount` instead of `amount - fee`, and line 70 incorrectly subtracts `fee` from each share.\n\n```json\n{\n  \"function_name\": \"credit_share\",\n  \"faulty_lines\": [70, 68],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution, but instead line 68 computes shares from the full amount and line 70 subtracts the fee from each individual share, effectively multiplying the fee deduction by the number of participants.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        70,
+        68
+      ],
+      "valid_preds": [
+        70,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

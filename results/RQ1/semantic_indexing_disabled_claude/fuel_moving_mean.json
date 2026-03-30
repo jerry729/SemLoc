@@ -1,0 +1,44 @@
+{
+  "function": "fuel_moving_mean",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "Line 65 divides `total` by `window` (the configured window size) instead of `len(recent)` (the actual number of samples). When fewer values exist than the window size, this produces an incorrect (too small) mean.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the function, the issue is on line 65: `mean = total / window` divides by `window` (the configured window size) rather than `len(recent)` (the actual number of samples in the window).\n\nWhen `len(recent) < window` (e.g., there are fewer values than the window size), the mean is incorrectly calculated by dividing by `window` instead of the actual count of samples. This would produce a smaller-than-expected mean when the values list is shorter than the window.\n\n```json\n{\n  \"function_name\": \"fuel_moving_mean\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"Line 65 divides `total` by `window` (the configured window size) instead of `len(recent)` (the actual number of samples). When fewer values exist than the window size, this produces an incorrect (too small) mean.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

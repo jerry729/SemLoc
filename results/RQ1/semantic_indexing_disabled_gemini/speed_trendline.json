@@ -1,0 +1,44 @@
+{
+  "function": "speed_trendline",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 84,
+  "runs": [
+    {
+      "faulty_lines": [
+        71
+      ],
+      "explanation": "The condition to apply clamping is inverted; the code clamps the output when `clamp=False`, whereas it should do so when `clamp=True` as specified by the docstring and argument name.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"speed_trendline\",\n  \"faulty_lines\": [\n    71\n  ],\n  \"explanation\": \"The condition to apply clamping is inverted; the code clamps the output when `clamp=False`, whereas it should do so when `clamp=True` as specified by the docstring and argument name.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        71
+      ],
+      "valid_preds": [
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 71,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

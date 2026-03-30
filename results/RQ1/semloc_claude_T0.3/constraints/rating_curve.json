@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rating_curve",
+  "fault_hypothesis": "The condition on line 74 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or clamp == False"
+      },
+      "intent": "When clamp is True the branch body (clamping logic) should execute, but `if not clamp` means it executes when clamp is False instead \u2014 the condition is inverted.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "The then-branch (clamping) should only execute when clamp is False due to the inverted condition, but it should execute when clamp is True.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "y__2 >= min(y0, y1) and y__2 <= max(y0, y1)"
+      },
+      "intent": "After clamping, y__2 must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamp is True the returned value must be within the segment's rating range.",
+      "confidence": 0.9
+    }
+  ]
+}

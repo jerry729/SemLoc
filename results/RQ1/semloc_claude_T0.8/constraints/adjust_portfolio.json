@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_portfolio",
+  "fault_hypothesis": "The function never normalizes the blended weights so that they sum to 1.0; line 68 returns `adjusted` without dividing each element by the total sum, causing failure when inputs don't already sum to 1.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 after normalization; without a normalization step this fails when inputs don't sum to 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0"
+      },
+      "intent": "Right after initialization, adjusted__1 is empty (correct), confirming the list starts clean before the loop.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(w >= 0.0 for w in adjusted__1)"
+      },
+      "intent": "Every blended weight appended in the loop should be non-negative, but the loop never normalizes, so the sum may not equal 1.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation weights must always sum to 1.0 as stated in the docstring.",
+      "confidence": 0.9
+    }
+  ]
+}

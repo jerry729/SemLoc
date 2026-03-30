@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_48",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.generic.DataFrameGroupBy._cython_agg_blocks",
+    "buggy_methods": [
+      "pandas.core.groupby.generic.DataFrameGroupBy._cython_agg_blocks"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.generic.DataFrameGroupBy._cython_agg_blocks",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/generic.py": [
+      1086
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

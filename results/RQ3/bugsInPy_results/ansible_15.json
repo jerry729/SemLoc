@@ -1,0 +1,27 @@
+{
+  "bug_id": "ansible_15",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.modules.network.eos.eos_eapi.map_obj_to_commands",
+    "buggy_methods": [
+      "lib.ansible.modules.network.eos.eos_eapi.map_obj_to_commands"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.modules.network.eos.eos_eapi.map_obj_to_commands",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/modules/network/eos/eos_eapi.py": [
+      267
+    ],
+    "test/units/modules/network/eos/test_eos_eapi.py": [
+      137
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

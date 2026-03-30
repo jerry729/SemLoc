@@ -1,0 +1,44 @@
+{
+  "function": "offer_expiry",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    66
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "The expiry check uses a strict greater-than comparison (`>`), which means an offer is considered valid at the exact moment of its deadline. An offer should be considered expired at or after its deadline, so the comparison should be greater-than-or-equal-to (`>=`).",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"offer_expiry\",\n  \"faulty_lines\": [\n    66\n  ],\n  \"explanation\": \"The expiry check uses a strict greater-than comparison (`>`), which means an offer is considered valid at the exact moment of its deadline. An offer should be considered expired at or after its deadline, so the comparison should be greater-than-or-equal-to (`>=`).\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "notification_gate",
+  "fault_hypothesis": "The rate limit check on line 63 uses a strict inequality `len(recent) > limit`, which incorrectly allows a new notification when the number of recent events is exactly equal to the limit. The check should be `len(recent) >= limit`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) == (len(recent__1) >= limit)"
+      },
+      "intent": "The condition to block a notification should be inclusive, blocking when the count equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a notification is allowed, the number of recent events must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "To compute remaining slots and allow a notification, the current count must be under the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or __cbfl_result[1] > 0"
+      },
+      "intent": "If a notification is allowed, there must be at least one remaining slot available.",
+      "confidence": 1.0
+    }
+  ]
+}

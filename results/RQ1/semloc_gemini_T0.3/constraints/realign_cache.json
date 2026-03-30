@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_cache",
+  "fault_hypothesis": "The function fails to normalize the `adjusted` weights to sum to 1.0 before returning them on line 61. This violates the documented postcondition that the result is a valid probability distribution.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must be a probability distribution summing to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The final adjusted weights, after clamping, should be normalized to sum to 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The value about to be returned should be a normalized probability distribution.",
+      "confidence": 0.9
+    }
+  ]
+}

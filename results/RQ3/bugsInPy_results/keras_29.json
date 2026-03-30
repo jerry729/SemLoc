@@ -1,0 +1,42 @@
+{
+  "bug_id": "keras_29",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.training.Model.compile",
+    "buggy_methods": [
+      "keras.engine.training.Model.compile"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.training.Model.compile",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/training.py": [
+      1177,
+      1178,
+      1179,
+      1366,
+      1367,
+      1368,
+      2188,
+      2189,
+      2190,
+      2334,
+      2335,
+      2336
+    ],
+    "tests/keras/metrics_test.py": [
+      110,
+      158,
+      160,
+      161,
+      162
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

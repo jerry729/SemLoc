@@ -1,0 +1,30 @@
+{
+  "bug_id": "pandas_75",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.period.PeriodIndex.get_value",
+    "buggy_methods": [
+      "pandas.core.indexes.period.PeriodIndex.get_value"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.period.PeriodIndex.get_value",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/period.py": [
+      489,
+      571,
+      572,
+      577
+    ],
+    "pandas/tests/indexes/period/test_indexing.py": [
+      526
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

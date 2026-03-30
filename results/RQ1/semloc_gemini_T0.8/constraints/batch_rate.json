@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batch_rate",
+  "fault_hypothesis": "The comparison on line 70, `len(recent) > limit`, is an off-by-one error. It should be `len(recent) >= limit` to correctly deny requests when the number of recent events exactly matches the limit.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The decision logic should not treat the `len(recent) == limit` case as being under the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a request is allowed, the count of recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] and __cbfl_result[1] == 0)"
+      },
+      "intent": "It is invalid to allow a request but indicate zero remaining slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not be exactly at the limit before the check is performed.",
+      "confidence": 0.8
+    }
+  ]
+}

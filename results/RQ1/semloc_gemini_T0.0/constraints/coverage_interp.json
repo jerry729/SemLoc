@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "coverage_interp",
+  "fault_hypothesis": "The condition on line 66 is inverted. The clamping logic is executed when `clamp` is `False` instead of when it is `True`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The initial interpolated value is within the y-range for all passing tests, but not for failing tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 == y__1"
+      },
+      "intent": "When the clamping branch is entered, the value should only be modified for failing tests (where clamping is unexpected).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "When clamping is requested, the result must be within the segment's y-range, but this branch fails to enforce it.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= lo__1 and y__1 <= hi__1"
+      },
+      "intent": "The value checked by the clamping logic is always in-bounds for passing tests.",
+      "confidence": 0.8
+    }
+  ]
+}

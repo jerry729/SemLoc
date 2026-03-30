@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_api",
+  "fault_hypothesis": "The clamping logic on line 67 is incorrect. When a counter exceeds `max_value`, it is set to `max_value - 1` instead of being clamped to `max_value`.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value should be exactly the maximum value, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "After clamping, the new value must equal the ceiling.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "max_value is None or not (new_value__1 > max_value) or new_value__3 == max_value"
+      },
+      "intent": "If the counter exceeds the max value, the final value must be clamped to the max value.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "max_value is None or __cbfl_result <= max_value"
+      },
+      "intent": "The returned value should never exceed the specified maximum value.",
+      "confidence": 0.3
+    }
+  ]
+}

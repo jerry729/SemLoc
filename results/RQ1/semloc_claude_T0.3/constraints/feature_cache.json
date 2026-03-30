@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_cache",
+  "fault_hypothesis": "The `_is_expired` function uses a strict inequality (`now > ttl`) instead of `now >= ttl`, so when `now == ttl` the entry is incorrectly treated as valid rather than expired. The bug manifests at line 66 where `_is_expired(now, ttl)` is called.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "_is_expired(now, ttl__1) == (now >= ttl__1)"
+      },
+      "intent": "When now equals ttl exactly, _is_expired must return True (entry is expired); the bug is that it returns False at the boundary.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == ttl__1) or _is_expired(now, ttl__1)"
+      },
+      "intent": "Immediately before ttl__1 is used in the expiry check, assert that when now equals ttl the expiry function returns True.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "In the non-expired branch (entry is served), now must be strictly less than ttl; if now == ttl the entry should have been expired.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is not None and 'ttl__1' in dir() and now >= ttl__1)"
+      },
+      "intent": "The function must never return a non-None payload when now is at or past the TTL.",
+      "confidence": 0.85
+    }
+  ]
+}

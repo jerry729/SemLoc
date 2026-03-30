@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "optimizer_step_guard",
+  "fault_hypothesis": "On line 62, the NaN check uses `loss_value == loss_value` as the non-NaN guard, but this condition is placed as the first part of an AND with `loss_value > max_loss`. When loss_value is NaN, `loss_value == loss_value` is False so the whole condition is False and the function returns True instead of False. The NaN check should be inverted: NaN should cause a return of False, not True.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not (loss_value != loss_value) or (loss_value == loss_value and loss_value > max_loss)"
+      },
+      "intent": "When loss_value is NaN (loss_value != loss_value is True), the if-branch should have been entered to return False, but the condition on line 62 fails to catch NaN.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "loss_value == loss_value and loss_value <= max_loss"
+      },
+      "intent": "After the if-branch is skipped (else path), loss_value must be non-NaN and within max_loss; NaN should never reach this path.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "loss_value"
+        }
+      },
+      "spec": {
+        "expr": "loss_value != loss_value or loss_value >= 0"
+      },
+      "intent": "Before using loss_value in the guard condition, NaN or non-negative values are the only valid inputs after validation.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (loss_value != loss_value) or __cbfl_result is False"
+      },
+      "intent": "If loss_value is NaN, the function must return False.",
+      "confidence": 0.95
+    }
+  ]
+}

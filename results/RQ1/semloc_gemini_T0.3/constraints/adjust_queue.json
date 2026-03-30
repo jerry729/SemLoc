@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_queue",
+  "fault_hypothesis": "The function calculates interpolated weights but fails to normalize the final list so that its elements sum to 1. The unnormalized list is returned on line 66.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list of weights must be normalized to sum to 1.0, as specified in the docstring.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The fully constructed list of weights must sum to 1.0 before being returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "current"
+        }
+      },
+      "spec": {
+        "expr": "abs(((1 - damping) * sum(current) + damping * sum(target)) - 1.0) < 1e-9"
+      },
+      "intent": "Without an explicit normalization step, the interpolated sum must coincidentally be 1.0 for the function to work correctly.",
+      "confidence": 0.8
+    }
+  ]
+}

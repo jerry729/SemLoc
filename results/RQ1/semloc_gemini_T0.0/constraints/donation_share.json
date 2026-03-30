@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "donation_share",
+  "fault_hypothesis": "The processing fee is incorrectly subtracted from each recipient's individual share on line 60, causing the fee to be deducted multiple times. The fee should be subtracted from the gross donation amount before it is split among recipients.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the net donation amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "len(payouts__1) < 2 or sum(payouts__1) == 0 or all(abs(payouts__1[i] / sum(payouts__1) - ratios[i] / total_ratio__1) < 1e-9 for i in range(len(ratios)))"
+      },
+      "intent": "The proportion of each payout must match the specified input ratio.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(max(0.0, b - fee) for b in base__1) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "The logic for fee deduction, if applied to the gross shares, should result in the correct net total.",
+      "confidence": 0.9
+    }
+  ]
+}

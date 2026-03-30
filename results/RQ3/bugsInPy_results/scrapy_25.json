@@ -1,0 +1,25 @@
+{
+  "bug_id": "scrapy_25",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.http.request.form._get_form_url",
+    "buggy_methods": [
+      "scrapy.http.request.form._get_form_url"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.http.request.form._get_form_url",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/http/request/form.py": [
+      47,
+      61
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "bug_id": "cookiecutter_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "cookiecutter.generate.generate_context",
+    "buggy_methods": [
+      "cookiecutter.generate.generate_context"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "cookiecutter.generate.generate_context",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "cookiecutter/generate.py": [
+      85
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      85
+    ],
+    "best_rank": null,
+    "fn_lines": 42,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 101,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "cookiecutter_1",
+    "function": "generate_context",
+    "src_path": "cookiecutter/generate.py",
+    "fn_begin": 70,
+    "fn_end": 111,
+    "n_constraints": 4,
+    "n_tests_passing": 10,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 101,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/cookiecutter_1/generate_context_constraints.json",
+    "report_path": "/tmp/bip_semloc/cookiecutter_1/violations.jsonl"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_route",
+  "fault_hypothesis": "The expiration check on line 68 uses a strict greater-than comparison (>), but it should be greater-than-or-equal (>=) to correctly handle cases where the current time is exactly at the expiration boundary.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The current time should not be exactly at the expiration boundary, as this edge case is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If a route value is returned (i.e., not considered expired), the current time must be strictly before its effective expiration.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 >= expires_at__1"
+      },
+      "intent": "The effective expiration time, which includes clock-skew tolerance, should not be earlier than the base expiration time.",
+      "confidence": 0.8
+    }
+  ]
+}

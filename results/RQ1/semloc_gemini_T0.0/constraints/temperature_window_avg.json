@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "temperature_window_avg",
+  "fault_hypothesis": "The mean is calculated by dividing the sum of the tail values by the requested window size (line 67), but it should be divided by the actual number of values in the tail. This causes an incorrect average when the input series is shorter than the window size.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (abs(mean__1 - (total__1 / len(tail__1))) < 1e-9)"
+      },
+      "intent": "The calculated mean should be correct, unless it's going to be discarded by the warmup check.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "window == len(tail__1) or len(tail__1) < warmup_min"
+      },
+      "intent": "The divisor `window` is only correct if it equals the number of samples, unless the warmup condition will be met.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) > 0"
+      },
+      "intent": "The tail of the series being averaged must not be empty.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) == (len(values[-window:]) < warmup_min)"
+      },
+      "intent": "The function should return None if and only if the number of samples in the tail is less than the warmup minimum.",
+      "confidence": 0.3
+    }
+  ]
+}

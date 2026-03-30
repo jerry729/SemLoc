@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_deployment",
+  "fault_hypothesis": "The counter is incorrectly clamped to one less than the ceiling instead of the ceiling value itself. The bug is on line 67, where `new_value` is assigned `effective_ceiling - 1` instead of `effective_ceiling`.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "The new value should be clamped to the ceiling, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "When clamping, the counter must be set exactly to the ceiling value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__3 == effective_ceiling__1"
+      },
+      "intent": "After clamping, the counter value must be equal to the ceiling.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (max_value is not None and counts.get(key, 0) + 1 > max_value) or (__cbfl_result == max_value)"
+      },
+      "intent": "If the counter would exceed the ceiling, the final value must be exactly the ceiling.",
+      "confidence": 0.8
+    }
+  ]
+}

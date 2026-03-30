@@ -1,0 +1,53 @@
+{
+  "bug_id": "pandas_53",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.series.Series._get_value",
+    "buggy_methods": [
+      "pandas.core.series.Series._get_value"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.series.Series._get_value",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      3114
+    ],
+    "pandas/core/series.py": [
+      974
+    ],
+    "pandas/tests/indexing/test_categorical.py": [
+      85,
+      86,
+      87,
+      88,
+      89
+    ],
+    "pandas/tests/indexing/test_loc.py": [
+      19,
+      37
+    ],
+    "pandas/tests/indexing/test_scalar.py": [
+      141,
+      142,
+      143,
+      144,
+      145,
+      147,
+      150,
+      158,
+      159,
+      160,
+      161,
+      162,
+      164
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

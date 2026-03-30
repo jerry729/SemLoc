@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "task_tally",
+  "fault_hypothesis": "The clamping logic on line 55 is incorrect. When the counter exceeds `max_value`, it is set to `max_value - 1` instead of being clamped to `max_value`.",
+  "fault_line": 55,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 55
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value should be exactly the maximum allowed value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 54,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "After clamping because the value exceeded the ceiling, the new value must equal the ceiling.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "max_value is None or ((new_value__1 > max_value and new_value__3 == max_value) or (new_value__1 <= max_value and new_value__3 == new_value__1))"
+      },
+      "intent": "The final value must be correctly clamped to the ceiling if one is provided.",
+      "confidence": 0.95
+    }
+  ]
+}

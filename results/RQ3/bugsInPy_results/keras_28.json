@@ -1,0 +1,32 @@
+{
+  "bug_id": "keras_28",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.preprocessing.sequence.TimeseriesGenerator.__len__",
+    "buggy_methods": [
+      "keras.preprocessing.sequence.TimeseriesGenerator.__len__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.preprocessing.sequence.TimeseriesGenerator.__len__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/preprocessing/sequence.py": [
+      331,
+      344,
+      348
+    ],
+    "tests/keras/preprocessing/sequence_test.py": [
+      2,
+      155,
+      168,
+      169
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

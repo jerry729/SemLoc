@@ -1,0 +1,44 @@
+{
+  "function": "embedding_lookup_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        72
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the docstring says an entry is valid \"while `now` is strictly before the expiration boundary `cached_at + ttl`\". This means the entry should expire when `now >= cached_at + ttl`.\n\nThe current condition on line 72 is `if now > cached_at + validated_ttl`, which means entries are still returned when `now == cached_at + ttl` (i.e., exactly at expiration). This contradicts the specification that says \"strictly before\" the expiration boundary.\n\nThe correct condition should be `if now >= cached_at + validated_ttl` to properly expire entries at the boundary.\n\n{\n  \"function_name\": \"embedding_lookup_cache\",\n  \"faulty_lines\": [72],\n  \"explanation\": \"The expiration check uses strict greater-than (`now > cached_at + validated_ttl`), but per the docstring, an entry is valid only while `now` is strictly before the expiration boundary. The condition should be `now >= cached_at + validated_ttl` to expire entries exactly at the TTL boundary.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        72
+      ],
+      "valid_preds": [
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

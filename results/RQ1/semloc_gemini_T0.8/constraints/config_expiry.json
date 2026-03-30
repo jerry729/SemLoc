@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_expiry",
+  "fault_hypothesis": "The expiry check at line 77 uses a strict greater-than comparison (`>`), causing entries to be considered valid when the current time is exactly equal to the expiration time. It should use greater-than-or-equal-to (`>=`) to correctly handle the boundary case.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1) or (now > adjusted_expiry__1)"
+      },
+      "intent": "An entry at the exact expiry boundary should be treated as expired.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "If an entry is served, the current time must be strictly before its expiration.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= 0"
+      },
+      "intent": "The expiration timestamp from a validated entry must be non-negative.",
+      "confidence": 0.9
+    }
+  ]
+}

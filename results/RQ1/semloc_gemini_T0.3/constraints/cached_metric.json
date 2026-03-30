@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_metric",
+  "fault_hypothesis": "The expiry check on line 61 uses a strict inequality (`>`), which incorrectly treats an entry as valid when the current time is exactly equal to the expiry time. The comparison should be `>=` to correctly expire entries on the boundary.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now < effective_expiry__1"
+      },
+      "intent": "A cached item should only be considered valid if the current time is strictly before its effective expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_expiry__1 >= ttl__1"
+      },
+      "intent": "The effective expiry time, after adjustments, must not be earlier than the original TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "now"
+        }
+      },
+      "spec": {
+        "expr": "now >= 0.0"
+      },
+      "intent": "The timestamp 'now' must be non-negative at the point of the expiry comparison.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "ttl__1 >= 0.0"
+      },
+      "intent": "The TTL value retrieved from the cache must be non-negative.",
+      "confidence": 0.8
+    }
+  ]
+}

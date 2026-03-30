@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "pages_union",
+  "fault_hypothesis": "The function incorrectly removes the last element from the merged list on line 80 if it is common to the end of both input lists. The conditional logic on line 79 that triggers this is faulty, as the tests expect all duplicates to be preserved.",
+  "fault_line": 79,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 79
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The length of the merged list after the conditional pop must equal the sum of the lengths of the input lists.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 79,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "This branch, which incorrectly removes a duplicate element, should never be executed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "merged__1.count(left[-1]) == left.count(left[-1]) + right.count(left[-1])"
+      },
+      "intent": "The count of the shared last element must be preserved, but this check fails after the incorrect pop operation.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "blend_levels",
+  "fault_hypothesis": "The condition on line 74 is flawed, causing an element to be incorrectly removed on line 75 when both input lists share the same maximum value.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition for removing a shared trailing element should never be met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The total number of elements must be preserved even if this branch is taken.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "len(left) == 0 or len(right) == 0 or len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final list must contain all elements from both inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

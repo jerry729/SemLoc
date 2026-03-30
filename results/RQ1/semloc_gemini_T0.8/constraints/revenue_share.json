@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "revenue_share",
+  "fault_hypothesis": "The share calculation on line 70 incorrectly uses the gross `amount` instead of the net amount (`amount - fee`). The fee should be deducted from the total pool before it is split among participants, not from each participant's share after splitting.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (fee > 0 and len(ratios) > 1 and amount > fee)"
+      },
+      "intent": "The current share calculation logic is only correct if there's no fee, only one participant, or if the fee consumes the entire amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts must equal the total amount less the fee, clamped at zero.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive to allow for a valid distribution.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == 0"
+      },
+      "intent": "The shares list must be empty before accumulation begins.",
+      "confidence": 1.0
+    }
+  ]
+}

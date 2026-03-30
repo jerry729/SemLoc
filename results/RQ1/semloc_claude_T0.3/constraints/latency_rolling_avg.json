@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "latency_rolling_avg",
+  "fault_hypothesis": "On line 69, the average is computed by dividing `total` by `window` instead of `len(tail)`. When the series is shorter than the window, this produces an incorrect (too small) result.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "The average must equal total divided by the actual tail length, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing avg, verify it is consistent with total and actual tail length when tail is shorter than window.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before returning avg, it should equal total divided by the number of samples actually in the tail.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - sum(series[-min(window, len(series)):]) / min(window, len(series))) < 1e-9"
+      },
+      "intent": "The returned average must equal the mean of the actual tail elements, not total/window.",
+      "confidence": 0.8
+    }
+  ]
+}

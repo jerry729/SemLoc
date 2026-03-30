@@ -1,0 +1,46 @@
+{
+  "bug_id": "pandas_44",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.timedeltas.TimedeltaIndex.get_loc",
+    "buggy_methods": [
+      "pandas.core.indexes.timedeltas.TimedeltaIndex.get_loc"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.timedeltas.TimedeltaIndex.get_loc",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      32,
+      4660,
+      4662,
+      4663
+    ],
+    "pandas/core/indexes/datetimelike.py": [
+      11,
+      35
+    ],
+    "pandas/core/indexes/datetimes.py": [
+      10,
+      13
+    ],
+    "pandas/core/indexes/period.py": [
+      12,
+      457,
+      458,
+      459,
+      460,
+      462
+    ],
+    "pandas/core/indexes/timedeltas.py": [
+      4
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

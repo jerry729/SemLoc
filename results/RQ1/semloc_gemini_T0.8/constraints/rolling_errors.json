@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_errors",
+  "fault_hypothesis": "The mean on line 62 is calculated by dividing by the fixed `window` size, but it should use the actual number of samples, `len(recent)`, which can be smaller.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0 and abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The calculated mean should be the total sum divided by the number of recent samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0 and abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The value assigned to mean must be the correct average of the available samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "window == len(recent__1)"
+      },
+      "intent": "The current implementation is only correct if the number of samples matches the window size.",
+      "confidence": 0.9
+    }
+  ]
+}

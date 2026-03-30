@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_118",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.melt.melt",
+    "buggy_methods": [
+      "pandas.core.reshape.melt.melt"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.melt.melt",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/reshape/melt.py": [
+      50,
+      72
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

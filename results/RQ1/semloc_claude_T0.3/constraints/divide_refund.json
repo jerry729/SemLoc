@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_refund",
+  "fault_hypothesis": "On line 61, the fee is subtracted from each individual participant's base payout instead of being deducted from the total amount before splitting. The correct logic should compute `net = amount - fee` first, then distribute proportionally.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "After computing payouts, their sum must equal amount minus the single fee, not amount minus fee*len(ratios).",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "Payouts list sum should equal net amount (amount - fee), confirming fee is deducted once from total, not per participant.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "Before using base to compute payouts, base values should sum to the full amount (fee not yet deducted).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The returned payouts must sum to amount minus fee (fee deducted once from total).",
+      "confidence": 0.85
+    }
+  ]
+}

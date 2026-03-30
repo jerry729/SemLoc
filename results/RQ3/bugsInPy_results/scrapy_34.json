@@ -1,0 +1,33 @@
+{
+  "bug_id": "scrapy_34",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.item.ItemMeta.__new__",
+    "buggy_methods": [
+      "scrapy.item.ItemMeta.__new__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.item.ItemMeta.__new__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/item.py": [
+      30
+    ],
+    "tests/test_item.py": [
+      148,
+      149,
+      155,
+      173,
+      182,
+      198,
+      205
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

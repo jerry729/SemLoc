@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "error_meter",
+  "fault_hypothesis": "The counter is incorrectly clamped to `cap - 1` instead of `cap` on line 56. This causes the value to drop below the intended ceiling when it exceeds the cap.",
+  "fault_line": 56,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 56
+        }
+      },
+      "spec": {
+        "expr": "counters[key] == cap"
+      },
+      "intent": "The counter value should be clamped to exactly the cap value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 55,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] >= cap"
+      },
+      "intent": "When clamped, the counter's value must not be less than the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or counters[key] == cap or counters[key] < cap - 1"
+      },
+      "intent": "The final counter value should be exactly the cap if clamping occurred, not one less.",
+      "confidence": 0.7
+    }
+  ]
+}

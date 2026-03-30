@@ -1,0 +1,44 @@
+{
+  "function": "ledger_balance_rollup",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "Line 66 incorrectly adds the amount for a 'debit' entry (`balance += amount`) instead of subtracting it (`balance -= amount`), causing debit transactions to increase the balance rather than decrease it.",
+      "confidence": 0.99,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"ledger_balance_rollup\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"Line 66 incorrectly adds the amount for a 'debit' entry (`balance += amount`) instead of subtracting it (`balance -= amount`), causing debit transactions to increase the balance rather than decrease it.\",\n  \"confidence\": 0.99\n}",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

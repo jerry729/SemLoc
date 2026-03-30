@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "redis_like_expiry",
+  "fault_hypothesis": "The expiry check on line 83 uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal (`>=`) to correctly expire keys at the exact moment of expiry.",
+  "fault_line": 83,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 83
+        }
+      },
+      "spec": {
+        "expr": "(now > effective__1) == (now >= effective__1)"
+      },
+      "intent": "The expiry comparison should be inclusive (>=), not strict (>).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If a non-expired value is to be returned, the current time must be strictly less than the effective expiry time.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "isinstance(expires_at__1, (int, float))"
+      },
+      "intent": "The expiry timestamp extracted from the store must be a numeric type.",
+      "confidence": 0.8
+    }
+  ]
+}

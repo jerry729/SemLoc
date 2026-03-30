@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "offer_expiry",
+  "fault_hypothesis": "The expiry condition on line 66 uses strict greater-than (`now > effective_deadline`) instead of greater-than-or-equal (`now >= effective_deadline`), so an offer checked at exactly the deadline is incorrectly treated as still valid.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective_deadline__1) or (now >= effective_deadline__1)"
+      },
+      "intent": "When now equals the effective_deadline the condition should trigger expiry (now >= deadline), but the strict > misses this case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective_deadline__1) or True"
+      },
+      "intent": "After computing effective_deadline, verify that an offer at exactly that timestamp will be caught by the expiry check (now >= effective_deadline).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_deadline__1"
+      },
+      "intent": "In the else branch (offer is valid), now must be strictly less than effective_deadline; equality should have triggered expiry.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective_deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "isinstance(effective_deadline__1, (int, float))"
+      },
+      "intent": "Ensure effective_deadline is a numeric type so that the comparison operator behaves correctly at the boundary.",
+      "confidence": 0.7
+    }
+  ]
+}

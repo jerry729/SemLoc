@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_temperature",
+  "fault_hypothesis": "The condition on line 68 is inverted: `if not clamp` applies the clamping logic when clamp is False, but it should apply when clamp is True. As a result, clamping never happens when requested.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__1 == min(max(y__1, min(y0, y1)), max(y0, y1)))"
+      },
+      "intent": "When clamp is True, the clamping branch should have been entered and y should be within [min(y0,y1), max(y0,y1)]",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (min(y0, y1) <= y__3 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True and we fall into the else branch (no clamping applied), y__3 should still be within bounds \u2014 but it won't be for extrapolation cases",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (min(y0, y1) <= y__3 <= max(y0, y1))"
+      },
+      "intent": "After y__3 is finalized, if clamp is True it must lie within the sensor temperature range",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp or (min(y0, y1) <= y__2 <= max(y0, y1))"
+      },
+      "intent": "The then-branch (not clamp) applies clamping, so y__2 must be in range \u2014 but this branch fires when clamp is False, which is the wrong condition",
+      "confidence": 0.88
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_34",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.resample.TimeGrouper._get_time_bins",
+    "buggy_methods": [
+      "pandas.core.resample.TimeGrouper._get_time_bins"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.resample.TimeGrouper._get_time_bins",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/resample.py": [
+      1431
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

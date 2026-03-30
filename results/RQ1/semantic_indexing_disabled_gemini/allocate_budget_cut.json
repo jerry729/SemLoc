@@ -1,0 +1,47 @@
+{
+  "function": "allocate_budget_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [
+        67,
+        65
+      ],
+      "explanation": "The fee is incorrectly subtracted from each participant's individual share after the proportional split, instead of being deducted from the total amount before the distribution is calculated, which contradicts the function's documentation.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"allocate_budget_cut\",\n  \"faulty_lines\": [\n    67,\n    65\n  ],\n  \"explanation\": \"The fee is incorrectly subtracted from each participant's individual share after the proportional split, instead of being deducted from the total amount before the distribution is calculated, which contradicts the function's documentation.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        67,
+        65
+      ],
+      "valid_preds": [
+        67,
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

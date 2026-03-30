@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_api",
+  "fault_hypothesis": "The condition on line 66 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly returns `True` with `remaining=0` instead of `False, 0`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit and len(recent__1) > limit)"
+      },
+      "intent": "When recent count equals limit, the strict > check fails to trigger the denial branch, exposing the off-by-one bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the else branch (request allowed), recent count must be strictly less than limit; equality should have been denied.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) >= limit) or len(recent__1) > limit"
+      },
+      "intent": "If recent count is at or above limit, the strict > guard must also be true; otherwise the boundary case is missed.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and __cbfl_result[1] == 0)"
+      },
+      "intent": "The function should never return (True, 0): allowed=True with remaining=0 is an inconsistent state indicating the boundary check is wrong.",
+      "confidence": 0.88
+    }
+  ]
+}

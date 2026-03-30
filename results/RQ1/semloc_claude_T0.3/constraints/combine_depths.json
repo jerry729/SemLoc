@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_depths",
+  "fault_hypothesis": "Lines 77-78 incorrectly pop the last element when both streams share the same final value, but the docstring says duplicates must be preserved. This spurious removal causes failing tests where the last elements of left and right are equal.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the spurious pop should never be true when both streams legitimately share the same last value.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == (len(left) + len(right) - 1)"
+      },
+      "intent": "After the pop branch executes, merged should have one fewer element than the total inputs, which is wrong when duplicates should be preserved.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == i__1 + j"
+      },
+      "intent": "After each loop iteration, the merged list length should equal the number of elements consumed from left and right combined.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right) or len(__cbfl_result) == MAX_DEPTH_LEVELS"
+      },
+      "intent": "The output length must equal the sum of input lengths unless capped by MAX_DEPTH_LEVELS.",
+      "confidence": 0.92
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "api_rate_guard",
+  "fault_hypothesis": "The rate limit check on line 72 uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal-to (`>=`) to deny requests when the number of recent requests is exactly at the limit.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "The comparison logic should deny access when usage is exactly at the limit, which is currently not the case.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "The code path that allows a request should only be taken when usage is strictly below the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and __cbfl_result[1] == 0)"
+      },
+      "intent": "It is invalid to report that a request is allowed while also reporting zero remaining requests.",
+      "confidence": 0.9
+    }
+  ]
+}

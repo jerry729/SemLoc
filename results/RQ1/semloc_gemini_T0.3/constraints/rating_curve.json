@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rating_curve",
+  "fault_hypothesis": "The condition on line 74 is inverted. The clamping logic is incorrectly executed when `clamp` is `False` due to `if not clamp:`, but it should be executed when `clamp` is `True`.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The interpolated value must be within the y-range, as all passing tests are, but failing tests are not.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic branch should only be executed when clamping is enabled.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If the clamping logic is skipped (the 'else' branch), the interpolated value must already be within the valid range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "The value before returning must be consistent with the clamping setting and the initial interpolated value.",
+      "confidence": 0.9
+    }
+  ]
+}

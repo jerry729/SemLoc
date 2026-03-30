@@ -1,0 +1,53 @@
+{
+  "bug_id": "black_17",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.decode_bytes",
+    "buggy_methods": [
+      "black.decode_bytes"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.decode_bytes",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      626
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      626
+    ],
+    "best_rank": null,
+    "fn_lines": 12,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 610,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "black_17",
+    "function": "decode_bytes",
+    "src_path": "black.py",
+    "fn_begin": 602,
+    "fn_end": 613,
+    "n_constraints": 4,
+    "n_tests_passing": 58,
+    "n_tests_failing": 8,
+    "line_scores": [
+      {
+        "line": 609,
+        "score": 0.31622776601683794
+      }
+    ],
+    "fault_line": 610,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/black_17/decode_bytes_constraints.json",
+    "report_path": "/tmp/bip_semloc/black_17/violations.jsonl"
+  }
+}

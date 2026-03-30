@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gradient_clip_budget",
+  "fault_hypothesis": "On line 66, the scale factor is computed as `max_norm / (norm + 1)` instead of `max_norm / norm`, causing the clipped gradients to have a norm smaller than max_norm rather than exactly equal to it.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(scale__1 - max_norm / norm__1) < 1e-9"
+      },
+      "intent": "The scale factor must equal max_norm / norm, not max_norm / (norm + 1).",
+      "confidence": 0.98
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "scale__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(scale__1 * norm__1 - max_norm) < 1e-9"
+      },
+      "intent": "Multiplying scale by norm must recover max_norm exactly.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "scale__1"
+        }
+      },
+      "spec": {
+        "expr": "scale__1 < 1.0 and scale__1 > 0.0 and abs(scale__1 - max_norm / norm__1) < 1e-9"
+      },
+      "intent": "Before applying scale, it must equal max_norm/norm and be a proper fraction less than 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "abs(scale__1 - max_norm / norm__1) < 1e-9"
+      },
+      "intent": "At the end of the clipping branch, scale must have been computed without the erroneous +1 offset.",
+      "confidence": 0.93
+    }
+  ]
+}

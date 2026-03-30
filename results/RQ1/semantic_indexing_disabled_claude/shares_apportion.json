@@ -1,0 +1,47 @@
+{
+  "function": "shares_apportion",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        68,
+        72
+      ],
+      "explanation": "Line 68 truncates planned allocations using int() (floor) but never distributes the remaining units to recipients with the largest fractional parts, so the sum of returned allocations is typically less than total. The return on line 72 returns incomplete allocations without the largest-remainder correction step.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the `shares_apportion` function, I need to identify the bug.\n\nThe function is supposed to use \"largest-remainder rounding\" (also known as Hamilton's method) to distribute integer allocations. The algorithm should:\n1. Compute floor values\n2. Calculate remainders\n3. Distribute leftover units to recipients with largest fractional parts\n\nHowever, the implementation on line 68 simply does `int(x)` (floor) for each planned value but **never distributes the remainder**. The `int()` truncation means the total of allocations will often be less than `total`. The largest-remainder step is completely missing.\n\nAdditionally, line 68 uses `int(x)` which truncates (floor), but there's no subsequent step to add back the remaining units to reach the target `total`.\n\nThe missing remainder distribution logic should come after line 68, and the function returns without ensuring `sum(allocations) == total`.\n\n```json\n{\n  \"function_name\": \"shares_apportion\",\n  \"faulty_lines\": [68, 72],\n  \"explanation\": \"Line 68 truncates planned allocations using int() (floor) but never distributes the remaining units to recipients with the largest fractional parts, so the sum of returned allocations is typically less than total. The return on line 72 returns incomplete allocations without the largest-remainder correction step.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        68,
+        72
+      ],
+      "valid_preds": [
+        68,
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 68,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

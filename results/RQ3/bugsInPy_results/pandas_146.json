@@ -1,0 +1,33 @@
+{
+  "bug_id": "pandas_146",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.dtypes.missing.array_equivalent",
+    "buggy_methods": [
+      "pandas.core.dtypes.missing.array_equivalent"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.dtypes.missing.array_equivalent",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/dtypes/missing.py": [
+      448,
+      449
+    ],
+    "pandas/core/indexes/base.py": [
+      4327,
+      4328,
+      4329,
+      4330,
+      4331,
+      4332
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

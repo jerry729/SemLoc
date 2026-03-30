@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_responses",
+  "fault_hypothesis": "The function incorrectly removes an element on line 72 if both input lists end with the same value. This violates the postcondition that the output size must equal the sum of the input sizes.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The pop operation on this line incorrectly reduces the list size, violating a key invariant.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "merged__1.count(left[-1]) == left.count(left[-1]) + right.count(right[-1])"
+      },
+      "intent": "The count of the shared tail element must be preserved, but logic in this branch violates that.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The merged list must have the correct total size after the main merge logic and before the faulty deduplication.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final returned list must contain all elements from both inputs.",
+      "confidence": 0.8
+    }
+  ]
+}

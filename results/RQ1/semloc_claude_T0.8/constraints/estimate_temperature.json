@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_temperature",
+  "fault_hypothesis": "The condition on line 68 is inverted: `if not clamp` applies clamping when clamp=False and skips clamping when clamp=True, which is the opposite of the intended behavior.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or (not clamp and y__1 == y__1)"
+      },
+      "intent": "When clamp=True, the branch body (clamping) should execute, so 'if not clamp' being True when clamp=False means clamping happens only when it should NOT \u2014 this check is FALSE on failing tests where clamp=True but no clamping occurs.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch (clamping logic) should only execute when clamp is False due to the inverted condition \u2014 on failing tests clamp=True so this branch is never entered.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, the final y value should be within [min(y0,y1), max(y0,y1)]; failing tests have clamp=True with extrapolated x, so y__3 falls outside this range.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "y__2 (clamped value) is computed only inside 'if not clamp', so it is only defined when clamp=False; when clamp=True this code is never reached, meaning clamping never happens.",
+      "confidence": 0.88
+    }
+  ]
+}

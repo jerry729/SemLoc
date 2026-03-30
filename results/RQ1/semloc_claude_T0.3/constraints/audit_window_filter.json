@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "audit_window_filter",
+  "fault_hypothesis": "On line 68, the filter uses `t >= cutoff` (inclusive) instead of `t > cutoff` (exclusive), so events exactly at the cutoff boundary are incorrectly retained.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "all(t > cutoff__1 for t in [t for t in timestamps if t >= cutoff__1])"
+      },
+      "intent": "Every timestamp in the result must be strictly greater than the cutoff, not equal to it.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 == now - window"
+      },
+      "intent": "Verify the cutoff is computed correctly as now minus window.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(t > (now - window) for t in __cbfl_result)"
+      },
+      "intent": "All returned timestamps must be strictly after the cutoff (now - window), excluding the boundary.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 == now - window"
+      },
+      "intent": "Confirm cutoff value is correct before it is used in the list comprehension filter.",
+      "confidence": 0.8
+    }
+  ]
+}

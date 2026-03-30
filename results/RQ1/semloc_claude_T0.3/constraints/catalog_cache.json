@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "catalog_cache",
+  "fault_hypothesis": "The expiry check on line 64 uses strict greater-than (`now > adjusted_expiry`) instead of greater-than-or-equal (`now >= adjusted_expiry`), so an entry whose current time exactly equals the expiration timestamp is incorrectly returned as valid instead of expired.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "now >= adjusted_expiry__1 or now < adjusted_expiry__1"
+      },
+      "intent": "After the branch condition, verify that equality (now == adjusted_expiry) is treated as expired \u2014 the condition `now > adjusted_expiry` misses the boundary case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1) or (now >= adjusted_expiry__1)"
+      },
+      "intent": "After computing adjusted_expiry, confirm that when now equals adjusted_expiry the entry should be considered expired (now >= adjusted_expiry must be the correct predicate).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "now != adjusted_expiry__1 or True"
+      },
+      "intent": "Immediately before adjusted_expiry is used in the branch, flag the boundary case where now == adjusted_expiry to expose the off-by-one comparison bug.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "In the else branch (entry not expired), now must be strictly less than adjusted_expiry; if now == adjusted_expiry the entry should have been expired and this constraint will be violated.",
+      "confidence": 0.92
+    }
+  ]
+}

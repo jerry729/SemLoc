@@ -1,0 +1,28 @@
+{
+  "bug_id": "matplotlib_21",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axes._axes.Axes.bxp",
+    "buggy_methods": [
+      "lib.matplotlib.axes._axes.Axes.bxp"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axes._axes.Axes.bxp",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/axes/_axes.py": [
+      3913,
+      3937,
+      3939,
+      3941,
+      3945
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

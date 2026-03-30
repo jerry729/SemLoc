@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "budget_budgeter",
+  "fault_hypothesis": "Line 68 uses simple truncation (`int(x)`) to convert planned allocations to integers, which loses fractional remainders and causes the sum of allocations to be less than `total` when the budget doesn't divide evenly.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "After integer conversion, the sum of allocations must equal the total budget.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == sum(int(x) for x in planned__1) and sum(allocations__1) == int(total)"
+      },
+      "intent": "The integer-converted allocations must sum to the original total, not lose budget to truncation.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "Before returning, the final allocations list must sum exactly to the total budget.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "At the end of the integer-allocation branch, the sum must equal the total.",
+      "confidence": 0.88
+    }
+  ]
+}

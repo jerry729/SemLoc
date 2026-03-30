@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "replica_sync_offsets",
+  "fault_hypothesis": "The conditional check on line 70 is incorrect. It wrongly removes the last element from the `missing` list if it numerically matches the last element of the `replica` list, which causes an error for inputs with duplicates that are correctly identified as missing.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (missing__1 and replica and missing__1[-1] == replica[-1])"
+      },
+      "intent": "The condition that incorrectly removes a valid missing offset should never be true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that removes a valid missing offset should never be executed.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "i__1"
+        }
+      },
+      "spec": {
+        "expr": "not (i__1 < len(primary) and replica and primary[-1] == replica[-1])"
+      },
+      "intent": "If a suffix of primary is added after the main loop, its last element should not match replica's last element.",
+      "confidence": 0.8
+    }
+  ]
+}

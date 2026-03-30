@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_161",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.categorical.Categorical.fillna",
+    "buggy_methods": [
+      "pandas.core.arrays.categorical.Categorical.fillna"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.categorical.Categorical.fillna",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/categorical.py": [
+      1843,
+      1844
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

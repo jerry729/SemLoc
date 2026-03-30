@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "maintenance_booking",
+  "fault_hypothesis": "The overlap condition on line 77 uses strict inequalities (b <= s or a >= e), which allows adjacent/touching windows (where b==s or a==e) to pass through without being flagged as conflicts. The correct condition should use strict inequalities in the other direction: overlap exists when NOT (b < s or a > e), i.e., touching endpoints should count as conflicts.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not any((b__1 == s or a__1 == e) and not any(not (b__1 <= s or a__1 >= e) for s, e in timeline) for s, e in timeline)"
+      },
+      "intent": "When any existing booking shares an endpoint with the new window, the overlap check should detect it as a conflict; touching windows must not slip through.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all((not (b__1 < s or a__1 > e)) == (not (b__1 <= s or a__1 >= e)) or (b__1 == s or a__1 == e) for s, e in timeline) == False or len(timeline) == 0"
+      },
+      "intent": "The non-overlap predicate using <= and >= differs from using < and > exactly when endpoints touch; this constraint flags that discrepancy when touching windows exist.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "After passing the overlap check (else branch), every existing booking must be strictly non-touching with the new window \u2014 b must be strictly less than s or a strictly greater than e.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "result is only computed when no conflict was detected; at that point the new window must be strictly non-adjacent to all existing bookings.",
+      "confidence": 0.85
+    }
+  ]
+}

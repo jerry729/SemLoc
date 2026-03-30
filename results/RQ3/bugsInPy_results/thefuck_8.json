@@ -1,0 +1,28 @@
+{
+  "bug_id": "thefuck_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.dnf_no_such_command._parse_operations",
+    "buggy_methods": [
+      "thefuck.rules.dnf_no_such_command._parse_operations"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.dnf_no_such_command._parse_operations",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "thefuck/rules/dnf_no_such_command.py": [
+      18,
+      19,
+      20,
+      21,
+      29
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

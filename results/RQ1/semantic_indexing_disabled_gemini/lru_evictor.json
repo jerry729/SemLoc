@@ -1,0 +1,47 @@
+{
+  "function": "lru_evictor",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    27
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        56,
+        57
+      ],
+      "explanation": "The function fails to evict when the number of items equals the capacity, violating the \"strictly under capacity\" requirement. The `while` loop condition on line 56 should be `>=` instead of `>`, and the call on line 57 incorrectly targets a final size equal to capacity, not less than it.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"lru_evictor\",\n  \"faulty_lines\": [\n    56,\n    57\n  ],\n  \"explanation\": \"The function fails to evict when the number of items equals the capacity, violating the \\\"strictly under capacity\\\" requirement. The `while` loop condition on line 56 should be `>=` instead of `>`, and the call on line 57 incorrectly targets a final size equal to capacity, not less than it.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        56,
+        57
+      ],
+      "valid_preds": [
+        56,
+        57
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 56,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

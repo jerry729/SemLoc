@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "time_range_filter",
+  "fault_hypothesis": "On line 75, the filter condition uses `<= end` (inclusive) instead of `< end` (exclusive), violating the half-open interval [start, end) contract and incorrectly including points at the end boundary.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "all(p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "Every returned point must have a timestamp strictly less than end (exclusive upper bound).",
+      "confidence": 0.98
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "__cbfl_result"
+        }
+      },
+      "spec": {
+        "expr": "all(start <= p[0] and p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "All points in the result must satisfy the half-open interval [start, end).",
+      "confidence": 0.97
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end"
+        }
+      },
+      "spec": {
+        "expr": "not any(p[0] == end for p in points) or all(p[0] != end for p in [q for q in points if start <= q[0] <= end] if p[0] == end)"
+      },
+      "intent": "Points at exactly the end boundary should not be included in the filtered result.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(p[0] >= start and p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "Returned list must only contain points within [start, end) \u2014 catching the inclusive-end bug at the return.",
+      "confidence": 0.85
+    }
+  ]
+}

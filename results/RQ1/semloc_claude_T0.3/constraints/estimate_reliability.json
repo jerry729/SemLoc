@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_reliability",
+  "fault_hypothesis": "The condition on line 68 is inverted: clamping is applied when `clamp` is False and skipped when `clamp` is True. It should be `if clamp:` not `if not clamp:`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) == (not (not clamp))"
+      },
+      "intent": "When clamp is True the branch body (clamping logic) should execute, but the condition `not clamp` causes it to be skipped \u2014 this is always trivially true so use the semantic check below instead",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, the final y value must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 >= min(y0, y1) and y__4 <= max(y0, y1)"
+      },
+      "intent": "After the clamping branch executes, y must be within the calibration range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "Before y__4 is used in the return, if clamp was True it must already be restricted to the calibration range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamp=True the returned value must not exceed the calibration range bounds.",
+      "confidence": 0.85
+    }
+  ]
+}

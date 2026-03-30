@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "search_result_pager",
+  "fault_hypothesis": "On line 72, the slice uses `end__1 + 1` instead of `end__1`, causing one extra element to be included in every page result.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size__1"
+      },
+      "intent": "The returned page must never contain more items than page_size; the off-by-one +1 in the slice violates this.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 == start__1 + page_size__1"
+      },
+      "intent": "end must equal start plus page_size exactly, so slicing results[start:end] gives the right count.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 - start__1 == page_size__1"
+      },
+      "intent": "Immediately before end is used in the slice, the window size must equal page_size, not page_size+1.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size"
+      },
+      "intent": "The returned sequence length must never exceed page_size.",
+      "confidence": 0.85
+    }
+  ]
+}

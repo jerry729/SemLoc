@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gain_trendline",
+  "fault_hypothesis": "The condition `if not clamp:` on line 70 inverts the clamping logic. It should be `if clamp:` to apply clamping only when requested, but instead clamping occurs when `clamp=False` and is skipped when `clamp=True`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "The current logic is only correct for interpolation (t in [0,1]), not extrapolation.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "When clamping is enabled, the value should be within the y-range of the segment endpoints.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 == y__1"
+      },
+      "intent": "When clamping is disabled, the value of y should not be modified.",
+      "confidence": 1.0
+    }
+  ]
+}

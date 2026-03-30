@@ -1,0 +1,42 @@
+{
+  "bug_id": "keras_37",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.layers.wrappers.Bidirectional.call",
+    "buggy_methods": [
+      "keras.layers.wrappers.Bidirectional.call"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.layers.wrappers.Bidirectional.call",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/layers/recurrent.py": [
+      521,
+      523,
+      526
+    ],
+    "keras/layers/wrappers.py": [
+      324,
+      325,
+      326,
+      327,
+      328
+    ],
+    "tests/keras/layers/wrappers_test.py": [
+      328,
+      330,
+      331,
+      335,
+      338,
+      339,
+      340
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "function": "bill_payout",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        68
+      ],
+      "explanation": "The fee should be deducted from the total amount before splitting (net_amount = amount - fee), but instead the full amount is distributed and then fee is subtracted from each individual share, resulting in the total fee deducted being fee * len(ratios) rather than just fee.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at this function, the fee is supposed to be deducted from the total amount before distribution, but instead it's being subtracted from each individual share after distribution. This means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe correct approach would be to compute `net_amount = amount - fee` first, then distribute `net_amount` proportionally. Instead, the code distributes the full `amount` and then subtracts `fee` from each share.\n\nThe faulty lines are line 68 (where the full `amount` is used instead of `amount - fee`) and line 70 (where `fee` is incorrectly subtracted per-share).\n\n```json\n{\n  \"function_name\": \"bill_payout\",\n  \"faulty_lines\": [70, 68],\n  \"explanation\": \"The fee should be deducted from the total amount before splitting (net_amount = amount - fee), but instead the full amount is distributed and then fee is subtracted from each individual share, resulting in the total fee deducted being fee * len(ratios) rather than just fee.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        70,
+        68
+      ],
+      "valid_preds": [
+        70,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "budget_mix",
+  "fault_hypothesis": "The function is missing a normalization step after computing the adjusted values. Line 71 returns `adjusted__2` without dividing each element by the total sum, so the output does not sum to 1 when inputs don't already sum to 1.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation must sum to 1.0 after normalization, which fails when inputs don't sum to 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After clamping, the adjusted values should already be normalized to sum to 1 before returning.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "Before using adjusted__2 as the return value, it must sum to 1.0 to satisfy the normalization contract.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == len(current) and all(0.0 <= v <= 1.0 for v in adjusted__1)"
+      },
+      "intent": "After linear interpolation, all adjusted values should remain in [0,1] and have the correct length.",
+      "confidence": 0.75
+    }
+  ]
+}

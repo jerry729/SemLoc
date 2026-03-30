@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "speed_trendline",
+  "fault_hypothesis": "The condition on line 71 is inverted: clamping is applied when `clamp=False` and skipped when `clamp=True`, because the guard reads `if not clamp` instead of `if clamp`.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or clamp == False"
+      },
+      "intent": "The clamping block should execute when clamp is True, not when it is False; the guard `not clamp` is the bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "Inside the clamping branch, clamp should be True (we entered because clamp is True), but the inverted condition means clamp is False here.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, y__4 must be bounded by [min(y0,y1), max(y0,y1)]; the bug causes this to be violated.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "clamp or (y__1 == y0 + _compute_ratio(x0, x1, x) * (y1 - y0))"
+      },
+      "intent": "y__1 should be the raw interpolated value before any clamping is applied.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1)) or (__cbfl_result == MIN_SPEED_KMH or __cbfl_result == MAX_SPEED_KMH)"
+      },
+      "intent": "When clamp=True the returned value must lie within the reference speed range (ignoring global speed limits).",
+      "confidence": 0.88
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "throughput_trendline",
+  "fault_hypothesis": "The condition on line 60 is inverted: the clamping block executes when `clamp` is False (i.e., `not clamp` is True) instead of when `clamp` is True, so clamping is applied when it should not be and skipped when it should be.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) == False or (clamp == True)"
+      },
+      "intent": "When clamp=True the branch body (clamping) should execute, so `not clamp` should be False when clamp is True \u2014 this is violated by the inverted condition.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "The clamping branch should only be entered when clamp is False (no-clamp / extrapolation mode) \u2014 but the logic is inverted so this branch is entered when clamp=True.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "y__2 is the clamped value; it should only be computed when clamp is False (extrapolation disabled), not when clamp is True.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) or (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, y__3 should be the unclamped interpolation (possibly outside [y0,y1]); when clamp=False it should be clamped within [y0,y1] \u2014 the inverted condition causes the wrong assignment.",
+      "confidence": 0.88
+    }
+  ]
+}

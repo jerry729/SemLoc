@@ -1,0 +1,44 @@
+{
+  "function": "rolling_requests",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "The average is computed by dividing `total` by `window` (the window size) instead of `len(tail)` (the actual number of samples in the tail). When fewer samples than `window` are available, this produces an incorrectly low average rather than the true mean of the available samples.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"rolling_requests\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The average is computed by dividing `total` by `window` (the window size) instead of `len(tail)` (the actual number of samples in the tail). When fewer samples than `window` are available, this produces an incorrectly low average rather than the true mean of the available samples.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

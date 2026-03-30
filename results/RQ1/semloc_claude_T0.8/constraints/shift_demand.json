@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_demand",
+  "fault_hypothesis": "The function does not normalize the adjusted values before returning; `_clamp_allocations` clamps but does not divide by the sum, so when inputs don't sum to 1 the output also won't sum to 1. The missing normalization step should be at line 64 (or after line 62).",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The returned vector must sum to 1.0 after clamping; fails when inputs are not unit-normalized.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After _clamp_allocations, the adjusted vector should be normalized to sum to 1, which it is not when inputs don't already sum to 1.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - (sum(c + (t - c) * damping for c, t in zip(current, target)))) < 1e-9 and (sum(adjusted__1) == 0 or True)"
+      },
+      "intent": "The raw adjusted values reflect the smoothing formula; their sum equals sum(current)*(1-damping)+sum(target)*damping, which may not be 1.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must always sum to 1.0 regardless of the magnitude of the inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

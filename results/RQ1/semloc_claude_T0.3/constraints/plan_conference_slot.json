@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_conference_slot",
+  "fault_hypothesis": "The `overlaps` function on line 76 uses strict inequality (`b[1] <= a[0]` and `b[0] >= a[1]`), which means touching/adjacent slots are not considered overlapping. The tests expect that touching slots (where one ends exactly where another begins) should conflict, but the current logic allows them through.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] < a[0] or b[0] > a[1])"
+      },
+      "intent": "The overlaps function should treat touching slots (adjacent boundaries) as overlapping, using strict less-than rather than less-than-or-equal.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0] or candidate[1] == slot[0]) or not (slot[1] <= (slot[0] - buffer__1) or (slot[0] - buffer__1) >= slot[1])"
+      },
+      "intent": "When a slot touches the candidate at a boundary point, the overlap check with buffer should detect the conflict.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "buffer__1"
+        }
+      },
+      "spec": {
+        "expr": "buffer__1 >= 0"
+      },
+      "intent": "The buffer value must be non-negative so that the expanded slot range correctly covers adjacent boundaries.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buffer__1"
+        }
+      },
+      "spec": {
+        "expr": "(_CONFLICT_STRICT and buffer__1 > 0) or (not _CONFLICT_STRICT and buffer__1 == 0)"
+      },
+      "intent": "When _CONFLICT_STRICT is enabled, buffer must be positive so adjacent slots are treated as conflicting.",
+      "confidence": 0.75
+    }
+  ]
+}

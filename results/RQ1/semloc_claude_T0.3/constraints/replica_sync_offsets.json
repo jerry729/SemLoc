@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "replica_sync_offsets",
+  "fault_hypothesis": "Line 70 contains a spurious condition that incorrectly removes the last element of `missing` when it equals `replica[-1]`. This is wrong because the element was legitimately added via `extend` (a trailing duplicate in primary that wasn't matched during the merge loop), and should remain in the result.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (missing__1 and replica and missing__1[-1] == replica[-1])"
+      },
+      "intent": "The condition that triggers the pop should never be true for valid inputs; when it fires it incorrectly removes a legitimately missing offset.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(x not in replica for x in missing__1)"
+      },
+      "intent": "Every element appended to missing during the merge loop must not be present in replica (merge correctness invariant).",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "missing__1"
+        }
+      },
+      "spec": {
+        "expr": "len(missing__1) == 0"
+      },
+      "intent": "After initialization, missing must be empty before the merge loop begins.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The then-branch of the spurious condition should never execute on correct inputs; if it does, a valid missing offset was incorrectly removed.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "confidence_trendline",
+  "fault_hypothesis": "The condition for clamping the output is inverted. The `if not clamp:` on line 77 should be `if clamp:`, which causes the clamping logic to run when disabled and to be skipped when enabled.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "(y__4 == y__1) == (not clamp or (y__1 >= min(y0, y1) and y__1 <= max(y0, y1)))"
+      },
+      "intent": "The value after the conditional block (y__4) should equal the raw value (y__1) if and only if clamping was disabled or unnecessary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "When the non-clamping branch is taken, the value must already be within the clamping bounds.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "The clamping logic within this branch should only ever be executed if the 'clamp' flag is True.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "(x >= min(x0, x1) and x <= max(x0, x1)) == (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "The raw interpolated value y__1 is within the y-range if and only if the evaluation point x is within the x-range.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_137",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.categorical.Categorical.astype",
+    "buggy_methods": [
+      "pandas.core.arrays.categorical.Categorical.astype"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.categorical.Categorical.astype",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/categorical.py": [
+      60
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

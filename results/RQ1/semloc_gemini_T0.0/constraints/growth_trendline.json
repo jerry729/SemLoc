@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "growth_trendline",
+  "fault_hypothesis": "The condition on line 66 for clamping the result is inverted. It checks `if not clamp:` when it should check `if clamp:`, causing clamping to be applied when disabled and skipped when enabled.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(clamp or (y__5 == y__1)) and ((not clamp) or (min(y0, y1) <= y__5 and y__5 <= max(y0, y1)))"
+      },
+      "intent": "The final value of y must correctly reflect the clamping flag after the conditional block.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "min(y0, y1) <= y__1 and y__1 <= max(y0, y1)"
+      },
+      "intent": "If clamping is enabled but the clamping logic is skipped, the value must already be within the target range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "t__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(t__1 * (x1 - x0) - (x - x0)) < 1e-9"
+      },
+      "intent": "The interpolation parameter t must be consistent with its definition.",
+      "confidence": 0.8
+    }
+  ]
+}

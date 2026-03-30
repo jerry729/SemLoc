@@ -1,0 +1,33 @@
+{
+  "bug_id": "ansible_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.modules.packaging.os.redhat_subscription.main",
+    "buggy_methods": [
+      "lib.ansible.modules.packaging.os.redhat_subscription.main"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.modules.packaging.os.redhat_subscription.main",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/modules/packaging/os/redhat_subscription.py": [
+      518,
+      842,
+      843
+    ],
+    "test/units/modules/packaging/os/test_redhat_subscription.py": [
+      560,
+      561,
+      570,
+      571,
+      661
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

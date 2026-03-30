@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "heartbeat_throttle",
+  "fault_hypothesis": "The rate limit check on line 73 uses a strict `>` comparison, which incorrectly allows a new heartbeat when the number of active timestamps is exactly equal to the limit. The condition should be `>=` to correctly throttle when the window is full.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The number of active timestamps should not be exactly equal to the limit at the decision point, as this is the failing boundary condition.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == (len(active) < limit)) and (__cbfl_result[1] == (limit - len(active) if len(active) < limit else 0))"
+      },
+      "intent": "The returned 'allowed' status and 'remaining' count must correctly reflect whether the active timestamp count is under the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If a heartbeat is allowed (by taking the else branch), the number of active timestamps must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The number of active timestamps should not be exactly at the limit before the throttling decision is made.",
+      "confidence": 1.0
+    }
+  ]
+}

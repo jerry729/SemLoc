@@ -1,0 +1,44 @@
+{
+  "function": "realign_power",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    57
+  ],
+  "total_source_lines": 59,
+  "runs": [
+    {
+      "faulty_lines": [
+        59
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, it's supposed to \"renormalise the result so the weights form a valid distribution\" according to the docstring, but the implementation never actually normalizes the output. The function just returns the interpolated values without dividing by their sum.\n\n{\n  \"function_name\": \"realign_power\",\n  \"faulty_lines\": [59],\n  \"explanation\": \"The function docstring states it renormalises the result to form a valid distribution, but the implementation returns `updated` without any normalisation step. The sum of interpolated values should be computed and each element divided by it before returning.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        59
+      ],
+      "valid_preds": [
+        59
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 59,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

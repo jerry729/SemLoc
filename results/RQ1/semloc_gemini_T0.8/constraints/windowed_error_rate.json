@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "windowed_error_rate",
+  "fault_hypothesis": "The error rate calculation on line 69 is incorrect. It divides the number of errors by the window duration (`window`) instead of the total number of recent events (`len(recent)`), resulting in an incorrect rate.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(__cbfl_result - (errors__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The returned error rate must be the ratio of errors to the total number of recent events.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "errors__1"
+        }
+      },
+      "spec": {
+        "expr": "0 <= errors__1 <= len(recent__1)"
+      },
+      "intent": "The number of errors cannot be negative or exceed the total number of recent events.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts > cutoff__1 for ts, _ in recent__1)"
+      },
+      "intent": "All events considered 'recent' must have timestamps after the calculated cutoff time.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_27",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.datetimes.DatetimeArray.to_period",
+    "buggy_methods": [
+      "pandas.core.arrays.datetimes.DatetimeArray.to_period"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.datetimes.DatetimeArray.to_period",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/datetimes.py": [
+      1100
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

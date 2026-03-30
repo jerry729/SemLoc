@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shares_apportion",
+  "fault_hypothesis": "The integer allocation on line 68 incorrectly truncates fractional shares using `int()`. This fails to distribute the remainder as required by the largest-remainder method, causing the sum of allocations to be less than the total.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The sum of allocated integer shares must equal the total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(p % 1.0 for p in planned__1) < 1e-9"
+      },
+      "intent": "The simple truncation logic is only correct if there are no fractional parts to distribute.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == total"
+      },
+      "intent": "The sum of final allocations must equal the total to be distributed.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ttl_snapshot_store",
+  "fault_hypothesis": "The expiry check on line 68 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now == effective` the entry is incorrectly returned as valid instead of expired.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now >= effective__1 or now < effective__1"
+      },
+      "intent": "At the boundary check, the condition should treat now == effective as expired (now >= effective should cause return None), so the branch must use >= not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "After the expiry branch is not taken (else branch), now must be strictly less than effective; equality should have triggered the then-branch.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or True"
+      },
+      "intent": "After computing effective, verify the semantic: if now >= effective the function must return None, not value.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or now < effective__1"
+      },
+      "intent": "The function should only return a non-None value when now is strictly less than effective (not equal).",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rating_curve",
+  "fault_hypothesis": "The condition on line 74 is inverted. Clamping is applied when `clamp` is False and skipped when `clamp` is True, which is the opposite of the intended behavior.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__3 >= min(y0, y1) and y__3 <= max(y0, y1)) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "The value after the conditional block should be clamped if and only if clamping was requested.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "The code block that performs clamping should only be executed when clamping is enabled.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If clamping is enabled but the clamping block is skipped, the value must have already been within the valid range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "y0 == y1 or ((t__1 >= 0.0 and t__1 <= 1.0) == (y__1 >= min(y0, y1) and y__1 <= max(y0, y1)))"
+      },
+      "intent": "The uninterpolated value y__1 should be within the y-bounds if and only if the interpolation parameter t is within [0, 1].",
+      "confidence": 0.9
+    }
+  ]
+}

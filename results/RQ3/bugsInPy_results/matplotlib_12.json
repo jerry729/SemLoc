@@ -1,0 +1,37 @@
+{
+  "bug_id": "matplotlib_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axes._axes.Axes.hlines",
+    "buggy_methods": [
+      "lib.matplotlib.axes._axes.Axes.hlines"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axes._axes.Axes.hlines",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/axes/_axes.py": [
+      1126,
+      1127,
+      1129,
+      1130,
+      1132,
+      1133,
+      1134,
+      1204,
+      1205,
+      1207,
+      1208,
+      1210,
+      1211,
+      1212
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

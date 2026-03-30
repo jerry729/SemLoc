@@ -1,0 +1,53 @@
+{
+  "function": "plan_points_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        74,
+        67,
+        66,
+        56
+      ],
+      "explanation": "Line 74 uses `int()` (truncation) instead of `round()` for integer allocation, which can cause the total distributed points to be less than expected. Additionally, line 67 applies the minimum floor even to near-zero weight lanes, which can cause the sum of allocations to exceed `total`.",
+      "confidence": 0.6,
+      "parse_ok": true,
+      "raw": "Looking at this function, I need to identify potential bugs.\n\nKey issues I can spot:\n\n1. **Line 56**: `if not weights or sum(weights) == 0` - This checks if `sum(weights) == 0`, but `sum(weights)` uses the raw weights without the `_MIN_WEIGHT_THRESHOLD` filtering. However, this is a pre-validation check before `_effective_weight_sum`. The real issue is that this check uses `sum(weights)` which could pass even when all effective weights are zero (if weights are all between 0 and `_MIN_WEIGHT_THRESHOLD`). But that's handled by line 62-63.\n\n2. **Line 74**: `return list(map(int, shares))` - `int()` truncates toward zero (floors for positive numbers), which means the total allocated may not equal `total`. This is a common bug in proportional allocation - should use `round()` or a proper rounding algorithm.\n\n3. **Line 67**: `return raw if raw >= minimum else minimum` - When `minimum > 0` and many lanes get the minimum, the sum of allocations could exceed `total`. This is a logical issue but may be intentional per the spec.\n\n4. **Line 66**: `raw = (w / weight_sum) * total` - For weights below `_MIN_WEIGHT_THRESHOLD`, they were excluded from `weight_sum` but are still passed to `compute_share`, which would give them a non-zero share (since `w/weight_sum` would be small but non-zero, and if that's below minimum, they'd get `minimum`). This seems like a bug - tiny weights should probably be treated as 0.\n\nThe most likely faulty line causing test failures would be **line 74** (using `int()` instead of `round()`) and **line 66/67** (tiny weights getting minimum allocation instead of 0).\n\n```json\n{\n  \"function_name\": \"plan_points_share\",\n  \"faulty_lines\": [74, 67, 66, 56],\n  \"explanation\": \"Line 74 uses `int()` (truncation) instead of `round()` for integer allocation, which can cause the total distributed points to be less than expected. Additionally, line 67 applies the minimum floor even to near-zero weight lanes, which can cause the sum of allocations to exceed `total`.\",\n  \"confidence\": 0.6\n}\n```",
+      "predicted": [
+        74,
+        67,
+        66,
+        56
+      ],
+      "valid_preds": [
+        74,
+        67,
+        66,
+        56
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 4,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": null,
+  "mean_n_predicted": 4.0
+}

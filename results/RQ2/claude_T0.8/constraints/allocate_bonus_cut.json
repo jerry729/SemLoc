@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_bonus_cut",
+  "fault_hypothesis": "The fee is subtracted per-participant in the list comprehension at line 72 instead of being deducted once from the total pool before distribution. The correct approach is to deduct the fee from `amount` first (or distribute `amount - fee` proportionally), not subtract `fee` from each individual share.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(s - fee) for s in shares__1]) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal amount minus the one-time fee, not amount minus fee*n_participants.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (sum(ratios[:len(shares__1)]) / total_ratio__1) * amount) < 1e-9"
+      },
+      "intent": "After each iteration, the running sum of shares should equal the proportional fraction of the full amount (not amount-fee), confirming shares are computed from full amount before fee deduction.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-9"
+      },
+      "intent": "Before the return comprehension uses shares, their sum should equal the full amount (fee not yet deducted), so that subtracting fee once per share gives total deduction of fee*n instead of fee once.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-9 or (fee >= amount)"
+      },
+      "intent": "The total distributed should equal amount minus the single fee deduction when fee < amount.",
+      "confidence": 0.9
+    }
+  ]
+}

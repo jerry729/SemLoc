@@ -1,0 +1,44 @@
+{
+  "function": "prediction_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        73
+      ],
+      "explanation": "The expiration check at line 73 incorrectly compares the current time (`now`) against the adjusted deadline, whereas it should be compared against the original, unadjusted deadline from the cache record (`record[1]`).",
+      "confidence": 0.85,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"prediction_cache\",\n  \"faulty_lines\": [\n    73\n  ],\n  \"explanation\": \"The expiration check at line 73 incorrectly compares the current time (`now`) against the adjusted deadline, whereas it should be compared against the original, unadjusted deadline from the cache record (`record[1]`).\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [
+        73
+      ],
+      "valid_preds": [
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

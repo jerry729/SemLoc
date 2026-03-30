@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "coverage_interp",
+  "fault_hypothesis": "The condition on line 66 is inverted: `if not clamp` applies clamping when clamp is False, and skips clamping when clamp is True. It should be `if clamp:` to clamp when clamping is requested.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or clamp == False"
+      },
+      "intent": "When clamp=True, the clamping block (if not clamp) is skipped, so no clamping occurs \u2014 the condition is inverted; this checks that clamping is entered when clamp is True.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "After the `if not clamp` branch, clamp must be False; if clamp is True we should never enter this branch.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, the final y value must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamping is requested, the returned value must not exceed the range of y0 and y1.",
+      "confidence": 0.85
+    }
+  ]
+}

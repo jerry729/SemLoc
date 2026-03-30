@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "view_tally",
+  "fault_hypothesis": "The clamping logic at line 68 incorrectly sets the new value to `max_value - 1` instead of `max_value` when the counter exceeds the ceiling.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value should be exactly the maximum allowed value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The value assigned after clamping must be equal to the maximum.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "not (max_value is not None and current__1 == max_value) or (new_value__3 == max_value)"
+      },
+      "intent": "If the count is already at the ceiling, it should remain at the ceiling.",
+      "confidence": 0.9
+    }
+  ]
+}

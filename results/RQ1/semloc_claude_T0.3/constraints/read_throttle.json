@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "read_throttle",
+  "fault_hypothesis": "The condition on line 70 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(active) == limit` the function incorrectly returns `True` with `remaining=0` instead of `False, 0`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit and len(active__1) > limit)"
+      },
+      "intent": "When active count equals limit, the strict > condition is False, causing the wrong branch to be taken; this constraint is violated on failing tests.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) >= limit) or (len(active__1) > limit)"
+      },
+      "intent": "After computing active, if active count is at or above limit the strict comparison should also be true \u2014 this is violated when len(active)==limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit or (len(active__1) > limit)"
+      },
+      "intent": "Before using active in the comparison, if active equals limit the strict > should also hold \u2014 this is false when they are equal, exposing the off-by-one bug.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), active count must be strictly less than limit; if equal to limit we should not reach here.",
+      "confidence": 0.92
+    }
+  ]
+}

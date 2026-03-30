@@ -1,0 +1,24 @@
+{
+  "bug_id": "tornado_11",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.http1connection.HTTP1Connection._read_body",
+    "buggy_methods": [
+      "tornado.http1connection.HTTP1Connection._read_body"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.http1connection.HTTP1Connection._read_body",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/http1connection.py": [
+      568
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

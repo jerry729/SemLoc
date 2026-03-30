@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "stream_joiner",
+  "fault_hypothesis": "Lines 72-73 incorrectly remove a duplicate element when both streams end with the same value. The condition `out[-1] == left[-1] == right[-1]` triggers an erroneous `out.pop()` that removes one occurrence of a legitimately duplicated trailing element.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "After pop(), the output length should still equal the sum of both input lengths \u2014 this is violated when the pop incorrectly removes a duplicate.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "After the then-branch executes the pop, the total count must still equal the combined input lengths.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "out__1"
+        }
+      },
+      "spec": {
+        "expr": "not (out__1 and left and right and out__1[-1] == left[-1] == right[-1]) or len(out__1) != len(left) + len(right)"
+      },
+      "intent": "The pop condition should never be true when the output already has the correct total count, catching the erroneous removal.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned merged list must contain exactly as many elements as both inputs combined.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_apportion",
+  "fault_hypothesis": "The return statement on line 69 simply truncates via `int()` (floor) without applying largest-remainder rounding, causing the sum of allocations to be less than `total` when weights don't divide evenly.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "sum(int(x) for x in raw__1) == int(total)"
+      },
+      "intent": "The sum of truncated allocations must equal the total; fails when fractional remainders are discarded.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(raw__1) - total) < 1e-6"
+      },
+      "intent": "The raw shares computed by _compute_raw_shares should sum to total before truncation.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "len(raw__1) == len(weights)"
+      },
+      "intent": "The raw shares list must have the same length as the weights list before being converted to ints.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned allocations must sum exactly to total (as integer), catching the rounding loss at return.",
+      "confidence": 0.88
+    }
+  ]
+}

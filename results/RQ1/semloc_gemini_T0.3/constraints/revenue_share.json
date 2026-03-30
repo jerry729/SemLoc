@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "revenue_share",
+  "fault_hypothesis": "The fee is subtracted from each participant's share individually on line 72. This results in the total fee being deducted multiple times, once for each participant, instead of once from the total amount before the split.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(ratios) <= 1 or abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The final sum of payouts must equal the net distributable amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "amount < fee or fee == 0 or shares__1[-1] == (r / total_ratio__1) * (amount - fee)"
+      },
+      "intent": "Each calculated share should be based on the net amount, not the gross amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "amount < fee or fee == 0 or abs(sum(shares__1) - (sum(ratios[0:__cbfl_loop_iter_1+1]) / total_ratio__1) * (amount - fee)) < 1e-9"
+      },
+      "intent": "The running sum of shares should be proportional to the net distributable amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The total payout must equal the initial amount minus the fee, clamped at zero.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shard_assignment",
+  "fault_hypothesis": "The function never sorts the buckets before returning them. The docstring says keys within each shard should be in sorted order, but line 65 returns `buckets` without sorting each bucket.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "all(bucket == sorted(bucket) for bucket in buckets__1)"
+      },
+      "intent": "Each bucket in the result must be sorted before returning.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(len(b) == 0 or True for b in buckets__1)"
+      },
+      "intent": "After each key is appended, verify buckets are still valid lists (placeholder for sort invariant).",
+      "confidence": 0.5
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buckets__1"
+        }
+      },
+      "spec": {
+        "expr": "len(buckets__1) == shards and all(b == [] for b in buckets__1)"
+      },
+      "intent": "After initialization, all buckets should be empty lists with correct count.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(__cbfl_result[i] == sorted(__cbfl_result[i]) for i in range(len(__cbfl_result)))"
+      },
+      "intent": "The returned list of buckets must have each bucket individually sorted.",
+      "confidence": 0.95
+    }
+  ]
+}

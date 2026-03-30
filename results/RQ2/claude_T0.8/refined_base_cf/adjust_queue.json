@@ -1,0 +1,40 @@
+[
+  {
+    "cid": "C2",
+    "status": "OverApproximate",
+    "patch": "",
+    "original_failing": [
+      "test_output_sums_to_one_unequal_weights",
+      "test_output_sums_to_one_asymmetric",
+      "test_output_sums_to_one_two_queues",
+      "test_output_sums_to_one_small_damping"
+    ],
+    "patched_failing": [
+      "test_output_sums_to_one_unequal_weights",
+      "test_output_sums_to_one_asymmetric",
+      "test_output_sums_to_one_two_queues",
+      "test_output_sums_to_one_small_damping"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  },
+  {
+    "cid": "C4",
+    "status": "OverApproximate",
+    "patch": "",
+    "original_failing": [
+      "test_output_sums_to_one_unequal_weights",
+      "test_output_sums_to_one_asymmetric",
+      "test_output_sums_to_one_two_queues",
+      "test_output_sums_to_one_small_damping"
+    ],
+    "patched_failing": [
+      "test_output_sums_to_one_unequal_weights",
+      "test_output_sums_to_one_asymmetric",
+      "test_output_sums_to_one_two_queues",
+      "test_output_sums_to_one_small_damping"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  }
+]

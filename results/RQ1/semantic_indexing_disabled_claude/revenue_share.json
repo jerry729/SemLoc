@@ -1,0 +1,47 @@
+{
+  "function": "revenue_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        72,
+        70
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the fee is supposed to be deducted from the total pool before distribution, but instead it's being deducted from each individual share after distribution.\n\nThe correct approach should be: `net_amount = amount - fee`, then distribute `net_amount` among participants. Instead, the code distributes the full `amount` and then subtracts `fee` from each participant's share, which means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe fault is on line 70 where `amount` should be `(amount - fee)` (computed before the loop), and line 72 where `s - fee` should just be `s`.\n\n{\n  \"function_name\": \"revenue_share\",\n  \"faulty_lines\": [72, 70],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution (net_amount = amount - fee), but instead the code distributes the full amount and then subtracts fee from each individual share, resulting in a total fee deduction of fee * len(ratios) rather than just fee.\",\n  \"confidence\": 0.9\n}",
+      "predicted": [
+        72,
+        70
+      ],
+      "valid_preds": [
+        72,
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

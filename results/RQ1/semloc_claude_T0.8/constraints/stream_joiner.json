@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "stream_joiner",
+  "fault_hypothesis": "Lines 72-73 incorrectly remove the last element when both streams share the same trailing value, which is not a valid deduplication step for a merge operation. This causes duplicate tail values to be wrongly popped from the output.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "After the pop, the output length must still equal the sum of both input lengths; popping here violates this invariant.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "After executing the pop branch, output count must equal total input count.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "out__1"
+        }
+      },
+      "spec": {
+        "expr": "not (out__1 and left and right and out__1[-1] == left[-1] == right[-1]) or len(out__1) > len(left) + len(right) - 1"
+      },
+      "intent": "Before the conditional pop, the shared-tail condition should not trigger a removal when both inputs legitimately end with the same value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned merged list must contain exactly as many elements as both inputs combined.",
+      "confidence": 0.95
+    }
+  ]
+}

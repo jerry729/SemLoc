@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "machine_booking",
+  "fault_hypothesis": "The conflict detection on line 61 uses non-strict inequalities (`<=`, `>=`), which incorrectly accepts a booking that touches the boundary of an existing one. The logic should use strict inequalities (`<`, `>`) to correctly reject such cases as conflicts.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "(any(not (b__1 <= s or a__1 >= e) for s, e in timeline)) == (any(not (b__1 < s or a__1 > e) for s, e in timeline))"
+      },
+      "intent": "The conflict detection logic must correctly identify overlaps, including boundary-touching cases.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 != s for s, e in timeline)"
+      },
+      "intent": "If no conflict is detected, the new window's end must not touch the start of any existing booking.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(a__1 != e for s, e in timeline)"
+      },
+      "intent": "If no conflict is detected, the new window's start must not touch the end of any existing booking.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(window[1] < s or window[0] > e for s, e in timeline)"
+      },
+      "intent": "An accepted booking must not touch the boundaries of any existing reservation.",
+      "confidence": 0.9
+    }
+  ]
+}

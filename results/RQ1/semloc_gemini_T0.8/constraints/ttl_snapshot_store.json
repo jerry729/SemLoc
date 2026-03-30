@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ttl_snapshot_store",
+  "fault_hypothesis": "The expiry check on line 68 uses a strict greater-than comparison (`>`), which incorrectly treats an entry as valid when the current time is exactly equal to the expiry time. It should use a greater-than-or-equal-to comparison (`>=`) to correctly invalidate entries at the exact moment of expiry.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "The condition to bypass the expiry check requires the current time to be strictly less than the effective expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "A non-None value should only be returned if the entry has not expired (i.e., current time is strictly less than expiry).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "The program branch that returns a cached value should only be executed if the entry is still valid.",
+      "confidence": 1.0
+    }
+  ]
+}

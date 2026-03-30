@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "confidence_trendline",
+  "fault_hypothesis": "The condition on line 77 is inverted. The clamping logic is executed when `clamp` is `False` and skipped when `clamp` is `True`, which is the opposite of the intended behavior.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "(y__4 != y__1) == (clamp and (y__1 < min(y0, y1) or y__1 > max(y0, y1)))"
+      },
+      "intent": "The value should be changed if and only if clamping is enabled and the value is out of bounds.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamp is true, the value should already be in bounds because this branch (incorrectly) does no clamping.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 == y__1"
+      },
+      "intent": "When clamp is false, the value should not be modified by the clamping logic in this branch.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "bug_id": "pandas_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.category.CategoricalIndex.__contains__",
+    "buggy_methods": [
+      "pandas.core.indexes.category.CategoricalIndex.__contains__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.category.CategoricalIndex.__contains__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/categorical.py": [
+      40,
+      1837
+    ],
+    "pandas/core/indexes/category.py": [
+      22,
+      368,
+      371
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

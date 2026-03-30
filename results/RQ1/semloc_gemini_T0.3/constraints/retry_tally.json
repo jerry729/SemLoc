@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "retry_tally",
+  "fault_hypothesis": "The bug is on line 55. When a counter exceeds its cap, it is incorrectly set to `cap - 1` instead of being clamped to the `cap` value itself.",
+  "fault_line": 55,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 55
+        }
+      },
+      "spec": {
+        "expr": "not (cap is not None and counters[key] == cap - 1)"
+      },
+      "intent": "The counter value should not be incorrectly set to one less than the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 55,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters[key] == cap"
+      },
+      "intent": "When the counter exceeds the cap, it must be clamped exactly to the cap value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 52
+        }
+      },
+      "spec": {
+        "expr": "not (cap is not None and counters[key] == cap + 1)"
+      },
+      "intent": "The counter should not be incremented to a value that would trigger the faulty capping logic.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "function": "calibrate_latency",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "The condition `if not clamp:` is inverted \u2014 clamping should occur when `clamp=True`, but the current code applies clamping only when `clamp=False`, which is the opposite of the intended behavior.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "The condition `if not clamp:` is inverted. When `clamp=True`, the code should clamp the result, but instead it clamps when `clamp=False` and does nothing when `clamp=True`.\n\n```json\n{\n  \"function_name\": \"calibrate_latency\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"The condition `if not clamp:` is inverted \u2014 clamping should occur when `clamp=True`, but the current code applies clamping only when `clamp=False`, which is the opposite of the intended behavior.\",\n  \"confidence\": 0.97\n}\n```",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

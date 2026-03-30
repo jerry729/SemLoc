@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "inspection_booking",
+  "fault_hypothesis": "The `overlaps` function on line 65 uses strict inequalities (`<=` and `>=`) which treat adjacent windows (sharing only an endpoint) as non-overlapping. The failing tests expect adjacent windows to be considered conflicting, so the condition should use strict less-than (`<`) instead.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] <= a[0] or b[0] >= a[1]) == (b[1] > a[0] and b[0] < a[1])"
+      },
+      "intent": "Check that the overlaps function correctly identifies adjacent windows as overlapping when they share an endpoint (strict vs non-strict boundary check).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0] or slot[0] == candidate[1]) or not (slot[1] <= candidate[0] or slot[0] >= candidate[1])"
+      },
+      "intent": "When a slot shares an endpoint with the candidate, the overlaps function should return True (conflict detected), but the current implementation returns False for adjacent windows.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (slot[1] == candidate[0] or slot[0] == candidate[1]) for slot in existing)"
+      },
+      "intent": "Before building the merged schedule, verify no existing slot is adjacent to the candidate; if any are adjacent, the function should have returned False already.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__2"
+        }
+      },
+      "spec": {
+        "expr": "all(not (merged__2[i][1] == merged__2[j][0]) for i in range(len(merged__2)) for j in range(len(merged__2)) if i != j)"
+      },
+      "intent": "After normalization, if adjacent slots were incorrectly allowed through, the merged schedule would contain windows sharing endpoints that should have caused rejection.",
+      "confidence": 0.75
+    }
+  ]
+}

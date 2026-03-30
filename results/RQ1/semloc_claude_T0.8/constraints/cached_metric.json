@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_metric",
+  "fault_hypothesis": "The expiry check on line 61 uses strict greater-than (`now > effective_expiry`) instead of greater-than-or-equal (`now >= effective_expiry`), so entries are incorrectly served when `now` exactly equals the expiry time.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective_expiry__1) or True"
+      },
+      "intent": "At the boundary now==effective_expiry the condition should trigger a return None, meaning now>=effective_expiry should evaluate True and take the branch; the strict > misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_expiry__1 == _adjusted_expiry(ttl__1, _CLOCK_SKEW_TOLERANCE)"
+      },
+      "intent": "Verify that effective_expiry is correctly computed so the subsequent comparison is against the right value.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_expiry__1"
+      },
+      "intent": "After falling through the expiry branch (not returning None), now must be strictly less than effective_expiry; equality means the entry is expired and payload should not be returned.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (now < effective_expiry)"
+      },
+      "intent": "If a payload is returned, now must be strictly less than effective_expiry; returning payload when now==expiry is the observed bug.",
+      "confidence": 0.9
+    }
+  ]
+}

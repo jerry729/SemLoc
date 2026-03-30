@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "login_throttle",
+  "fault_hypothesis": "The check on line 69 uses a strict greater-than comparison ('>') instead of greater-than-or-equal ('>='), incorrectly allowing login attempts when the number of recent attempts is exactly equal to the limit.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The buggy logic fails specifically when the number of recent attempts is exactly equal to the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "The 'allow' branch should only be taken when the number of attempts is strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(t > cutoff__1 for t in recent__1)"
+      },
+      "intent": "All timestamps in the 'recent' list must actually be more recent than the cutoff time.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_search",
+  "fault_hypothesis": "The condition on line 74 uses `>` (strictly greater than) instead of `>=`, so when `len(active) == limit` the function incorrectly returns True with 0 remaining instead of False.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit and True)"
+      },
+      "intent": "When active count equals limit, the branch condition should be true (deny), but with > it is false \u2014 this expr is FALSE on failing tests where len(active)==limit.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "After the else branch (allowed path), active count must be strictly less than limit; equality should have been caught by the if-branch.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) <= limit or len(active__1) > limit"
+      },
+      "intent": "Sanity check that active count is comparable to limit \u2014 always true, but ensures active__1 is properly defined before the boundary check.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(active__1) >= limit)"
+      },
+      "intent": "The returned allowed flag should be False whenever active count is >= limit (not just > limit).",
+      "confidence": 0.93
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "function": "api_rate_guard",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        72
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the issue is on line 72. The condition `if len(recent) > limit` should be `if len(recent) >= limit`. \n\nWhen the number of recent requests equals the limit, the caller should be denied (no remaining capacity), but the current code allows one extra request through. The `remaining` calculation on line 74 would return 0 when `len(recent) == limit`, but the call is still permitted (`True` returned), which is incorrect \u2014 it should be denied.\n\n{\n  \"function_name\": \"api_rate_guard\",\n  \"faulty_lines\": [72],\n  \"explanation\": \"The condition `len(recent) > limit` should be `len(recent) >= limit`. When the count of recent requests equals the limit, the function incorrectly returns `(True, 0)` instead of `(False, 0)`, allowing one extra request beyond the allowed limit.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        72
+      ],
+      "valid_preds": [
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

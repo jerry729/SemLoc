@@ -1,0 +1,44 @@
+{
+  "function": "track_delivery",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        72
+      ],
+      "explanation": "When the updated value exceeds the cap, the code sets `updated = cap - 1` instead of `updated = cap`, meaning the counter is capped one below the intended maximum rather than at the cap value itself.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"track_delivery\",\n  \"faulty_lines\": [72],\n  \"explanation\": \"When the updated value exceeds the cap, the code sets `updated = cap - 1` instead of `updated = cap`, meaning the counter is capped one below the intended maximum rather than at the cap value itself.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        72
+      ],
+      "valid_preds": [
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

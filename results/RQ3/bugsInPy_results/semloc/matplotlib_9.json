@@ -1,0 +1,16 @@
+{
+  "bug_id": "matplotlib_9",
+  "function": "draw",
+  "src_path": "lib/matplotlib/projections/polar.py",
+  "fn_begin": 951,
+  "fn_end": 994,
+  "n_constraints": 4,
+  "n_tests_passing": 0,
+  "n_tests_failing": 3,
+  "line_scores": [],
+  "fault_line": 967,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/matplotlib_9/draw_constraints.json",
+  "report_path": "/tmp/bip_semloc/matplotlib_9/violations.jsonl"
+}

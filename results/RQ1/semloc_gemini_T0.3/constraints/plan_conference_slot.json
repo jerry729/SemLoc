@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_conference_slot",
+  "fault_hypothesis": "The `overlaps` function on line 76 uses non-strict inequalities (`<=`, `>=`) to check for non-overlapping intervals. This incorrectly classifies adjacent (touching) slots as non-overlapping, causing the failing tests to accept conflicting candidates.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "__cbfl_result == (not (b[1] < a[0] or b[0] > a[1]))"
+      },
+      "intent": "The return value of overlaps should correctly identify touching intervals as overlapping.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[0] <= slot[1] and slot[0] <= candidate[1])"
+      },
+      "intent": "If the loop continues, the candidate must not have a true (touching) overlap with the current slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(sorted(merged__1)[i][1] < sorted(merged__1)[i+1][0] for i in range(len(merged__1) - 1))"
+      },
+      "intent": "When a candidate is accepted, the resulting merged schedule must not contain any touching or overlapping slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "An accepted schedule must not contain any touching or overlapping slots.",
+      "confidence": 0.8
+    }
+  ]
+}

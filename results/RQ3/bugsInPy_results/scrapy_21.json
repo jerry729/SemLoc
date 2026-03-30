@@ -1,0 +1,24 @@
+{
+  "bug_id": "scrapy_21",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.downloadermiddlewares.robotstxt.RobotsTxtMiddleware._robots_error",
+    "buggy_methods": [
+      "scrapy.downloadermiddlewares.robotstxt.RobotsTxtMiddleware._robots_error"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.downloadermiddlewares.robotstxt.RobotsTxtMiddleware._robots_error",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/downloadermiddlewares/robotstxt.py": [
+      104
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

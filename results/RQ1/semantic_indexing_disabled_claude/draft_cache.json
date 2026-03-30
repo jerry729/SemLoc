@@ -1,0 +1,44 @@
+{
+  "function": "draft_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        73
+      ],
+      "explanation": "Line 73 directly compares `now > expires_at` instead of calling `_is_expired(now, expires_at)`, bypassing the clock skew tolerance and the dedicated helper function that was defined for this purpose.",
+      "confidence": 0.75,
+      "parse_ok": true,
+      "raw": "Looking at the code, the `_is_expired` function uses `_CLOCK_SKEW_TOLERANCE` to check expiration, but `draft_cache` directly uses `now > expires_at` on line 73 instead of calling `_is_expired`. This means the clock skew tolerance is ignored, and the expiration boundary condition differs from what `_is_expired` implements (which uses strict `>` with tolerance, while the docstring says \"reached or passed\" should return None, meaning `now >= expires_at` should be invalid).\n\nThe `_is_expired` helper was defined but not used. Line 73 should use `_is_expired(now, expires_at)` instead of directly comparing `now > expires_at`.\n\n```json\n{\n  \"function_name\": \"draft_cache\",\n  \"faulty_lines\": [73],\n  \"explanation\": \"Line 73 directly compares `now > expires_at` instead of calling `_is_expired(now, expires_at)`, bypassing the clock skew tolerance and the dedicated helper function that was defined for this purpose.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [
+        73
+      ],
+      "valid_preds": [
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

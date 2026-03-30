@@ -1,0 +1,28 @@
+{
+  "bug_id": "scrapy_32",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.crawler.CrawlerProcess.__init__",
+    "buggy_methods": [
+      "scrapy.crawler.CrawlerProcess.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.crawler.CrawlerProcess.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/crawler.py": [
+      212,
+      213
+    ],
+    "tests/test_crawler.py": [
+      4
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

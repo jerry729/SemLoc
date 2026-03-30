@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "notification_gate",
+  "fault_hypothesis": "The condition on line 63 uses `>` instead of `>=`, so when `len(recent) == limit` the function incorrectly returns `True` (allowed) instead of `False` (blocked).",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or len(recent__1) > limit or (len(recent__1) == limit)"
+      },
+      "intent": "When len(recent) equals limit the branch should be taken (blocked), so the condition must be >= not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the else branch (not blocked), recent count must be strictly less than limit; equality should have been caught by the if branch.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or True"
+      },
+      "intent": "Capture the case where len(recent) equals limit \u2014 the gate should block but the > condition misses this.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len([t for t in timestamps if t >= now - window]) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when recent event count meets or exceeds the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

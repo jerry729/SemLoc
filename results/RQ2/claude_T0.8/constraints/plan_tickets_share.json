@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_tickets_share",
+  "fault_hypothesis": "Line 81 uses a simple `int()` (floor) conversion on each share, which loses fractional remainders and causes the sum to be less than `total` when the total is not evenly divisible. A proper largest-remainder rounding should be used instead.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == int(total)"
+      },
+      "intent": "After flooring all shares, their sum must equal the integer total \u2014 violated when fractional parts are discarded without redistribution.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 80,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned list of integer allocations must sum to the original total.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "sum(shares__1) <= total + 1e-9"
+      },
+      "intent": "Accumulated raw shares must never exceed total (sanity check on _compute_portion).",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "Before converting to integers, the raw shares should sum to total within floating-point tolerance.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(__cbfl_result) == int(total)"
+      },
+      "intent": "Whenever floor_to_int is True the returned allocations must sum exactly to the integer total.",
+      "confidence": 0.9
+    }
+  ]
+}

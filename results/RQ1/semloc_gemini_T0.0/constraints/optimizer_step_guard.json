@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "optimizer_step_guard",
+  "fault_hypothesis": "The condition on line 62 incorrectly handles NaN values. The check `loss_value == loss_value` evaluates to `False` for NaN, causing the `if` block to be skipped and the function to incorrectly return `True`.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "loss_value == loss_value"
+      },
+      "intent": "The comparison `loss_value > max_loss` is only meaningful for non-NaN values.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "loss_value == loss_value"
+      },
+      "intent": "If the `if` condition is false, it should be because the loss is within bounds, not because it is NaN.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(loss_value == loss_value) or (__cbfl_result == False)"
+      },
+      "intent": "The function must return False if the loss value is NaN.",
+      "confidence": 0.8
+    }
+  ]
+}

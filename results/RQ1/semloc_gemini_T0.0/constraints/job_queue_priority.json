@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "job_queue_priority",
+  "fault_hypothesis": "The condition on line 67 uses a strict greater-than `>` comparison, but the requirement is to reject batches that meet or exceed the capacity (`>=`). This causes batches with a size exactly equal to `max_jobs` to be incorrectly accepted.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "len(job_list__1) != max_jobs"
+      },
+      "intent": "The number of jobs must not equal the capacity, as this boundary case is buggy.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result == True) implies (len(job_list) < max_jobs)"
+      },
+      "intent": "An accepted batch must be strictly smaller than the capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(job_list__1) < max_jobs"
+      },
+      "intent": "The 'accept' path should only be taken if batch size is strictly less than capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "batch_size__1"
+        }
+      },
+      "spec": {
+        "expr": "batch_size__1 != max_jobs"
+      },
+      "intent": "The calculated batch size should not be exactly the capacity limit.",
+      "confidence": 0.9
+    }
+  ]
+}

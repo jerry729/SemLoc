@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_job",
+  "fault_hypothesis": "The condition on line 75 uses a strict greater-than comparison (`>`) instead of greater-than-or-equal (`>=`). This allows a new job when the number of recent jobs is exactly at the limit, which should be disallowed.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The boundary condition where the number of recent jobs equals the limit is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a job is allowed (i.e., this branch is taken), the number of recent jobs must have been strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= 0"
+      },
+      "intent": "The count of recent jobs cannot be negative before being compared to the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == False) == (len(recent) >= limit)"
+      },
+      "intent": "A job should be disallowed if and only if the number of recent jobs is greater than or equal to the limit.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "function": "scores_apportion",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        75,
+        68
+      ],
+      "explanation": "Line 75 uses int() (truncation) instead of round() or a proper largest-remainder method, causing the sum of allocations to not equal 'total'. Additionally, line 68 applies minimum without accounting for the fact that clamping can cause the total shares to exceed the budget.",
+      "confidence": 0.75,
+      "parse_ok": true,
+      "raw": "Looking at the function, I need to identify the fault.\n\nThe function is supposed to distribute a total across lanes proportionally. The key issues I can see:\n\n1. **Line 75**: `return list(map(int, shares))` - This uses `int()` which truncates (floors) the values. For proper integer apportionment, you'd typically want to round and then adjust to ensure the total sums correctly. The sum of truncated values may not equal `total`.\n\n2. **Line 68**: The `_clamp_share` applies the minimum floor, but if `minimum > 0`, the total of shares could exceed `total` since each lane gets at least `minimum`. This is a design issue but might be intentional.\n\n3. **Line 75**: Using `int()` (truncation) instead of `round()` means the allocations will systematically be too low. For example, if shares are [2.9, 2.9, 2.2], `int()` gives [2, 2, 2] = 6, not 8.\n\nThe most obvious bug is on line 75 where `int()` (truncation) is used instead of proper rounding. This causes the sum of allocations to not equal `total` in many cases. A proper apportionment would use something like the largest remainder method.\n\nHowever, if the test expects the sum to equal `total`, then line 75 is definitely faulty because truncation doesn't preserve the sum.\n\n```json\n{\n  \"function_name\": \"scores_apportion\",\n  \"faulty_lines\": [75, 68],\n  \"explanation\": \"Line 75 uses int() (truncation) instead of round() or a proper largest-remainder method, causing the sum of allocations to not equal 'total'. Additionally, line 68 applies minimum without accounting for the fact that clamping can cause the total shares to exceed the budget.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [
+        75,
+        68
+      ],
+      "valid_preds": [
+        75,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 75,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

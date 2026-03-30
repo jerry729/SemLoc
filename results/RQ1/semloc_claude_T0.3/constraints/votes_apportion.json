@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "votes_apportion",
+  "fault_hypothesis": "Line 29 simply floors each share with int(), discarding fractional remainders without applying a largest-remainder correction, so the sum of integer allocations can be less than total.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "After flooring, the sum of integer allocations must equal total.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 28,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "Inside the floor_to_int branch, the returned list must sum to total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= minimum for s in shares__1)"
+      },
+      "intent": "Every accumulated share must be at least minimum after each iteration.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "shares__1 == []"
+      },
+      "intent": "Immediately after initialisation shares must be empty before the loop fills it.",
+      "confidence": 0.6
+    }
+  ]
+}

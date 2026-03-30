@@ -1,0 +1,44 @@
+{
+  "function": "download_rate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [
+        75
+      ],
+      "explanation": "The condition `len(active) > limit` is an off-by-one error, as it allows one more download than the specified limit. The check should be `len(active) >= limit` to correctly reject a new download when the number of active downloads is already equal to the limit.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"download_rate\",\n  \"faulty_lines\": [\n    75\n  ],\n  \"explanation\": \"The condition `len(active) > limit` is an off-by-one error, as it allows one more download than the specified limit. The check should be `len(active) >= limit` to correctly reject a new download when the number of active downloads is already equal to the limit.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        75
+      ],
+      "valid_preds": [
+        75
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 75,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

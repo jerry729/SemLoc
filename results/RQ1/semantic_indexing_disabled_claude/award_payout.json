@@ -1,0 +1,47 @@
+{
+  "function": "award_payout",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        67,
+        69
+      ],
+      "explanation": "The fee should be deducted from the total pool before distribution (net_amount = amount - fee), but instead line 67 computes shares from the full amount and line 69 subtracts the fee from each individual share, causing the total fee deducted to be fee * len(ratios) instead of fee.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the code, the fee should be deducted from the total pool before distribution, not from each individual share after distribution.\n\nThe correct approach: `net_amount = amount - fee`, then distribute `net_amount` proportionally.\n\nInstead, line 67 computes each share based on the full `amount`, and line 69 subtracts `fee` from each individual share. This means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\n```json\n{\n  \"function_name\": \"award_payout\",\n  \"faulty_lines\": [67, 69],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution (net_amount = amount - fee), but instead line 67 computes shares from the full amount and line 69 subtracts the fee from each individual share, causing the total fee deducted to be fee * len(ratios) instead of fee.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        67,
+        69
+      ],
+      "valid_preds": [
+        67,
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

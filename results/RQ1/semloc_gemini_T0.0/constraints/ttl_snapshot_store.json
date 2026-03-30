@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ttl_snapshot_store",
+  "fault_hypothesis": "The bug is on line 68. The strict inequality `now > effective` fails to consider an entry expired when `now == effective`, violating the requirement that entries are valid only when `now` is strictly before the expiry time.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The comparison at this line is flawed for the boundary case where the current time equals the expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "The cached value should only be returned if the current time is strictly before the expiry time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(key not in entries) or (now < entries[key][1]) or (__cbfl_result is None)"
+      },
+      "intent": "An entry should be returned only if it exists and is not expired.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 == expires_at__1"
+      },
+      "intent": "The effective expiry time is expected to be identical to the stored expiry timestamp.",
+      "confidence": 0.8
+    }
+  ]
+}

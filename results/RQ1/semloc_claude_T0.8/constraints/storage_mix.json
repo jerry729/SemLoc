@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "storage_mix",
+  "fault_hypothesis": "The `_clamp_allocation` call at line 62 only clamps values but does not normalize the vector to sum to 1; when inputs do not sum to 1, the output will not be properly normalized.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After _clamp_allocation, the adjusted vector must sum to 1.0 (normalized).",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "adjusted__2 must be a properly normalized probability vector summing to 1.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == len(current)"
+      },
+      "intent": "The blended vector must preserve the length of the input allocation.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "Before returning adjusted__2, it must sum to 1.0 to satisfy the normalization contract.",
+      "confidence": 0.88
+    }
+  ]
+}

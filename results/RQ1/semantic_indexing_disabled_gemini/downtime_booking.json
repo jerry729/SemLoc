@@ -1,0 +1,44 @@
+{
+  "function": "downtime_booking",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "The capacity check is performed before checking for overlaps, causing an OverflowError to be raised for a full schedule even if the candidate window would have been rejected for overlapping. The overlap check should occur before the capacity check.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"downtime_booking\",\n  \"faulty_lines\": [\n    61\n  ],\n  \"explanation\": \"The capacity check is performed before checking for overlaps, causing an OverflowError to be raised for a full schedule even if the candidate window would have been rejected for overlapping. The overlap check should occur before the capacity check.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

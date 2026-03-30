@@ -1,0 +1,29 @@
+{
+  "bug_id": "pandas_22",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.window.rolling._Rolling_and_Expanding.count",
+    "buggy_methods": [
+      "pandas.core.window.rolling._Rolling_and_Expanding.count"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.window.rolling._Rolling_and_Expanding.count",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/window/rolling.py": [
+      1174,
+      1175,
+      1942
+    ],
+    "pandas/tests/window/test_base_indexer.py": [
+      85
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prediction_cache",
+  "fault_hypothesis": "The expiration check on line 73 uses a strict greater-than comparison (`>`), but should use greater-than-or-equal-to (`>=`) to correctly handle entries exactly at their deadline. This causes expired entries to be returned as valid.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(now > deadline__1) == (now >= deadline__1)"
+      },
+      "intent": "The result of the buggy expiration comparison should match the correct comparison.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "If an entry is considered not expired, the current time must be strictly less than its deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "The cached value should only be returned if the current time is strictly before the deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(key in store and now >= store[key][1]) ==> (__cbfl_result == default)"
+      },
+      "intent": "If a cached entry exists and is expired (or at its deadline), the function must return the default value.",
+      "confidence": 0.8
+    }
+  ]
+}

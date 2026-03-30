@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warm_cache_loader",
+  "fault_hypothesis": "The function calculates the new expiration time on line 75 but fails to update the cache entry with this new value before returning on line 76. This causes the 'warm cache' TTL extension to not work, as the updated expiration time is discarded.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "cache[key] == (value__1, now + ttl__1)"
+      },
+      "intent": "The cache entry for the accessed key should be updated with the new value and extended expiration time before returning.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__2 > now"
+      },
+      "intent": "The newly computed expiration timestamp must be in the future relative to the current time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= now"
+      },
+      "intent": "A cache entry must not be expired to reach this point in the code.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or __cbfl_result == cache[key][0]"
+      },
+      "intent": "If a value is returned, it must be the value currently stored in the cache for that key.",
+      "confidence": 0.7
+    }
+  ]
+}

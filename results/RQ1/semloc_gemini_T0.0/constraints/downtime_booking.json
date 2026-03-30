@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "downtime_booking",
+  "fault_hypothesis": "The overlap detection logic on line 64 is incorrect. It does not consider adjacent time windows (where one ends exactly when the other begins) as overlapping, because it implicitly uses strict inequalities.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "__cbfl_result == (a[0] <= b[1] and b[0] <= a[1])"
+      },
+      "intent": "The return value of overlaps should correctly reflect whether two intervals, including their boundaries, overlap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (slot[0] <= candidate[1] and candidate[0] <= slot[1])"
+      },
+      "intent": "If the overlap check is false for a given slot, the slot and candidate must truly not overlap (including boundaries).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (s[0] <= candidate[1] and candidate[0] <= s[1]) for s in existing)"
+      },
+      "intent": "If the candidate is merged into the schedule, it must not overlap with any of the previously existing slots.",
+      "confidence": 0.9
+    }
+  ]
+}

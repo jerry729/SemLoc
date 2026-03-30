@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "request_token_bucket",
+  "fault_hypothesis": "When a request is denied at line 62, the function returns without updating the `last` access timestamp in the `tokens` dictionary. This causes subsequent calls to calculate token refills based on a stale timestamp, leading to incorrect throttling behavior.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "tokens.get(TOKEN_KEY_LAST__1, last__1) == now"
+      },
+      "intent": "On denial, the last-access timestamp should reflect the current time, but it is not being updated.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "available__2"
+        }
+      },
+      "spec": {
+        "expr": "available__2 <= capacity"
+      },
+      "intent": "The number of available tokens after a refill must not exceed the bucket's capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "available__2"
+        }
+      },
+      "spec": {
+        "expr": "available__2 >= available__1"
+      },
+      "intent": "The token refill calculation should never decrease the number of available tokens.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result == False) or (tokens.get(TOKEN_KEY_LAST) == now)"
+      },
+      "intent": "If a request is denied (returns False), the 'last' timestamp in the state dictionary must be updated to the current time 'now'.",
+      "confidence": 0.9
+    }
+  ]
+}

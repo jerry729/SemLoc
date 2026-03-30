@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_manifest",
+  "fault_hypothesis": "The expiry check at line 65 uses a strict greater-than comparison (`>`), but it should use greater-than-or-equal-to (`>=`). This causes an entry to be incorrectly considered valid when the current time is exactly equal to its expiry time.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The current time should not be exactly equal to the effective expiry, as this boundary case is handled incorrectly by the strict inequality.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If an entry is considered valid (i.e., the expiry check is not met), the current time must be strictly less than its effective expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "Just before comparing 'now' and 'effective', they should not be equal, as this specific case reveals the bug in the comparison operator.",
+      "confidence": 0.9
+    }
+  ]
+}

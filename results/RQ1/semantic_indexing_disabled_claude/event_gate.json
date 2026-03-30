@@ -1,0 +1,44 @@
+{
+  "function": "event_gate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        62
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the logic in `event_gate`:\n\nThe condition on line 62 checks `if len(recent) > limit`, but it should check `if len(recent) >= limit`. \n\nWhen `len(recent) == limit`, the gate should be closed (no more events allowed), but the current code returns `True, 0` (allowed with zero remaining) instead of `False, 0`. The event should not be allowed when the count already equals the limit.\n\n{\n  \"function_name\": \"event_gate\",\n  \"faulty_lines\": [62],\n  \"explanation\": \"The condition `len(recent) > limit` should be `len(recent) >= limit`. When the number of recent events equals the limit, no more events should be allowed, but the current code incorrectly returns True (allowed) with zero remaining capacity.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        62
+      ],
+      "valid_preds": [
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

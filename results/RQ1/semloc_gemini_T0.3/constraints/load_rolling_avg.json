@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_rolling_avg",
+  "fault_hypothesis": "The average on line 68 is calculated by dividing by the fixed `window` size instead of the actual number of samples in `tail`. This is incorrect when the series has fewer samples than the window size.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The computed average must be mathematically consistent with the sum and the actual number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window or len(tail__1) < warmup_min__1"
+      },
+      "intent": "The number of samples should equal the window size, unless the warmup minimum is not met.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "If an average is returned, the number of samples used should equal the window size for the division to be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result * len(series[-window:]) - sum(series[-window:])) < 1e-9"
+      },
+      "intent": "The returned value, if not None, must be the correct average of the samples in the window.",
+      "confidence": 0.8
+    }
+  ]
+}

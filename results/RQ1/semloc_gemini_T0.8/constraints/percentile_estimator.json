@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "percentile_estimator",
+  "fault_hypothesis": "The index calculation on line 59, `int(len(values) * q)`, can result in an index equal to `len(values)` when q is 1.0. This causes an `IndexError` on line 60 because the maximum valid index is `len(values) - 1`.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "The calculated index must be a valid index for the values list.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "idx__1"
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "The calculated index must be within the valid bounds of the input list.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "idx__1"
+        }
+      },
+      "spec": {
+        "expr": "not (q == 1.0) or (idx__1 == len(values) - 1)"
+      },
+      "intent": "If q is 1.0, the index should point to the last element, not one past it.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "idx__1"
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "The index must be less than the length of the list before being used for access.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warm_cache_loader",
+  "fault_hypothesis": "Line 75 computes the new expiration but never writes it back to the cache dict, so the cache entry is never updated with the extended TTL. The function should do `cache[key] = (value, expires_at)` after computing the new expiration.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "cache.get(key) is not None and cache[key][1] == now + ttl__1"
+      },
+      "intent": "After computing the new expiration, the cache entry must be updated to reflect the extended TTL.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "cache.get(key) is not None and cache[key][1] == expires_at__2"
+      },
+      "intent": "After expires_at__2 is assigned, the cache must store this new expiration value for the key.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "cache.get(key) is not None and cache[key][1] > expires_at__1"
+      },
+      "intent": "Before returning the value, the cache entry's expiration should have been updated beyond the original expiration.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or (cache.get(key) is not None and cache[key][1] >= now + ttl)"
+      },
+      "intent": "When a valid value is returned, the cache must have been updated with the new expiration.",
+      "confidence": 0.85
+    }
+  ]
+}

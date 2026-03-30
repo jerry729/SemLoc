@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_rebalance",
+  "fault_hypothesis": "The function never normalises the updated weights before returning; line 65 returns the raw interpolated values instead of dividing each weight by their total sum, so the output does not sum to 1.0 when inputs are not already normalised.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9 or sum(updated__1) == 0.0"
+      },
+      "intent": "The list being returned must already be normalised (sum to 1.0) before the return executes.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(w >= 0.0 for w in updated__1)"
+      },
+      "intent": "Every appended weight must be non-negative after each loop iteration.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0"
+      },
+      "intent": "After initialisation, updated__1 must be an empty list before the loop fills it.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9 or sum(__cbfl_result) == 0.0"
+      },
+      "intent": "The returned list must sum to 1.0 for any valid non-zero input.",
+      "confidence": 0.9
+    }
+  ]
+}

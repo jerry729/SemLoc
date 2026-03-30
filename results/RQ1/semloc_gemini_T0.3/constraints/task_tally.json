@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "task_tally",
+  "fault_hypothesis": "The clamping logic is incorrect. On line 55, when a counter exceeds `max_value`, it is set to `max_value - 1` instead of being set to `max_value` itself.",
+  "fault_line": 55,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 55
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "After clamping, the new value should be exactly the maximum allowed value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 53,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not (new_value__1 > max_value) or new_value__3 == max_value"
+      },
+      "intent": "If a ceiling is active, the final value must be correctly clamped if necessary.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "max_value is None or not (new_value__1 > max_value) or new_value__3 == max_value"
+      },
+      "intent": "The value being stored in the counts dictionary must be correct.",
+      "confidence": 0.9
+    }
+  ]
+}

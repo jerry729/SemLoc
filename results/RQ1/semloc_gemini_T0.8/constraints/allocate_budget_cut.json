@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_budget_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 67. This causes the total fee deducted to be multiplied by the number of participants, instead of being a single deduction from the total pool.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(amount < fee) or (abs(sum(s - fee for s in shares__1) - (amount - fee)) < 1e-9)"
+      },
+      "intent": "The sum of payouts before clamping should equal the net pool, unless the fee exceeds the pool.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "(amount < fee) or (fee == 0) or (len(ratios) == 1)"
+      },
+      "intent": "The computed shares are only suitable for the subsequent fee logic under specific input conditions.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 58,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "(amount < fee) or (fee == 0) or (len(ratios) == 1)"
+      },
+      "intent": "Given valid inputs, the subsequent fee logic is only correct under specific conditions.",
+      "confidence": 0.8
+    }
+  ]
+}

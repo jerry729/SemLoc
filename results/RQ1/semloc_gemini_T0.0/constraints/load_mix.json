@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_mix",
+  "fault_hypothesis": "The function calculates blended allocations but fails to normalize them so they sum to 1.0 before returning. The bug is the missing normalization step, making the return value on line 68 incorrect for inputs that are not already normalized.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of allocations must be normalized to sum to 1.0 before being returned.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(x <= 1.0 for x in adjusted__1)"
+      },
+      "intent": "Each computed allocation weight in the adjusted list should not exceed 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The fully-computed list of allocations must sum to 1.0 before it is used.",
+      "confidence": 0.95
+    }
+  ]
+}

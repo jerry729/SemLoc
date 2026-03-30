@@ -1,0 +1,44 @@
+{
+  "function": "cached_metric",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "The expiry comparison uses strict greater-than (`now > effective_expiry`) instead of greater-than-or-equal (`now >= effective_expiry`), causing cache entries to be incorrectly returned as valid hits at exactly the TTL boundary when they should be considered expired.",
+      "confidence": 0.65,
+      "parse_ok": true,
+      "raw": "Looking at the code, the key question is about the expiry comparison logic.\n\nThe cache stores `(payload, ttl)` where `ttl` represents the expiration timestamp. The comparison on line 61 is `if now > effective_expiry`, which means the entry is considered valid when `now == effective_expiry` (exactly at expiry time). \n\nTypically, cache expiry should use `>=` to expire entries at or past their TTL. But more importantly, looking at `_adjusted_expiry` on line 25: it returns `ttl + tolerance`. With `_CLOCK_SKEW_TOLERANCE = 0`, this just returns `ttl`. The comparison `now > effective_expiry` means the cache is still considered valid when `now == ttl`, which could be a bug depending on expected behavior.\n\nHowever, the more subtle issue: the `_adjusted_expiry` adds tolerance to TTL, but the purpose of clock skew tolerance is typically to allow entries to be considered valid even slightly after their TTL. The current implementation extends the expiry (makes it expire *later*), which is the correct direction for clock skew tolerance.\n\nThe comparison `now > effective_expiry` vs `now >= effective_expiry` is the most likely bug - at exactly the expiry moment, the entry should be expired but isn't. This is line 61.\n\n```json\n{\n  \"function_name\": \"cached_metric\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The expiry comparison uses strict greater-than (`now > effective_expiry`) instead of greater-than-or-equal (`now >= effective_expiry`), causing cache entries to be incorrectly returned as valid hits at exactly the TTL boundary when they should be considered expired.\",\n  \"confidence\": 0.65\n}\n```",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

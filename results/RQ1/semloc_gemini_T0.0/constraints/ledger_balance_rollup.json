@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ledger_balance_rollup",
+  "fault_hypothesis": "The function incorrectly adds debit amounts to the balance instead of subtracting them. The bug is on line 66, which should be `balance -= amount`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "amount == -amount"
+      },
+      "intent": "A debit operation should be equivalent to adding the negative of the amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "balance == sum(e[0] for e in entries[:idx+1] if e[1] == 'credit') - sum(e[0] for e in entries[:idx+1] if e[1] == 'debit')"
+      },
+      "intent": "The running balance must equal the total credits minus total debits for all entries processed so far.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "balance <= sum(e[0] for e in entries[:idx+1] if e[1] == 'credit')"
+      },
+      "intent": "After processing any debit, the net balance cannot be greater than the sum of all credits processed so far.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result == _round_balance(sum(e[0] for e in entries if e[1] == 'credit') - sum(e[0] for e in entries if e[1] == 'debit'))"
+      },
+      "intent": "The final returned balance must equal the rounded difference between total credits and total debits.",
+      "confidence": 0.7
+    }
+  ]
+}

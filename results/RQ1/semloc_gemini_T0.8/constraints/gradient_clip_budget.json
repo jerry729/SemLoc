@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gradient_clip_budget",
+  "fault_hypothesis": "The fault is on line 66. The scaling factor is calculated using `norm + 1` in the denominator instead of `norm`, which results in the clipped gradient's norm being smaller than the required `max_norm`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(scale__1 * norm__1 - max_norm) < 1e-9"
+      },
+      "intent": "The product of the scaling factor and the original norm must equal the target maximum norm.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "scale__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(scale__1 - (max_norm / norm__1)) < 1e-9"
+      },
+      "intent": "The scale factor must be the exact ratio of the target norm to the current norm.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(v*v for v in [g * scale__1 for g in gradients]) - (max_norm * max_norm)) < 1e-6"
+      },
+      "intent": "The squared L2 norm of the clipped gradients must equal the square of the maximum norm.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_weight",
+  "fault_hypothesis": "The function is missing a normalization step. The value computed by `_compute_shifted_values` is returned directly on line 64 without being normalized to sum to 1.0, as required by the function's contract.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of weights being returned must be normalized to sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The intermediate weights computed on line 60 should be normalized before being returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == 0 or abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned portfolio must always sum to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

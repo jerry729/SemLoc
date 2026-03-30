@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_coupon",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 67. This causes the fee to be deducted multiple times, once for each participant, instead of once from the total amount.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of final payouts must equal the total amount less a single fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(abs(p - ((r / total_ratio__1) * max(0, amount - fee))) < 1e-9 for p, r in zip(result__1, ratios))"
+      },
+      "intent": "Each individual payout must be proportional to the net distributable amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((amount - sum(result__1)) - min(fee, amount)) < 1e-9"
+      },
+      "intent": "The total reduction from the original amount must equal the fee, capped by the amount itself.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The returned list of payouts must sum to the net distributable amount.",
+      "confidence": 0.8
+    }
+  ]
+}

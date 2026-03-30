@@ -1,0 +1,59 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "error_meter",
+  "fault_hypothesis": "The clamping logic on line 56 is incorrect. When a counter exceeds its cap, it is set to `cap - 1` instead of `cap`, causing it to oscillate below the cap instead of staying at the cap.",
+  "fault_line": 56,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 56
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "The counter should be clamped to the cap value, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 55,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After clamping, the counter value must be exactly the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "TEMPORAL_CALL_SNAPSHOT",
+      "instrument": {
+        "region": "ON_EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "guard": "cap is not None",
+        "snapshot": [
+          {
+            "name": "old_count",
+            "expr": "counters.get(key, 0)"
+          }
+        ],
+        "require": "not (old_count + 1 > cap) or (__cbfl_result == cap)"
+      },
+      "intent": "If the counter exceeds the cap, the final value must be the cap.",
+      "confidence": 0.8
+    }
+  ]
+}

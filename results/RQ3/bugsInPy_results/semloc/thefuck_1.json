@@ -1,0 +1,16 @@
+{
+  "bug_id": "thefuck_1",
+  "function": "get_new_command",
+  "src_path": "thefuck/rules/git_pull_uncommitted_changes.py",
+  "fn_begin": 13,
+  "fn_end": 14,
+  "n_constraints": 3,
+  "n_tests_passing": 0,
+  "n_tests_failing": 3,
+  "line_scores": [],
+  "fault_line": 14,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/thefuck_1/get_new_command_constraints.json",
+  "report_path": "/tmp/bip_semloc/thefuck_1/violations.jsonl"
+}

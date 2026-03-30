@@ -1,0 +1,24 @@
+{
+  "bug_id": "keras_13",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.training_generator.fit_generator",
+    "buggy_methods": [
+      "keras.engine.training_generator.fit_generator"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.training_generator.fit_generator",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/training_generator.py": [
+      127
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

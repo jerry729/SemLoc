@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "profile_expiry",
+  "fault_hypothesis": "The expiry check on line 73 uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal (`>=`). This causes entries to be incorrectly returned as valid when the current time is exactly equal to the expiry time.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The check at the boundary should handle equality, but the current code does not, so current time must not exactly equal effective expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If an entry is considered valid (i.e., the expiry check fails), the current time must be strictly less than its effective expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 >= expires_at__1"
+      },
+      "intent": "The effective expiry time, which accounts for clock skew, must be greater than or equal to the stored expiry time.",
+      "confidence": 0.8
+    }
+  ]
+}

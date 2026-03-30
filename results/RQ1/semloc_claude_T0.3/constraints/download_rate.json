@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "download_rate",
+  "fault_hypothesis": "The condition on line 75 uses `>` instead of `>=`, so when the number of active downloads exactly equals the limit, the function incorrectly allows the download instead of blocking it.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) == limit) == (len(active__1) >= limit)"
+      },
+      "intent": "When active count equals limit, the condition should treat it as blocked (>= not >).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), active count must be strictly less than limit.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) <= limit or len(active__1) > limit"
+      },
+      "intent": "Sanity check that active count relative to limit is correctly computed before the branch.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(active__1) >= limit)"
+      },
+      "intent": "The function should return allowed=False whenever active count is >= limit.",
+      "confidence": 0.9
+    }
+  ]
+}

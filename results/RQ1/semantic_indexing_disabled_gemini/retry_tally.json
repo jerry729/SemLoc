@@ -1,0 +1,44 @@
+{
+  "function": "retry_tally",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    55
+  ],
+  "total_source_lines": 57,
+  "runs": [
+    {
+      "faulty_lines": [
+        55
+      ],
+      "explanation": "When the counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being set to the cap value itself, which contradicts the documented behavior.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"retry_tally\",\n  \"faulty_lines\": [\n    55\n  ],\n  \"explanation\": \"When the counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being set to the cap value itself, which contradicts the documented behavior.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        55
+      ],
+      "valid_preds": [
+        55
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 55,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

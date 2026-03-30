@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "priority_mix",
+  "fault_hypothesis": "The function calculates the blended weights but omits the final step of normalizing the `updated` list so that its elements sum to 1.0 before returning on line 61.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9 if len(updated__1) > 0 else True"
+      },
+      "intent": "The final list of weights must be normalized to sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9 if len(updated__1) > 0 else True"
+      },
+      "intent": "The list of weights must be normalized before being returned.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(x <= 1.0 for x in updated__1)"
+      },
+      "intent": "Individual weights should not exceed 1.0, which is a property of a normalized distribution.",
+      "confidence": 0.9
+    }
+  ]
+}

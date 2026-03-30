@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "task_tally",
+  "fault_hypothesis": "The clamping logic is incorrect on line 55. When the new value exceeds `max_value`, it is incorrectly set to `max_value - 1` instead of being capped at `max_value`.",
+  "fault_line": 55,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 55
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The new value after clamping should be exactly the maximum value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value must equal the ceiling from which it was derived.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 54,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__3 == max_value"
+      },
+      "intent": "After the clamping branch executes, the resulting value must equal the ceiling.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(max_value is None) or (__cbfl_result <= max_value)"
+      },
+      "intent": "The final returned value must never exceed the specified maximum value.",
+      "confidence": 0.3
+    }
+  ]
+}

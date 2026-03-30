@@ -1,0 +1,83 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_search",
+  "fault_hypothesis": "The condition on line 74 uses `>` instead of `>=`, so when `len(active) == limit` the function incorrectly allows the request instead of denying it.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) >= limit) == (len(active__1) > limit or len(active__1) == limit)"
+      },
+      "intent": "When active count equals limit the branch condition must be true, so >= is the correct operator not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "The else branch (allowing the request) should only be reached when active count is strictly less than limit, not equal to it.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit) or True"
+      },
+      "intent": "Capture the active count at definition so we can verify boundary behavior when count equals limit.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) >= limit"
+      },
+      "intent": "The then-branch (denying the request) must be reached whenever active count is at or above the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(active__1) >= limit)"
+      },
+      "intent": "The returned allowed flag must be False whenever the active count meets or exceeds the limit.",
+      "confidence": 0.88
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "bug_id": "httpie_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "httpie.sessions.Session.update_headers",
+    "buggy_methods": [
+      "httpie.sessions.Session.update_headers"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "httpie.sessions.Session.update_headers",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "bug_id": "pandas_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.datetimelike.wrapped",
+    "buggy_methods": [
+      "pandas.core.indexes.datetimelike.wrapped"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.datetimelike.wrapped",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/datetimelike.py": [
+      91,
+      454,
+      460,
+      461
+    ],
+    "pandas/tests/arithmetic/test_period.py": [
+      1447,
+      1448
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

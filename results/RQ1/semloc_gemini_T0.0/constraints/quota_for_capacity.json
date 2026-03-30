@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_capacity",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers by simple truncation on line 78. This discards the fractional parts, causing the sum of the allocated integer units to be less than the total capacity.",
+  "fault_line": 78,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == total"
+      },
+      "intent": "The sum of integer-truncated shares must equal the total capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The raw floating-point shares computed by the helper must sum to the total capacity.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "In float mode, the returned shares must sum to the total capacity.",
+      "confidence": 0.9
+    }
+  ]
+}

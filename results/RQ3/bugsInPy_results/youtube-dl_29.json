@@ -1,0 +1,61 @@
+{
+  "bug_id": "youtube-dl_29",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.unified_strdate",
+    "buggy_methods": [
+      "youtube_dl.utils.unified_strdate"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.unified_strdate",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/utils.py": [
+      914
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      914
+    ],
+    "best_rank": 3,
+    "fn_lines": 63,
+    "pct_suspicious": 4.761904761904762,
+    "top1": false,
+    "top3": true,
+    "top5": true,
+    "fault_line": 910,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "youtube-dl_29",
+    "function": "unified_strdate",
+    "src_path": "youtube_dl/utils.py",
+    "fn_begin": 852,
+    "fn_end": 914,
+    "n_constraints": 4,
+    "n_tests_passing": 49,
+    "n_tests_failing": 1,
+    "line_scores": [
+      {
+        "line": 906,
+        "score": 0.9
+      },
+      {
+        "line": 856,
+        "score": 0.3
+      },
+      {
+        "line": 914,
+        "score": 0.3
+      }
+    ],
+    "fault_line": 910,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/youtube-dl_29/unified_strdate_constraints.json",
+    "report_path": "/tmp/bip_semloc/youtube-dl_29/violations.jsonl"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "function": "cost_trendline",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    66
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "The clamping logic is executed when the `clamp` parameter is False, but the function's documentation and parameter name imply it should execute when `clamp` is True. The condition `if not clamp:` is inverted and should be `if clamp:`.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"cost_trendline\",\n  \"faulty_lines\": [\n    65\n  ],\n  \"explanation\": \"The clamping logic is executed when the `clamp` parameter is False, but the function's documentation and parameter name imply it should execute when `clamp` is True. The condition `if not clamp:` is inverted and should be `if clamp:`.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

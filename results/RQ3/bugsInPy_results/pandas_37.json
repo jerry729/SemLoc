@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_37",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.string_.StringArray.astype",
+    "buggy_methods": [
+      "pandas.core.arrays.string_.StringArray.astype"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.string_.StringArray.astype",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/string_.py": [
+      16
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

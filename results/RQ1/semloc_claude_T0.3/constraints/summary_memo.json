@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "summary_memo",
+  "fault_hypothesis": "On line 68, `adjusted_now` is computed as `now - _CLOCK_SKEW_TOLERANCE` (subtracting the tolerance), but it should be `now + _CLOCK_SKEW_TOLERANCE` (or the comparison on line 73 uses `>=` instead of `>`). The result is that when `now == expires_at`, `adjusted_now < expires_at`, so the entry is incorrectly returned instead of treated as expired.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 >= now"
+      },
+      "intent": "adjusted_now should be >= now (tolerance added, not subtracted) so that boundary cases are correctly treated as expired",
+      "confidence": 0.85
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_now__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 >= now"
+      },
+      "intent": "After computing adjusted_now, it must be at least as large as now (clock-skew tolerance should be added, not subtracted)",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted_now__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 >= now"
+      },
+      "intent": "Before using adjusted_now in the expiry comparison, verify it is not less than now (which would cause boundary entries to be incorrectly returned)",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 < expires_at__1"
+      },
+      "intent": "If we reach the return value branch, adjusted_now must be strictly less than expires_at (not equal), confirming the entry is truly not expired",
+      "confidence": 0.75
+    }
+  ]
+}

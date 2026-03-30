@@ -1,0 +1,27 @@
+{
+  "bug_id": "scrapy_40",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.exporters.PythonItemExporter._serialize_value",
+    "buggy_methods": [
+      "scrapy.exporters.PythonItemExporter._serialize_value"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.exporters.PythonItemExporter._serialize_value",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/exporters.py": [
+      276,
+      277,
+      278,
+      279
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

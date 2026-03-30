@@ -1,0 +1,24 @@
+{
+  "bug_id": "ansible_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.module_utils.facts.system.distribution.DistributionFiles.parse_distribution_file_Debian",
+    "buggy_methods": [
+      "lib.ansible.module_utils.facts.system.distribution.DistributionFiles.parse_distribution_file_Debian"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.module_utils.facts.system.distribution.DistributionFiles.parse_distribution_file_Debian",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/module_utils/facts/system/distribution.py": [
+      323
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

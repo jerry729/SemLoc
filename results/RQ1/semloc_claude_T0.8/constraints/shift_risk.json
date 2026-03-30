@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_risk",
+  "fault_hypothesis": "The function is missing a normalization step after clamping; it returns the clamped values directly without dividing by their sum, so when clamping causes the sum to deviate from 1.0 the output does not sum to 1.0. The bug is on line 65 (the return statement) because the normalized result is never computed.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The values being returned must sum to 1.0; if normalization is missing this will be false when clamping changes the sum.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After clamping, the adjusted list should still sum to 1.0 before being returned; a missing normalization step violates this.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - sum(adjusted__1)) < 1e-9 or abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "Before returning, the clamped list sum should either equal the pre-clamp sum or be normalized to 1.0; if neither holds normalization is absent.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation must sum to 1.0 as stated in the docstring.",
+      "confidence": 0.9
+    }
+  ]
+}

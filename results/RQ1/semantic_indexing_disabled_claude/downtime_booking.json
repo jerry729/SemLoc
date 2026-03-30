@@ -1,0 +1,38 @@
+{
+  "function": "downtime_booking",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `overlaps` function on line 64:\n\n```python\nreturn not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nThis checks if two windows overlap. Two windows do NOT overlap if one ends before or at the other starts, or one starts at or after the other ends. The condition `b[1] <= a[0]` means b ends at or before a starts (no overlap), and `b[0] >= a[1]` means b starts at or after a ends (no overlap). This logic seems correct for strict overlap detection.\n\nHowever, the issue depends on whether adjacent windows (e.g., (1, 5) and (5, 10)) should be considered overlapping. With `b[1] <= a[0]` using `<=`, adjacent windows are NOT considered overlapping, which is typically correct behavior.\n\nWait, let me reconsider. The `_ADJACENCY_BUFFER_MINUTES = 0` variable exists but is never used in the overlap check. This could be a bug if it was intended to be used.\n\nBut more critically, looking at `_check_capacity` - it checks `len(existing) >= _MAX_WINDOWS_PER_DAY` BEFORE adding the candidate. This means if there are already 12 windows, it raises an error. This seems correct.\n\nThe overlaps function: `not (b[1] <= a[0] or b[0] >= a[1])` - this is the standard overlap check. Windows that share just an endpoint (e.g., (1,5) and (5,10)) would have `b[0] >= a[1]` \u2192 `5 >= 5` \u2192 True, so not overlap. This seems intentional.\n\nActually, the `_ADJACENCY_BUFFER_MINUTES` is defined but never used - this is suspicious but not necessarily a \"bug\" in the traditional sense.\n\nThe most likely fault is that `_ADJACENCY_BUFFER_MINUTES` was intended to be incorporated into the overlap check but wasn't, or the overlap logic has an off-by-one issue where adjacent windows should be treated as overlapping.\n\nGiven the overlap check logic at line 64, if tests expect adjacent windows to conflict, the condition should use `<` instead of `<=` for `b[1] <= a[0]`.\n\n```json\n{\n  \"function_name\": \"downtime_booking\",\n  \"faulty_lines\": [64],\n  \"explanation\": \"The overlaps function uses `b[1] <= a[0]` which allows adjacent windows (sharing an endpoint) to be booked without conflict, but tests likely expect adjacent windows to be treated as overlapping. The `_ADJACENCY_BUFFER_MINUTES` variable is defined but never used in the overlap check, suggesting it was meant to be incorporated here.\",\n  \"confidence\": 0.45\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

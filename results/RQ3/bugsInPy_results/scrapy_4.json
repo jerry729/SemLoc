@@ -1,0 +1,24 @@
+{
+  "bug_id": "scrapy_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.contracts.__init__.ContractsManager._clean_req",
+    "buggy_methods": [
+      "scrapy.contracts.__init__.ContractsManager._clean_req"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.contracts.__init__.ContractsManager._clean_req",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/contracts/__init__.py": [
+      87
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

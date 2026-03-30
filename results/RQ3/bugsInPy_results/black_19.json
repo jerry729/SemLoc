@@ -1,0 +1,20 @@
+{
+  "bug_id": "black_19",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.EmptyLineTracker._maybe_empty_lines",
+    "buggy_methods": [
+      "black.EmptyLineTracker._maybe_empty_lines"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.EmptyLineTracker._maybe_empty_lines",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "function": "quota_for_capacity",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    77
+  ],
+  "total_source_lines": 79,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, I need to identify what's likely buggy based on the code logic.\n\nThe `quota_for_capacity` function distributes a total capacity across slots proportionally. When `floor_to_int=True`, it uses `int()` (which truncates/floors) on line 78.\n\nThe issue is that when using integer allocation, the sum of floored values may be less than `total`. For example, with total=10 and weights=[1,1,1], each share is 3.33..., floored to 3, giving sum=9 instead of 10.\n\nHowever, the more subtle bug is on line 78: `int(v)` truncates toward zero, which is equivalent to floor for positive numbers. But the real issue might be elsewhere.\n\nLooking more carefully at `_compute_raw_shares` on line 43:\n```python\nshares.append(portion if portion > minimum else minimum)\n```\n\nWhen `minimum=0` (default), `portion > minimum` means `portion > 0`. If portion equals exactly 0 (weight=0), it would use minimum (0), which is fine. But if weights contain negative values, `weight_sum` could be non-zero while individual portions could be negative, and those negative portions would be replaced by `minimum=0`. This changes the semantics.\n\nThe main bug that would cause test failures is likely on line 78 - using `int()` (truncation) instead of proper rounding with remainder redistribution. But also, line 43 uses `>` instead of `>=` for the minimum check - if `portion == minimum`, it should still use minimum (or it doesn't matter since they're equal).\n\nActually, the most likely fault is line 78 where `int(v)` is used instead of `math.floor(v)` or proper rounding, causing the total to not be preserved. But `int()` and `math.floor()` are equivalent for positive numbers.\n\nAnother issue: line 43 uses `portion > minimum` - if portion equals minimum exactly, it still uses minimum (no difference). \n\nThe real bug is likely line 78 - after flooring, the remainders aren't redistributed, so the sum doesn't equal `total`. But this might be intentional per the docstring (\"approximates\").\n\nThe most suspicious bug is line 43: when `minimum > 0`, the sum of shares can exceed `total` since minimums are applied without adjusting other shares. But that's a design issue.\n\nGiven the test failures likely involve integer allocation not summing correctly, line 78 is most suspicious, followed by line 43.\n\n{\n  \"function_name\": \"quota_for_capacity\",\n  \"faulty_lines\": [78, 43],\n  \"explanation\": \"Line 78 uses `int()` (truncation) instead of proper rounding with remainder redistribution, causing the sum of integer allocations to be less than `total` when fractional parts are truncated. Line 43 applies minimums without adjusting other shares, potentially causing the total to exceed `total`.\",\n  \"confidence\": 0.5\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

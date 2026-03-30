@@ -1,0 +1,38 @@
+{
+  "function": "calendar_slot_insert",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify what's faulty.\n\nThe function is supposed to allow adjacent slots (where one ends exactly when the next begins) unless `_CONFLICT_STRICT` is enabled. \n\nThe overlap check on line 73 is:\n```python\nif not (end <= s or start >= e):\n```\n\nThis means: conflict exists if NOT (new slot ends before existing starts OR new slot starts after existing ends).\n\nFor adjacent slots:\n- If new slot ends exactly when existing starts: `end == s`, so `end <= s` is True \u2192 no conflict \u2713\n- If new slot starts exactly when existing ends: `start == e`, so `start >= e` is True \u2192 no conflict \u2713\n\nSo the adjacency logic seems correct for `_CONFLICT_STRICT = False`.\n\nBut wait - the code defines `boundary = _SLOT_BOUNDARY_EPSILON` on line 70 but never uses it! The variable `boundary` is computed but not incorporated into the overlap check. This suggests the overlap check should use `boundary` to handle strict/non-strict conflict detection.\n\nWith `_CONFLICT_STRICT = False` and `_SLOT_BOUNDARY_EPSILON = 0`, adjacent slots should be allowed. The current check already allows adjacent slots (using strict `<` would be the issue, but `<=` and `>=` are used).\n\nActually, looking more carefully: the `_CONFLICT_STRICT` flag is never used either! The code computes `boundary` but doesn't use it in the condition. The intended logic was probably:\n\n```python\nif not (end <= s + boundary or start >= e - boundary):\n```\n\nor the strict mode should change the comparison operators.\n\nThe main bug is that `boundary` (and implicitly `_CONFLICT_STRICT`) is computed but never used in the overlap check. The `boundary` variable on line 70 is unused, meaning the behavior doesn't change based on `_CONFLICT_STRICT`.\n\nHowever, looking at the overlap check itself with the default settings, the logic appears functionally correct for the default case. The fault is that `boundary` is defined but not used, and `_CONFLICT_STRICT` is ignored.\n\nThe faulty line is 73, where `boundary` should be incorporated into the condition.\n\n```json\n{\n  \"function_name\": \"calendar_slot_insert\",\n  \"faulty_lines\": [73, 70],\n  \"explanation\": \"The variable `boundary` is computed on line 70 but never used in the overlap check on line 73. The overlap condition should incorporate `boundary` (derived from `_SLOT_BOUNDARY_EPSILON` and `_CONFLICT_STRICT`) to properly implement strict vs. non-strict conflict detection.\",\n  \"confidence\": 0.6\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

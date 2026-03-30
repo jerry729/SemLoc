@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cpu_allocator",
+  "fault_hypothesis": "The conversion from floating-point planned allocations to integers on line 68 uses simple truncation (`int()`), which discards the fractional parts. This causes the sum of the final allocations to be less than the total available CPUs when the division is not perfectly even.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The sum of integer allocations must equal the total available CPUs.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of planned floating-point allocations should be equal to the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) >= int(sum(planned__1))"
+      },
+      "intent": "The sum of truncated allocations should not be less than the truncated sum of planned allocations.",
+      "confidence": 0.8
+    }
+  ]
+}

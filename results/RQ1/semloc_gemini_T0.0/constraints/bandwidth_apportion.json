@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_apportion",
+  "fault_hypothesis": "The bug is on line 69. The simple `int()` conversion truncates fractional bandwidth shares, causing the sum of the final allocations to be less than the total available bandwidth when the division is not exact.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "sum(int(x) for x in raw__1) == total"
+      },
+      "intent": "The sum of allocations after integer conversion must equal the total bandwidth.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(raw__1) - total) < 1e-9"
+      },
+      "intent": "The raw floating-point shares must sum up to the total bandwidth before conversion.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(x != int(x) for x in raw__1) or (sum(int(x) for x in raw__1) == total)"
+      },
+      "intent": "If any raw share is fractional, the final sum must still be conserved, which simple truncation fails to do.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of the final integer allocations must equal the total bandwidth.",
+      "confidence": 0.8
+    }
+  ]
+}

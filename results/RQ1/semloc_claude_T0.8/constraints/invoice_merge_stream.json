@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "invoice_merge_stream",
+  "fault_hypothesis": "Lines 83-84 incorrectly pop the last element when the last element of merged equals the last elements of both left and right, which removes a legitimate duplicate entry that should be preserved according to the function's contract.",
+  "fault_line": 83,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 83
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left__1 and right__1 and merged__1[-1] == left__1[-1] == right__1[-1])"
+      },
+      "intent": "The condition triggering the spurious pop should never be true for valid inputs with duplicates at the end; this expression is FALSE on failing tests where it incorrectly pops a legitimate duplicate.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == 0"
+      },
+      "intent": "After initialization, merged must be empty before any merging begins.",
+      "confidence": 0.99
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The pop branch should never execute for correctly merged duplicate streams; this is always FALSE on failing tests where the pop removes a valid duplicate.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The merged result must contain exactly len(left)+len(right) elements since all elements from both streams must be preserved.",
+      "confidence": 0.9
+    }
+  ]
+}

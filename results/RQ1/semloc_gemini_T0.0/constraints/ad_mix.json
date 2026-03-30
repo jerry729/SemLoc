@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ad_mix",
+  "fault_hypothesis": "The function computes the interpolated ad allocations but omits the required normalization step before returning. The `return` statement on line 67 incorrectly returns the unnormalized list, whose elements do not sum to 1.0 when the input lists do not.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list of allocations must sum to 1.0 to be a valid probability distribution.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of allocations must be normalized to sum to 1.0 before it is returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(x >= 0 for x in adjusted__1)"
+      },
+      "intent": "All allocation weights must remain non-negative throughout the adjustment process.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == 0 or abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned list of allocations must sum to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

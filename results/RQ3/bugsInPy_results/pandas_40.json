@@ -1,0 +1,39 @@
+{
+  "bug_id": "pandas_40",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.merge._get_join_indexers",
+    "buggy_methods": [
+      "pandas.core.reshape.merge._get_join_indexers"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.merge._get_join_indexers",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/reshape/merge.py": [
+      9,
+      16,
+      1274,
+      1286,
+      1825,
+      1837
+    ],
+    "pandas/tests/reshape/merge/test_merge.py": [
+      1289,
+      1290,
+      1294,
+      1295,
+      1296,
+      1297,
+      1298,
+      1299
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

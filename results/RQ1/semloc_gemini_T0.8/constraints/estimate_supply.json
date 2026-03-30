@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_supply",
+  "fault_hypothesis": "The condition at line 66 to apply clamping is inverted. It should be `if clamp:` but is `if not clamp:`, causing clamping to be applied when disabled and skipped when enabled.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))) or (not clamp and y__5 == y__1)"
+      },
+      "intent": "The result of the conditional clamping logic must be consistent with the `clamp` parameter.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If clamping is enabled but the clamping logic is skipped, the value must have already been within bounds.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 == y__1"
+      },
+      "intent": "If clamping is disabled, the value of y should not be modified by the clamping logic.",
+      "confidence": 0.9
+    }
+  ]
+}

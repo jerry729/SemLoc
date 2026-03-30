@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "heartbeat_throttle",
+  "fault_hypothesis": "The condition on line 73 uses strict greater-than (`> limit`) instead of greater-than-or-equal (`>= limit`), so when the active count exactly equals the limit, the function incorrectly returns True (allowed) instead of False (throttled).",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) >= limit) == (len(active__1) > limit or len(active__1) == limit)"
+      },
+      "intent": "When active count equals limit, the branch condition must be True (deny), so >= is the correct operator, not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "In the else branch (allowed path), the active count must be strictly less than the limit; if equal to limit we should have taken the then branch.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) <= limit or len(active__1) > limit"
+      },
+      "intent": "Sanity check that active count relative to limit is correctly compared; the real check should use >= limit to deny when equal.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(active__1) >= limit)"
+      },
+      "intent": "The function must not return allowed=True when the active count is at or above the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

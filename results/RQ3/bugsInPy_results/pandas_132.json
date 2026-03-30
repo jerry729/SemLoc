@@ -1,0 +1,30 @@
+{
+  "bug_id": "pandas_132",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.series.Series._reduce",
+    "buggy_methods": [
+      "pandas.core.series.Series._reduce"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.series.Series._reduce",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/nanops.py": [
+      709,
+      712
+    ],
+    "pandas/tests/reductions/test_reductions.py": [
+      303,
+      639,
+      640
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

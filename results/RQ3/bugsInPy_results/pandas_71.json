@@ -1,0 +1,20 @@
+{
+  "bug_id": "pandas_71",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.tile.cut",
+    "buggy_methods": [
+      "pandas.core.reshape.tile.cut"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.tile.cut",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

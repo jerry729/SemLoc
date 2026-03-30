@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cluster_rebalance_weights",
+  "fault_hypothesis": "The function omits the normalization step required to make the output weights sum to 1.0. The unnormalized interpolated vector is returned directly at line 64.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The weights vector being returned must sum to 1.0 to represent a valid probability distribution.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(x >= 0 and x <= 1.0 for x in updated__1)"
+      },
+      "intent": "All individual weights in a normalized probability distribution must be between 0.0 and 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) != 1 or abs(updated__1[0] - 1.0) < 1e-9"
+      },
+      "intent": "A single cluster's weight must be normalized to 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned list of weights must sum to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

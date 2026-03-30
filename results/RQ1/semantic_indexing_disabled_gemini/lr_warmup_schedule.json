@@ -1,0 +1,44 @@
+{
+  "function": "lr_warmup_schedule",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    57
+  ],
+  "total_source_lines": 62,
+  "runs": [
+    {
+      "faulty_lines": [
+        59
+      ],
+      "explanation": "The learning rate calculation incorrectly uses `step + 1`, causing the linear warmup to start at a non-zero value and reach the `base_lr` one step too early (at `warmup_steps - 1`), contrary to the docstring's description of a linear increase from zero.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"lr_warmup_schedule\",\n  \"faulty_lines\": [\n    59\n  ],\n  \"explanation\": \"The learning rate calculation incorrectly uses `step + 1`, causing the linear warmup to start at a non-zero value and reach the `base_lr` one step too early (at `warmup_steps - 1`), contrary to the docstring's description of a linear increase from zero.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        59
+      ],
+      "valid_preds": [
+        59
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 59,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

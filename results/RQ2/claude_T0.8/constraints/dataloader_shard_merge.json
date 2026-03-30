@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "dataloader_shard_merge",
+  "fault_hypothesis": "Lines 73-74 incorrectly remove the last element when both lists share the same final value, which breaks the requirement to preserve all duplicates. This spurious deduplication logic should not exist.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left_ids and right_ids and merged__1[-1] == left_ids[-1] == right_ids[-1])"
+      },
+      "intent": "The condition that triggers the pop should never be true for valid inputs with duplicates; if it fires it incorrectly removes an element.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == 0"
+      },
+      "intent": "After initialization merged must be empty.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left_ids) + len(right_ids) - 1 and False"
+      },
+      "intent": "After the pop branch executes, merged has one fewer element than the full union \u2014 this branch should never execute for duplicate-preserving semantics.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) * stride >= len(left_ids) + len(right_ids) - (stride - 1)"
+      },
+      "intent": "The output after stride filtering should account for all merged elements without spurious removal.",
+      "confidence": 0.7
+    }
+  ]
+}

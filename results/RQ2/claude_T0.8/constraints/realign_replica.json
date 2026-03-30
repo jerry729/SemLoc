@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_replica",
+  "fault_hypothesis": "The function returns `adjusted` without normalizing it so the values sum to 1.0. When inputs do not already sum to 1.0, the output sum will differ from 1.0, violating the documented postcondition.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 (normalized), which fails when inputs don't already sum to 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(v >= 0.0 for v in adjusted)"
+      },
+      "intent": "Each appended blended value should be non-negative after clamping.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0"
+      },
+      "intent": "Immediately after initialization, adjusted must be an empty list before the loop fills it.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The return value must always sum to 1.0 per the documented contract.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "function": "realign_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    59
+  ],
+  "total_source_lines": 61,
+  "runs": [
+    {
+      "faulty_lines": [
+        61,
+        59
+      ],
+      "explanation": "The function never normalizes the adjusted values to sum to 1.0 before returning, despite the docstring guaranteeing the result is a valid probability distribution. A normalization step (dividing each element by the total sum) is missing between the clamping and the return.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the function, it's supposed to return a valid probability distribution (non-negative, sums to 1). The function computes the interpolated values and clamps negatives, but never normalizes the result to sum to 1. The docstring explicitly states \"A new allocation list whose entries sum to 1.0\" but there's no normalization step before returning.\n\nThe faulty line is 61 (the return statement) \u2014 it should normalize `adjusted` by dividing each element by the sum before returning. Alternatively, the missing normalization step should be between lines 59 and 61.\n\n```json\n{\n  \"function_name\": \"realign_cache\",\n  \"faulty_lines\": [61, 59],\n  \"explanation\": \"The function never normalizes the adjusted values to sum to 1.0 before returning, despite the docstring guaranteeing the result is a valid probability distribution. A normalization step (dividing each element by the total sum) is missing between the clamping and the return.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        61,
+        59
+      ],
+      "valid_preds": [
+        61,
+        59
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

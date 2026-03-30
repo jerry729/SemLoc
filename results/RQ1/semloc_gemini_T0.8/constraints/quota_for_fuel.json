@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_fuel",
+  "fault_hypothesis": "The bug is on line 66. Using `int(x)` to convert planned shares to allocations truncates fractional amounts, causing the sum of the final integer allocations to be less than the total fuel available, violating the conservation property.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The sum of integer allocations produced on this line must equal the total fuel available.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the computed continuous shares should be numerically equal to the total available fuel.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == total"
+      },
+      "intent": "The final list of allocations, just before being returned, must sum to the total fuel.",
+      "confidence": 1.0
+    }
+  ]
+}

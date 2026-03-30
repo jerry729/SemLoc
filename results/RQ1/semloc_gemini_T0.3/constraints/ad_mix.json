@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ad_mix",
+  "fault_hypothesis": "The function calculates the interpolated allocation weights but omits the required normalization step before returning. The return statement on line 67 provides the un-normalized list, which does not sum to 1.0 as required by the specification.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of allocations, just before being returned, must sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of allocations must be normalized to sum to 1.0 before it is used in the return statement.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) != len(current) or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "After the final loop iteration, the accumulated list of allocations must sum to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

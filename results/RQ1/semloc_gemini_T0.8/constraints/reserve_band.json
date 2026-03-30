@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_band",
+  "fault_hypothesis": "The `overlaps` function on line 68 incorrectly uses non-strict inequalities (`<=`, `>=`), causing it to fail to detect an overlap when two bands are adjacent (i.e., touching at a boundary). The logic should use strict inequalities (`<`, `>`) for the non-overlap check.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] == a[0] or b[0] == a[1]) or __cbfl_result is True"
+      },
+      "intent": "If two bands are adjacent (touching at a boundary), they must be considered overlapping.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "At the end of each loop iteration, if the loop continues, the candidate must not overlap the current slot, including at the boundaries.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the non-overlap path is taken, the candidate must truly not overlap any existing band, which includes not being adjacent.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "The function should only report success if the candidate band doesn't overlap any original bands, including at the boundaries.",
+      "confidence": 0.8
+    }
+  ]
+}

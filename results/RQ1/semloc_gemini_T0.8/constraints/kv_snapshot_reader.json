@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "kv_snapshot_reader",
+  "fault_hypothesis": "The loop termination condition on line 70 is incorrect. It uses `k < key`, causing the search to stop prematurely for any key that is not the first element, whereas it should be `k > key` to correctly leverage the snapshot's sorted order.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (k < key and any(item[0] == key for item in snapshot))"
+      },
+      "intent": "The loop should not prepare to break if the current key `k` is less than the target `key` and the target `key` actually exists in the snapshot.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not any(item[0] == key for item in snapshot)"
+      },
+      "intent": "This early-exit branch, taken when `k < key`, should only be executed if the target key is not present in the snapshot at all.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_HEAD",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "k >= key or not any(item[0] == key for item in snapshot)"
+      },
+      "intent": "At the start of each loop iteration, we should not have passed the key's position (`k > key`) if the key exists in the snapshot.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result != effective_default__1) or all(item[0] != key for item in snapshot)"
+      },
+      "intent": "If the function returns the default value, it must be because the key was not found in the snapshot.",
+      "confidence": 0.9
+    }
+  ]
+}

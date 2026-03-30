@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_sensor",
+  "fault_hypothesis": "The condition on line 64 uses strictly-greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(active) == limit` the sensor is incorrectly allowed instead of denied.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) >= limit or len(active__1) < limit"
+      },
+      "intent": "When active count equals limit the branch condition should be True (deny), but the strict > misses the equality case causing the sensor to be incorrectly allowed.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit) or (len(active__1) > limit)"
+      },
+      "intent": "Checks that if active count equals limit the strict-greater-than condition still triggers denial \u2014 this is violated because > excludes equality.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "In the else branch (sensor allowed), active count must be strictly less than limit; if it equals limit we should not reach here.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(active__1) >= limit)"
+      },
+      "intent": "The sensor must never be allowed when active actions reach or exceed the limit.",
+      "confidence": 0.85
+    }
+  ]
+}

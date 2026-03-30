@@ -1,0 +1,44 @@
+{
+  "function": "warm_cache_loader",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    76
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        75
+      ],
+      "explanation": "Line 75 updates the local variable `expires_at` but never writes the refreshed expiration back to the cache dictionary (`cache[key]`), so the warm-cache TTL extension is never persisted.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the `warm_cache_loader` function, I need to identify the bug.\n\nThe function is supposed to:\n1. Look up a cache entry\n2. If valid (not expired), refresh its TTL\n3. Return the cached value\n\nThe issue is on line 75: `expires_at = now + ttl` \u2014 this updates the local variable `expires_at` but never writes the updated expiration back to the cache dictionary. The cache entry is never refreshed/updated, so the \"warm cache\" strategy (extending TTL on access) is never actually implemented.\n\nThe fix would require something like: `cache[key] = (value, now + ttl)` to persist the updated expiration.\n\n```json\n{\n  \"function_name\": \"warm_cache_loader\",\n  \"faulty_lines\": [75],\n  \"explanation\": \"Line 75 updates the local variable `expires_at` but never writes the refreshed expiration back to the cache dictionary (`cache[key]`), so the warm-cache TTL extension is never persisted.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        75
+      ],
+      "valid_preds": [
+        75
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 75,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

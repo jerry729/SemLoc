@@ -1,0 +1,20 @@
+{
+  "bug_id": "pandas_81",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.integer.IntegerArray.astype",
+    "buggy_methods": [
+      "pandas.core.arrays.integer.IntegerArray.astype"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.integer.IntegerArray.astype",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

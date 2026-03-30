@@ -1,0 +1,26 @@
+{
+  "bug_id": "pandas_156",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.sparse.frame.SparseDataFrame._combine_match_index",
+    "buggy_methods": [
+      "pandas.core.sparse.frame.SparseDataFrame._combine_match_index"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.sparse.frame.SparseDataFrame._combine_match_index",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/sparse/frame.py": [
+      579,
+      580,
+      606
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

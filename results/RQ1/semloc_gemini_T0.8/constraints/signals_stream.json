@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "signals_stream",
+  "fault_hypothesis": "The condition on line 69 is incorrect. It wrongly identifies a situation for removing an element, which happens on line 70, causing the final list to be shorter than expected when inputs share a final value.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that incorrectly triggers a pop operation should evaluate to false.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The total number of elements must be preserved even if this branch is taken.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain all elements from both input lists.",
+      "confidence": 0.9
+    }
+  ]
+}

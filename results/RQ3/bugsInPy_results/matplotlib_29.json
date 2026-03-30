@@ -1,0 +1,35 @@
+{
+  "bug_id": "matplotlib_29",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axis.Axis.set_inverted",
+    "buggy_methods": [
+      "lib.matplotlib.axis.Axis.set_inverted"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axis.Axis.set_inverted",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/axis.py": [
+      1007,
+      1008,
+      1009,
+      1010,
+      1011
+    ],
+    "lib/matplotlib/tests/test_axes.py": [
+      247,
+      250,
+      251,
+      254,
+      257
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

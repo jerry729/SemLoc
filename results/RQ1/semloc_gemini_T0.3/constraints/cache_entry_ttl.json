@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cache_entry_ttl",
+  "fault_hypothesis": "The bug is on line 73. The expiration check `now > effective` incorrectly handles the case where `now == effective`, treating the entry as valid instead of expired. The comparison operator should be `>=` to correctly handle the boundary condition.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If an entry is considered valid after the expiry check, the current time must be strictly less than its effective expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires__1"
+        }
+      },
+      "spec": {
+        "expr": "now != expires__1"
+      },
+      "intent": "The function behaves incorrectly when the current time exactly matches the entry's expiration time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The expiration check is about to fail because the current time is exactly at the expiration boundary.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not (key in entries and now == entries[key][1])) or (__cbfl_result is None)"
+      },
+      "intent": "An entry queried at its exact expiration time must be considered expired and result in None.",
+      "confidence": 0.8
+    }
+  ]
+}

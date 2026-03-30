@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_tickets_share",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers on line 81 by simple truncation using int(). This causes the sum of the final allocations to be less than the original total because the fractional remainders are discarded instead of being distributed.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of the final integer allocations must equal the original total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The sum of raw floating-point shares must equal the total before rounding.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 80,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(v - int(v) for v in shares__1) < 1e-9"
+      },
+      "intent": "The buggy truncation only works correctly if there are no fractional parts to discard.",
+      "confidence": 0.9
+    }
+  ]
+}

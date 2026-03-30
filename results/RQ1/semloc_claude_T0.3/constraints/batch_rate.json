@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batch_rate",
+  "fault_hypothesis": "The condition on line 70 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly allows the request instead of denying it.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or (len(recent__1) >= limit)"
+      },
+      "intent": "When len(recent) equals limit the branch must be taken (denied); the condition should be >= not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), the number of recent events must be strictly less than the limit.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or len(recent__1) >= limit"
+      },
+      "intent": "When recent count equals limit, the rate limiter must deny the request (remaining==0, allowed==False).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] is False or __cbfl_result[1] > 0 or __cbfl_result[1] == 0"
+      },
+      "intent": "When allowed is True, remaining must be positive; when allowed is False, remaining must be 0.",
+      "confidence": 0.7
+    }
+  ]
+}

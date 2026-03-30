@@ -1,0 +1,44 @@
+{
+  "function": "priority_mix",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 61,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, it's supposed to return weights \"normalised to sum to 1\", but the implementation never performs normalization. The updated weights are returned without dividing by their sum.\n\n{\n  \"function_name\": \"priority_mix\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The function claims to return weights normalized to sum to 1, but the implementation never normalizes the blended values before returning them. The `updated` list should be divided by its total sum before being returned.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,44 @@
+{
+  "function": "track_build",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    52
+  ],
+  "total_source_lines": 59,
+  "runs": [
+    {
+      "faulty_lines": [
+        53
+      ],
+      "explanation": "When the counter exceeds the cap, it should be clamped to `cap` (the ceiling), but the code sets it to `cap - 1`, which is one below the allowed maximum. The correct assignment should be `counters[key] = cap`.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"track_build\",\n  \"faulty_lines\": [53],\n  \"explanation\": \"When the counter exceeds the cap, it should be clamped to `cap` (the ceiling), but the code sets it to `cap - 1`, which is one below the allowed maximum. The correct assignment should be `counters[key] = cap`.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        53
+      ],
+      "valid_preds": [
+        53
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 53,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

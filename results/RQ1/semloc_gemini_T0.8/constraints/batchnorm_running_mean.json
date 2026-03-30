@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batchnorm_running_mean",
+  "fault_hypothesis": "The weights for `current_mean` and `batch_mean` are swapped in the exponential moving average formula on line 70. `momentum` should weight the historical `current_mean`, but it is incorrectly applied to the new `batch_mean`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "updated__1 == momentum * current_mean + (1 - momentum) * batch_mean"
+      },
+      "intent": "Checks if the updated mean is calculated using the correct EMA formula where momentum weights the current mean.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "(momentum != 0.0) or (updated__1 == batch_mean)"
+      },
+      "intent": "If momentum is zero, the running mean should snap to the batch mean.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "(momentum != 1.0) or (updated__1 == current_mean)"
+      },
+      "intent": "If momentum is one, the running mean should not change from the current mean.",
+      "confidence": 0.9
+    }
+  ]
+}

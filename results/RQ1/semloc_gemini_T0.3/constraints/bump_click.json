@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_click",
+  "fault_hypothesis": "The clamping logic on line 64 is incorrect. When a counter exceeds the cap, it is set to `cap - 1` instead of being clamped to `cap`, causing it to drop below the cap.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After clamping, the counter's value must be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "The 'then' branch for clamping should set the counter value to the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] + 1 != cap"
+      },
+      "intent": "The clamped value should not be an off-by-one error relative to the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or not (__cbfl_result < cap)"
+      },
+      "intent": "The final counter value must never be less than the cap.",
+      "confidence": 0.8
+    }
+  ]
+}

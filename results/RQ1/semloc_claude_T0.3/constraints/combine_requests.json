@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_requests",
+  "fault_hypothesis": "Lines 74-75 incorrectly pop the last element when both streams share the same last value, removing a valid duplicate that should be kept according to the 'keep_both' strategy.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The pop() at line 75 should never execute because it incorrectly removes a valid duplicate element.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition triggering the pop should never be true since duplicates at the end must be preserved.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "Execution should never enter the then-branch of the condition at line 74 because it incorrectly removes a duplicate.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The merged result must contain exactly as many elements as both input streams combined.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "memory_moving_mean",
+  "fault_hypothesis": "The moving average on line 65 is incorrectly calculated by always dividing by the `window` size. It should instead divide by the actual number of samples available in `tail`, which can be less than the window size.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated average must equal the total sum divided by the actual number of samples in the tail.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or (min(tail__1) <= avg__1 <= max(tail__1))"
+      },
+      "intent": "The calculated average must fall within the range of the samples being averaged.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (abs(avg__1 * len(tail__1) - total__1) < 1e-9)"
+      },
+      "intent": "The average calculation must be correct if the result is intended to be used (i.e., not discarded due to warmup).",
+      "confidence": 0.9
+    }
+  ]
+}

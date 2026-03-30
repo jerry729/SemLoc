@@ -1,0 +1,47 @@
+{
+  "function": "combine_offsets",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        71
+      ],
+      "explanation": "The code incorrectly removes the last element of the merged list if it is the largest value and present in both input lists. A standard merge operation, as described by the docstring, should preserve all elements from both inputs, including duplicates.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"combine_offsets\",\n  \"faulty_lines\": [\n    70,\n    71\n  ],\n  \"explanation\": \"The code incorrectly removes the last element of the merged list if it is the largest value and present in both input lists. A standard merge operation, as described by the docstring, should preserve all elements from both inputs, including duplicates.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        70,
+        71
+      ],
+      "valid_preds": [
+        70,
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

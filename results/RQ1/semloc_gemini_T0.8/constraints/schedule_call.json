@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_call",
+  "fault_hypothesis": "The overlap detection on line 72 is incorrect. It uses non-strict inequalities (`<=`, `>=`), which fails to identify adjacent, touching time slots as overlapping.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] == a[0] or b[0] == a[1])"
+      },
+      "intent": "Asserts that the overlap logic is not being evaluated on a case where slots are merely touching, as this is where the logic is faulty.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "effective[1] < candidate[0] or candidate[1] < effective[0]"
+      },
+      "intent": "Checks that if a loop iteration does not find an overlap, the slots are truly separate and not just touching.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "all(merged__1[i][1] < merged__1[i+1][0] for i in range(len(merged__1) - 1))"
+      },
+      "intent": "Ensures that after sorting, the final merged schedule contains no touching or overlapping slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "Checks that if the function reports success (accepted=True), the returned schedule is valid with no adjacent slots.",
+      "confidence": 0.8
+    }
+  ]
+}

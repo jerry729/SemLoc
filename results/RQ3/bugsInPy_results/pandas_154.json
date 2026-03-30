@@ -1,0 +1,28 @@
+{
+  "bug_id": "pandas_154",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.groupby.GroupBy._get_cythonized_result",
+    "buggy_methods": [
+      "pandas.core.groupby.groupby.GroupBy._get_cythonized_result"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.groupby.GroupBy._get_cythonized_result",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/groupby.py": [
+      2269,
+      2272,
+      2279,
+      2285,
+      2294
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

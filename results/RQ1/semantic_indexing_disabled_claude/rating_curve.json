@@ -1,0 +1,44 @@
+{
+  "function": "rating_curve",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 78,
+  "runs": [
+    {
+      "faulty_lines": [
+        74
+      ],
+      "explanation": "The clamping logic is inverted: the condition should be `if clamp:` to apply clamping when clamp=True, but the code uses `if not clamp:`, which applies clamping when clamp=False and skips it when clamp=True.",
+      "confidence": 0.98,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"rating_curve\",\n  \"faulty_lines\": [74],\n  \"explanation\": \"The clamping logic is inverted: the condition should be `if clamp:` to apply clamping when clamp=True, but the code uses `if not clamp:`, which applies clamping when clamp=False and skips it when clamp=True.\",\n  \"confidence\": 0.98\n}",
+      "predicted": [
+        74
+      ],
+      "valid_preds": [
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

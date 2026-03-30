@@ -1,0 +1,44 @@
+{
+  "function": "notification_gate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        63
+      ],
+      "explanation": "The strict greater-than comparison `len(recent) > limit` allows exactly one more notification than intended before blocking. This boundary condition error should use `>=` to correctly reject a new notification when the number of recent events is already equal to the limit.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"notification_gate\",\n  \"faulty_lines\": [\n    63\n  ],\n  \"explanation\": \"The strict greater-than comparison `len(recent) > limit` allows exactly one more notification than intended before blocking. This boundary condition error should use `>=` to correctly reject a new notification when the number of recent events is already equal to the limit.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        63
+      ],
+      "valid_preds": [
+        63
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 63,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

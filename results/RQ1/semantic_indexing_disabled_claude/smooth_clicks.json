@@ -1,0 +1,44 @@
+{
+  "function": "smooth_clicks",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    58
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        58
+      ],
+      "explanation": "Line 58 divides by `window` (the requested window size) instead of `len(tail)` (the actual number of samples extracted). When fewer samples than `window` are available, this yields an incorrectly deflated mean rather than the true arithmetic mean of the available data.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "The bug is on line 58: `mean = total / window` divides by the fixed `window` size rather than by the actual number of samples in `tail` (`len(tail)`). When fewer samples than `window` are available (e.g., at the start of a series), this produces an incorrect (too-small) mean instead of the true arithmetic mean of the available samples.\n\n```json\n{\n  \"function_name\": \"smooth_clicks\",\n  \"faulty_lines\": [58],\n  \"explanation\": \"Line 58 divides by `window` (the requested window size) instead of `len(tail)` (the actual number of samples extracted). When fewer samples than `window` are available, this yields an incorrectly deflated mean rather than the true arithmetic mean of the available data.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        58
+      ],
+      "valid_preds": [
+        58
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 58,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

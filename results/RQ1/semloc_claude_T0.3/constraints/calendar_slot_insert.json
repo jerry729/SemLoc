@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calendar_slot_insert",
+  "fault_hypothesis": "The overlap condition on line 73 uses strict inequalities (`end <= s` and `start >= e`), which allows adjacent slots (where end==s or start==e) to pass through without conflict. The condition should use strict less-than (`end < s` and `start > e`) to also reject adjacent slots.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) and not (start__1 == e)"
+      },
+      "intent": "After the overlap check, adjacent slots (end==s or start==e) should have been caught as conflicts, so neither equality should hold when we continue past the check.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "At the end of each loop iteration that did not return False, the new slot must be strictly non-adjacent to the current existing slot (s, e).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b[0] > a[1] for a, b in zip(result__1, result__1[1:]))"
+      },
+      "intent": "After building the result, every consecutive pair of slots must have a strict gap (no adjacency), confirming adjacent slots were rejected.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] and any(b[0] <= a[1] for a, b in zip(__cbfl_result[1], __cbfl_result[1][1:])))"
+      },
+      "intent": "If insertion succeeded, no two consecutive slots in the returned schedule should be adjacent or overlapping.",
+      "confidence": 0.8
+    }
+  ]
+}

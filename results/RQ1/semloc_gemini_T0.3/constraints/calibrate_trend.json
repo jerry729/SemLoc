@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_trend",
+  "fault_hypothesis": "The condition on line 63 is inverted. The clamping logic is incorrectly executed when `clamp` is `False` instead of when it is `True`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(clamp and ((y__3 >= y0 and y__3 <= y1) or (y__3 >= y1 and y__3 <= y0))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "The value of y after the conditional should be clamped if and only if clamping is enabled.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "(y__3 >= y0 and y__3 <= y1) or (y__3 >= y1 and y__3 <= y0)"
+      },
+      "intent": "When the non-clamping branch is taken, it should only be because clamping is on and the value is already within the valid range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "y__2 == y__1"
+      },
+      "intent": "When the clamping branch is (wrongly) taken, it implies no change should have been made to y because clamping was disabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or ((__cbfl_result >= y0 and __cbfl_result <= y1) or (__cbfl_result >= y1 and __cbfl_result <= y0))"
+      },
+      "intent": "If clamping is enabled, the final result must be within the range defined by y0 and y1.",
+      "confidence": 0.8
+    }
+  ]
+}

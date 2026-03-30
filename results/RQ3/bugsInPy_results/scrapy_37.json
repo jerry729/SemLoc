@@ -1,0 +1,24 @@
+{
+  "bug_id": "scrapy_37",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.http.request.__init__.Request._set_url",
+    "buggy_methods": [
+      "scrapy.http.request.__init__.Request._set_url"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.http.request.__init__.Request._set_url",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/http/request/__init__.py": [
+      69
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

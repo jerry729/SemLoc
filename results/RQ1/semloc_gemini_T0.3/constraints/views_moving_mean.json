@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "views_moving_mean",
+  "fault_hypothesis": "The mean on line 62 is incorrectly calculated by dividing `total` by the fixed `window` size. It should be divided by `len(recent)`, the actual number of samples being averaged, which is only correct when the number of samples equals the window size.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) == window) or (len(recent__1) < warmup_min)"
+      },
+      "intent": "The division to calculate the mean is only correct if the number of samples matches the window size, or if the result is discarded due to warmup.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (len(recent__1) == 0) or (min(recent__1) <= mean__1 <= max(recent__1))"
+      },
+      "intent": "The calculated mean must fall within the range of the samples it was computed from, unless it's a discarded warmup value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window"
+      },
+      "intent": "If a mean is returned, the code's implicit assumption that the number of samples equals the window size must hold for the result to be correct.",
+      "confidence": 0.9
+    }
+  ]
+}

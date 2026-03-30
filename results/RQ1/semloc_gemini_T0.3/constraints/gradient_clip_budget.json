@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gradient_clip_budget",
+  "fault_hypothesis": "The scaling factor on line 66 is calculated incorrectly. It should be `max_norm / norm`, but an extra `+ 1` is added to the denominator, causing the rescaled gradient norm to be smaller than the target `max_norm`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(scale__1 - (max_norm / norm__1)) < 1e-9"
+      },
+      "intent": "The scaling factor should be calculated as max_norm divided by the original norm.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "scale__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((scale__1 * norm__1) - max_norm) < 1e-9"
+      },
+      "intent": "The rescaled norm (original norm * scale) should equal the target max_norm.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "norm__1"
+        }
+      },
+      "spec": {
+        "expr": "norm__1 >= 0"
+      },
+      "intent": "The L2 norm of the gradients must be a non-negative value.",
+      "confidence": 0.7
+    }
+  ]
+}

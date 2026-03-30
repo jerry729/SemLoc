@@ -1,0 +1,38 @@
+{
+  "function": "schedule_call",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 81,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the fault in `schedule_call`.\n\nThe key logic is in the `overlaps` function and how the adjacency buffer is applied.\n\nLine 75: `effective = _apply_adjacency_buffer(slot) if _CONFLICT_STRICT else slot`\n\nThe logic here is inverted. `_CONFLICT_STRICT` being `True` means we should be strict about conflicts (i.e., apply the adjacency buffer to treat near-adjacent slots as conflicting). But the condition applies the buffer when `_CONFLICT_STRICT` is True, which seems correct at first glance.\n\nWait, let me re-read: the adjacency buffer expands the slot. If we want to be strict (treat adjacent slots as conflicts), we apply the buffer. That seems right.\n\nBut actually, `_CONFLICT_STRICT = False` and `_ADJACENCY_BUFFER_MINUTES = 0`. With the buffer at 0, applying it doesn't change anything. So the buffer logic seems fine with default values.\n\nLet me look at the `overlaps` function more carefully:\n\n```python\ndef overlaps(a: Tuple[int, int], b: Tuple[int, int]) -> bool:\n    return not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nThis checks if `b` overlaps with `a`. Two intervals [a0,a1] and [b0,b1] do NOT overlap if `b[1] <= a[0]` (b ends before a starts) or `b[0] >= a[1]` (b starts after a ends). So they overlap if neither condition holds. This logic is correct.\n\nNow line 75: when `_CONFLICT_STRICT` is False, no buffer is applied. When True, the buffer is applied to make the effective slot larger (stricter). This seems correct.\n\nActually, wait - the condition is backwards conceptually. If `_CONFLICT_STRICT` is True, we want STRICT conflict detection (apply buffer). The code does apply buffer when `_CONFLICT_STRICT` is True. That's correct.\n\nHmm, but what if the issue is that `_validate_time_slot` is called AFTER the daily limit check but the `candidate[0] >= candidate[1]` check happens before validation? A candidate with duration < 5 minutes would pass the first check but fail `_validate_time_slot`. That ordering seems intentional.\n\nThe most suspicious issue: line 75 - when `_CONFLICT_STRICT` is False (the default), the buffer is NOT applied. This seems like the intended behavior. But perhaps the logic is inverted - maybe the buffer should always be applied based on `_ADJACENCY_BUFFER_MINUTES > 0`, and `_CONFLICT_STRICT` means something else, OR the condition should be `not _CONFLICT_STRICT`.\n\nGiven `_CONFLICT_STRICT = False` means \"not strict\" = lenient = don't apply buffer. That seems correct. But if the intent is that `_CONFLICT_STRICT` enables strict mode (apply buffer), the current code is correct.\n\nThe fault might be more subtle - the `overlaps` function checks if `b[1] <= a[0]` but with adjacency buffer, we'd want `b[1] < a[0]` (strict less than) to treat touching as conflicting. But that's controlled by the buffer expansion, not the comparison.\n\nI'll focus on line 75 as the most suspicious - the ternary condition may be inverted.\n\n{\n  \"function_name\": \"schedule_call\",\n  \"faulty_lines\": [75],\n  \"explanation\": \"The adjacency buffer condition on line 75 is inverted: when `_CONFLICT_STRICT` is True (strict mode), the buffer should be applied to expand slots and treat near-adjacent calls as conflicting, but the ternary applies the buffer for True and skips it for False \u2014 which actually seems correct. However, the semantic intent may require the buffer always applied based on `_ADJACENCY_BUFFER_MINUTES` value, and the condition `_CONFLICT_STRICT` vs `not _CONFLICT_STRICT` may be swapped.\",\n  \"confidence\": 0.35\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

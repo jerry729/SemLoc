@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_write",
+  "fault_hypothesis": "The condition on line 70 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly allows the write instead of denying it.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or len(recent__1) > limit or (len(recent__1) == limit)"
+      },
+      "intent": "When len(recent) equals limit the branch should be taken (denied), so the condition must use >= not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or True"
+      },
+      "intent": "Verify that when recent count equals limit, the subsequent guard correctly denies the request (i.e., >= should be used).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= limit or len(recent__1) < limit"
+      },
+      "intent": "Confirm that the comparison at the branch uses >= so that equality with limit triggers denial.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed path), recent count must be strictly less than limit; equality should have been caught by the if-branch.",
+      "confidence": 0.92
+    }
+  ]
+}

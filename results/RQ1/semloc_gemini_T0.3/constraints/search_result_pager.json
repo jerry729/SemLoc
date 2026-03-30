@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "search_result_pager",
+  "fault_hypothesis": "The slice operation on line 72 is `results[start:end + 1]` instead of the correct `results[start:end]`. This off-by-one error causes the function to return one more item than specified by `page_size` when the page is not the last one.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(results[start__1:end__1 + 1]) <= page_size__1"
+      },
+      "intent": "The number of items in the returned page slice must not exceed the page size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "ANY_RETURN",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size"
+      },
+      "intent": "The final returned page must not contain more items than the page size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 >= len(results) or results[end__1] not in results[start__1:end__1 + 1]"
+      },
+      "intent": "The element at the exclusive end index `end` should not be included in the returned slice.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 - start__1 == page_size__1"
+      },
+      "intent": "The calculated index range between start and end should exactly match the page size.",
+      "confidence": 0.8
+    }
+  ]
+}

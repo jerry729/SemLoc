@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "revenue_share",
+  "fault_hypothesis": "The fee is subtracted from each individual share (line 72) rather than from the total pool before splitting (line 70 should use `amount - fee`). This causes the total deducted fee to be `fee * n` instead of `fee`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - (amount - fee) * sum(r / total_ratio for r in ratios[:len(shares)])) < 1e-9"
+      },
+      "intent": "After computing shares, the running sum should reflect the net pool (amount - fee), not the gross amount.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= 0 for s in shares) and sum(shares) <= amount"
+      },
+      "intent": "At each loop iteration, the accumulated shares should not exceed the gross amount (this holds trivially but the net check fails when fee is misapplied per-share).",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-9"
+      },
+      "intent": "Before fee subtraction, the raw shares must sum to exactly `amount` (not `amount - fee * n`).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "The total returned payouts should equal the pool minus the single platform fee, not minus fee-per-participant.",
+      "confidence": 0.95
+    }
+  ]
+}

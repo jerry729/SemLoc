@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "draft_cache",
+  "fault_hypothesis": "On line 73, the expiration check uses strict greater-than (`now > expires_at`) instead of greater-than-or-equal (`now >= expires_at`), so entries queried at exactly their expiration time are incorrectly returned as valid instead of expired.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now >= expires_at__1"
+      },
+      "intent": "When now equals expires_at the condition should be true (entry is expired), but the strict > makes it false, causing the wrong branch to be taken.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == expires_at__1) or (now >= expires_at__1)"
+      },
+      "intent": "At the boundary where now equals expires_at, the entry must be considered expired; checks that the boundary condition is correctly handled before expires_at is used in the comparison.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "In the else branch (entry not expired), now must be strictly less than expires_at; if now == expires_at we should not reach this branch.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is not None and now >= expires_at__1)"
+      },
+      "intent": "The function must never return a non-None value when now is at or past the expiration timestamp.",
+      "confidence": 0.88
+    }
+  ]
+}

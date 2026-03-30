@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "grades_union",
+  "fault_hypothesis": "The conditional on line 76 is flawed, causing the pop() on line 77 to incorrectly remove a valid element when both input lists share the same final value.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left__1 and right__1 and merged__1[-1] == left__1[-1] == right__1[-1])"
+      },
+      "intent": "The condition for removing an element should not be met for cases that are actually valid merges.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left__1) + len(right__1)"
+      },
+      "intent": "After the merge loop and extends, the merged list must contain all elements from both inputs.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(1 for x in merged__1 if x == left__1[-1]) == sum(1 for x in left__1 if x == left__1[-1]) + sum(1 for x in right__1 if x == left__1[-1])"
+      },
+      "intent": "The final count of a shared last element must be the sum of its counts in the inputs.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain exactly the sum of the number of elements from the two input lists.",
+      "confidence": 1.0
+    }
+  ]
+}

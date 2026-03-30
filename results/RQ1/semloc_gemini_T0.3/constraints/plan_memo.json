@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_memo",
+  "fault_hypothesis": "The expiry check on line 65 uses a strict inequality `>` instead of `>=`, causing entries to be considered valid at their exact expiry timestamp when they should be expired.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (now == expires_at__1)"
+      },
+      "intent": "An entry should not be considered valid at its exact expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "If an entry is considered valid, the current time must be strictly before its expiry.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "A value should only be returned if its expiry time is strictly after the current time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (key in entries and now < entries[key][1])"
+      },
+      "intent": "A non-None result implies the key exists and its entry has not yet expired.",
+      "confidence": 0.8
+    }
+  ]
+}

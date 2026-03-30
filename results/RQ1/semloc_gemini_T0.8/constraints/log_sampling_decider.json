@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "log_sampling_decider",
+  "fault_hypothesis": "The comparison operator on line 67 is incorrect. It should be `<` instead of `>`, which causes a higher sampling rate to incorrectly sample fewer logs instead of more.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(rate > 0 and rate < 1) or (rate == 1 and __cbfl_result) or (rate == 0 and not __cbfl_result)"
+      },
+      "intent": "The function must return True for rate=1 and False for rate=0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "bucket__1 >= 0 and bucket__1 < 1"
+      },
+      "intent": "The computed bucket value must be a valid fraction in the range [0, 1).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "rate >= 0 and rate <= 1"
+      },
+      "intent": "The sampling rate must be in the valid [0, 1] range after validation.",
+      "confidence": 0.95
+    }
+  ]
+}

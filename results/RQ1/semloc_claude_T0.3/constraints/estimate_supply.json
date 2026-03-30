@@ -1,0 +1,83 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_supply",
+  "fault_hypothesis": "The condition on line 66 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) == (not False)"
+      },
+      "intent": "When clamp is True the clamping block should execute; the condition `not clamp` means it executes when clamp is False instead \u2014 this expr is False on failing tests where clamp=True but clamping is skipped.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "Inside the then-branch of `if not clamp`, clamp must be False; if clamp is True we should never be here.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "In the else-branch (no clamping applied), clamp must be True \u2014 but the inverted condition means clamp=True lands here without clamping.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True the final y value must lie within [min(y0,y1), max(y0,y1)]; the bug causes this to be violated.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C5",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamping is requested the returned value must be within the supply range of the two endpoints.",
+      "confidence": 0.85
+    }
+  ]
+}

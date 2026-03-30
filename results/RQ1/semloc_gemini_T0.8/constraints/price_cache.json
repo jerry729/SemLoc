@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "price_cache",
+  "fault_hypothesis": "The expiry check at line 61 uses a strict greater-than comparison (`>`). This incorrectly allows an entry to be considered valid when the adjusted current time is equal to the TTL, violating the requirement that the current time be strictly before the TTL.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now != ttl__1"
+      },
+      "intent": "The boundary case where the current time is exactly equal to the TTL is not handled correctly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "If an item is considered not expired by the check on line 61, the current time must be strictly less than its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "Just before returning a cached payload, its TTL must not have been reached by the current time.",
+      "confidence": 1.0
+    }
+  ]
+}

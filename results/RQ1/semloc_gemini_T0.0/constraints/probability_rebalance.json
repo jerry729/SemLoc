@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "probability_rebalance",
+  "fault_hypothesis": "The function is missing a normalization step. The return statement on line 59 incorrectly returns the blended vector `adjusted` before it has been normalized to sum to 1.0, as required by the function's contract.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The vector being returned must be a valid probability distribution that sums to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned list must sum to 1.0 to be a valid probability distribution.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__1) > 0"
+      },
+      "intent": "The sum of the blended vector's probabilities must be positive before normalization.",
+      "confidence": 0.8
+    }
+  ]
+}

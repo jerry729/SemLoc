@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_143",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.range.RangeIndex.get_indexer",
+    "buggy_methods": [
+      "pandas.core.indexes.range.RangeIndex.get_indexer"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.range.RangeIndex.get_indexer",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/range.py": [
+      383,
+      384
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

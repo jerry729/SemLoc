@@ -1,0 +1,24 @@
+{
+  "bug_id": "youtube-dl_15",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.js_to_json",
+    "buggy_methods": [
+      "youtube_dl.utils.js_to_json"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.js_to_json",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/utils.py": [
+      2270
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting ',' delimiter: line 1 column 39 (char 38)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting ',' delimiter: line 1 column 39 (char 38)"
+  }
+}

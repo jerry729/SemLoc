@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_deployment",
+  "fault_hypothesis": "The logic for clamping the counter is incorrect on line 67. When the counter exceeds the ceiling, it is set to `ceiling - 1` instead of being set to the ceiling value itself.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "The clamped value should be exactly the ceiling, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__3 == effective_ceiling__1"
+      },
+      "intent": "After clamping, the new value must equal the ceiling.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "effective_ceiling__1 is None or new_value__3 >= counts.get(key__1, 0)"
+      },
+      "intent": "The counter should not decrease when a ceiling is applied.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "download_rate",
+  "fault_hypothesis": "The check on line 75 uses `>` instead of `>=`, incorrectly allowing a download when the number of active downloads is exactly at the limit. A download should only be permitted if the number of active downloads is strictly less than the limit.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The case where the number of active downloads exactly equals the limit is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the 'allow' branch is taken, the number of active downloads must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "Before checking the condition, it must not be the case that the number of active downloads is exactly the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "bug_id": "pandas_20",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.tseries.offsets.MonthOffset.apply_index",
+    "buggy_methods": [
+      "pandas.tseries.offsets.MonthOffset.apply_index"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.tseries.offsets.MonthOffset.apply_index",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/tseries/offsets.py": [
+      1150,
+      1151,
+      1152,
+      1871,
+      1872,
+      1873,
+      1874,
+      1875,
+      1957,
+      1958,
+      1959,
+      1960,
+      1961
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

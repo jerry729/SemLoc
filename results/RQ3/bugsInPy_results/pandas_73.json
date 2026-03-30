@@ -1,0 +1,38 @@
+{
+  "bug_id": "pandas_73",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.ops.missing.mask_zero_div_zero",
+    "buggy_methods": [
+      "pandas.core.ops.missing.mask_zero_div_zero"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.ops.missing.mask_zero_div_zero",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/frame.py": [
+      5344,
+      5371,
+      5380
+    ],
+    "pandas/core/ops/missing.py": [
+      112,
+      118,
+      120,
+      121,
+      125,
+      126,
+      127,
+      128,
+      129,
+      131
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

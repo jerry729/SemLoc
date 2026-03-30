@@ -1,0 +1,83 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_pressure",
+  "fault_hypothesis": "The condition on line 70 is inverted: `if not clamp` applies clamping when clamp is False, and skips clamping when clamp is True (the default). It should be `if clamp:` to clamp when clamping is enabled.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(clamp and True) or (not clamp and True)"
+      },
+      "intent": "When clamp is True, the branch body (clamping logic) should execute; the condition `not clamp` is inverted so clamping happens when clamp=False instead of True.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch should only execute when clamp is False; if clamp is True we should not be clamping here (but the inverted condition causes clamping when clamp=False).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp and (y__2 >= min(y0, y1)) and (y__2 <= max(y0, y1))"
+      },
+      "intent": "y__2 is the clamped value and should only exist (be computed) when clamp is False due to the inverted condition bug.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The else-branch (no clamping applied) should execute when clamp is True, but with the inverted condition the else-branch runs when clamp=True, skipping clamping entirely.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or ((__cbfl_result >= min(y0, y1)) and (__cbfl_result <= max(y0, y1)))"
+      },
+      "intent": "When clamping is enabled (clamp=True), the returned value must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.92
+    }
+  ]
+}

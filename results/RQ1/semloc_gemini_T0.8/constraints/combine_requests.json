@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_requests",
+  "fault_hypothesis": "The condition on line 74 is incorrect. It causes a necessary duplicate element to be removed on line 75 when the two input streams end with the same value.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The special-case logic for handling shared tail elements should not be triggered.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain all elements from both inputs.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "left"
+        }
+      },
+      "spec": {
+        "expr": "not (left and right and left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the bug, related to the left stream's tail, must be false.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "right"
+        }
+      },
+      "spec": {
+        "expr": "not (left and right and left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the bug, related to the right stream's tail, must be false.",
+      "confidence": 0.8
+    }
+  ]
+}

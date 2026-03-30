@@ -1,0 +1,20 @@
+{
+  "bug_id": "scrapy_5",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.http.response.__init__.Response.follow",
+    "buggy_methods": [
+      "scrapy.http.response.__init__.Response.follow"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.http.response.__init__.Response.follow",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

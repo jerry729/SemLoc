@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gain_trendline",
+  "fault_hypothesis": "The condition on line 70 is inverted: `if not clamp` applies clamping when clamp=False and skips it when clamp=True, which is the opposite of the intended behavior.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True, the clamping block should execute; the condition `not clamp` is inverted so clamping runs when clamp=False instead.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of the if-not-clamp block should only execute when clamp is False (i.e., no clamping desired), but the condition is inverted.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (min(y0, y1) <= y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, the final y value must be within [min(y0,y1), max(y0,y1)]; the bug causes this invariant to be violated.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "Before returning, if clamp=True the result must be bounded by the segment endpoints.",
+      "confidence": 0.88
+    }
+  ]
+}

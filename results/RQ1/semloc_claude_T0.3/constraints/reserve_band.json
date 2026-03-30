@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_band",
+  "fault_hypothesis": "The `overlaps` function on line 68 uses strict inequalities (`b[1] <= a[0]` and `b[0] >= a[1]`), which means touching/adjacent bands (where one ends exactly where another starts) are not considered overlapping. The condition should use strict inequalities in the opposite sense, i.e., adjacent bands should be treated as overlapping.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not (5.0 <= 5.0 or 2.0 >= 5.0) == False"
+      },
+      "intent": "Check that adjacent bands (candidate end == existing start) are detected as overlapping; the current strict inequality makes b[1] <= a[0] true when they touch, so overlaps returns False incorrectly.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == slot[0] or candidate[0] == slot[1]) or overlaps(slot, candidate)"
+      },
+      "intent": "At the end of each loop iteration, if the candidate touches an existing slot at a boundary point, overlaps should have returned True (detected overlap).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (candidate[1] == slot[0] or candidate[0] == slot[1]) for slot in existing)"
+      },
+      "intent": "Before merged is constructed, verify that no existing slot is adjacent (touching) to the candidate; if any slot touches the candidate, we should have returned False already.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "After the non-overlapping branch of the overlap check, the candidate must be strictly non-adjacent to the slot (not merely touching at a boundary).",
+      "confidence": 0.8
+    }
+  ]
+}

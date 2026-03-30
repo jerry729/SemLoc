@@ -1,0 +1,56 @@
+{
+  "bug_id": "keras_42",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.models.Sequential.fit_generator",
+    "buggy_methods": [
+      "keras.models.Sequential.fit_generator"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.models.Sequential.fit_generator",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/training.py": [
+      1903,
+      1944,
+      2013,
+      2014,
+      2015,
+      2016,
+      2062,
+      2063,
+      2064,
+      2065,
+      2066,
+      2067,
+      2068,
+      2069,
+      2070,
+      2176,
+      2193,
+      2228,
+      2229,
+      2291,
+      2308,
+      2340,
+      2341
+    ],
+    "keras/models.py": [
+      1119,
+      1226,
+      1266
+    ],
+    "tests/keras/engine/test_training.py": [
+      241,
+      383,
+      385
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

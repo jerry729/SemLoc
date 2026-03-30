@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "machine_booking",
+  "fault_hypothesis": "The bug is on line 61. The conflict detection logic `b <= s or a >= e` incorrectly treats intervals that touch at their boundaries as non-conflicting, but they should be rejected. The condition should use strict inequalities (`<`, `>`).",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 <= s or a__1 >= e) for s, e in timeline) == any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "The result of the buggy conflict check should be identical to the result of a correct check that handles boundary conditions.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "If a booking is accepted and a new timeline is created, the accepted window must not conflict with any of the original bookings.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "If the conflict branch is taken, there must be a genuine conflict (including touching boundaries) with an existing booking.",
+      "confidence": 0.9
+    }
+  ]
+}

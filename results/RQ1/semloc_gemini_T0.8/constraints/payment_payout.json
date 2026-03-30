@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_payout",
+  "fault_hypothesis": "The per-participant share on line 70 is calculated from the gross 'amount' instead of the net amount (after fee). This error is coincidentally canceled by a second bug on line 73 only when there is a single participant, causing some tests to pass despite the incorrect logic.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(ratios) == 1 or abs(raw - (r / total_ratio__1) * max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "A participant's raw share should be based on the net amount, unless it's a single-participant payout where a later bug compensates.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(ratios) == 1 or fee == 0 or sum(shares) <= max(0, amount - fee) + 0.02"
+      },
+      "intent": "The cumulative sum of calculated gross shares must not exceed the net pool available for distribution.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(ratios) <= 1 or fee == 0 or abs(sum(__cbfl_result) - max(0, amount - fee)) < 0.02"
+      },
+      "intent": "The sum of final payouts must equal the net distributable amount.",
+      "confidence": 0.8
+    }
+  ]
+}

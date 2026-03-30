@@ -1,0 +1,21 @@
+{
+  "bug_id": "youtube-dl_30",
+  "function": "build_format_selector",
+  "src_path": "youtube_dl/YoutubeDL.py",
+  "fn_begin": 913,
+  "fn_end": 1128,
+  "n_constraints": 4,
+  "n_tests_passing": 13,
+  "n_tests_failing": 1,
+  "line_scores": [
+    {
+      "line": 929,
+      "score": 0.6363961030678927
+    }
+  ],
+  "fault_line": 966,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_30/build_format_selector_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_30/violations.jsonl"
+}

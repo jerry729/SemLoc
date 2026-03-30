@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_job",
+  "fault_hypothesis": "Line 75 uses a strict greater-than comparison (`> limit`) instead of `>= limit`, so when `len(recent) == limit` the function incorrectly returns `True` (allowed) instead of `False` (blocked).",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or len(recent__1) > limit"
+      },
+      "intent": "The branch condition should trigger (block) when count equals limit, so at this line the count should never equal limit without triggering the block.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the if-branch is not taken, the count must be strictly less than the limit (not equal), otherwise the job should have been blocked.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= 0 and (len(recent__1) >= limit or limit - len(recent__1) >= 0)"
+      },
+      "intent": "Before using recent__1 in the comparison, verify that when count equals limit the remaining would be 0 and the job should be blocked.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(_filter_recent_timestamps(timestamps, now - window)) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when the recent job count meets or exceeds the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

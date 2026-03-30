@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_refund",
+  "fault_hypothesis": "The fee is deducted from each participant's share after distribution, instead of from the total amount before distribution. The error originates on line 59 where the gross `amount` is used for proportional splitting, instead of the net amount (`amount - fee`).",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(b - fee for b in base__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of final payouts, if calculated from the `base` amount, should equal the total amount minus a single fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "all(abs(p - (r / total_ratio__1) * (amount - fee)) < 1e-9 for p, r in zip(payouts__1, ratios))"
+      },
+      "intent": "Each individual payout must be a proportional share of the net amount (total minus fee).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "not (fee > 0 and len(ratios) > 1) or abs(sum(base__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of the proportional base amounts should equal the net distributable amount in cases where the bug manifests.",
+      "confidence": 0.9
+    }
+  ]
+}

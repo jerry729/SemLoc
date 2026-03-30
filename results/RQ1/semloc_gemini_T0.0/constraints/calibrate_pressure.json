@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_pressure",
+  "fault_hypothesis": "The condition on line 70, `if not clamp:`, is inverted. It should be `if clamp:`, causing the clamping logic to be applied when disabled and skipped when enabled.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(y__1 - y0) * (y__1 - y1) <= 0"
+      },
+      "intent": "When the interpolated value is within the y-range, the bug has no effect, so the program behaves correctly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or ((y__1 - y0) * (y__1 - y1) <= 0)"
+      },
+      "intent": "If clamping is enabled (which leads to this branch), the interpolated value must already be within the valid range for the program to be correct.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic (the 'then' branch) should only execute when clamping is enabled.",
+      "confidence": 1.0
+    }
+  ]
+}

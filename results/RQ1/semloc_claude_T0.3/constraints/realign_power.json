@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_power",
+  "fault_hypothesis": "The function is missing a normalization step before returning; line 59 returns the raw interpolated values without dividing by their sum, causing the output to not sum to 1.0 when inputs have large absolute weights.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The updated list must sum to 1.0 before being returned as a valid distribution.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(v >= 0.0 for v in updated__1)"
+      },
+      "intent": "All interpolated values should be non-negative after each iteration.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0"
+      },
+      "intent": "After initialization, updated list should be empty before the loop fills it.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation must always sum to 1.0 regardless of input magnitude.",
+      "confidence": 0.9
+    }
+  ]
+}

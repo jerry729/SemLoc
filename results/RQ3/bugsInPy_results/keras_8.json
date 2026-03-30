@@ -1,0 +1,27 @@
+{
+  "bug_id": "keras_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.network.Network.from_config",
+    "buggy_methods": [
+      "keras.engine.network.Network.from_config"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.network.Network.from_config",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/network.py": [
+      980,
+      981,
+      1028,
+      1029
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

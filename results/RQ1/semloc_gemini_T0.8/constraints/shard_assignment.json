@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shard_assignment",
+  "fault_hypothesis": "The function fails to sort the keys within each shard as required by its documentation. The return statement at line 65 sends back the buckets with keys in their original append order, not in sorted order.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "all(bucket == sorted(bucket) for bucket in __cbfl_result)"
+      },
+      "intent": "Each list of keys within the returned list of buckets must be sorted.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "buckets__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b == sorted(b) for b in buckets__1)"
+      },
+      "intent": "The buckets variable should contain sorted lists of keys right before it is returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "buckets__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(len(b) for b in buckets__1) == len(keys)"
+      },
+      "intent": "The total number of keys distributed across all buckets must equal the number of input keys.",
+      "confidence": 0.8
+    }
+  ]
+}

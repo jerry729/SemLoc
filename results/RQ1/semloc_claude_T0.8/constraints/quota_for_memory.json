@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_memory",
+  "fault_hypothesis": "On line 72, using `int(x)` (floor truncation) instead of proper rounding causes the sum of integer allocations to be less than `total` when fractional parts are truncated away. The fix requires a rounding strategy that preserves the total (e.g., largest-remainder method).",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "After integer truncation, the sum of allocations must still equal total \u2014 this will be FALSE on failing tests where truncation loses units.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == sum(int(x) for x in planned__1) and sum(allocations__1) == int(total)"
+      },
+      "intent": "After defining allocations__1 via int() truncation, its sum must equal total \u2014 violated when fractional parts are discarded.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-6"
+      },
+      "intent": "Before consuming planned__1, verify its sum equals total so any loss is attributable to the int() conversion on line 72.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "At the end of the integer-allocation branch, the total must be preserved \u2014 failing when floor truncation drops units.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned allocations must sum to total \u2014 a symptom-level check that catches the rounding bug.",
+      "confidence": 0.8
+    }
+  ]
+}

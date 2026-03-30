@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "token_cache",
+  "fault_hypothesis": "The expiration check on line 67 uses a strict inequality `>` which incorrectly validates a token when `now` is exactly equal to `effective_ttl`. The check should be `now >= effective_ttl` to correctly expire the token at the boundary.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "now < effective_ttl__1"
+      },
+      "intent": "A token should only be considered valid if the current time is strictly less than its effective TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_ttl__1 >= ttl__1"
+      },
+      "intent": "The effective TTL, which includes clock skew tolerance, must be at least the base TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "ttl__1 >= 0"
+      },
+      "intent": "A token's time-to-live timestamp must be a non-negative value.",
+      "confidence": 0.8
+    }
+  ]
+}

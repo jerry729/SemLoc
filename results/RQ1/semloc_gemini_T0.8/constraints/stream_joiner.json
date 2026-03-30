@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "stream_joiner",
+  "fault_hypothesis": "The condition on line 72 incorrectly identifies a scenario for removing a duplicate element. When both input streams end with the same value, the code on line 73 wrongly removes one instance of that value from the result.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "not (out__1 and left and right and out__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "A shared tail value between inputs should not trigger the element removal logic.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "Popping an element must not violate the total element count invariant.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "If no element is popped, the total element count must be preserved.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged stream must contain all elements from both input streams.",
+      "confidence": 1.0
+    }
+  ]
+}

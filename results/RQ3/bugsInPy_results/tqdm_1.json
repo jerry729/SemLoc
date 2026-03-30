@@ -1,0 +1,17 @@
+{
+  "bug_id": "tqdm_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "tqdm.contrib.__init__.tenumerate",
+    "buggy_methods": [
+      "tqdm.contrib.__init__.tenumerate"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tqdm.contrib.__init__.tenumerate",
+  "autofl_matched_info": [],
+  "checkout_error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 233, in run_one_bug\n    checkout_info = checkout_bug(bug_id, workdir=workdir)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_checkout.py\", line 142, in checkout_bug\n    raise ValueError(f\"Unknown project {project!r}. Known: {list(PROJECT_REPOS)}\")\nValueError: Unknown project 'tqdm'. Known: ['PySnooper', 'ansible', 'black', 'cookiecutter', 'fastapi', 'httpie', 'keras', 'luigi', 'matplotlib', 'pandas', 'sanic', 'scrapy', 'spacy', 'thefuck', 'tornado', 'youtube-dl']\n",
+  "semloc": {
+    "error": "Checkout failed: Unknown project 'tqdm'. Known: ['PySnooper', 'ansible', 'black', 'cookiecutter', 'fastapi', 'httpie', 'keras', 'luigi', 'matplotlib', 'pandas', 'sanic', 'scrapy', 'spacy', 'thefuck', 'tornado', 'youtube-dl']"
+  }
+}

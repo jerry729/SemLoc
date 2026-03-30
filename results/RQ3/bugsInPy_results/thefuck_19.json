@@ -1,0 +1,29 @@
+{
+  "bug_id": "thefuck_19",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.git_push_force.get_new_command",
+    "buggy_methods": [
+      "thefuck.rules.git_push_force.get_new_command"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.git_push_force.get_new_command",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_git_push_force.py": [
+      48,
+      49,
+      50
+    ],
+    "thefuck/rules/git_push_force.py": [
+      15
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

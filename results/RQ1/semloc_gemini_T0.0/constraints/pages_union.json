@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "pages_union",
+  "fault_hypothesis": "The function incorrectly removes the last element from the result if both input lists share the same last element. This is caused by the `merged.pop()` call on line 80, which is guarded by a faulty condition on line 79.",
+  "fault_line": 80,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The length of the merged list should be the sum of input lengths, which this line violates.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 79,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "This branch, which incorrectly removes a shared last element, should never be executed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "not (left and right and left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the faulty element removal should not be true before the check.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(merged) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain all elements from both input lists, preserving duplicates.",
+      "confidence": 1.0
+    }
+  ]
+}

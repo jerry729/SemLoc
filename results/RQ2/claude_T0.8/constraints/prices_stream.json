@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prices_stream",
+  "fault_hypothesis": "Lines 81-82 unconditionally remove the last element when both streams share the same last value, but this is incorrect \u2014 equal tail values should appear twice in the output, not be deduplicated. The pop() on line 82 removes a correctly-merged duplicate.",
+  "fault_line": 82,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 82
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(merged__1) + 1"
+      },
+      "intent": "The pop() at line 82 always makes the result shorter than it should be when the last elements are equal; this constraint is always false after the pop fires, exposing the bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 81,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The then-branch of the guard at line 81 should never execute because removing a correctly-merged duplicate is always wrong; this flags every entry into the branch as a fault.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "Before returning, the merged list must contain exactly len(left)+len(right) elements; the spurious pop() reduces the count by one when the last elements coincide.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned list must have exactly as many elements as the two input lists combined, regardless of duplicates.",
+      "confidence": 0.88
+    }
+  ]
+}

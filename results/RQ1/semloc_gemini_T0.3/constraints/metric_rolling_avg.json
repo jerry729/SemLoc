@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "metric_rolling_avg",
+  "fault_hypothesis": "The average on line 70 is calculated by dividing by the `window` size, but it should use the actual number of samples in `tail` (`len(tail)`), which can be smaller than `window`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) < min_samples or window == len(tail__1)"
+      },
+      "intent": "The divisor `window` is only correct if it matches the number of samples, unless the result is discarded due to min_samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The computed average, when multiplied by the number of samples, should equal the total sum of those samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "window == len(tail__1)"
+      },
+      "intent": "If returning a numeric average, it must have been computed using a number of samples equal to the window size.",
+      "confidence": 0.9
+    }
+  ]
+}

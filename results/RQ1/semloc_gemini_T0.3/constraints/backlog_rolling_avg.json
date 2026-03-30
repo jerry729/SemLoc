@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "backlog_rolling_avg",
+  "fault_hypothesis": "The mean is calculated by dividing the sum of recent values by the `window` size on line 59. When fewer values exist than the window size, the divisor should be the actual number of samples (`len(recent)`), not `window`.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "The calculated mean must be the sum of recent values divided by the actual number of recent values.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == min(len(values), window)"
+      },
+      "intent": "The number of recent samples should be the smaller of the window size or the total number of available values.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0 and mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "If a result is returned, the mean must have been calculated correctly based on the available samples.",
+      "confidence": 0.9
+    }
+  ]
+}

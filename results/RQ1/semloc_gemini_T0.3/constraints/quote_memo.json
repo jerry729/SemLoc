@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quote_memo",
+  "fault_hypothesis": "The bug is on line 61, where the expiry check `now > effective` fails to consider an item expired when `now == effective`. The comparison should be `now >= effective` to correctly handle the boundary case.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "An item is either strictly expired or strictly valid; the boundary case is faulty.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If a cached payload is returned, the current time must be strictly before its expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "item__1"
+        }
+      },
+      "spec": {
+        "expr": "(item__1 is None) or (isinstance(item__1, tuple) and len(item__1) == 2 and isinstance(item__1[1], (int, float)))"
+      },
+      "intent": "A valid cache item must be a tuple containing a payload and a numeric TTL, or None.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "ttl__1 >= 0"
+      },
+      "intent": "The stored TTL value from the cache should be a non-negative timestamp.",
+      "confidence": 0.8
+    }
+  ]
+}

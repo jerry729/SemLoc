@@ -1,0 +1,6 @@
+.vscode
+.pytest*
+__pycache__
+.env
+
+semloc.egg-info

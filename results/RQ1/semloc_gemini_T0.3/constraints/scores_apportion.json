@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "scores_apportion",
+  "fault_hypothesis": "The function truncates floating-point shares to integers on line 75 using `int()`, which discards fractional remainders. This causes the sum of the final allocations to be less than the original total when the division is not exact.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "minimum > 0 or sum(__cbfl_result) == total"
+      },
+      "intent": "Unless a minimum floor is applied, the sum of the final integer allocations must equal the original total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "minimum > 0 or abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "Unless a minimum floor is applied, the sum of the intermediate floating-point shares must be nearly equal to the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "minimum > 0 or sum(__cbfl_result) == total"
+      },
+      "intent": "When returning integers, their sum must equal the total unless a minimum floor was applied.",
+      "confidence": 1.0
+    }
+  ]
+}

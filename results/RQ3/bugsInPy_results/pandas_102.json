@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_102",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.construction.init_ndarray",
+    "buggy_methods": [
+      "pandas.core.internals.construction.init_ndarray"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.construction.init_ndarray",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/internals/construction.py": [
+      156,
+      157
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

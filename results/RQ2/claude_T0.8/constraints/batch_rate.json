@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batch_rate",
+  "fault_hypothesis": "The comparison on line 70 uses `>` instead of `>=`, so when the number of recent events exactly equals the limit, the function incorrectly allows the request instead of denying it.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) == (len(recent__1) >= limit)"
+      },
+      "intent": "When recent event count equals limit, both > and >= should agree; this is FALSE only when count == limit (the failing case).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the else branch (not denied), recent count must be strictly less than limit; fails when count equals limit.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "If recent equals limit, the function should deny \u2014 so reaching the return True path with count==limit is inconsistent; this flags the boundary condition.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(recent__1) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when recent events meet or exceed the limit.",
+      "confidence": 0.92
+    }
+  ]
+}

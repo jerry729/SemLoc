@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "scores_apportion",
+  "fault_hypothesis": "Line 75 uses a naive `int()` truncation (floor) to convert float shares to integers, which loses fractional remainders and causes the sum of allocations to be less than `total`. The correct approach would use a remainder-distribution algorithm (e.g., largest-remainder method) to ensure the sum equals `total`.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "sum(map(int, shares__1)) == total"
+      },
+      "intent": "After truncating shares to int, their sum must still equal total \u2014 violated when fractional parts are discarded.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "The raw float shares must sum exactly to total before integer conversion.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The returned integer list from the INTEGER_ALLOCATION branch must sum to total.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1.0"
+      },
+      "intent": "Before using shares for integer conversion, verify their sum is within 1 unit of total to catch systematic under-allocation.",
+      "confidence": 0.8
+    }
+  ]
+}

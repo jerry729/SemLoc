@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "upload_gate",
+  "fault_hypothesis": "The condition on line 74 uses a strict inequality `>` instead of `>=`. This allows an upload when the number of active uploads is exactly at the limit, which should close the gate.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) > limit) == (len(active__1) >= limit)"
+      },
+      "intent": "The buggy comparison `>` should behave identically to the correct comparison `>=`.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the gate is not closed, the number of active uploads must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "limit"
+        }
+      },
+      "spec": {
+        "expr": "limit > len(active__1)"
+      },
+      "intent": "To calculate remaining slots for an open gate, the limit must be strictly greater than the active count.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (len(active) < limit)"
+      },
+      "intent": "The gate is allowed to be open if and only if the active upload count is less than the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "maintenance_booking",
+  "fault_hypothesis": "The overlap condition on line 77 uses strict inequalities (`b <= s` and `a >= e`), which treats touching endpoints (e.g., new end == existing start) as non-overlapping. The correct check should use strict inequalities `b < s or a > e` to treat touching as a conflict.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 < s or a__1 > e) for s, e in timeline) == any(not (b__1 <= s or a__1 >= e) for s, e in timeline) or any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "Detect when touching endpoints are incorrectly classified as non-overlapping by the strict-boundary condition.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s for s, e in timeline) or any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "When new window end equals an existing window start, the overlap check must detect a conflict.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "a__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(a__1 == e for s, e in timeline) or any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "When new window start equals an existing window end, the overlap check must detect a conflict.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "After deciding no conflict exists, verify that the new window truly does not touch or overlap any existing booking.",
+      "confidence": 0.85
+    }
+  ]
+}

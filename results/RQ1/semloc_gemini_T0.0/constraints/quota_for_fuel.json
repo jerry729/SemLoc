@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_fuel",
+  "fault_hypothesis": "The function fails to conserve fuel because it truncates floating-point shares to integers on line 66. This systematically discards fractional amounts, causing the sum of allocations to be less than the total available fuel.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(allocations__1) - total) < 1"
+      },
+      "intent": "The sum of integer allocations must be nearly equal to the total fuel.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of continuous planned shares from the helper function must be almost exactly the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "not _INTEGER_ALLOCATION or abs(sum(__cbfl_result) - total) < 1"
+      },
+      "intent": "The sum of the returned allocations must conserve the total fuel.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(allocations__3) - total) < 1e-9"
+      },
+      "intent": "The sum of rounded float allocations should still conserve the total fuel, unlike the integer truncation branch.",
+      "confidence": 0.9
+    }
+  ]
+}

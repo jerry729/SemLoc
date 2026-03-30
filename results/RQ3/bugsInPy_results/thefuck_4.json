@@ -1,0 +1,30 @@
+{
+  "bug_id": "thefuck_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.shells.fish._get_aliases",
+    "buggy_methods": [
+      "thefuck.shells.fish._get_aliases"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.shells.fish._get_aliases",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/shells/test_fish.py": [
+      19,
+      72
+    ],
+    "thefuck/shells/fish.py": [
+      23,
+      24,
+      25
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

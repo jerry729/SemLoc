@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "traffic_shaping_gate",
+  "fault_hypothesis": "Line 71 uses a strict greater-than comparison (`> limit`) instead of `>= limit`, so when `len(active) == limit` the gate incorrectly allows the request instead of denying it.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit and len(active__1) > limit == False)"
+      },
+      "intent": "When active count equals limit, the condition len(active__1) > limit must be True (i.e., the comparison should be >= not >); this is False on failing tests.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "After the else branch (gate allows), active count must be strictly less than limit; if equal it should have been denied.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) >= limit) or len(active__1) > limit"
+      },
+      "intent": "Whenever active count meets or exceeds limit, the guard condition must trigger denial; the off-by-one means == limit slips through.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(active__1) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when the active count is at or above the limit.",
+      "confidence": 0.88
+    }
+  ]
+}

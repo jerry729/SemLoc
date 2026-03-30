@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "fee_splitter",
+  "fault_hypothesis": "The platform fee is incorrectly subtracted from each individual's share on line 61. This results in the fee being deducted multiple times, once for each participant, instead of once from the total amount.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - max(0, amount - fee)) < 1e-9 * max(1, amount)"
+      },
+      "intent": "The sum of all payouts must equal the total amount less a single fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((sum(base__1) - sum(payouts__1)) - min(fee, amount)) < 1e-9 * max(1, amount)"
+      },
+      "intent": "The total amount deducted as fee should equal the platform fee, capped by the total amount available.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9 * max(1, abs(amount))"
+      },
+      "intent": "The sum of the proportional base amounts, before fee deduction, should equal the original total amount.",
+      "confidence": 0.9
+    }
+  ]
+}

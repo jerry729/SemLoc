@@ -1,0 +1,25 @@
+{
+  "bug_id": "keras_18",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.backend.tensorflow_backend.Function.__init__",
+    "buggy_methods": [
+      "keras.backend.tensorflow_backend.Function.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.backend.tensorflow_backend.Function.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/backend/tensorflow_backend.py": [
+      2548,
+      2646
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_points_share",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers on line 74 using `map(int, ...)`, which truncates fractional values. This causes the sum of the final allocations to be less than the total budget when shares have fractional parts.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(abs(sum(shares__1) - total) >= 1e-9) or (sum(int(s) for s in shares__1) == int(total))"
+      },
+      "intent": "If minimums did not significantly alter the sum, the sum of integer shares must equal the total budget.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "all(s >= minimum for s in shares__1)"
+      },
+      "intent": "Each computed share, after applying the floor, must be at least the specified minimum.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(shares__1) >= total - 1e-9"
+      },
+      "intent": "The sum of shares after applying minimums should not be less than the total budget.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(weights)"
+      },
+      "intent": "The number of allocations returned must match the number of input weights.",
+      "confidence": 1.0
+    }
+  ]
+}

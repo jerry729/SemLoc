@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_forecast_curve",
+  "fault_hypothesis": "The condition on line 66 is inverted: clamping is applied when `clamp` is False and skipped when `clamp` is True. The `if not clamp:` should be `if clamp:`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True the branch body (clamping logic) should execute, so the condition entering the branch must be True when clamp is True.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "After the then-branch executes, clamp should be False (meaning the branch correctly fires only when clamping is disabled).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True the final y value must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "low__1"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The bounds computation should only happen when clamping is disabled (clamp=False), so low__1 is defined only when clamp is False.",
+      "confidence": 0.88
+    }
+  ]
+}

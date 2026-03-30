@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ad_mix",
+  "fault_hypothesis": "The function calculates the interpolated ad allocations but fails to normalize the resulting list so that its elements sum to 1.0. The bug is the missing normalization step before the return on line 67.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of allocations returned by the function must sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of adjusted allocations must sum to 1.0 before being returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LOOP_HEAD",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(current) - 1.0) < 1e-9 and abs(sum(target) - 1.0) < 1e-9"
+      },
+      "intent": "The buggy code only works correctly when the input allocation vectors already sum to 1.0.",
+      "confidence": 0.7
+    }
+  ]
+}

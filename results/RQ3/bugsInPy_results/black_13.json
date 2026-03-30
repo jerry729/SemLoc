@@ -1,0 +1,26 @@
+{
+  "bug_id": "black_13",
+  "autofl": {
+    "top1": true,
+    "prediction": "blib2to3.pgen2.tokenize.generate_tokens",
+    "buggy_methods": [
+      "blib2to3.pgen2.tokenize.generate_tokens"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "blib2to3.pgen2.tokenize.generate_tokens",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "blib2to3/pgen2/tokenize.py": [
+      519,
+      524,
+      525
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

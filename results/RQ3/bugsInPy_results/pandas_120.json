@@ -1,0 +1,32 @@
+{
+  "bug_id": "pandas_120",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.groupby.GroupBy.size",
+    "buggy_methods": [
+      "pandas.core.groupby.groupby.GroupBy.size"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.groupby.GroupBy.size",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/generic.py": [
+      560,
+      712
+    ],
+    "pandas/core/groupby/groupby.py": [
+      1299,
+      2383,
+      2397,
+      2429,
+      2451
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

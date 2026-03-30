@@ -1,0 +1,30 @@
+{
+  "bug_id": "pandas_160",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.computation.expressions._can_use_numexpr",
+    "buggy_methods": [
+      "pandas.core.computation.expressions._can_use_numexpr"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.computation.expressions._can_use_numexpr",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/computation/expressions.py": [
+      79,
+      83,
+      88
+    ],
+    "pandas/tests/test_expressions.py": [
+      69,
+      321
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

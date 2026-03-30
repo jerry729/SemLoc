@@ -1,0 +1,25 @@
+{
+  "bug_id": "youtube-dl_33",
+  "function": "parse_iso8601",
+  "src_path": "youtube_dl/utils.py",
+  "fn_begin": 921,
+  "fn_end": 943,
+  "n_constraints": 4,
+  "n_tests_passing": 28,
+  "n_tests_failing": 3,
+  "line_scores": [
+    {
+      "line": 941,
+      "score": 0.5773502691896258
+    },
+    {
+      "line": 942,
+      "score": 0.5773502691896258
+    }
+  ],
+  "fault_line": 941,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_33/parse_iso8601_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_33/violations.jsonl"
+}

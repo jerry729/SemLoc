@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "checkout_rate",
+  "fault_hypothesis": "The rate limit check on line 66 uses a strict greater-than comparison (`>`), which incorrectly allows a new event when the number of recent events is exactly equal to the limit. The comparison should be greater-than-or-equal-to (`>=`) to correctly block events at the limit.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "The decision logic should not treat the case of being exactly at the limit as being under the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a checkout is allowed (i.e., this branch is taken), the number of recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (len(recent) < limit)"
+      },
+      "intent": "A checkout should be allowed if and only if the number of recent events is strictly less than the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

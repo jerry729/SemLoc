@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_appointment_slot",
+  "fault_hypothesis": "The overlap check on line 65 incorrectly permits adjacent (touching) appointment slots because it uses non-strict inequalities. The condition for non-overlap should use strict inequalities (`b < s` or `a > e`) to correctly identify touching slots as conflicts.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 <= s or a__1 >= e) for s, e in timeline) == any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "The result of the buggy overlap check should be identical to a correct check that includes touching boundaries.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1) - 1))"
+      },
+      "intent": "The final timeline, after adding the new window, must not contain any adjacent or overlapping slots.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "If the code determines there is no overlap, then a correct check (including touching) must also find no overlap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "A successful result implies an updated timeline with no adjacent or overlapping slots.",
+      "confidence": 0.9
+    }
+  ]
+}

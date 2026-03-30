@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "fee_splitter",
+  "fault_hypothesis": "The fee is incorrectly deducted from each participant's share on line 61, instead of being deducted once from the total amount before distribution. This results in the total fee being multiplied by the number of participants.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee)) <= abs(sum(payouts__1) - (amount - fee * len(ratios)))"
+      },
+      "intent": "The sum of payouts should be closer to the amount minus a single fee than the amount minus a per-participant fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "len(payouts__1) < 2 or abs(payouts__1[0] * ratios[1] - payouts__1[1] * ratios[0]) < 1e-6"
+      },
+      "intent": "Payouts should remain proportional to the original ratios after deducting the fee.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((amount - sum(payouts__1)) - min(amount, fee)) < 1e-6"
+      },
+      "intent": "The total amount deducted should equal the fee, capped by the total amount.",
+      "confidence": 0.9
+    }
+  ]
+}

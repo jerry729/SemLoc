@@ -1,0 +1,66 @@
+{
+  "bug_id": "youtube-dl_33",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.parse_iso8601",
+    "buggy_methods": [
+      "youtube_dl.utils.parse_iso8601"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.parse_iso8601",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/extractor/drtv.py": [
+      3,
+      4,
+      28,
+      29,
+      38
+    ],
+    "youtube_dl/utils.py": [
+      928,
+      941
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      928,
+      941
+    ],
+    "best_rank": 1,
+    "fn_lines": 23,
+    "pct_suspicious": 4.3478260869565215,
+    "top1": true,
+    "top3": true,
+    "top5": true,
+    "fault_line": 941,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "youtube-dl_33",
+    "function": "parse_iso8601",
+    "src_path": "youtube_dl/utils.py",
+    "fn_begin": 921,
+    "fn_end": 943,
+    "n_constraints": 4,
+    "n_tests_passing": 28,
+    "n_tests_failing": 3,
+    "line_scores": [
+      {
+        "line": 941,
+        "score": 0.5773502691896258
+      },
+      {
+        "line": 942,
+        "score": 0.5773502691896258
+      }
+    ],
+    "fault_line": 941,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/youtube-dl_33/parse_iso8601_constraints.json",
+    "report_path": "/tmp/bip_semloc/youtube-dl_33/violations.jsonl"
+  }
+}

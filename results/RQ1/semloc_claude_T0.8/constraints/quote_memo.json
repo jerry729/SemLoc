@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quote_memo",
+  "fault_hypothesis": "The expiry check on line 61 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now` exactly equals the TTL the entry is incorrectly treated as still valid rather than expired.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or (now > effective__1)"
+      },
+      "intent": "When now equals effective the branch should trigger (return None), so the condition now > effective must be replaced by now >= effective; this expr is false when now == effective and the branch is not taken.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or True"
+      },
+      "intent": "Capture that when now equals effective__1 the subsequent expiry check must return None \u2014 the strict inequality fails to handle this boundary.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "After the else branch (entry not expired), now must be strictly less than effective; if now == effective we should have taken the then-branch, so this being false reveals the off-by-one boundary bug.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or __cbfl_result is None"
+      },
+      "intent": "If now is at or past the TTL, the function must return None; failing tests show it returns the payload instead.",
+      "confidence": 0.8
+    }
+  ]
+}

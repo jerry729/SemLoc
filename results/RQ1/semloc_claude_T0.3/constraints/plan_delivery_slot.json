@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_delivery_slot",
+  "fault_hypothesis": "Line 67 uses non-strict comparisons (`b <= s` and `a >= e`) for the overlap check instead of strict comparisons (`b < s` and `a > e`), causing touching/adjacent windows to be incorrectly accepted instead of rejected.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "all(not (b__1 < s or a__1 > e) == (not (b__1 <= s or a__1 >= e)) for s, e in timeline if b__1 != s and a__1 != e)"
+      },
+      "intent": "The strict and non-strict overlap checks should agree when no endpoint touching occurs; when they disagree (touching case), the non-strict version is wrong.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) == (b__1 <= s or a__1 >= e) or (b__1 == s or a__1 == e) for s, e in timeline)"
+      },
+      "intent": "The strict and non-strict no-overlap conditions differ only when an endpoint of the new window exactly touches an endpoint of an existing slot.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (result__1[i][1] == result__1[i+1][0]) for i in range(len(result__1)-1))"
+      },
+      "intent": "In the correctly inserted result, no two adjacent slots should share an endpoint (touching slots should have been rejected before reaching this point).",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and any(window[1] == s or window[0] == e for s, e in timeline))"
+      },
+      "intent": "If the new window touches any existing slot endpoint, the function should not return success=True.",
+      "confidence": 0.88
+    }
+  ]
+}

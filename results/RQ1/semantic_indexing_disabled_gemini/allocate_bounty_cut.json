@@ -1,0 +1,47 @@
+{
+  "function": "allocate_bounty_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    64
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        64,
+        62
+      ],
+      "explanation": "The fee is incorrectly subtracted from each recipient's individual share on line 64, instead of being deducted from the total `amount` before the proportional shares are calculated on line 62. This causes the total fee to be effectively multiplied by the number of recipients, which contradicts the function's documentation.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"allocate_bounty_cut\",\n  \"faulty_lines\": [\n    64,\n    62\n  ],\n  \"explanation\": \"The fee is incorrectly subtracted from each recipient's individual share on line 64, instead of being deducted from the total `amount` before the proportional shares are calculated on line 62. This causes the total fee to be effectively multiplied by the number of recipients, which contradicts the function's documentation.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        64,
+        62
+      ],
+      "valid_preds": [
+        64,
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 64,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

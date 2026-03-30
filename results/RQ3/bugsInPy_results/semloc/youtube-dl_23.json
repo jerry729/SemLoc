@@ -1,0 +1,49 @@
+{
+  "bug_id": "youtube-dl_23",
+  "function": "js_to_json",
+  "src_path": "youtube_dl/utils.py",
+  "fn_begin": 2105,
+  "fn_end": 2141,
+  "n_constraints": 4,
+  "n_tests_passing": 69,
+  "n_tests_failing": 1,
+  "line_scores": [
+    {
+      "line": 2108,
+      "score": 0.7071067811865475
+    },
+    {
+      "line": 2109,
+      "score": 0.7071067811865475
+    },
+    {
+      "line": 2113,
+      "score": 0.7071067811865475
+    },
+    {
+      "line": 2126,
+      "score": 0.7071067811865475
+    },
+    {
+      "line": 2127,
+      "score": 0.7071067811865475
+    },
+    {
+      "line": 2128,
+      "score": 0.7071067811865475
+    },
+    {
+      "line": 2130,
+      "score": 0.7071067811865475
+    },
+    {
+      "line": 2132,
+      "score": 0.7071067811865475
+    }
+  ],
+  "fault_line": 2113,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_23/js_to_json_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_23/violations.jsonl"
+}

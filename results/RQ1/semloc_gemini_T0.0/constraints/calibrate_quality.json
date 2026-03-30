@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_quality",
+  "fault_hypothesis": "The condition for clamping the result on line 68 is inverted. The code clamps when `clamp` is `False` and does not clamp when it is `True`, due to the condition being `if not clamp:` instead of `if clamp:`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "The function only passes for interpolation cases (t in [0,1]) and fails for all extrapolation cases.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "((not clamp) and y__5 == y__1) or (clamp and y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "The value after the conditional block must be unclamped if clamp is false, or within the y-range if clamp is true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "ENTRY",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(x - x0) * (x - x1) <= 0"
+      },
+      "intent": "The function only behaves correctly when not extrapolating (i.e., x is between x0 and x1).",
+      "confidence": 0.8
+    }
+  ]
+}

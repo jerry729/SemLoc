@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_preference",
+  "fault_hypothesis": "The expiry check on line 85 uses a strict greater-than `>` comparison, which fails to expire an item when the current time `now` is exactly equal to its `ttl`. The comparison should be greater-than-or-equal-to (`>=`) to correctly handle this boundary condition.",
+  "fault_line": 85,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 85
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "If execution proceeds past the expiry check, the current time must be strictly less than the item's TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "ttl__1 != now"
+      },
+      "intent": "The TTL and current time should not be exactly equal, as this boundary case is the source of the bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "payload__1 == cache[validated_key__1][0]"
+      },
+      "intent": "The payload extracted from the cached item must match the value stored in the cache.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (key.strip() not in cache) or (now < cache[key.strip()][1])"
+      },
+      "intent": "If a non-None payload is returned, it must be because the item is present in the cache and its TTL has not been reached.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "function": "plan_seats_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    81
+  ],
+  "total_source_lines": 83,
+  "runs": [
+    {
+      "faulty_lines": [
+        82,
+        44
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the fault in `plan_seats_share`.\n\nThe function is supposed to allocate seats proportionally. Let me examine the key parts:\n\n1. `_compute_raw_shares` (line 43-44): computes `portion = (w / weight_sum) * total` and applies minimum floor.\n\n2. `plan_seats_share` line 82: `return [int(v) for v in shares]` - uses `int()` which truncates toward zero, not rounds.\n\nThe main issue I see: when `floor_to_int=True`, the code uses `int(v)` which truncates (floors for positive numbers). The docstring says \"round allocations to integers\" but `int()` truncates, not rounds. This could cause the total allocated seats to be less than expected.\n\nHowever, the more subtle bug: the `minimum` parameter is applied in `_compute_raw_shares`, but when `floor_to_int=True`, the minimum might be violated after truncation (e.g., if minimum=1.0, a share of 1.7 becomes 1, which is fine, but if minimum=1.5 and a share is 1.7, after int() it becomes 1, violating the minimum of 1.5).\n\nBut the most likely bug from a test perspective: `int()` truncates rather than rounds. For example, `int(2.9)` gives 2, not 3. The function docstring says \"round\" but uses truncation.\n\nAlso, looking at line 82: `int(v)` truncates, which for typical seat allocation should probably be `round(v)` to properly round to integers.\n\nThe faulty line is line 82 where `int(v)` should likely be `round(v)` for proper integer rounding behavior as described in the docstring.\n\n{\n  \"function_name\": \"plan_seats_share\",\n  \"faulty_lines\": [82, 44],\n  \"explanation\": \"Line 82 uses `int(v)` which truncates (floors) rather than rounds to the nearest integer, contradicting the docstring which says 'round allocations to integers'. This causes systematic under-allocation. Line 44 applies the minimum before proportional scaling is complete, which can cause the total to exceed `total` when minimums are enforced.\",\n  \"confidence\": 0.72\n}",
+      "predicted": [
+        82,
+        44
+      ],
+      "valid_preds": [
+        82,
+        44
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 82,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

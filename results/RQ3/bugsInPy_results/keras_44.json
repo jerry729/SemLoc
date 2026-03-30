@@ -1,0 +1,20 @@
+{
+  "bug_id": "keras_44",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.layers.recurrent.RNN.trainable_weights",
+    "buggy_methods": [
+      "keras.layers.recurrent.RNN.trainable_weights"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.layers.recurrent.RNN.trainable_weights",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

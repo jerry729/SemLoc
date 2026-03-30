@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_band",
+  "fault_hypothesis": "The `overlaps` function on line 68 incorrectly handles adjacent intervals. The non-overlap check `b[1] <= a[0] or b[0] >= a[1]` fails to detect an overlap when two intervals touch at a boundary, because it uses non-strict inequalities (`<=`, `>=`) instead of strict ones (`<`, `>`).",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] == a[0] or b[0] == a[1]) or (not (b[1] <= a[0] or b[0] >= a[1]))"
+      },
+      "intent": "The overlap check must correctly return true for intervals that touch at a boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "If the loop continues because no overlap was detected, the current slot and candidate must be strictly separate.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all((candidate[1] < s[0] or candidate[0] > s[1]) for s in existing)"
+      },
+      "intent": "If the candidate is merged into the list, it must not have had any overlaps (including boundary touches) with existing slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (not any(not (candidate[1] < slot[0] or candidate[0] > slot[1]) for slot in existing))"
+      },
+      "intent": "The function's success status must accurately reflect the correct overlap logic for all slots.",
+      "confidence": 0.8
+    }
+  ]
+}

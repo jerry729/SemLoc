@@ -1,0 +1,31 @@
+{
+  "bug_id": "scrapy_31",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.http.cookies.WrappedRequest.get_header",
+    "buggy_methods": [
+      "scrapy.http.cookies.WrappedRequest.get_header"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.http.cookies.WrappedRequest.get_header",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/http/cookies.py": [
+      152,
+      156,
+      174
+    ],
+    "tests/test_downloadermiddleware_cookies.py": [
+      25,
+      33,
+      34
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

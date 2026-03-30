@@ -1,0 +1,44 @@
+{
+  "function": "job_queue_priority",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        67
+      ],
+      "explanation": "The condition on line 67 uses `>` instead of `>=`, so batches with exactly `max_jobs` jobs are incorrectly admitted even though the spec says 'meets or exceeds max_jobs' should be denied.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "The docstring says \"if the number of incoming jobs meets or exceeds *max_jobs*, admission is denied,\" but line 67 uses `>` (strictly greater than) instead of `>=` (meets or exceeds). This means a batch exactly equal to `max_jobs` is incorrectly admitted.\n\n```json\n{\n  \"function_name\": \"job_queue_priority\",\n  \"faulty_lines\": [67],\n  \"explanation\": \"The condition on line 67 uses `>` instead of `>=`, so batches with exactly `max_jobs` jobs are incorrectly admitted even though the spec says 'meets or exceeds max_jobs' should be denied.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        67
+      ],
+      "valid_preds": [
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

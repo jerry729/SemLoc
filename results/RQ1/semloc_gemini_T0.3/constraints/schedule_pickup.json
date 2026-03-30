@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_pickup",
+  "fault_hypothesis": "The overlap check on line 62 uses non-strict inequalities (`<=`, `>=`), which incorrectly permits new time windows that touch the boundaries of existing ones. The failing tests expect touching boundaries to be treated as conflicts.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "A window that is not rejected as overlapping must not be touching any existing window's boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 != s for s, e in timeline)"
+      },
+      "intent": "The new window's end time must not be equal to the start time of any existing booking.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "a__1"
+        }
+      },
+      "spec": {
+        "expr": "all(a__1 != e for s, e in timeline)"
+      },
+      "intent": "The new window's start time must not be equal to the end time of any existing booking.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a booking is successful, the updated timeline must not have any touching or overlapping slots.",
+      "confidence": 0.8
+    }
+  ]
+}

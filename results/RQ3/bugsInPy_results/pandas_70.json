@@ -1,0 +1,32 @@
+{
+  "bug_id": "pandas_70",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.groupby._GroupBy._try_cast",
+    "buggy_methods": [
+      "pandas.core.groupby.groupby._GroupBy._try_cast"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.groupby._GroupBy._try_cast",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/groupby.py": [
+      816,
+      817,
+      818
+    ],
+    "pandas/tests/resample/test_datetime_index.py": [
+      125
+    ],
+    "pandas/tests/resample/test_timedelta.py": [
+      108
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "function": "notification_gate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        63
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the issue is on line 63. The condition `if len(recent) > limit` should be `if len(recent) >= limit`. \n\nWhen `len(recent) == limit`, the function returns `True, _compute_remaining(len(recent), limit)` which gives `True, 0`. But the notification should not be allowed when the count already equals the limit - it should return `False, 0`. The check should use `>=` instead of `>`.\n\nAdditionally, when allowed is True and remaining is 0 (meaning `len(recent) == limit - 1` after sending), the logic for `_compute_remaining` also needs consideration. Actually, the `remaining` returned represents slots *after* the current notification would be sent, so `_compute_remaining` should use `len(recent) + 1`. But the primary bug is the `>` vs `>=` comparison.\n\nWhen `len(recent) == limit`, the gate should block (return False), but currently it returns True with remaining=0.\n\n{\n  \"function_name\": \"notification_gate\",\n  \"faulty_lines\": [63],\n  \"explanation\": \"The condition on line 63 uses `>` instead of `>=`. When `len(recent) == limit`, the gate should block the notification (return False, 0), but instead it incorrectly allows it by falling through to line 65.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        63
+      ],
+      "valid_preds": [
+        63
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 63,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

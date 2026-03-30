@@ -1,0 +1,44 @@
+{
+  "function": "plan_conference_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    76
+  ],
+  "total_source_lines": 86,
+  "runs": [
+    {
+      "faulty_lines": [
+        28
+      ],
+      "explanation": "The validation logic on line 28 incorrectly allows slots with zero or negative duration by checking `and duration > 0`. This causes the function to accept invalid existing slots that should raise an error.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"plan_conference_slot\",\n  \"faulty_lines\": [\n    28\n  ],\n  \"explanation\": \"The validation logic on line 28 incorrectly allows slots with zero or negative duration by checking `and duration > 0`. This causes the function to accept invalid existing slots that should raise an error.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        28
+      ],
+      "valid_preds": [
+        28
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 28,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

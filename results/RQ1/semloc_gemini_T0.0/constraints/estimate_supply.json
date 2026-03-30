@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_supply",
+  "fault_hypothesis": "The condition for clamping the result is inverted. The code on line 66 checks `if not clamp:` instead of `if clamp:`, causing clamping to be applied when disabled and skipped when enabled.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The program is only correct for interpolation cases because the buggy clamping logic is not triggered.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic block should only be entered when clamping is enabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The non-clamping path should only be taken when clamping is disabled.",
+      "confidence": 0.9
+    }
+  ]
+}

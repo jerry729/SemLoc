@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "profile_expiry",
+  "fault_hypothesis": "Line 73 uses a strict greater-than comparison (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now == effective` the entry is incorrectly returned as valid instead of expired.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or (now >= effective__1 and __cbfl_result is None)"
+      },
+      "intent": "When now equals effective, the function must return None (entry is expired); the strict > comparison fails this at the boundary.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or True"
+      },
+      "intent": "After computing effective, verify that the subsequent comparison will correctly treat now >= effective as expired; placeholder to anchor near the fault.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1 or now >= effective__1"
+      },
+      "intent": "Immediately before effective__1 is used in the comparison, assert that equality of now and effective implies the entry should be expired (now >= effective must trigger expiry).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "In the else branch (entry returned as valid), now must be strictly less than effective; if now == effective we should not reach here.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "function": "adjust_allocation",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [
+        67
+      ],
+      "explanation": "The function is documented to re-normalise the blended weights so they sum to 1.0, but the normalization step is missing entirely \u2014 the function returns the raw blended values without dividing by their sum.",
+      "confidence": 0.93,
+      "parse_ok": true,
+      "raw": "The function is supposed to re-normalize the weights so they sum to 1.0, but the normalization step is missing. The function returns `updated` without dividing each element by the total sum.\n\n```json\n{\n  \"function_name\": \"adjust_allocation\",\n  \"faulty_lines\": [67],\n  \"explanation\": \"The function is documented to re-normalise the blended weights so they sum to 1.0, but the normalization step is missing entirely \u2014 the function returns the raw blended values without dividing by their sum.\",\n  \"confidence\": 0.93\n}\n```",
+      "predicted": [
+        67
+      ],
+      "valid_preds": [
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

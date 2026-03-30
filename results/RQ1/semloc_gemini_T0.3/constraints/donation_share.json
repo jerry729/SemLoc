@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "donation_share",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each recipient's individual share on line 60, rather than from the total amount before distribution. This causes the fee to be effectively multiplied by the number of recipients.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts should equal the net donation amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "len(payouts__1) < 2 or all(abs(payouts__1[i] * ratios[0] - payouts__1[0] * ratios[i]) < 1e-9 for i in range(len(payouts__1)))"
+      },
+      "intent": "The final payouts must remain proportional to the original ratios.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((sum(base__1) - sum(payouts__1)) - min(fee, amount)) < 1e-9"
+      },
+      "intent": "The total fee deducted should equal the specified fee, capped by the donation amount.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "bug_id": "keras_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "docs.autogen.process_list_block",
+    "buggy_methods": [
+      "docs.autogen.process_list_block"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "docs.autogen.process_list_block",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "docs/autogen.py": [
+      120,
+      121
+    ],
+    "tests/test_doc_auto_generation.py": [
+      329,
+      330,
+      331
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

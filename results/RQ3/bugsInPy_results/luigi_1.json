@@ -1,0 +1,28 @@
+{
+  "bug_id": "luigi_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.server.MetricsHandler.get",
+    "buggy_methods": [
+      "luigi.server.MetricsHandler.get"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.server.MetricsHandler.get",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/server.py": [
+      282,
+      284
+    ],
+    "test/server_test.py": [
+      468
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

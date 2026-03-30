@@ -1,0 +1,44 @@
+{
+  "function": "quota_for_fuel",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, the issue is in line 66 where `int(x)` is used to convert float shares to integers. `int()` truncates (floors) the value, which means the sum of allocations will often be less than the total. The proper approach for allocating integer quotas would be to use a largest remainder method or at minimum `round()` instead of `int()`. Using `int()` causes systematic under-allocation - for example, with total=10 and equal weights, each recipient gets truncated shares that sum to less than 10.\n\n{\n  \"function_name\": \"quota_for_fuel\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"Line 66 uses `int(x)` which truncates (floors) each planned share, causing the total allocated units to be less than the requested total. It should use `round(x)` or a largest-remainder method to ensure the allocations sum correctly to the total.\",\n  \"confidence\": 0.82\n}",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

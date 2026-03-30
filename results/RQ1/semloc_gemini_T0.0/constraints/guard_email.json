@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_email",
+  "fault_hypothesis": "The rate-limiting check on line 71 uses a strict greater-than comparison (>), which incorrectly allows a send when the number of recent sends is exactly equal to the limit. The check should be inclusive (>=) to block sends when the limit has been reached.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent sends should not be exactly equal to the limit at the decision point.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the email is allowed (i.e., this branch is taken), the number of recent sends must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == sum(1 for t in timestamps if t >= cutoff__1)"
+      },
+      "intent": "The list of recent timestamps must contain exactly those timestamps that fall after the cutoff time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(len(recent) != limit) or (__cbfl_result[0] is False and __cbfl_result[1] == 0)"
+      },
+      "intent": "If the number of recent sends equals the limit, the email must be denied with zero remaining sends.",
+      "confidence": 0.8
+    }
+  ]
+}

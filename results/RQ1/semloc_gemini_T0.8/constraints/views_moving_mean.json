@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "views_moving_mean",
+  "fault_hypothesis": "The mean calculation on line 62 incorrectly divides by the `window` size instead of the actual number of samples in `recent`. This is wrong when the number of available values is less than the window size.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "The calculated mean must equal the total sum divided by the number of actual samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (len(recent__1) == window)"
+      },
+      "intent": "For the subsequent division by `window` to be correct, the number of samples must equal the window size, unless the warmup condition is met.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (any(v <= mean__1 for v in recent__1) and any(v >= mean__1 for v in recent__1))"
+      },
+      "intent": "The computed mean must fall within the min/max range of the sample values, unless in warmup.",
+      "confidence": 0.9
+    }
+  ]
+}

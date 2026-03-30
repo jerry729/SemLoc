@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "retry_tally",
+  "fault_hypothesis": "The counter is incorrectly capped at `cap - 1` instead of `cap` when it exceeds the limit. The bug is in the assignment on line 55.",
+  "fault_line": 55,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 55
+        }
+      },
+      "spec": {
+        "expr": "counters[key] == cap"
+      },
+      "intent": "The counter value should be clamped to the cap, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 55,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters[key] == cap"
+      },
+      "intent": "After capping, the counter value must equal the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The returned counter value must never exceed the specified cap.",
+      "confidence": 0.8
+    }
+  ]
+}

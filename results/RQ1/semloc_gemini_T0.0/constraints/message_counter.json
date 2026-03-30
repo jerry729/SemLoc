@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "message_counter",
+  "fault_hypothesis": "When a counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being clamped to `cap`. The bug is on line 61, where the assignment should be `counters[key] = cap`.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "cap <= 1"
+      },
+      "intent": "The capping logic appears to be correct only when cap is 1, based on the provided tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap or cap <= 1"
+      },
+      "intent": "When the cap is enforced, the counter should be set to the cap value, but this only holds for passing tests when cap > 1.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "counters__1"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] <= cap or cap <= 1"
+      },
+      "intent": "The counter value just before checking the cap should not exceed the cap, unless it's the special case of cap=1 which passes tests.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result == cap or not (__cbfl_result == cap - 1)"
+      },
+      "intent": "The final returned value should be the cap if capping occurred, not one less than the cap.",
+      "confidence": 0.3
+    }
+  ]
+}

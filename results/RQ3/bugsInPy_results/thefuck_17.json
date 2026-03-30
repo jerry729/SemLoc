@@ -1,0 +1,45 @@
+{
+  "bug_id": "thefuck_17",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.shells.bash.Bash.app_alias",
+    "buggy_methods": [
+      "thefuck.shells.bash.Bash.app_alias"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.shells.bash.Bash.app_alias",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/shells/test_bash.py": [
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "thefuck/shells/bash.py": [
+      1,
+      4,
+      12,
+      27,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "thefuck/shells/zsh.py": [
+      29
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

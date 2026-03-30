@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_bounty_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each recipient's share after distribution (line 64), instead of from the total amount before distribution. The calculation of `base` on line 62 uses the gross `amount` instead of the net amount (`amount - fee`).",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0) or (amount < fee)"
+      },
+      "intent": "The base distribution calculation is only correct if no fee is applied, or if the fee exceeds the bounty.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0) or (amount < fee)"
+      },
+      "intent": "The subsequent calculation of base shares is only correct if there is no fee or the fee exceeds the bounty.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0) or (amount < fee) or abs(sum(base__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of base shares should equal the net amount, unless the fee is zero or exceeds the bounty.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the bounty amount net of the fee.",
+      "confidence": 0.9
+    }
+  ]
+}

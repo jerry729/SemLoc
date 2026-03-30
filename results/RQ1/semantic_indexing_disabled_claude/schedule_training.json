@@ -1,0 +1,38 @@
+{
+  "function": "schedule_training",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    66
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify what's faulty in `schedule_training`.\n\nThe function is supposed to schedule non-overlapping training intervals. Let me analyze the overlap detection logic on line 67:\n\n```python\nif not (end <= s or start >= e):\n```\n\nThis checks if the proposed interval `[start, end)` overlaps with existing interval `[s, e)`. Two intervals do NOT overlap if `end <= s` (new ends before existing starts) or `start >= e` (new starts after existing ends). So the overlap condition is `not (end <= s or start >= e)`, which is correct.\n\nWait, but what about adjacent intervals? If `end == s`, the intervals are adjacent (touching) but not overlapping. The condition `end <= s` correctly treats touching as non-overlapping.\n\nThe logic seems correct for overlap detection. Let me think about what else could be wrong...\n\nActually, looking more carefully, the condition on line 67 seems correct. But wait - what if `_CONFLICT_STRICT = False` is supposed to be used somewhere but isn't? The variable is defined but never used in the function. This could indicate a missing feature.\n\nHowever, the more likely bug: the function modifies and returns a new list but the overlap check uses the condition `not (end <= s or start >= e)`. This is the standard overlap check and appears correct.\n\nLet me reconsider - what about the `_CONFLICT_STRICT` flag? It's defined on line 14 but never used. Perhaps when `_CONFLICT_STRICT = True`, touching intervals should also be considered conflicts, but this isn't implemented.\n\nActually, looking at this more carefully, the main suspicious issue is that `_CONFLICT_STRICT` is defined but unused. The overlap condition on line 67 might need to incorporate this flag. When `_CONFLICT_STRICT = True`, the condition should be `not (end < s or start > e)` (strictly non-overlapping, where touching counts as conflict).\n\nThe faulty line is 67, where `_CONFLICT_STRICT` should influence whether `<=` or `<` is used.\n\n{\n  \"function_name\": \"schedule_training\",\n  \"faulty_lines\": [67, 14],\n  \"explanation\": \"The `_CONFLICT_STRICT` flag is defined but never used in the overlap check on line 67. When `_CONFLICT_STRICT=True`, touching intervals (where end==s or start==e) should also be considered conflicts, requiring `<` instead of `<=` comparisons, but the current code ignores this flag entirely.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

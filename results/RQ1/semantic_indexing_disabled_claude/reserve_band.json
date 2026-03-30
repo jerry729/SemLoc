@@ -1,0 +1,38 @@
+{
+  "function": "reserve_band",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 82,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `overlaps` function on line 68:\n\n```python\nreturn not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nThis checks if band `b` overlaps with band `a`. The condition `b[1] <= a[0]` means b ends at or before a starts (no overlap), and `b[0] >= a[1]` means b starts at or after a ends (no overlap). So the overlap check seems correct for strict overlap (touching bands are NOT overlapping).\n\nHowever, the issue is with the `_ADJACENCY_TOLERANCE = 0.0` variable defined but never used. The overlap function doesn't incorporate this tolerance. But more importantly, looking at the logic:\n\n- `b[1] <= a[0]`: b ends before or exactly at a's start \u2192 no overlap \u2713\n- `b[0] >= a[1]`: b starts at or after a's end \u2192 no overlap \u2713\n\nThis seems correct for the standard case. But wait - the `_CONFLICT_STRICT = False` flag is defined but never used in the function. When `_CONFLICT_STRICT` is False, touching bands (where one ends exactly where another begins) should NOT be considered overlapping, which is what the current `<=` and `>=` handle correctly.\n\nActually, looking more carefully at the adjacency tolerance - it's defined but unused. The overlap check on line 68 should potentially incorporate `_ADJACENCY_TOLERANCE` to handle edge cases where bands are considered adjacent (not overlapping) within some tolerance.\n\nBut given the test failures, the most likely bug is that `_CONFLICT_STRICT` and `_ADJACENCY_TOLERANCE` are defined but not used, or the overlap condition logic is slightly off. The overlap function uses `b[1] <= a[0]` which means touching at a point is NOT an overlap - this might be wrong if strict mode should treat touching as overlapping.\n\nThe faulty line is 68, where the overlap logic doesn't account for `_CONFLICT_STRICT` (when strict, touching should count as overlap, requiring `b[1] < a[0]` instead of `b[1] <= a[0]`).\n\n{\n  \"function_name\": \"reserve_band\",\n  \"faulty_lines\": [68],\n  \"explanation\": \"The `overlaps` function on line 68 does not incorporate the `_CONFLICT_STRICT` flag or `_ADJACENCY_TOLERANCE`. When `_CONFLICT_STRICT` is True, touching bands (where one ends exactly where another begins) should be considered overlapping, requiring `b[1] < a[0]` instead of `b[1] <= a[0]`, but the current implementation always treats touching as non-overlapping.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

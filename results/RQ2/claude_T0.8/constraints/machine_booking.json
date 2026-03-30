@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "machine_booking",
+  "fault_hypothesis": "The overlap check on line 61 uses strict inequalities (`b <= s` and `a >= e`), which means adjacent windows (where the new window's end equals an existing start, or new window's start equals an existing end) are not detected as conflicts. The condition should use `b <= s` and `a >= e` with strict inequalities replaced by `b < s` and `a > e` to also catch touching boundaries, i.e., it should be `not (b < s or a > e)` or equivalently the conflict should be detected when `a <= e and b >= s`.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 <= s or a__1 >= e) == (b__1 < s or a__1 > e) for s, e in timeline) or any(b__1 == s or a__1 == e for s, e in timeline) == False"
+      },
+      "intent": "When the new window touches an existing booking boundary (b==s or a==e), the strict-inequality overlap check incorrectly treats it as non-conflicting; this expression is FALSE when such a touching case exists and the check wrongly passes.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s for s, e in timeline) or any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "If b (the new window's end) equals any existing booking's start, the conflict detector should flag it; verifies the touching-end case is caught.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "a__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(a__1 == e for s, e in timeline) or any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "If a (the new window's start) equals any existing booking's end, the conflict detector should flag it; verifies the touching-start case is caught.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(a__1 <= e and b__1 >= s for s, e in timeline)"
+      },
+      "intent": "After the conflict check passes (no conflict detected), no existing booking should overlap or touch the new window under the inclusive-boundary definition.",
+      "confidence": 0.85
+    }
+  ]
+}

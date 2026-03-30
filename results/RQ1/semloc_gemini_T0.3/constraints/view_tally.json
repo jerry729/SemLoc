@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "view_tally",
+  "fault_hypothesis": "When clamping the counter at `max_value`, the new value is incorrectly set to `max_value - 1` instead of `max_value`. The bug is on line 68.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "After clamping, the new value should be exactly max_value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "max_value is None or new_value__3 >= current__1"
+      },
+      "intent": "The new count should not decrease when a ceiling is applied.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 >= current__1"
+      },
+      "intent": "Clamping the value should not cause it to decrease below its previous value.",
+      "confidence": 0.9
+    }
+  ]
+}

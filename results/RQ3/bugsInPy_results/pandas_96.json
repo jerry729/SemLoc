@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_96",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.tseries.offsets.BusinessHourMixin.apply",
+    "buggy_methods": [
+      "pandas.tseries.offsets.BusinessHourMixin.apply"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.tseries.offsets.BusinessHourMixin.apply",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/tseries/offsets.py": [
+      899
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

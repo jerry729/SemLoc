@@ -1,0 +1,42 @@
+{
+  "bug_id": "keras_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.training_utils.standardize_weights",
+    "buggy_methods": [
+      "keras.engine.training_utils.standardize_weights"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.training_utils.standardize_weights",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/training_utils.py": [
+      435,
+      481,
+      482,
+      483,
+      484,
+      498,
+      499,
+      503,
+      504,
+      505,
+      506,
+      510,
+      511,
+      513,
+      522,
+      524,
+      525,
+      526,
+      527
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

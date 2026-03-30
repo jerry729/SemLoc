@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "subsidy_payout",
+  "fault_hypothesis": "The fee is incorrectly deducted from each participant's share on line 71. It should be deducted from the total `amount` before the shares are calculated on line 69.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the total pool amount after deducting the fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (amount > fee) or abs(shares__1[-1] - (r / total_ratio__1) * (amount - fee)) < 1e-9"
+      },
+      "intent": "Each calculated share should be based on the amount net of fee, unless the fee exceeds the amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not (amount > fee) or abs(sum(shares__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all shares before clamping should equal the total distributable amount, unless the fee exceeds the amount.",
+      "confidence": 0.9
+    }
+  ]
+}

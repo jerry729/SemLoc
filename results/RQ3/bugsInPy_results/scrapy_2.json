@@ -1,0 +1,29 @@
+{
+  "bug_id": "scrapy_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.utils.datatypes.LocalCache.__setitem__",
+    "buggy_methods": [
+      "scrapy.utils.datatypes.LocalCache.__setitem__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.utils.datatypes.LocalCache.__setitem__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/utils/datatypes.py": [
+      318,
+      319
+    ],
+    "tests/test_utils_datatypes.py": [
+      10,
+      247
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "stream_joiner",
+  "fault_hypothesis": "The function incorrectly removes an element on line 73 if it is the last element of both input streams. This violates the postcondition that the output length must be the sum of the input lengths.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "The total number of elements must equal the sum of input lengths, but pop() violates this.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == i + j"
+      },
+      "intent": "The number of elements in the output must match the number consumed from inputs during the merge loop.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "The branch that removes an element incorrectly reduces the total count of elements.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain all elements from both inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

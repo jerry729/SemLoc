@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "offer_expiry",
+  "fault_hypothesis": "The expiry check on line 66 uses a strict `>` comparison, which incorrectly considers an offer valid at its exact expiration time. It should use `>=` to correctly expire the offer.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "now != effective_deadline__1"
+      },
+      "intent": "The logic should correctly handle the boundary case where the current time is exactly the deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_deadline__1"
+      },
+      "intent": "If an offer is considered valid, the current time must be strictly before its effective deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_deadline__1 >= deadline__1"
+      },
+      "intent": "The adjusted deadline for clock skew should not be earlier than the original deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in store) or (__cbfl_result == default)"
+      },
+      "intent": "If the offer key is not in the store, the function must return the default value.",
+      "confidence": 0.8
+    }
+  ]
+}

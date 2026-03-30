@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "summary_memo",
+  "fault_hypothesis": "The expiration check on line 73 uses a strict greater-than comparison (`>`), which incorrectly treats an entry as valid when the current time is exactly equal to the expiration time. The comparison should be greater-than-or-equal-to (`>=`) to correctly mark such entries as expired.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 < expires_at__1"
+      },
+      "intent": "If execution proceeds past the expiry check, the adjusted current time must be strictly less than the expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(key not in entries) or (__cbfl_result is None) or (now < entries[key][1])"
+      },
+      "intent": "A non-None result implies the entry was found and the current time is strictly before its expiry, assuming zero clock skew.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_now__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 <= now"
+      },
+      "intent": "The adjusted time for clock skew should not be greater than the original time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= 0"
+      },
+      "intent": "Expiration timestamps must be non-negative.",
+      "confidence": 0.7
+    }
+  ]
+}

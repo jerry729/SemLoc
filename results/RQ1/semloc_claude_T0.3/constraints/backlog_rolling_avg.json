@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "backlog_rolling_avg",
+  "fault_hypothesis": "On line 59, the mean is computed by dividing total by `window` instead of `len(recent)`. When fewer values exist than the window size, this produces an incorrect (too small) average.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "After computing mean, it must equal total divided by the actual number of recent samples, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "mean times the count of recent samples must equal total; dividing by window violates this when len(recent) < window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "Immediately before mean is used in the return, verify it was computed with the correct denominator.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - sum(values[-window:]) / len(values[-window:])) < 1e-6"
+      },
+      "intent": "The returned value must match the mean of the actual recent samples, not total divided by window.",
+      "confidence": 0.85
+    }
+  ]
+}

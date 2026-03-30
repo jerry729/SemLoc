@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_cache",
+  "fault_hypothesis": "The function fails to normalize the final allocation vector so that its elements sum to 1.0. The bug is an omission of a normalization step before the return statement on line 61.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__2) == 0 or sum(adjusted__2) == 0 or abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must be a valid probability distribution summing to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__2) == 0 or abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The adjusted vector should be normalized to sum to 1.0 before being returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__2) > 0 implies abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The vector to be returned must sum to 1.0 if it's not a zero vector.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_forecast_curve",
+  "fault_hypothesis": "The conditional on line 66 is inverted. It should be `if clamp:`, but is `if not clamp:`, causing the clamping logic to be applied when it should be skipped and vice-versa.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(y0 <= y1 and y__1 >= y0 and y__1 <= y1) or (y1 < y0 and y__1 >= y1 and y__1 <= y0)"
+      },
+      "intent": "The bug only manifests for extrapolation cases, which are exactly the failing tests where the raw forecast is outside the anchor range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The value should only be clamped to the lower bound if clamping is enabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The value should only be clamped to the upper bound if clamping is enabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and ((y0 <= y1 and y__4 >= y0 and y__4 <= y1) or (y1 < y0 and y__4 >= y1 and y__4 <= y0))) or (not clamp and y__4 == y__1)"
+      },
+      "intent": "The final returned value must satisfy the correct clamping rule based on the clamp parameter.",
+      "confidence": 1.0
+    }
+  ]
+}

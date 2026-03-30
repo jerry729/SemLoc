@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cache_entry_ttl",
+  "fault_hypothesis": "The bug is on line 73. The expiry check `now > effective` is incorrect because it does not handle the case where the current time is exactly equal to the expiration time, which should result in expiry. The check should be `now >= effective`.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The comparison should correctly handle the boundary case where the current time is exactly the expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If an entry is considered valid (not expired), the current time must be strictly less than its effective expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "A cached value should only be prepared for return if the current time is strictly before its effective expiry.",
+      "confidence": 1.0
+    }
+  ]
+}

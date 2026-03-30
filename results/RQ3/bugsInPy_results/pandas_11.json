@@ -1,0 +1,27 @@
+{
+  "bug_id": "pandas_11",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.concat._make_concat_multiindex",
+    "buggy_methods": [
+      "pandas.core.reshape.concat._make_concat_multiindex"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.concat._make_concat_multiindex",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/reshape/concat.py": [
+      622,
+      623,
+      624,
+      625
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

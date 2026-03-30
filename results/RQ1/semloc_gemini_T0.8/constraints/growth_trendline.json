@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "growth_trendline",
+  "fault_hypothesis": "The condition on line 66 is `if not clamp:`, but it should be `if clamp:`. This inverts the clamping logic, causing extrapolation when clamping is requested and clamping when extrapolation is requested.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__5 >= min(y0, y1) and y__5 <= max(y0, y1)) or (not clamp and y__5 == y__1)"
+      },
+      "intent": "The value of y after the conditional block must correctly reflect the clamp parameter's intent.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "(t__1 >= 0.0 and t__1 <= 1.0) == (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "An interpolated value should be within the y-range if and only if the query point is within the x-range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "When clamping is requested (the correct path), the result must fall within the range defined by y0 and y1.",
+      "confidence": 0.9
+    }
+  ]
+}

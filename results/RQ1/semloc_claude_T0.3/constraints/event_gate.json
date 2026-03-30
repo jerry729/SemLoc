@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "event_gate",
+  "fault_hypothesis": "The condition on line 62 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when the number of recent events exactly equals the limit the gate incorrectly allows the event instead of blocking it.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) >= limit)"
+      },
+      "intent": "When recent count equals limit the condition must evaluate to True (blocking), which fails with strict >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or True"
+      },
+      "intent": "Verify that when recent count equals limit the gate should block; the > operator misses this boundary case.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), recent count must be strictly less than limit; if equal to limit we should not reach here.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and __cbfl_result[1] == 0)"
+      },
+      "intent": "A return of (True, 0) is contradictory \u2014 allowed but zero remaining \u2014 which can happen when count equals limit with the wrong operator.",
+      "confidence": 0.8
+    }
+  ]
+}

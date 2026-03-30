@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cache_entry_ttl",
+  "fault_hypothesis": "The condition on line 73 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so entries are incorrectly returned as valid when `now == effective` (the exact expiration boundary).",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or True == (now >= effective__1)"
+      },
+      "intent": "At the expiry boundary (now == effective), the condition should treat the entry as expired; the strict '>' misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "After falling through the expiry check (entry is returned), now must be strictly less than effective; equality means the entry should have been expired.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1 or now > effective__1"
+      },
+      "intent": "Before using effective__1 in the comparison, if now equals effective the entry should be considered expired (now > effective should be True at boundary).",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or (key in entries and now < entries[key][1])"
+      },
+      "intent": "The function should only return a non-None value when now is strictly less than the expiry timestamp.",
+      "confidence": 0.85
+    }
+  ]
+}

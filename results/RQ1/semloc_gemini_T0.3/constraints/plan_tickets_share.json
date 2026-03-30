@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_tickets_share",
+  "fault_hypothesis": "The function incorrectly converts float shares to integers by simple truncation on line 81. This discards fractional remainders, causing the sum of the integer allocations to be less than the original total.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "(minimum > 0) or (sum(__cbfl_result) == total)"
+      },
+      "intent": "The sum of integer shares must equal the total, unless a minimum is applied.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 80,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "(minimum > 0) or (sum(int(v) for v in shares__1) == total)"
+      },
+      "intent": "After flooring, the sum of shares must be consistent with the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "(not floor_to_int) or (minimum > 0) or (sum(int(s) for s in shares__1) == total)"
+      },
+      "intent": "If shares are to be floored, their floored sum must equal the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not floor_to_int) or (minimum > 0) or (sum(__cbfl_result) == total)"
+      },
+      "intent": "The final returned list must sum to the total if it's an integer allocation without minimums.",
+      "confidence": 0.8
+    }
+  ]
+}

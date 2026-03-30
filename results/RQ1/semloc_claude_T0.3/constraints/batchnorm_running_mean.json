@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batchnorm_running_mean",
+  "fault_hypothesis": "On line 70, the coefficients for current_mean and batch_mean are swapped: the formula uses (1-momentum)*current_mean + momentum*batch_mean, but the correct EMA formula should be momentum*current_mean + (1-momentum)*batch_mean.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9"
+      },
+      "intent": "Check that updated uses momentum*current_mean + (1-momentum)*batch_mean, not the swapped version.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "momentum == 1.0 or momentum == 0.0 or abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9"
+      },
+      "intent": "After assignment, updated__1 must equal the correct EMA formula with momentum weighting current_mean.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9"
+      },
+      "intent": "Before passing updated__1 to _clamp_near_zero, verify it holds the correct EMA value.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "current_mean == batch_mean or abs(__cbfl_result - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-6"
+      },
+      "intent": "The returned value should match the correct EMA formula when current_mean != batch_mean.",
+      "confidence": 0.85
+    }
+  ]
+}

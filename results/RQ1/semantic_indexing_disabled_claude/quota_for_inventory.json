@@ -1,0 +1,44 @@
+{
+  "function": "quota_for_inventory",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "The function uses `int(x)` (truncation) instead of a proper rounding algorithm. For integer allocation, the standard approach is to use the \"largest remainder method\": floor each value, sum the floors, then distribute remaining units to those with the largest fractional parts. The current code simply truncates, which means the sum of allocations may not equal `total`.\n\n{\n  \"function_name\": \"quota_for_inventory\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"Line 66 uses `int(x)` which truncates float allocations, causing the sum of allocations to potentially be less than `total`. A proper integer allocation algorithm (e.g., largest remainder method) should be used to ensure the allocations sum to `total`.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

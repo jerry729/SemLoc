@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "read_throttle",
+  "fault_hypothesis": "The condition on line 70 uses strict greater-than (`> limit`) instead of greater-than-or-equal (`>= limit`), so when `len(active) == limit` the function incorrectly returns `True` with `remaining=0` instead of `False, 0`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit or (len(active__1) == limit and __cbfl_result == (False, 0)) or (len(active__1) > limit and __cbfl_result == (False, 0))"
+      },
+      "intent": "When active count equals or exceeds limit, the result must be (False, 0); the strict > misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), active count must be strictly less than limit; equality should have been caught by the if.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "Before the condition is evaluated, if active equals limit the guard should trigger denial, so this expression being false reveals the off-by-one boundary bug.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(active__1) >= limit)"
+      },
+      "intent": "The returned allowed flag must be False whenever active count is at or above the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

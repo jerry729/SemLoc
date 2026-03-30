@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_delivery",
+  "fault_hypothesis": "When the counter exceeds the cap, it is incorrectly set to `cap - 1` instead of `cap`. This bug on line 72 causes the counter to decrease when it's at or above the cap, leading to oscillations.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The updated value should be clamped to the cap, not one less than it.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 >= current__1"
+      },
+      "intent": "The counter value should never decrease during an increment operation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "After clamping, the value must equal the cap.",
+      "confidence": 0.95
+    }
+  ]
+}

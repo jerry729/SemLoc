@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "donation_share",
+  "fault_hypothesis": "On line 60, the fee is deducted per-recipient from each individual share (b - fee), but it should be deducted once from the total amount before splitting. The correct formula should distribute (amount - fee) proportionally, not subtract fee from each recipient's share.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - max(_MIN_PAYOUT * len(ratios), amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts should equal amount minus the single fee, not amount minus fee*n.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "The base shares before fee deduction should sum to the gross amount; fee should not yet be subtracted here.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - max(_MIN_PAYOUT * len(ratios), amount - fee)) < 1e-6"
+      },
+      "intent": "After computing payouts, their sum must equal net amount (gross minus one fee), not gross minus fee*n.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(_MIN_PAYOUT * len(ratios), amount - fee)) < 1e-6"
+      },
+      "intent": "Returned payouts must sum to amount minus fee (one deduction), not amount minus fee per recipient.",
+      "confidence": 0.8
+    }
+  ]
+}

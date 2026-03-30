@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_query",
+  "fault_hypothesis": "The condition on line 69, `len(active) > limit`, is incorrect. It should be `len(active) >= limit` to deny queries when the number of active queries exactly equals the limit.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "The branch condition handles the case `len(active) == limit` incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If a query is allowed by taking this branch, the number of active queries must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "limit - len(active__1) > 0"
+      },
+      "intent": "If a query is allowed, the number of remaining queries must be positive.",
+      "confidence": 0.9
+    }
+  ]
+}

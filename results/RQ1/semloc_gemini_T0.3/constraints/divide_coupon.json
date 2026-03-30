@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_coupon",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 67. This results in the total fee being deducted multiple times (once per participant) instead of once from the total amount before distribution.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - max(0, amount - fee)) < 1e-9 * len(ratios)"
+      },
+      "intent": "The sum of all payouts must equal the initial amount less the fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "not (fee > 0 and amount > fee) or abs(sum(base__1) - amount) > 1e-9"
+      },
+      "intent": "The pre-fee distribution base should not sum to the gross amount if a fee is meant to be deducted.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "fee == 0.0 or len(ratios) == 1 or abs((amount - sum(result__1)) - fee) < 1e-9 * len(ratios)"
+      },
+      "intent": "The total amount deducted should equal the fee, not the fee multiplied by the number of participants.",
+      "confidence": 0.9
+    }
+  ]
+}

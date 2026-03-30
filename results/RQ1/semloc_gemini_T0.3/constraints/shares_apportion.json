@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shares_apportion",
+  "fault_hypothesis": "The allocation on line 68 incorrectly truncates fractional shares to integers without distributing the remainder. This causes the sum of allocations to be less than the total for inputs that don't divide evenly.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == total"
+      },
+      "intent": "The sum of integer-truncated allocations should equal the total, but the remainder is lost.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the planned fractional shares must be consistent with the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == total"
+      },
+      "intent": "After integer allocation, the sum of shares must still equal the total.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "function": "summary_memo",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `_is_within_max_age` function:\n\n```python\ndef _is_within_max_age(expires_at: float, now: float) -> bool:\n    \"\"\"Check whether the entry hasn't exceeded the absolute maximum age.\"\"\"\n    earliest_creation = expires_at - _MAX_ENTRY_AGE\n    return now >= earliest_creation\n```\n\nThis function is supposed to check that an entry hasn't exceeded the maximum age. The logic computes `earliest_creation = expires_at - _MAX_ENTRY_AGE`. If `now >= earliest_creation`, it means the entry was created within the max age window. But this logic is inverted - it returns `True` (within max age) when `now >= earliest_creation`, which is almost always true for recent entries.\n\nWait, let me reconsider. The function returns `True` when `now >= earliest_creation`. This means: the current time is at or after the earliest possible creation time. This would be `True` for valid entries and also for very old entries. The condition that would make it `False` is if `now < earliest_creation`, meaning the clock went backwards significantly.\n\nActually the bug is that the condition should check if the entry is NOT too old. The entry was created at approximately `expires_at - ttl`, but we don't know the TTL. The max age check should be: the entry shouldn't be older than `_MAX_ENTRY_AGE`. If `expires_at` is the expiry time, and we assume some TTL, we can't directly compute creation time without knowing TTL.\n\nThe real issue: `_is_within_max_age` returns `True` when `now >= earliest_creation`, but it should return `True` when `now <= expires_at` AND the entry isn't too old. The condition `now >= earliest_creation` is essentially always true (unless clock skew is extreme), meaning it never actually filters out old entries based on max age.\n\nThe correct check should be `now <= earliest_creation + _MAX_ENTRY_AGE` or equivalently `now <= expires_at` which is already checked. The logic seems backwards - it should probably check `now - _MAX_ENTRY_AGE <= expires_at` or `expires_at >= now - _MAX_ENTRY_AGE`.\n\nThe faulty line is line 34: it should return `expires_at >= now - _MAX_ENTRY_AGE` (entry not too old) rather than `now >= earliest_creation`.\n\n{\n  \"function_name\": \"summary_memo\",\n  \"faulty_lines\": [34, 33],\n  \"explanation\": \"The `_is_within_max_age` function has inverted/incorrect logic: `return now >= earliest_creation` is almost always True and doesn't properly check if the entry has exceeded the max age. The correct check should verify the entry isn't too old, e.g., `return expires_at >= now - _MAX_ENTRY_AGE`, meaning the expiry hasn't fallen more than _MAX_ENTRY_AGE seconds behind the current time.\",\n  \"confidence\": 0.72\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

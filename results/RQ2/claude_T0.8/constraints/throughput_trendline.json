@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "throughput_trendline",
+  "fault_hypothesis": "The condition on line 60 is inverted: the clamping block executes when `clamp` is False instead of when it is True, and conversely the no-clamp (extrapolation) path is taken when `clamp=True`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) == (not (not clamp))"
+      },
+      "intent": "When clamp is True the branch body (clamping logic) should be entered, not skipped \u2014 the guard `not clamp` is inverted relative to intended semantics.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__2 >= min(y0, y1) and y__2 <= max(y0, y1)"
+      },
+      "intent": "After the clamping branch executes, y must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, y__3 (the value after the clamping block) must be within the segment's y range.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamp=True the returned value must not exceed the endpoint y values.",
+      "confidence": 0.88
+    }
+  ]
+}

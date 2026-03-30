@@ -1,0 +1,53 @@
+{
+  "function": "txn_dedup_merge",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    75
+  ],
+  "total_source_lines": 78,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        76,
+        77,
+        69
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the merge logic has a bug in the `else` branch (when `left[i] == right[j]`). The function is supposed to merge two sorted lists preserving all elements (like merge-sort), but when equal elements are found, it appends both elements (lines 69-70), which would create duplicates. However, the docstring says it's a dedup merge, suggesting duplicates should be deduplicated.\n\nBut wait - let me re-read the docstring: \"The merge preserves all elements from both lists in sorted order, analogous to the merge step of merge-sort.\" So it should keep both.\n\nThe real bug is lines 76-77: there's an extra post-processing step that removes the last element if it equals both lists' last elements. This is incorrect logic that arbitrarily removes an element from the merged result.\n\nAdditionally, lines 69-70 append both copies of equal elements (creating duplicates), while lines 76-77 try to fix one case but in a broken way.\n\nThe core issue: when `left[i] == right[j]`, the function appends both (lines 69-70), creating a duplicate. A proper merge should only append one of them (dedup behavior) or both (preserve-all behavior). The function name says \"dedup_merge\" suggesting deduplication, so line 70 (`merged.append(right[j])`) is wrong - it should not append the duplicate. And lines 76-77 are a broken attempt to fix this.\n\n{\n  \"function_name\": \"txn_dedup_merge\",\n  \"faulty_lines\": [70, 76, 77, 69],\n  \"explanation\": \"When equal elements are found, the function appends both (lines 69-70), creating duplicates contrary to 'dedup' semantics. Lines 76-77 attempt a broken partial fix by removing the last element only when both lists end with the same value, which is incorrect and incomplete.\",\n  \"confidence\": 0.82\n}",
+      "predicted": [
+        70,
+        76,
+        77,
+        69
+      ],
+      "valid_preds": [
+        70,
+        76,
+        77,
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 4,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 4.0
+}

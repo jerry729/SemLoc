@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calendar_slot_insert",
+  "fault_hypothesis": "The overlap check on line 73 uses non-strict inequalities (`<=`, `>=`), which incorrectly permits adjacent slots. The failing tests require adjacent slots to be treated as conflicts, but the current logic allows them to be inserted.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(end__1 <= s or start__1 >= e) == (end__1 < s or start__1 > e)"
+      },
+      "intent": "The buggy non-overlap condition should be equivalent to a correct one that uses strict inequalities.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "The new slot must not overlap or be adjacent to any existing slot processed so far.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "If the overlap check passes, it must be because the slots have a gap, not because they are merely adjacent.",
+      "confidence": 0.9
+    }
+  ]
+}

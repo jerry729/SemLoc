@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "price_cache",
+  "fault_hypothesis": "On line 61, the condition `adjusted_now > ttl` uses strict greater-than, so when `adjusted_now == ttl` (i.e., `now == ttl` and `_CLOCK_SKEW_TOLERANCE == 0`) the entry is not expired, but the spec requires expiry when `now >= ttl`.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "not (adjusted_now__1 == ttl__1 and __cbfl_result is not None)"
+      },
+      "intent": "When adjusted_now equals ttl the function must return None (entry is expired), not the payload.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_now__1"
+        }
+      },
+      "spec": {
+        "expr": "not (adjusted_now__1 == ttl__1)"
+      },
+      "intent": "If adjusted_now equals ttl the subsequent strict-greater-than check will incorrectly allow the entry through; flag this equality as suspicious.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 >= ttl__1 or adjusted_now__1 < ttl__1"
+      },
+      "intent": "Verify that the comparison operator used against ttl covers the equality case (>= rather than >).",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 < ttl__1"
+      },
+      "intent": "After the expiry branch is not taken, adjusted_now must be strictly less than ttl; equality should have triggered expiry.",
+      "confidence": 0.9
+    }
+  ]
+}

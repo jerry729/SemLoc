@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_lane",
+  "fault_hypothesis": "The overlap check on line 62 uses strict inequalities (`b[1] <= a[0] or b[0] >= a[1]`), which treats touching boundaries (e.g., b[1]==a[0] or b[0]==a[1]) as non-overlapping. The tests expect touching boundaries to be treated as overlapping, so the condition should use strict less-than (`b[1] < a[0] or b[0] > a[1]`).",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] <= slot[0] or candidate[0] >= slot[1]) == (not (candidate[1] < slot[0] or candidate[0] > slot[1]))"
+      },
+      "intent": "At the overlap check line, the strict-inequality version and the correct boundary-inclusive version should agree \u2014 they differ when boundaries touch, revealing the bug.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == slot[0] or candidate[0] == slot[1]) or (not (candidate[1] <= slot[0] or candidate[0] >= slot[1]))"
+      },
+      "intent": "If candidate touches slot at a boundary, the overlaps function must have returned True (i.e., we should not still be iterating); this is violated when boundary touch is incorrectly treated as non-overlapping.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all((candidate[1] < s[0] or candidate[0] > s[1]) for s in existing)"
+      },
+      "intent": "Before merged is constructed, every existing slot must be strictly non-touching with candidate; if any boundary was touched the candidate should have been rejected already.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "When overlaps returns False (else branch of if overlaps), candidate and slot must be strictly non-adjacent \u2014 not merely non-overlapping under the lenient boundary rule.",
+      "confidence": 0.8
+    }
+  ]
+}

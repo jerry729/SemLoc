@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_metric",
+  "fault_hypothesis": "The bug is on line 61. The expiry check `now > effective_expiry` uses a strict inequality, which incorrectly considers an entry valid when the current time is exactly equal to its expiry time. The check should be `now >= effective_expiry`.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now != effective_expiry__1"
+      },
+      "intent": "The expiry check should correctly handle the boundary case where the current time equals the expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_expiry__1"
+      },
+      "intent": "A cached item should only be returned if the current time is strictly less than its effective expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_expiry__1 >= ttl__1"
+      },
+      "intent": "The calculated effective expiry time must be at least the base TTL.",
+      "confidence": 0.8
+    }
+  ]
+}

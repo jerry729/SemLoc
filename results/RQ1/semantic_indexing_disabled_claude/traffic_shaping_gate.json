@@ -1,0 +1,47 @@
+{
+  "function": "traffic_shaping_gate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        71,
+        73
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify the bug.\n\nThe function is a sliding-window rate limiter. Let me analyze the logic:\n\n1. `cutoff = now - window` - This calculates the cutoff time correctly.\n2. `active = _active_timestamps(timestamps, cutoff)` - Returns timestamps >= cutoff.\n3. The check `if len(active) > limit` returns `False, 0` when over limit.\n4. Otherwise returns `True, limit - len(active)`.\n\nThe bug is on line 71: `if len(active) > limit` should be `if len(active) >= limit`.\n\nWhen `len(active) == limit`, the client has already used all their allowed requests, so a new request should be denied. But the current code allows it through (returns `True`) and calculates `remaining = limit - len(active) = 0`.\n\nAdditionally, the `remaining` calculation on line 73 is wrong too. When the request is allowed, it counts as one of the requests, so the remaining should account for the new request being admitted. The remaining should be `limit - len(active) - 1` when allowed, not `limit - len(active)`.\n\nActually, let me reconsider. The primary bug is line 71: using `>` instead of `>=`. When `len(active) == limit`, the gate should reject (return False, 0) but currently it returns `True, 0`. This is the clear bug.\n\nLine 73 might also be wrong - if the request is allowed (active < limit), remaining after this request would be `limit - len(active) - 1`, but this depends on the specification.\n\nThe primary fault is line 71 where `>` should be `>=`.\n\n{\n  \"function_name\": \"traffic_shaping_gate\",\n  \"faulty_lines\": [71, 73],\n  \"explanation\": \"Line 71 uses `>` instead of `>=`, so when `len(active) == limit` the gate incorrectly allows the request through instead of rejecting it. Line 73 also may be incorrect as the remaining count should subtract 1 for the request being admitted (`limit - len(active) - 1`).\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        71,
+        73
+      ],
+      "valid_preds": [
+        71,
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 71,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

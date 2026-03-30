@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_refund",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's individual share on line 61. This results in the fee being deducted multiple times, once for each participant, instead of once from the total amount before distribution.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts after deduction must equal the initial amount minus a single fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((sum(base__1) - sum(payouts__1)) - fee) < 1e-9"
+      },
+      "intent": "The total amount deducted across all shares must equal the single fee value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "len(base__1) <= 1 or fee == 0"
+      },
+      "intent": "Deducting the full fee from each share is only correct if there is at most one share or no fee.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of the final returned payouts must equal the total amount minus the fee.",
+      "confidence": 0.3
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "profile_expiry",
+  "fault_hypothesis": "The expiry check on line 73 uses a strict inequality `>` which incorrectly treats an entry as valid when `now` is exactly equal to the expiry time. The check should be `now >= effective` to correctly invalidate the entry at the boundary.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(now > effective__1) == (now >= effective__1)"
+      },
+      "intent": "The expiry check must correctly handle the boundary case where the current time equals the expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= 0"
+      },
+      "intent": "The expiry timestamp read from the cache entry must be non-negative.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (key in entries and now < _effective_expiry(entries[key][1]))"
+      },
+      "intent": "If a value is returned, the current time must be strictly before the entry's effective expiry.",
+      "confidence": 0.3
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "function": "request_token_bucket",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        24,
+        64
+      ],
+      "explanation": "The integer conversion on line 24 discards any fractional tokens that have accumulated over time. This loss is made permanent on line 64, which resets the refill timestamp to `now` after a successful request, causing the actual token rate to be lower than configured.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"request_token_bucket\",\n  \"faulty_lines\": [\n    24,\n    64\n  ],\n  \"explanation\": \"The integer conversion on line 24 discards any fractional tokens that have accumulated over time. This loss is made permanent on line 64, which resets the refill timestamp to `now` after a successful request, causing the actual token rate to be lower than configured.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        24,
+        64
+      ],
+      "valid_preds": [
+        24,
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 24,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

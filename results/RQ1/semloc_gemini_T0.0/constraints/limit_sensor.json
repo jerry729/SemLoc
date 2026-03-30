@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_sensor",
+  "fault_hypothesis": "The check on line 64 uses a strict greater-than `>` comparison, but it should be greater-than-or-equal-to `>=`. This allows an action when the number of active timestamps is exactly equal to the limit, which should be denied.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The failing tests occur precisely when the active count equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the sensor is allowed, the number of active actions must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The ambiguous case where active count equals the limit is mishandled by the subsequent logic.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] and __cbfl_result[1] > 0) or (not __cbfl_result[0] and __cbfl_result[1] == 0)"
+      },
+      "intent": "The remaining count must be positive if allowed, and zero if not allowed.",
+      "confidence": 0.7
+    }
+  ]
+}

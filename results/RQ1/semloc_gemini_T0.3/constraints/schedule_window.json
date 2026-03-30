@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_window",
+  "fault_hypothesis": "The overlap detection on line 65 is incorrect. The non-overlap condition `end <= s or start >= e` fails to detect conflicts when intervals touch at their boundaries, whereas the correct non-overlap condition requires strict inequalities (`end < s or start > e`).",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(end <= s or start >= e) == (end < s or start > e)"
+      },
+      "intent": "The buggy non-overlap logic should be equivalent to the correct logic which uses strict inequalities for boundary checks.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all((end__1 < s or start__1 > e) for s, e in existing)"
+      },
+      "intent": "If the function decides to accept the interval, it must not overlap with any existing interval, including at the boundaries.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "end < s or start > e"
+      },
+      "intent": "If the loop continues past an existing slot, it must be because there is truly no overlap, even at the boundaries.",
+      "confidence": 0.95
+    }
+  ]
+}

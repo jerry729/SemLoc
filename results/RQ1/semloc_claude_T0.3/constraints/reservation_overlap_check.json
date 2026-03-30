@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_overlap_check",
+  "fault_hypothesis": "The overlap condition on line 69 uses strict inequalities (`c_end <= start` and `c_start >= end`), which incorrectly excludes shared-endpoint cases. It should use strict inequalities in the opposite sense: `c_end < start or c_start > end` to implement a closed-interval model where shared endpoints count as overlapping.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (c_end__1 < start or c_start__1 > end) == (not (c_end__1 <= start or c_start__1 >= end) or c_end__1 == start or c_start__1 == end)"
+      },
+      "intent": "When endpoints are shared (c_end==start or c_start==end), the strict-inequality condition should still detect overlap but the current <= / >= condition does not.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "c_end__1"
+        }
+      },
+      "spec": {
+        "expr": "not (c_end__1 == start) or not (c_end__1 <= start)"
+      },
+      "intent": "When c_end equals start, the condition c_end <= start is True (no overlap detected), but the closed-interval model requires overlap to be detected.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "c_start__1"
+        }
+      },
+      "spec": {
+        "expr": "not (c_start__1 == end) or not (c_start__1 >= end)"
+      },
+      "intent": "When c_start equals end, the condition c_start >= end is True (no overlap detected), but the closed-interval model requires overlap to be detected.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "(c_end__1 < start or c_start__1 > end) == (c_end__1 <= start or c_start__1 >= end) or c_end__1 == start or c_start__1 == end"
+      },
+      "intent": "At the end of each iteration, the strict and non-strict conditions differ only at shared endpoints; the bug manifests when endpoints are equal.",
+      "confidence": 0.85
+    }
+  ]
+}

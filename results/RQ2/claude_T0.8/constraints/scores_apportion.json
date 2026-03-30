@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "scores_apportion",
+  "fault_hypothesis": "Line 75 uses a naive `int()` (floor truncation) conversion that discards fractional remainders, causing the sum of results to be less than `total` when weights do not divide evenly. The correct approach should distribute the remainder so the sum equals `total`.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "sum(map(int, shares__1)) == total"
+      },
+      "intent": "After converting shares to int, their sum must equal the original total.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1.0"
+      },
+      "intent": "The floating-point shares must sum to approximately total before integer conversion.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The returned integer list from the INTEGER_ALLOCATION branch must sum to total.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < len(shares__1)"
+      },
+      "intent": "Before using shares in the integer conversion, each share's rounding error is bounded, ensuring total can be preserved.",
+      "confidence": 0.8
+    }
+  ]
+}

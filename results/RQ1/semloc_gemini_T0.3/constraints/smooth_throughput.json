@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_throughput",
+  "fault_hypothesis": "The average throughput calculation on line 61 is incorrect. It divides the sum of the tail samples by the fixed `window` size instead of the actual number of samples in the tail (`len(tail)`), leading to an incorrect average when the series is shorter than the window.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The average must be consistent with the total and the number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The newly computed average must be the sum divided by the actual sample count.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The average must be correct before being used for logging or returning.",
+      "confidence": 0.9
+    }
+  ]
+}

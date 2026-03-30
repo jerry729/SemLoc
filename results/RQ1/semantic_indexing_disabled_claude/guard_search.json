@@ -1,0 +1,44 @@
+{
+  "function": "guard_search",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        74
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the issue is on line 74. The condition `if len(active) > limit` should be `if len(active) >= limit`. When the number of active requests equals the limit, the request should be denied (remaining = 0), but the current code allows it and returns `True, 0` (limit - len(active) = 0). This means when exactly at the limit, the guard incorrectly allows the request instead of blocking it.\n\n{\n  \"function_name\": \"guard_search\",\n  \"faulty_lines\": [74],\n  \"explanation\": \"The condition on line 74 uses `>` instead of `>=`. When the number of active requests equals the limit, the request should be blocked (returning False, 0), but the current code allows it and returns True with 0 remaining slots.\",\n  \"confidence\": 0.9\n}",
+      "predicted": [
+        74
+      ],
+      "valid_preds": [
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

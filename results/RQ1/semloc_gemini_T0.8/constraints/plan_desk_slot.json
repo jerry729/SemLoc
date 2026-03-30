@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_desk_slot",
+  "fault_hypothesis": "The overlap detection on line 76 is incorrect because it treats adjacent intervals as non-overlapping. The non-overlap condition `end <= s or start >= e` should use strict inequalities to reject bookings that touch.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (start__1 == e or end__1 == s)"
+      },
+      "intent": "The non-overlap check should not be true for intervals that are merely adjacent.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(end__1 < s or start__1 > e for s, e in existing)"
+      },
+      "intent": "If the new interval is accepted, it must not conflict with or be adjacent to any existing interval.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "After checking an existing slot, it must be confirmed to be strictly non-overlapping with the new interval.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a schedule is accepted, it must not contain any adjacent or overlapping intervals.",
+      "confidence": 0.3
+    }
+  ]
+}

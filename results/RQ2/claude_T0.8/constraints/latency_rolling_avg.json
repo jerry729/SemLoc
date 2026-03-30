@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "latency_rolling_avg",
+  "fault_hypothesis": "On line 69, the average is computed by dividing `total` by `window` instead of `len(tail)`. When the series has fewer elements than `window`, this produces an incorrect (smaller) result because it divides by a larger denominator than the actual number of samples.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(tail) == 0 or abs(avg__1 - total__1 / len(tail)) < 1e-9"
+      },
+      "intent": "After computing avg, it should equal total divided by the actual tail length, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "avg times the actual number of tail samples must equal total; dividing by window breaks this when len(tail) < window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before avg is returned or logged, it must equal the mean of the actual tail samples.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(__cbfl_result - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "When warmup is met and a value is returned, it must be the true mean of the tail samples.",
+      "confidence": 0.9
+    }
+  ]
+}

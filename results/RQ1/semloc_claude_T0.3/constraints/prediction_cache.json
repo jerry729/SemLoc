@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prediction_cache",
+  "fault_hypothesis": "The expiration check on line 73 uses strict greater-than (`now > deadline`) instead of greater-than-or-equal (`now >= deadline`), so when `now == deadline` the entry is incorrectly treated as still valid and returned instead of the default.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now >= deadline__1"
+      },
+      "intent": "When now equals deadline the condition should be true so the entry is treated as expired; the strict > misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1 or now >= deadline__1"
+      },
+      "intent": "Sanity check that deadline__1 is available and the comparison covers both sides including equality.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "In the else branch (entry not expired), now must be strictly less than deadline; if now == deadline we should not reach here.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "deadline__1 is not None"
+      },
+      "intent": "Confirm deadline__1 was properly extracted from the validated record before the expiry comparison.",
+      "confidence": 0.4
+    }
+  ]
+}

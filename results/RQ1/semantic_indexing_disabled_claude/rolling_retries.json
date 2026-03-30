@@ -1,0 +1,44 @@
+{
+  "function": "rolling_retries",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        62
+      ],
+      "explanation": "The mean is computed by dividing by `window` (the window size) instead of `len(tail)` (the actual number of elements in the tail). When the tail has fewer elements than the window (e.g., during warmup), this produces an incorrect (too-small) mean.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"rolling_retries\",\n  \"faulty_lines\": [62],\n  \"explanation\": \"The mean is computed by dividing by `window` (the window size) instead of `len(tail)` (the actual number of elements in the tail). When the tail has fewer elements than the window (e.g., during warmup), this produces an incorrect (too-small) mean.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [
+        62
+      ],
+      "valid_preds": [
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

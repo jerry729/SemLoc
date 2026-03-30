@@ -1,0 +1,44 @@
+{
+  "function": "price_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    59
+  ],
+  "total_source_lines": 63,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the faulty line(s).\n\nThe function's docstring says: \"A cached entry is considered valid only while the current timestamp is strictly before the TTL\" - meaning the entry is valid when `now < ttl`.\n\nThe `_is_within_max_ttl` function checks `(ttl - now) <= _MAX_TTL_SECONDS`. This is supposed to check that the TTL doesn't exceed the maximum allowed lifespan. The logic should be that the entry is valid if its TTL is within `_MAX_TTL_SECONDS` from now. However, the condition returns `True` when `(ttl - now) <= _MAX_TTL_SECONDS`, which means it returns `True` even when `ttl < now` (expired entries), since `ttl - now` would be negative, which is definitely `<= _MAX_TTL_SECONDS`.\n\nThe intent seems to be to reject entries where `ttl - now > _MAX_TTL_SECONDS` (TTL is too far in the future). The function name suggests it should return `True` when within max TTL, but the logic seems correct for that purpose.\n\nWait, let me re-examine. The check at line 56 is `if not _is_within_max_ttl(ttl, now): return None`. So if `_is_within_max_ttl` returns `False`, we return `None`. `_is_within_max_ttl` returns `False` when `(ttl - now) > _MAX_TTL_SECONDS`. This means entries with TTL more than 86400 seconds in the future are rejected. That seems reasonable.\n\nThe main bug I see is at line 59: `adjusted_now = now - _CLOCK_SKEW_TOLERANCE`. With clock skew tolerance, if the clock might be ahead by some amount, we should be more lenient about accepting entries that appear slightly expired. The adjustment should be `now - _CLOCK_SKEW_TOLERANCE` to give entries a grace period. But if `_CLOCK_SKEW_TOLERANCE` is positive, subtracting it makes `adjusted_now` smaller, which is more lenient (correct). If the intent is to add tolerance for clock skew where `now` might be slightly ahead, then `now - _CLOCK_SKEW_TOLERANCE` is correct.\n\nActually, the real issue: the check at line 61 `if adjusted_now > ttl` should probably be `if adjusted_now >= ttl` since the docstring says \"strictly before the TTL\" means `now < ttl`, i.e., the entry is invalid when `now >= ttl`.\n\nLine 61: `if adjusted_now > ttl` should be `if adjusted_now >= ttl` to match the strict inequality described in the docstring.\n\n{\n  \"function_name\": \"price_cache\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The docstring states the entry is valid only while the current timestamp is 'strictly before the TTL', meaning it should be invalid when `adjusted_now >= ttl`. The condition `adjusted_now > ttl` incorrectly allows entries exactly at their TTL expiry to be returned as valid.\",\n  \"confidence\": 0.6\n}",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

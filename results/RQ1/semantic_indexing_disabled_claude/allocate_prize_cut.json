@@ -1,0 +1,47 @@
+{
+  "function": "allocate_prize_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        74,
+        72
+      ],
+      "explanation": "The fee should be deducted from the total pool before distribution (i.e., distribute `amount - fee`), but instead the code distributes the full `amount` and then subtracts `fee` from each individual share, causing the total deducted fee to be `fee * len(ratios)` rather than just `fee`.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the code, the fee should be deducted from the total amount before distribution, not subtracted from each individual share. The current implementation subtracts `fee` from each participant's share, which means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe correct approach should be to compute the distributable amount as `amount - fee` first, then distribute that among participants.\n\nThe faulty line is line 72 where `amount` is used instead of `(amount - fee)`, and line 74 where the fee is incorrectly subtracted per-share.\n\nActually, the intended logic based on the docstring is: \"The platform fee is deducted from the total pool before distribution.\" So the fix should be to use `(amount - fee)` in line 72 and remove line 74's per-share subtraction.\n\nThe faulty lines are 72 and 74.\n\n```json\n{\n  \"function_name\": \"allocate_prize_cut\",\n  \"faulty_lines\": [74, 72],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution (i.e., distribute `amount - fee`), but instead the code distributes the full `amount` and then subtracts `fee` from each individual share, causing the total deducted fee to be `fee * len(ratios)` rather than just `fee`.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        74,
+        72
+      ],
+      "valid_preds": [
+        74,
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

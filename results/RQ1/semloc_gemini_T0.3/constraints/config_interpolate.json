@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_interpolate",
+  "fault_hypothesis": "The condition on line 68 is `if not clamp`, but it should be `if clamp:`. This causes the function to apply clamping logic when clamping is disabled, and skip it when clamping is enabled.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (min(y0, y1) <= y__1 <= max(y0, y1))) or (not clamp and not (min(y0, y1) <= y__1 <= max(y0, y1))) == False"
+      },
+      "intent": "The decision to clamp should be made when `clamp` is true, but the logic at this line inverts the condition.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic block should only be executed when clamping is enabled (`clamp` is True).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "t__1"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= t__1 <= 1.0"
+      },
+      "intent": "The interpolation parameter t is outside the [0, 1] range on all failing tests, which is the condition that triggers the faulty clamping logic.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (min(y0, y1) <= __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "If clamping is enabled, the final result must be within the anchor range.",
+      "confidence": 0.3
+    }
+  ]
+}

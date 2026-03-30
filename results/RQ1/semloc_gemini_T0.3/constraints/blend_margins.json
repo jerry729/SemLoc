@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "blend_margins",
+  "fault_hypothesis": "The function incorrectly removes the last element from the merged list if both input lists end with the same value. The conditional logic on line 73 is flawed and the entire if-block on lines 73-74 should be removed.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (merged and left and right and merged[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that incorrectly triggers removal of the last element should never be met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that incorrectly removes a duplicate tail element should never be executed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain all elements from both input streams.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged) == i + j"
+      },
+      "intent": "The number of elements in the merged list must equal the number of elements consumed from the inputs during the merge loop.",
+      "confidence": 0.8
+    }
+  ]
+}

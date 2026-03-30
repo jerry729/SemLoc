@@ -1,0 +1,31 @@
+{
+  "bug_id": "scrapy_36",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.utils.misc.create_instance",
+    "buggy_methods": [
+      "scrapy.utils.misc.create_instance"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.utils.misc.create_instance",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/utils/misc.py": [
+      146,
+      148,
+      150
+    ],
+    "tests/test_utils_misc/__init__.py": [
+      117,
+      118,
+      126
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "views_moving_mean",
+  "fault_hypothesis": "On line 62, the mean is computed by dividing by `window` (the requested window size) instead of `len(recent)` (the actual number of available samples). When fewer samples exist than the window, this produces an incorrect (too-small) mean.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "After computing mean, it should equal total divided by the actual number of recent samples, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window or abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "When fewer samples than window exist, mean times actual count should equal total.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "Before using mean in the return, it must equal total divided by actual sample count.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= warmup_min and abs(round(total__1 / len(recent__1), _PRECISION_DIGITS) - round(mean__1, _PRECISION_DIGITS)) < 1e-9"
+      },
+      "intent": "In the branch where a result is returned, the rounded mean must match total/len(recent).",
+      "confidence": 0.88
+    }
+  ]
+}

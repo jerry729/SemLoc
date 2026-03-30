@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rating_curve",
+  "fault_hypothesis": "The bug is on line 74, where the condition `if not clamp:` incorrectly inverts the logic for clamping the result. It should be `if clamp:` to apply clamping when requested.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__3 == min(max(y__1, min(y0, y1)), max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "The final value should be the correctly clamped interpolated value if clamping is on, and the raw interpolated value otherwise.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "If the clamping logic is skipped, it must be because clamping is disabled or the value was already within the valid range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The code block that performs clamping should only be executed when the `clamp` parameter is true.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "not (t__1 >= 0 and t__1 <= 1) or (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "If the query point `x` is within the segment `[x0, x1]`, the interpolated value `y` must be within the range `[y0, y1]`.",
+      "confidence": 0.8
+    }
+  ]
+}

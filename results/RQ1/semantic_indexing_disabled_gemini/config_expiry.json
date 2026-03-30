@@ -1,0 +1,47 @@
+{
+  "function": "config_expiry",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    78
+  ],
+  "total_source_lines": 79,
+  "runs": [
+    {
+      "faulty_lines": [
+        77,
+        74
+      ],
+      "explanation": "The expiration check on line 77 uses a strict inequality (`>`) instead of `>=``, causing an entry to be incorrectly considered valid at its exact moment of expiration. A secondary fault on line 74 uses the clock-skew-adjusted expiry time for the max-age check, which can result in erroneous log warnings.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"config_expiry\",\n  \"faulty_lines\": [\n    77,\n    74\n  ],\n  \"explanation\": \"The expiration check on line 77 uses a strict inequality (`>`) instead of `>=``, causing an entry to be incorrectly considered valid at its exact moment of expiration. A secondary fault on line 74 uses the clock-skew-adjusted expiry time for the max-age check, which can result in erroneous log warnings.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        77,
+        74
+      ],
+      "valid_preds": [
+        77,
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

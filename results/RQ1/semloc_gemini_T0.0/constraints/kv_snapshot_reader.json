@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "kv_snapshot_reader",
+  "fault_hypothesis": "The early termination logic on line 70 is inverted. It breaks when the current key `k` is less than the target `key`, but for a sorted list, it should only break when `k` is greater than the target `key`, causing it to miss valid keys.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(k < key) implies (not any(item[0] == key for item in snapshot))"
+      },
+      "intent": "An early break due to `k < key` is only correct if the key is truly missing from the snapshot.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not any(item[0] == key for item in snapshot)"
+      },
+      "intent": "After taking the early-termination branch, it must be that the key was not in the snapshot.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "not any(item[0] == key for item in snapshot)"
+      },
+      "intent": "Returning the default value is only correct if the key was not present in the snapshot.",
+      "confidence": 0.9
+    }
+  ]
+}

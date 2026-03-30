@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_supply",
+  "fault_hypothesis": "The condition on line 66 is inverted: `if not clamp` applies clamping when clamp is False, and skips clamping when clamp is True. It should be `if clamp:` to clamp when clamping is requested.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__1 < min(y0, y1) or y__1 > max(y0, y1))) or (not clamp)"
+      },
+      "intent": "When clamp is True and interpolated value is out of range, the clamping block should be entered; the inverted condition prevents this.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of the if-not-clamp block should only execute when clamp is False; verifies the inverted logic.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamping is enabled, the final y value must be within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "clamp or (y__1 == y0 + t__1 * (y1 - y0))"
+      },
+      "intent": "Before entering the clamping logic, confirm y__1 is correctly interpolated so the clamping branch condition can be evaluated correctly.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, returned value must be within the supply range of the two endpoints.",
+      "confidence": 0.9
+    }
+  ]
+}

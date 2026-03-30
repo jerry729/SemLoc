@@ -1,0 +1,38 @@
+{
+  "function": "plan_desk_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    76
+  ],
+  "total_source_lines": 81,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the fault in `plan_desk_slot`.\n\nThe function uses its own conflict check at line 76:\n```python\nif not (end <= s or start >= e):\n```\n\nBut there's also `_has_conflict` defined at lines 37-42 which implements the same logic (with policy support via `_CONFLICT_STRICT`). The `plan_desk_slot` function duplicates the conflict logic inline instead of calling `_has_conflict`, which means:\n\n1. It ignores the `_CONFLICT_STRICT` policy\n2. The inline check at line 76 `not (end <= s or start >= e)` is equivalent to `new_end > existing_start and new_start < existing_end` - this is the relaxed (non-strict) check, same as line 42\n\nThe main bug is that `_has_conflict` is never called - the function reimplements the logic inline and bypasses the policy mechanism. The correct implementation should call `_has_conflict(s, e, start, end)` instead of the inline check.\n\nLooking more carefully at line 76: `if not (end <= s or start >= e)` - this is actually logically equivalent to the non-strict version in `_has_conflict` (line 42: `not (new_end <= existing_start or new_start >= existing_end)`). So the logic itself matches the relaxed policy, but it ignores `_CONFLICT_STRICT`.\n\nThe fault is at line 76 where `_has_conflict` should be called instead of reimplementing the logic inline (bypassing the strict conflict policy).\n\n```json\n{\n  \"function_name\": \"plan_desk_slot\",\n  \"faulty_lines\": [76],\n  \"explanation\": \"Line 76 reimplements conflict detection inline instead of calling `_has_conflict(s, e, start, end)`, thereby bypassing the `_CONFLICT_STRICT` policy flag that controls whether adjacent (touching) intervals are considered conflicting.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

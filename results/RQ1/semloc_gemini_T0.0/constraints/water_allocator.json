@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "water_allocator",
+  "fault_hypothesis": "The function incorrectly truncates floating-point shares to integers on line 29 using `int()`. This discards the fractional remainders, causing the sum of the final allocations to be less than the original total.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(int(v) for v in shares__1) == total"
+      },
+      "intent": "The sum of the integer-truncated shares must equal the total amount to be allocated.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the calculated floating-point shares must precisely equal the total amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "shares__1[-1] >= minimum"
+      },
+      "intent": "Each calculated share must be at least the specified minimum.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(__cbfl_result) == total"
+      },
+      "intent": "If results are floored to integers, their sum must equal the original total.",
+      "confidence": 0.8
+    }
+  ]
+}

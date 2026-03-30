@@ -1,0 +1,44 @@
+{
+  "function": "schedule_shift_allocator",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        68
+      ],
+      "explanation": "The function truncates floating-point shares to integers, discarding the fractional parts. This causes the sum of allocated shifts to often be less than the total number of shifts available, violating the documented goal of summing as close to the total as possible.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"schedule_shift_allocator\",\n  \"faulty_lines\": [\n    68\n  ],\n  \"explanation\": \"The function truncates floating-point shares to integers, discarding the fractional parts. This causes the sum of allocated shifts to often be less than the total number of shifts available, violating the documented goal of summing as close to the total as possible.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        68
+      ],
+      "valid_preds": [
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 68,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

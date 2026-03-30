@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lr_warmup_schedule",
+  "fault_hypothesis": "On line 59, the formula uses `(step + 1) / warmup_steps` instead of `step / warmup_steps`, causing the learning rate to be one step ahead of what is expected (e.g., at step 0 it returns base_lr/warmup_steps instead of 0).",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(lr__1 - base_lr * (step / warmup_steps)) < 1e-12"
+      },
+      "intent": "After computing lr, it should equal base_lr * step/warmup_steps, not base_lr * (step+1)/warmup_steps.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lr__1"
+        }
+      },
+      "spec": {
+        "expr": "lr__1 <= base_lr * step / warmup_steps + 1e-12"
+      },
+      "intent": "lr at step s should be at most base_lr * s/warmup_steps; the +1 offset inflates it beyond this bound.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "lr__1"
+        }
+      },
+      "spec": {
+        "expr": "step == 0 and warmup_steps > 0 and lr__1 < 1e-12 or step > 0"
+      },
+      "intent": "When step is 0, lr must be 0 (or effectively zero), not base_lr/warmup_steps.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "step >= warmup_steps or abs(__cbfl_result - max(base_lr * step / warmup_steps, MIN_LR_FLOOR)) < 1e-9"
+      },
+      "intent": "The returned learning rate during warmup should match base_lr * step/warmup_steps (floored at MIN_LR_FLOOR), not the off-by-one formula.",
+      "confidence": 0.85
+    }
+  ]
+}

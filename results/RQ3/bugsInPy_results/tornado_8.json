@@ -1,0 +1,20 @@
+{
+  "bug_id": "tornado_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.websocket.WebSocketProtocol13.accept_connection",
+    "buggy_methods": [
+      "tornado.websocket.WebSocketProtocol13.accept_connection"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.websocket.WebSocketProtocol13.accept_connection",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

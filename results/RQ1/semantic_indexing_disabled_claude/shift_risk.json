@@ -1,0 +1,44 @@
+{
+  "function": "shift_risk",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "The function's docstring states it normalizes the result so weights sum to 1.0, but line 65 returns `adjusted` without performing any normalization (dividing each element by the total sum).",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the function, the docstring says it \"normalizes the result so that the weights sum to 1,\" but the actual implementation at line 65 just returns `adjusted` without normalization. The function is missing the normalization step.\n\n```json\n{\n  \"function_name\": \"shift_risk\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The function's docstring states it normalizes the result so weights sum to 1.0, but line 65 returns `adjusted` without performing any normalization (dividing each element by the total sum).\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_logout",
+  "fault_hypothesis": "On line 69, when `updated > cap`, the code sets `updated = cap - 1` instead of `updated = cap`, so the counter is capped one below the cap value rather than at the cap itself.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "After capping, updated must equal cap, not cap-1.",
+      "confidence": 0.98
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The capped value must be exactly cap, not cap minus one.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 <= cap and updated__2 >= cap"
+      },
+      "intent": "After the capping branch, updated must equal cap exactly.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The returned counter must never exceed the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

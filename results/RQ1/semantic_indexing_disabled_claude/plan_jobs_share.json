@@ -1,0 +1,38 @@
+{
+  "function": "plan_jobs_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the fault in `plan_jobs_share`.\n\nThe key logic is on line 67:\n```python\nshares.append(portion if portion > minimum else minimum)\n```\n\nThis applies the minimum to ALL jobs, regardless of whether their weight is 0. More importantly, the condition `portion > minimum` means that when `portion == minimum`, it still uses `minimum` (which is fine since they're equal). But the real issue is that when `minimum = 0` (the default), every job gets at least 0, which seems correct.\n\nWait, let me think more carefully. The bug is that `portion > minimum` should likely be `portion >= minimum` - but that's a minor edge case.\n\nActually, the more significant bug: when `floor_to_int=True`, the code uses `int(v)` which truncates (floors toward zero), not `math.floor()`. For positive values these are the same. But the function imports `math` and doesn't use it, suggesting `math.floor` or `math.ceil` might be intended.\n\nBut the more likely bug: on line 67, the condition should be `portion >= minimum` not `portion > minimum`. When `portion == minimum`, it correctly returns minimum either way, so that's not a real bug.\n\nThe real fault: line 67 applies the minimum even when it shouldn't - when `minimum > 0` and `portion < minimum`, it sets the share to `minimum`, but this means the total allocated may exceed `total`. This could be intentional behavior per the docstring.\n\nActually, looking more carefully - the `int(v)` on line 72 uses truncation (toward zero), not floor. For positive numbers this floors, which matches `floor_to_int`. This seems correct.\n\nThe most suspicious bug: line 67 uses `portion > minimum` (strict greater than). If `portion == minimum`, the result is `minimum` anyway, so functionally equivalent. But there's another issue - when `minimum` is set and `portion < minimum`, we replace with `minimum` without adjusting other shares. This is likely intentional.\n\nThe real bug appears to be on line 67: it should use `max(portion, minimum)` which is equivalent but the condition `portion > minimum` vs `portion >= minimum` when `portion == minimum` gives the same result. \n\nActually the bug might be that `int(v)` on line 72 should be `math.floor(int(v))` - but `int()` already truncates toward zero for positive numbers.\n\nGiven the import of `math` that goes unused, and `floor_to_int` naming, the bug is likely that line 72 should use `math.floor(v)` instead of `int(v)` (for negative numbers they differ, but more likely the issue is elsewhere).\n\nThe most likely fault: line 67 should use `max(portion, minimum)` pattern, but more specifically the condition should ensure zero-weight jobs get 0 not minimum.\n\n```json\n{\n  \"function_name\": \"plan_jobs_share\",\n  \"faulty_lines\": [67, 72],\n  \"explanation\": \"Line 67 applies the minimum to all jobs including those with zero weight (which should get 0), and line 72 uses int() truncation instead of math.floor() which was imported but unused, suggesting floor behavior was intended.\",\n  \"confidence\": 0.45\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

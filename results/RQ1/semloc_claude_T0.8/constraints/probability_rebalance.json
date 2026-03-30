@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "probability_rebalance",
+  "fault_hypothesis": "The function returns `adjusted` directly from `_blend_vectors` without renormalizing it. Line 59 (the return) returns a non-normalized vector when the blended weights do not sum to 1.0, but the real bug is that line 55 assigns the result of `_blend_vectors` and line 59 returns it without a normalization step.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The vector returned must sum to 1.0; if _blend_vectors does not normalize, this will be false on failing tests.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "Immediately after _blend_vectors assigns adjusted, the result should already sum to 1.0 if normalization is performed inside or before the return.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "Before adjusted is returned, it must be a valid probability distribution summing to 1.0.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned list must always sum to 1.0 regardless of input normalization.",
+      "confidence": 0.8
+    }
+  ]
+}

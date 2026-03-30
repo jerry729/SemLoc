@@ -1,0 +1,20 @@
+{
+  "bug_id": "keras_22",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.input_layer.InputLayer.__init__",
+    "buggy_methods": [
+      "keras.engine.input_layer.InputLayer.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.input_layer.InputLayer.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

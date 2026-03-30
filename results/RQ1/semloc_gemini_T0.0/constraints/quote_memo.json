@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quote_memo",
+  "fault_hypothesis": "The expiry check on line 61 uses a strict greater-than comparison (`>`), which incorrectly considers an item valid when the current time is exactly equal to its expiry time. The comparison should be greater-than-or-equal-to (`>=`) to correctly treat such items as expired.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The expiry check should handle the `now == ttl` boundary case correctly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "item__1"
+        }
+      },
+      "spec": {
+        "expr": "len(item__1) == 2"
+      },
+      "intent": "A valid cache item must be a tuple of two elements (payload and TTL).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 >= 0"
+      },
+      "intent": "The calculated effective TTL must be a non-negative timestamp.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "implies(key in cache and cache.get(key) is not None and now >= cache.get(key)[1], __cbfl_result is None)"
+      },
+      "intent": "An item at or beyond its expiry time must not be returned.",
+      "confidence": 0.9
+    }
+  ]
+}

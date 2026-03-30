@@ -1,0 +1,16 @@
+{
+  "bug_id": "ansible_13",
+  "function": "_get_collection_info",
+  "src_path": "lib/ansible/galaxy/collection.py",
+  "fn_begin": 819,
+  "fn_end": 860,
+  "n_constraints": 4,
+  "n_tests_passing": 96,
+  "n_tests_failing": 1,
+  "line_scores": [],
+  "fault_line": 857,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/ansible_13/_get_collection_info_constraints.json",
+  "report_path": "/tmp/bip_semloc/ansible_13/violations.jsonl"
+}

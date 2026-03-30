@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_points_share",
+  "fault_hypothesis": "On line 74, `int()` truncates fractional shares toward zero instead of rounding, causing the sum of allocations to be less than `total` when weights don't divide evenly.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "sum(list(map(int, shares__1))) == int(total)"
+      },
+      "intent": "After int-truncation, the sum of integer shares must equal the total; this is FALSE when truncation loses fractional points.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The raw float shares must sum exactly to total before integer conversion.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "all(shares__1[i] >= (weights[i] / weight_sum__1) * total for i in range(len(shares__1)))"
+      },
+      "intent": "Each share must be at least the proportional allocation, ensuring no lane is under-allocated before int truncation.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned allocations must sum to the total budget; failing tests violate this.",
+      "confidence": 0.9
+    }
+  ]
+}

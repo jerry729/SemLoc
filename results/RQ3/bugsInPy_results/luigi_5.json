@@ -1,0 +1,40 @@
+{
+  "bug_id": "luigi_5",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.util.inherits.__call__",
+    "buggy_methods": [
+      "luigi.util.inherits.__call__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.util.inherits.__call__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/util.py": [
+      281,
+      282,
+      283,
+      285,
+      286,
+      287,
+      288,
+      303,
+      304,
+      305,
+      306,
+      307,
+      308,
+      310
+    ],
+    "test/util_test.py": [
+      21
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

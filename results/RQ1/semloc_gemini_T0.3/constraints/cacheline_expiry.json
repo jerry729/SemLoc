@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cacheline_expiry",
+  "fault_hypothesis": "The expiry check on line 67 uses a strict greater-than comparison (`>`), which incorrectly considers an item valid when the current time is exactly equal to its expiry time. It should use a greater-than-or-equal-to comparison (`>=`) to correctly expire items at the boundary.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "now != adjusted_ttl__1"
+      },
+      "intent": "An item at the exact expiry boundary should be considered expired, not valid.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "A payload should only be returned if the current time is strictly before the expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "ttl__1 >= 0.0"
+      },
+      "intent": "The TTL timestamp extracted from the cache must be non-negative.",
+      "confidence": 0.9
+    }
+  ]
+}

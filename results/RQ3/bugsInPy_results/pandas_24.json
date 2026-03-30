@@ -1,0 +1,26 @@
+{
+  "bug_id": "pandas_24",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.datetimes.DatetimeArray.tz_localize",
+    "buggy_methods": [
+      "pandas.core.arrays.datetimes.DatetimeArray.tz_localize"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.datetimes.DatetimeArray.tz_localize",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/datetimes.py": [
+      889,
+      897,
+      976
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

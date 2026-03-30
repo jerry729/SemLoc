@@ -1,0 +1,44 @@
+{
+  "function": "latency_rolling_avg",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        69
+      ],
+      "explanation": "The average is computed by dividing `total` by `window` (line 69) instead of `len(tail)`. When the series has fewer elements than `window`, this produces an incorrect (too small) average because it divides by the window size rather than the actual number of samples in the tail.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"latency_rolling_avg\",\n  \"faulty_lines\": [69],\n  \"explanation\": \"The average is computed by dividing `total` by `window` (line 69) instead of `len(tail)`. When the series has fewer elements than `window`, this produces an incorrect (too small) average because it divides by the window size rather than the actual number of samples in the tail.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [
+        69
+      ],
+      "valid_preds": [
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

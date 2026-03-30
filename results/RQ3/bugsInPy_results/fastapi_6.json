@@ -1,0 +1,26 @@
+{
+  "bug_id": "fastapi_6",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.dependencies.utils.request_body_to_args",
+    "buggy_methods": [
+      "fastapi.dependencies.utils.request_body_to_args"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.dependencies.utils.request_body_to_args",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/dependencies/utils.py": [
+      632,
+      633,
+      634
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

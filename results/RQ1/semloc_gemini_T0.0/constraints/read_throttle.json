@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "read_throttle",
+  "fault_hypothesis": "The condition on line 70 uses a strict greater-than comparison (`>`), which incorrectly allows a new action when the number of active events is exactly equal to the limit. It should use greater-than-or-equal (`>=`) to deny access when the limit has been reached.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "The number of active events should not be exactly equal to the limit when deciding whether to allow the action.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the request is allowed, the number of active events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts > cutoff__1 for ts in active__1)"
+      },
+      "intent": "All timestamps in the active set must be more recent than the cutoff time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == False) == (len(active__1) >= limit)"
+      },
+      "intent": "The 'allowed' status must be false if and only if active events are at or over the limit.",
+      "confidence": 1.0
+    }
+  ]
+}

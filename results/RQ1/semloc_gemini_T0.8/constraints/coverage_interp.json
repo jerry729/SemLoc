@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "coverage_interp",
+  "fault_hypothesis": "The condition on line 66 for clamping is inverted. It checks `not clamp` instead of `clamp`, causing the function to apply clamping when extrapolation is desired, and vice-versa.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "Extrapolation cases (where t is outside [0, 1]) fail due to the inverted clamping logic.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "If clamping is requested, the resulting value must be within the bounds of the reference y-values, but the buggy code fails to do this.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 == y__1"
+      },
+      "intent": "If clamping is disabled, the interpolated value should not be modified, but the buggy code modifies it during extrapolation.",
+      "confidence": 0.9
+    }
+  ]
+}

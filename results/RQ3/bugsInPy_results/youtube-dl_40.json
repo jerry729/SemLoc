@@ -1,0 +1,28 @@
+{
+  "bug_id": "youtube-dl_40",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.downloader.f4m.FlvReader.read_unsigned_long_long",
+    "buggy_methods": [
+      "youtube_dl.downloader.f4m.FlvReader.read_unsigned_long_long"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.downloader.f4m.FlvReader.read_unsigned_long_long",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/downloader/f4m.py": [
+      7,
+      30,
+      33,
+      36,
+      199
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

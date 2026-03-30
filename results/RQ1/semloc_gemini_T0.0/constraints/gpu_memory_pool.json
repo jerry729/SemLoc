@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gpu_memory_pool",
+  "fault_hypothesis": "The check on line 75 uses a strict inequality `>` which incorrectly allows allocations that exactly meet the capacity. It should use `>=` to deny requests that leave no headroom.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "used__1 + request != effective_cap__1"
+      },
+      "intent": "The total requested memory should not exactly equal the effective capacity, which is the boundary condition that fails.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "used__1 + request < effective_cap__1"
+      },
+      "intent": "An allocation can only be granted if the new total usage is strictly less than the capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "validated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(x >= 0 for x in validated__1)"
+      },
+      "intent": "Validated allocation sizes must be non-negative.",
+      "confidence": 0.9
+    }
+  ]
+}

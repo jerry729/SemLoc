@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warm_cache_loader",
+  "fault_hypothesis": "The function calculates the new expiration time on line 75 but fails to update the cache with this new value before returning on line 76. A statement to update the cache entry is missing.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "(expires_at__1 - now > 100) or (expires_at__1 - now == 0)"
+      },
+      "intent": "Checks a data-driven property on time-to-expiry that separates the given passing and failing test runs.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "cache[key] == (value__1, expires_at__2)"
+      },
+      "intent": "The cache entry for the given key should be updated with the newly computed expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now <= expires_at__1"
+      },
+      "intent": "An entry must be valid (not expired) for its TTL to be extended.",
+      "confidence": 1.0
+    }
+  ]
+}

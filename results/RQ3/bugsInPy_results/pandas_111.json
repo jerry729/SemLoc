@@ -1,0 +1,33 @@
+{
+  "bug_id": "pandas_111",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.category.CategoricalIndex._convert_scalar_indexer",
+    "buggy_methods": [
+      "pandas.core.indexes.category.CategoricalIndex._convert_scalar_indexer"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.category.CategoricalIndex._convert_scalar_indexer",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      2942,
+      2946
+    ],
+    "pandas/core/indexes/category.py": [
+      699,
+      700,
+      701
+    ],
+    "pandas/tests/indexing/test_floats.py": [
+      103
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

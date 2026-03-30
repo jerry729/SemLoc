@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ttl_snapshot_store",
+  "fault_hypothesis": "The expiry check on line 68 uses a strict `>` comparison, which incorrectly considers an entry valid when the current time is exactly equal to the expiry time. The comparison should be `>=` to correctly invalidate the entry at the boundary.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "An entry should be considered expired when the current time is exactly at the expiry boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "A cached value should only be returned if the current time is strictly before its expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 >= 0.0"
+      },
+      "intent": "Effective expiry timestamps must be non-negative.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (key in entries and now < entries[key][1])"
+      },
+      "intent": "A returned value implies the key exists and its entry has not yet expired.",
+      "confidence": 0.9
+    }
+  ]
+}

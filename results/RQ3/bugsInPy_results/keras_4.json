@@ -1,0 +1,24 @@
+{
+  "bug_id": "keras_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.optimizers.TFOptimizer.get_updates",
+    "buggy_methods": [
+      "keras.optimizers.TFOptimizer.get_updates"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.optimizers.TFOptimizer.get_updates",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/optimizers.py": [
+      706
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

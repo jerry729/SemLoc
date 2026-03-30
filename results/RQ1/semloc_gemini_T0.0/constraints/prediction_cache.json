@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prediction_cache",
+  "fault_hypothesis": "The expiration check on line 73 uses a strict greater-than comparison (`>`), which incorrectly considers an entry valid when the current time is exactly equal to the deadline. The condition should be `now >= deadline` to correctly expire entries at their deadline boundary.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now != deadline__1"
+      },
+      "intent": "The check at the deadline boundary is incorrect; time should not be exactly equal to the deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "A cached value should only be returned if the current time is strictly before its deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "record__1"
+        }
+      },
+      "spec": {
+        "expr": "record__1[1] != now"
+      },
+      "intent": "The deadline stored in the cache record should not be exactly equal to the current time, which is the failing boundary condition.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "('deadline' not in locals()) or (__cbfl_result == default) or (now < deadline)"
+      },
+      "intent": "A non-default value should only be returned if the deadline has not been reached, otherwise the default is expected.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "login_throttle",
+  "fault_hypothesis": "Line 69 uses `>` (strictly greater than) instead of `>=` (greater than or equal to), so when the number of recent attempts exactly equals the limit, the function incorrectly allows the login instead of denying it.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) >= limit)"
+      },
+      "intent": "When recent attempts equal the limit, the condition must be true so the attempt is denied.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed path), recent attempts must be strictly less than limit.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= limit or len(recent__1) > limit"
+      },
+      "intent": "Confirm that the comparison at the branch correctly handles the boundary case where len(recent) equals limit.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= limit"
+      },
+      "intent": "In the then branch (denied path), recent attempts must be at least equal to limit, not strictly greater.",
+      "confidence": 0.95
+    }
+  ]
+}

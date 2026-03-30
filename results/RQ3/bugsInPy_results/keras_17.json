@@ -1,0 +1,24 @@
+{
+  "bug_id": "keras_17",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.metrics.sparse_categorical_accuracy",
+    "buggy_methods": [
+      "keras.metrics.sparse_categorical_accuracy"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.metrics.sparse_categorical_accuracy",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/metrics.py": [
+      37
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

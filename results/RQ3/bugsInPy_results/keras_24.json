@@ -1,0 +1,34 @@
+{
+  "bug_id": "keras_24",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.callbacks.TensorBoard.set_model",
+    "buggy_methods": [
+      "keras.callbacks.TensorBoard.set_model"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.callbacks.TensorBoard.set_model",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/callbacks.py": [
+      789,
+      790
+    ],
+    "tests/keras/test_callbacks.py": [
+      13,
+      15,
+      626,
+      649,
+      650,
+      651,
+      652
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

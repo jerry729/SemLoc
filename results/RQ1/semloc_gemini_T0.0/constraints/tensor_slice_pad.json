@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tensor_slice_pad",
+  "fault_hypothesis": "The function adds one too many padding elements. The expression `missing + 1` on line 64 should be just `missing` to correctly calculate the number of padding values needed.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(result__1) == requested_length__1"
+      },
+      "intent": "The length of the result after padding should exactly match the requested length.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "missing__1 > 0"
+      },
+      "intent": "Padding should only be added if there are actually missing elements.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "missing__1"
+        }
+      },
+      "spec": {
+        "expr": "requested_length__1 == len(result__1) + missing__1"
+      },
+      "intent": "The requested length must equal the initial slice length plus the number of missing elements.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == end - start"
+      },
+      "intent": "The final returned list must have the length of the requested window.",
+      "confidence": 1.0
+    }
+  ]
+}

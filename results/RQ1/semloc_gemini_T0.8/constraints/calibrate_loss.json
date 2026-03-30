@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_loss",
+  "fault_hypothesis": "The condition on line 65 is inverted. The clamping logic is incorrectly executed when `clamp` is False and skipped when `clamp` is True, instead of the other way around.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))) or (not clamp and y__5 == y__1)"
+      },
+      "intent": "After the conditional block, the resulting value y__5 should be clamped if clamp is true, or equal to the original interpolated value y__1 if clamp is false.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "t__1"
+        }
+      },
+      "spec": {
+        "expr": "((x >= min(x0, x1) and x <= max(x0, x1))) == (t__1 >= 0.0 and t__1 <= 1.0)"
+      },
+      "intent": "The parameter t is in the range [0,1] if and only if x is within the segment [x0, x1].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "(t__1 >= 0.0 and t__1 <= 1.0) == (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "The interpolated y-value is within its original range if and only if the parameter t is in [0,1].",
+      "confidence": 0.9
+    }
+  ]
+}

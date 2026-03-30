@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quote_memo",
+  "fault_hypothesis": "The check on line 61 uses a strict greater-than comparison (`>`), which incorrectly treats an entry as valid when the current time is exactly equal to the expiration time. The check should be inclusive (`>=`) to correctly expire entries at their TTL boundary.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "To return a payload, the current time must be strictly less than the effective TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If the item is considered valid (the 'else' branch is taken), the current time must be strictly less than its expiration TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 >= 0.0"
+      },
+      "intent": "The calculated effective TTL must be a non-negative timestamp.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (key not in cache) or (now < cache[key][1])"
+      },
+      "intent": "A non-None result implies the cache entry was found and was not expired.",
+      "confidence": 0.8
+    }
+  ]
+}

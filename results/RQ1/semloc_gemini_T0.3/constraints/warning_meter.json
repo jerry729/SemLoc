@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warning_meter",
+  "fault_hypothesis": "The bug is on line 65. When a counter's value exceeds its cap, it is incorrectly set to `cap - 1` instead of being pinned to the `cap` value itself.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__2] == cap__1"
+      },
+      "intent": "After capping, the counter's value should be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__3] == cap__1"
+      },
+      "intent": "The counter value must equal the cap if the cap was exceeded.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "cap__1 is None or counters__1[key__3] <= cap__1"
+      },
+      "intent": "If no capping occurred, the counter value must not exceed the cap.",
+      "confidence": 0.8
+    }
+  ]
+}

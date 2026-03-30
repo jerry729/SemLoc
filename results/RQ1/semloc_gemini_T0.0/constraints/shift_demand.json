@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_demand",
+  "fault_hypothesis": "The function omits the normalization step required by its specification. The vector `adjusted` is returned on line 64 without its elements being scaled to sum to 1.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__2) == 0 or abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The vector being returned must be normalized to sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - ((1 - damping) * sum(current) + damping * sum(target))) < 1e-9"
+      },
+      "intent": "The sum of the smoothed vector must be a weighted average of the input sums.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__2) == 0 or abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "After clamping, the vector should sum to 1.0 if it is to be returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == 0 or abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The function's final output must be a normalized vector summing to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

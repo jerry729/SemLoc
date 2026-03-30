@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "weights_union",
+  "fault_hypothesis": "Lines 74-75 incorrectly remove one copy of the last element when both streams end with the same value, but the spec requires both copies to be preserved. The entire if/pop block is the bug.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the pop should never be true when both streams share a last element that must appear twice in the output.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) >= len(left) + len(right) - 1"
+      },
+      "intent": "After popping, the merged list should still contain at least as many elements as the union requires (both copies of shared elements).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__2"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__2) >= min(len(left), len(right)) + abs(len(left) - len(right))"
+      },
+      "intent": "The filtered merged result must contain at least as many elements as the longer of the two input streams.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == i__1 + j"
+      },
+      "intent": "After each loop iteration, the merged list length should equal the sum of consumed elements from both streams.",
+      "confidence": 0.8
+    }
+  ]
+}

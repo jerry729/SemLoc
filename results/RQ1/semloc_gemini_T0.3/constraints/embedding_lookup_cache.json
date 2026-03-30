@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "embedding_lookup_cache",
+  "fault_hypothesis": "The expiration check on line 72 uses a strict inequality `>` instead of `>=`. This causes entries at the exact expiration boundary to be considered valid when they should be expired.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "now < cached_at__1 + validated_ttl__1"
+      },
+      "intent": "If the expiration check passes, the current time must be strictly less than the expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (now < cached_at + validated_ttl)"
+      },
+      "intent": "A non-None result must only be returned for a cache entry that has not expired.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < cached_at__1 + validated_ttl__1"
+      },
+      "intent": "The branch that returns a cached value should only be taken if the entry is strictly not expired.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "cached_at__1"
+        }
+      },
+      "spec": {
+        "expr": "now >= cached_at__1"
+      },
+      "intent": "The current time should not be earlier than the time an entry was cached.",
+      "confidence": 0.8
+    }
+  ]
+}

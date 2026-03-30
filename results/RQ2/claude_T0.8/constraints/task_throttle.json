@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "task_throttle",
+  "fault_hypothesis": "The condition on line 62 uses `>` instead of `>=`, so when `len(recent) == limit` the function incorrectly allows the task instead of denying it.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or len(recent__1) >= limit"
+      },
+      "intent": "When len(recent) equals limit the branch should be taken (denied); the > operator misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the if-branch is skipped (else path), the number of recent events must be strictly less than the limit, not merely not greater.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= 0 and limit >= 0"
+      },
+      "intent": "Confirm recent and limit are valid before the comparison so the condition bug is isolated to the operator choice.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(recent__1) >= limit)"
+      },
+      "intent": "The task must be denied whenever recent events are greater than OR equal to the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

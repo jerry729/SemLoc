@@ -1,0 +1,16 @@
+{
+  "bug_id": "black_10",
+  "function": "_partially_consume_prefix",
+  "src_path": "blib2to3/pgen2/driver.py",
+  "fn_begin": 117,
+  "fn_end": 144,
+  "n_constraints": 4,
+  "n_tests_passing": 69,
+  "n_tests_failing": 9,
+  "line_scores": [],
+  "fault_line": 126,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/black_10/_partially_consume_prefix_constraints.json",
+  "report_path": "/tmp/bip_semloc/black_10/violations.jsonl"
+}

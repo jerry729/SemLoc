@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_training",
+  "fault_hypothesis": "The overlap detection on line 67 uses non-strict inequalities (`<=`, `>=`) which incorrectly allows intervals that touch at a boundary to be scheduled. The non-overlap condition should use strict inequalities (`<`, `>`) to correctly identify such cases as conflicts.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(end <= s or start >= e) == (end < s or start > e)"
+      },
+      "intent": "The non-overlap condition should use strict inequalities for touching intervals.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end < s or start > e"
+      },
+      "intent": "If no conflict is detected for the current item, the new interval must be strictly before or after it.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If the schedule is updated, the new interval must not have a boundary conflict with any existing interval.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If an interval is successfully scheduled, it must not touch any existing intervals.",
+      "confidence": 0.8
+    }
+  ]
+}

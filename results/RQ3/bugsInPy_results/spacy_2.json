@@ -1,0 +1,20 @@
+{
+  "bug_id": "spacy_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "spacy.util.load_model_from_path",
+    "buggy_methods": [
+      "spacy.util.load_model_from_path"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "spacy.util.load_model_from_path",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

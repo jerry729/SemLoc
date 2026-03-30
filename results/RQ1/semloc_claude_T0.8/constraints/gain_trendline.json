@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gain_trendline",
+  "fault_hypothesis": "The condition on line 70 is inverted: `if not clamp` should be `if clamp`, causing clamping to be applied when clamp=False and skipped when clamp=True.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) or (clamp == False and True)"
+      },
+      "intent": "When clamp=True the clamping block should execute; the condition `if not clamp` inverts this logic so clamping is skipped when requested.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of the if-not-clamp block should only execute when clamp is False (extrapolation allowed), not when clamp is True.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True the final y value must lie within [min(y0,y1), max(y0,y1)]; the inverted condition causes this invariant to be violated.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "Before returning, if clamp=True the value should already be bounded; the bug causes y__5 to be unclamped when clamp=True.",
+      "confidence": 0.88
+    }
+  ]
+}

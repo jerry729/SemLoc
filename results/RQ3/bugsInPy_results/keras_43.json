@@ -1,0 +1,28 @@
+{
+  "bug_id": "keras_43",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.utils.np_utils.to_categorical",
+    "buggy_methods": [
+      "keras.utils.np_utils.to_categorical"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.utils.np_utils.to_categorical",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/keras/utils/np_utils_test.py": [
+      10,
+      13,
+      15,
+      18,
+      21
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

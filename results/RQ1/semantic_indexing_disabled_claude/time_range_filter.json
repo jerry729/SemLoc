@@ -1,0 +1,44 @@
+{
+  "function": "time_range_filter",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        75
+      ],
+      "explanation": "The filter condition uses `start <= p[0] <= end` (closed interval on both ends), but the docstring specifies a half-open interval `[start, end)` where the end boundary should be exclusive. The correct condition should be `start <= p[0] < end`.",
+      "confidence": 0.98,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"time_range_filter\",\n  \"faulty_lines\": [75],\n  \"explanation\": \"The filter condition uses `start <= p[0] <= end` (closed interval on both ends), but the docstring specifies a half-open interval `[start, end)` where the end boundary should be exclusive. The correct condition should be `start <= p[0] < end`.\",\n  \"confidence\": 0.98\n}",
+      "predicted": [
+        75
+      ],
+      "valid_preds": [
+        75
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 75,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

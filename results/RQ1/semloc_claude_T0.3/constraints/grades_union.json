@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "grades_union",
+  "fault_hypothesis": "Lines 76-77 contain a spurious post-processing step that pops the last element when both inputs share the same final value, incorrectly removing a valid duplicate that should be retained in the merged result.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "This pop() call should never execute; it incorrectly removes a valid duplicate from the merged result.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that pops the last merged element should never be taken; any entry into this branch indicates a bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left__1) + len(right__1)"
+      },
+      "intent": "Before returning, the merged list length must equal the sum of both input lengths since all elements should be preserved.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned merged list must contain exactly as many elements as both inputs combined.",
+      "confidence": 0.9
+    }
+  ]
+}

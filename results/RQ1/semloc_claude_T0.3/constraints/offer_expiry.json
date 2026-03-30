@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "offer_expiry",
+  "fault_hypothesis": "The condition on line 66 uses strict greater-than (`now > effective_deadline`) instead of greater-than-or-equal (`now >= effective_deadline`), so an offer checked at exactly the deadline is incorrectly treated as still valid.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "now < effective_deadline__1 or (now >= effective_deadline__1 and __cbfl_result == default)"
+      },
+      "intent": "At the boundary (now == effective_deadline), the function must return default, not value; the strict > comparison fails this.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_deadline__1 == deadline__1 + _CLOCK_SKEW_TOLERANCE"
+      },
+      "intent": "Verify effective_deadline is correctly computed so the boundary check uses the right value.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_deadline__1"
+      },
+      "intent": "When the else branch (return value) is taken, now must be strictly less than effective_deadline; equality should have gone to the then branch.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (now >= effective_deadline__1 and __cbfl_result != default)"
+      },
+      "intent": "The function must never return the offer value when now is at or past the effective deadline.",
+      "confidence": 0.88
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "throughput_trendline",
+  "fault_hypothesis": "The condition on line 60 is inverted. The code checks `if not clamp:` but it should be `if clamp:`, causing the function to clamp when extrapolation is desired and vice-versa.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) == (clamp and (t__1 < 0.0 or t__1 > 1.0))"
+      },
+      "intent": "The decision to enter the clamping block is incorrect; this compares the actual branch condition with the correct one.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic should only execute when clamping is enabled, but this branch is taken when `clamp` is false.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= t__1 <= 1.0"
+      },
+      "intent": "If the clamping logic is skipped, it must be because the query point was within the original segment (t is in [0,1]).",
+      "confidence": 0.9
+    }
+  ]
+}

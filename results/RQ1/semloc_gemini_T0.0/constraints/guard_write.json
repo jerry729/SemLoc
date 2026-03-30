@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_write",
+  "fault_hypothesis": "The rate limit check on line 70 uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal (`>=`). When the number of recent events is exactly equal to the limit, the function incorrectly allows another write.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not be exactly at the limit when deciding whether to allow a new event.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a write is allowed, the count of recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts >= window_start__1 for ts in recent__1)"
+      },
+      "intent": "All timestamps considered 'recent' must fall within the calculated time window.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] and __cbfl_result[1] > 0) or (not __cbfl_result[0] and __cbfl_result[1] == 0)"
+      },
+      "intent": "If a write is allowed, remaining capacity must be positive; if denied, it must be zero.",
+      "confidence": 0.9
+    }
+  ]
+}

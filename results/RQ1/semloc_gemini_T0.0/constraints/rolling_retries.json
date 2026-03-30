@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_retries",
+  "fault_hypothesis": "The mean on line 62 is calculated by dividing by the fixed window size, which is wrong when the number of available values is smaller. The divisor should be the actual number of values in the tail.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (window == len(tail__1))"
+      },
+      "intent": "The divisor for the mean should be the number of samples, unless the result is discarded due to warmup.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "window == len(tail__1)"
+      },
+      "intent": "If a mean is returned, the window size must match the number of samples used for the calculation.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (abs(mean__1 - (total__1 / len(tail__1))) < 1e-9)"
+      },
+      "intent": "The computed mean should be correct, unless it's discarded by the warmup condition.",
+      "confidence": 0.95
+    }
+  ]
+}

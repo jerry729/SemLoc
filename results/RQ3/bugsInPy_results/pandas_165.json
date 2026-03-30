@@ -1,0 +1,26 @@
+{
+  "bug_id": "pandas_165",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.datetimelike.DatetimeLikeArrayMixin.__add__",
+    "buggy_methods": [
+      "pandas.core.arrays.datetimelike.DatetimeLikeArrayMixin.__add__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.datetimelike.DatetimeLikeArrayMixin.__add__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/datetimelike.py": [
+      1210,
+      1276,
+      1343
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

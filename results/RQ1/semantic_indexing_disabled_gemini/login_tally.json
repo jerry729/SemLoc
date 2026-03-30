@@ -1,0 +1,44 @@
+{
+  "function": "login_tally",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 78,
+  "runs": [
+    {
+      "faulty_lines": [
+        74
+      ],
+      "explanation": "When the updated counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being clamped at the cap value itself. The line should be `updated = cap` to correctly enforce the upper bound.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"login_tally\",\n  \"faulty_lines\": [\n    74\n  ],\n  \"explanation\": \"When the updated counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being clamped at the cap value itself. The line should be `updated = cap` to correctly enforce the upper bound.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        74
+      ],
+      "valid_preds": [
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

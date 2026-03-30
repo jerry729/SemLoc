@@ -1,0 +1,38 @@
+{
+  "bug_id": "black_23",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.lib2to3_parse",
+    "buggy_methods": [
+      "black.lib2to3_parse"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.lib2to3_parse",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      241,
+      245,
+      246,
+      247,
+      248,
+      249,
+      251,
+      252,
+      253,
+      254,
+      1541
+    ],
+    "tests/function.py": [
+      18,
+      99
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

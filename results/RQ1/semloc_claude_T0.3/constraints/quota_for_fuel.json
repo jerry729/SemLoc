@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_fuel",
+  "fault_hypothesis": "Line 66 uses `int(x)` (truncation) instead of a rounding strategy that conserves the total, causing the sum of allocations to be less than `total` when fractional shares are truncated.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "After integer truncation, the sum of allocations must equal the total; truncation without remainder redistribution violates this.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "The integer allocation list must sum to the total; int() truncation loses fractional remainders.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "Before returning, the final allocations must conserve the total fuel.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "At the end of the integer-allocation branch, the sum must equal total.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned allocations must sum to the input total in all cases.",
+      "confidence": 0.8
+    }
+  ]
+}

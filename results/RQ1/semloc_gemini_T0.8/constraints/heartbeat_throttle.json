@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "heartbeat_throttle",
+  "fault_hypothesis": "The rate limit check on line 73 uses a strict greater-than comparison (`>`) instead of greater-than-or-equal-to (`>=`), failing to throttle when the number of active heartbeats is exactly at the limit.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The failing cases occur precisely at the boundary where the number of active heartbeats equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the action is allowed (by taking the 'else' path), the number of active heartbeats must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "all(t >= cutoff__1 for t in active__1)"
+      },
+      "intent": "All timestamps counted as active must be at or after the calculated cutoff time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (len(active) < limit)"
+      },
+      "intent": "The action should be allowed if and only if the number of active heartbeats is strictly less than the limit.",
+      "confidence": 0.8
+    }
+  ]
+}

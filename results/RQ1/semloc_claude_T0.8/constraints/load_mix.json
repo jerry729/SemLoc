@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_mix",
+  "fault_hypothesis": "The function never normalises the blended allocations before returning; line 68 returns `adjusted` directly instead of dividing each element by the total sum, so the result does not sum to 1.0 in general (and specifically fails when inputs are not already normalised).",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 (normalised), which fails when inputs are not already normalised.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0"
+      },
+      "intent": "Immediately after initialisation, adjusted__1 should be empty before the loop fills it.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(0.0 <= v for v in adjusted__1)"
+      },
+      "intent": "Each blended value appended must be non-negative after clamping.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation vector must always sum to exactly 1.0.",
+      "confidence": 0.9
+    }
+  ]
+}

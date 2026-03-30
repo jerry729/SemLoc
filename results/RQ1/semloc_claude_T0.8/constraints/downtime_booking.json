@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "downtime_booking",
+  "fault_hypothesis": "The `overlaps` function on line 64 uses strict inequalities (`b[1] <= a[0]` and `b[0] >= a[1]`), which treats adjacent windows (where end equals start) as non-overlapping. The failing tests expect adjacent boundaries to be treated as overlapping, so the condition should use strict less-than (`b[1] < a[0]` and `b[0] > a[1]`).",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "not (200 <= 100 or 200 >= 200) == False"
+      },
+      "intent": "Check that overlaps returns True when candidate start equals existing end (adjacent boundary), which the buggy strict inequality makes False.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[0] == slot[1] or candidate[1] == slot[0])"
+      },
+      "intent": "After the non-overlap branch, ensure no adjacent-boundary case was incorrectly passed through as non-overlapping.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0] or slot[0] == candidate[1])"
+      },
+      "intent": "At each loop iteration tail, verify no adjacent-boundary slot was processed without triggering the overlap return.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (merged__1[i][1] == merged__1[j][0] or merged__1[j][1] == merged__1[i][0]) for i in range(len(merged__1)) for j in range(i+1, len(merged__1)))"
+      },
+      "intent": "After building merged, confirm no adjacent-boundary windows exist, which would indicate a candidate that should have been rejected was accepted.",
+      "confidence": 0.75
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "coverage_interp",
+  "fault_hypothesis": "The condition on line 66 is inverted; it should be `if clamp:` but is `if not clamp:`. This causes the clamping logic to execute when `clamp` is False and be skipped when `clamp` is True.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The interpolated value before clamping should be within the y-range, which is true for all passing tests but false for all failing extrapolation tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "When clamp is True, the code enters the (buggy) else branch, where the value should be clamped but is not.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 == y__1"
+      },
+      "intent": "When clamp is False, the code enters the (buggy) then branch, where the value is incorrectly clamped instead of remaining unchanged.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp and y__5 == y__1) or (clamp and y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "The final value must be unclamped if clamp is False, and within the y-range if clamp is True.",
+      "confidence": 1.0
+    }
+  ]
+}

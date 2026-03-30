@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_mix",
+  "fault_hypothesis": "The function calculates the blended allocation weights but omits the required normalization step before returning them. As a result, the returned list does not sum to 1.0 as specified in the docstring, causing tests with un-normalized inputs to fail.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of allocations must be normalized to sum to 1.0 before being returned.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "all(0.0 <= x <= 1.0 for x in adjusted__1)"
+      },
+      "intent": "All individual allocation weights in the final list must be within the valid probability range of [0, 1].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The sum of allocations must be 1.0 before the list is returned, unless the list is empty.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list, representing a probability distribution, must sum to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

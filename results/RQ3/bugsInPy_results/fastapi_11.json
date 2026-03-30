@@ -1,0 +1,25 @@
+{
+  "bug_id": "fastapi_11",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.dependencies.utils.is_scalar_field",
+    "buggy_methods": [
+      "fastapi.dependencies.utils.is_scalar_field"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.dependencies.utils.is_scalar_field",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/dependencies/utils.py": [
+      134,
+      139
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

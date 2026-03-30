@@ -1,0 +1,44 @@
+{
+  "function": "upload_gate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        74
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the bug in the `upload_gate` function.\n\nThe function is supposed to return `(allowed, remaining)` where `allowed` is `True` if the caller may proceed, and `remaining` is the number of uploads still available (0 when gate is closed).\n\nThe key issue is on line 74: `if len(active) > limit:` should be `if len(active) >= limit:`.\n\nWhen `len(active) == limit`, the window is already at capacity, so the upload should NOT be allowed (gate should be closed, returning `False, 0`). But with `>`, when `len(active) == limit`, the condition is `False`, so it falls through to line 76 returning `True, limit - len(active)` which would be `True, 0`. This is contradictory - it says allowed but remaining is 0.\n\nAlso on line 76, when `len(active) == limit`, `remaining` would be `0`, but `allowed` is `True`. The spec says remaining is 0 when the gate is closed, implying if remaining is 0, the gate should be closed. So the boundary condition is wrong.\n\nThe fix should be `>=` on line 74 instead of `>`.\n\n{\n  \"function_name\": \"upload_gate\",\n  \"faulty_lines\": [74],\n  \"explanation\": \"The condition `len(active) > limit` should be `len(active) >= limit`. When the number of active uploads equals the limit, the gate should be closed (returning False, 0), but the current code incorrectly allows the upload and returns `True, 0` which is contradictory.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        74
+      ],
+      "valid_preds": [
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

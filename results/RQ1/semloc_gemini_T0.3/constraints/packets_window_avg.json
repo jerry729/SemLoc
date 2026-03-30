@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "packets_window_avg",
+  "fault_hypothesis": "The mean on line 63 is calculated by dividing `total` by `window`, but it should divide by the actual number of samples, `len(recent)`. This is incorrect when the number of available samples is less than the window size.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) == window) or (len(recent__1) < warmup_min)"
+      },
+      "intent": "The division by `window` is only correct if the window is full, or if the computed mean is discarded due to the warmup condition.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "When a mean value is returned, it must be the sum of recent samples divided by the count of recent samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= window"
+      },
+      "intent": "The number of recent samples taken from the values sequence cannot exceed the specified window size.",
+      "confidence": 0.8
+    }
+  ]
+}

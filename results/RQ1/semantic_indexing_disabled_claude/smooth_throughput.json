@@ -1,0 +1,44 @@
+{
+  "function": "smooth_throughput",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "The average is computed by dividing by `window` instead of `len(tail)`. When the series has fewer elements than the window size, `tail` contains fewer samples than `window`, so dividing by `window` produces an incorrectly low average.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the code, the bug is on line 61: `avg = total / window`.\n\nThe average should be computed by dividing by the number of elements actually in `tail` (i.e., `len(tail)`), not by `window`. When `len(series) < window`, `tail` will have fewer elements than `window`, making the divisor too large and the average incorrectly small.\n\n```json\n{\n  \"function_name\": \"smooth_throughput\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The average is computed by dividing by `window` instead of `len(tail)`. When the series has fewer elements than the window size, `tail` contains fewer samples than `window`, so dividing by `window` produces an incorrectly low average.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

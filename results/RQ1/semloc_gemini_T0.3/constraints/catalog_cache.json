@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "catalog_cache",
+  "fault_hypothesis": "The expiry check on line 64 uses a strict greater-than comparison (`>`), which incorrectly treats an entry as valid when the current time is exactly equal to the expiration time. The comparison should be greater-than-or-equal (`>=`) to correctly expire entries on the boundary.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "(now > adjusted_expiry__1) == (now >= adjusted_expiry__1)"
+      },
+      "intent": "The result of the buggy comparison should be the same as the correct comparison logic.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "If the entry is considered valid (not expired), the current time must be strictly less than the adjusted expiry time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "A cached value should only be prepared for return if it has not yet expired.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in entries and now == entries[key][1] and __cbfl_result is not None)"
+      },
+      "intent": "An entry accessed exactly at its expiration time must be considered expired and not be returned.",
+      "confidence": 0.8
+    }
+  ]
+}

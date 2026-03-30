@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "retry_backoff_window",
+  "fault_hypothesis": "On line 66, when the raw delay exceeds max_delay, the capped value is set to `max_delay + base` instead of simply `max_delay`, causing the returned delay to exceed the configured maximum.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "delay__2 <= max_delay"
+      },
+      "intent": "After capping, delay__2 must not exceed max_delay; the bug adds base to max_delay making it too large.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "delay__2"
+        }
+      },
+      "spec": {
+        "expr": "delay__2 == max_delay"
+      },
+      "intent": "The capped delay should equal exactly max_delay, not max_delay + base.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "delay__3 <= max_delay"
+      },
+      "intent": "After the then-branch that applies the cap, the resulting delay must not exceed max_delay.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result <= max_delay"
+      },
+      "intent": "The returned delay must never exceed max_delay regardless of inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

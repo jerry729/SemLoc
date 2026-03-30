@@ -1,0 +1,44 @@
+{
+  "function": "smooth_cpu",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        68
+      ],
+      "explanation": "The mean is computed by dividing `total` by `window`, but when fewer than `window` samples are available (i.e., `len(tail) < window`), it should divide by `len(tail)` to get the correct arithmetic mean of the actual samples.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the code, the issue is on line 68: `mean = total / window`. \n\nWhen the tail has fewer elements than `window` (e.g., when `len(values) < window`), dividing by `window` instead of `len(tail)` gives an incorrect (too small) mean. The divisor should be `len(tail)` to compute the actual arithmetic mean of the available samples.\n\n```json\n{\n  \"function_name\": \"smooth_cpu\",\n  \"faulty_lines\": [68],\n  \"explanation\": \"The mean is computed by dividing `total` by `window`, but when fewer than `window` samples are available (i.e., `len(tail) < window`), it should divide by `len(tail)` to get the correct arithmetic mean of the actual samples.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        68
+      ],
+      "valid_preds": [
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 68,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

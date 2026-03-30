@@ -1,0 +1,44 @@
+{
+  "function": "guard_email",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        71
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the issue is on line 71. The condition `if len(recent) > limit` should be `if len(recent) >= limit`. \n\nWhen `len(recent) == limit`, the email should not be allowed (quota is exhausted), but the current condition allows it through and returns `remaining = 0`. This means when the count exactly equals the limit, it still returns `(True, 0)` instead of `(False, 0)`.\n\n{\n  \"function_name\": \"guard_email\",\n  \"faulty_lines\": [71],\n  \"explanation\": \"The condition `len(recent) > limit` should be `len(recent) >= limit`. When the number of recent sends equals the limit, the quota is exhausted and the email should be blocked, but the current code incorrectly allows it through.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        71
+      ],
+      "valid_preds": [
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 71,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

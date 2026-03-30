@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_64",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.io.formats.excel.ExcelFormatter.__init__",
+    "buggy_methods": [
+      "pandas.io.formats.excel.ExcelFormatter.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.io.formats.excel.ExcelFormatter.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/io/formats/excel.py": [
+      406
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

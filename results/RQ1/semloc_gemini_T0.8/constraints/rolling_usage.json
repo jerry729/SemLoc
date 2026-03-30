@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_usage",
+  "fault_hypothesis": "The average on line 67 is calculated by dividing the sum by the `window` size. This is incorrect when the series has fewer elements than the window, as the divisor should be the actual number of samples in the tail, `len(tail)`.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < max(warmup_min, 2)) or abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "If the calculated average is not discarded by the warmup logic, it must be the total sum divided by the actual number of samples in the tail.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "When a numeric average is about to be returned, it must be correctly computed using the tail's actual length as the divisor.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < max(warmup_min, 2)) or (window == len(tail__1))"
+      },
+      "intent": "The divisor 'window' is only correct if it matches the tail length, unless the warmup check will discard the computed result anyway.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - (sum(series[-window:]) / len(series[-window:]))) < 1e-9"
+      },
+      "intent": "The final returned average, if not None, must be correctly computed based on the actual number of samples considered.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "function": "rebate_splitter",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the fee should be deducted from the total amount before distribution, not from each individual share. The docstring says \"The fee is deducted from the total amount before distribution,\" but the implementation deducts the fee from each recipient's share individually.\n\nThe correct implementation should be:\n```python\nbase = amount - fee\npayouts = [(r / total_ratio) * base for r in ratios]\n```\n\nInstead, line 62 computes shares from the full `amount`, and line 64 subtracts `fee` from each individual share, effectively deducting `fee * len(ratios)` total instead of just `fee`.\n\n```json\n{\n  \"function_name\": \"rebate_splitter\",\n  \"faulty_lines\": [62, 64],\n  \"explanation\": \"The fee should be deducted from the total amount before splitting (net = amount - fee), but instead the code computes shares from the full amount and then subtracts the fee from each individual share, effectively deducting fee*N total instead of fee once.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

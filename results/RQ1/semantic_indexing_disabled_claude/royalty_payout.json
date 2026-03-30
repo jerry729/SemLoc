@@ -1,0 +1,47 @@
+{
+  "function": "royalty_payout",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        69,
+        67
+      ],
+      "explanation": "The fee is subtracted from each individual share on line 69, causing the total deducted fee to be `fee * len(ratios)` instead of just `fee`. The fee should be deducted from the total amount before distribution (i.e., distribute `amount - fee` proportionally), not from each participant's share separately.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the code, the fee should be deducted from the total pool before splitting, not from each individual share after splitting. The current implementation deducts `fee` from each participant's share, meaning the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe correct approach should be to compute `net_amount = amount - fee` and then distribute `net_amount` among participants. The bug is on line 67 where the share is calculated from `amount` instead of `(amount - fee)`, and line 69 where `fee` is incorrectly subtracted from each share.\n\n```json\n{\n  \"function_name\": \"royalty_payout\",\n  \"faulty_lines\": [69, 67],\n  \"explanation\": \"The fee is subtracted from each individual share on line 69, causing the total deducted fee to be `fee * len(ratios)` instead of just `fee`. The fee should be deducted from the total amount before distribution (i.e., distribute `amount - fee` proportionally), not from each participant's share separately.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        69,
+        67
+      ],
+      "valid_preds": [
+        69,
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

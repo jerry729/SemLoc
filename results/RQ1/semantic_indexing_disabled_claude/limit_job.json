@@ -1,0 +1,44 @@
+{
+  "function": "limit_job",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [
+        75
+      ],
+      "explanation": "The condition `len(recent) > limit` should be `len(recent) >= limit`. When the count equals the limit, no more jobs should be allowed (remaining is 0), but the current code incorrectly returns True (allowed) in that case.",
+      "confidence": 0.85,
+      "parse_ok": true,
+      "raw": "Looking at the function, the logic for determining if a job is allowed uses `len(recent) > limit` (line 75). \n\nThe docstring says \"the job is permitted only if the count is below the configured limit,\" meaning if `len(recent) == limit`, the job should NOT be allowed (count is not below limit). But with `>`, when `len(recent) == limit`, the function returns `True` (allowed) with `remaining = 0`.\n\nAdditionally, when `len(recent) == limit`, `remaining` would be `0`, which means no more jobs can be dispatched, yet the function says it's allowed - this is inconsistent. The condition should be `>= limit` to correctly block when the count reaches the limit, and `remaining` should reflect slots after this job is counted.\n\nThe faulty line is line 75 where `>` should be `>=`.\n\n```json\n{\n  \"function_name\": \"limit_job\",\n  \"faulty_lines\": [75],\n  \"explanation\": \"The condition `len(recent) > limit` should be `len(recent) >= limit`. When the count equals the limit, no more jobs should be allowed (remaining is 0), but the current code incorrectly returns True (allowed) in that case.\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [
+        75
+      ],
+      "valid_preds": [
+        75
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 75,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

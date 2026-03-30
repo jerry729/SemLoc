@@ -1,0 +1,16 @@
+{
+  "bug_id": "black_21",
+  "function": "dump_to_file",
+  "src_path": "black.py",
+  "fn_begin": 2323,
+  "fn_end": 2334,
+  "n_constraints": 4,
+  "n_tests_passing": 25,
+  "n_tests_failing": 2,
+  "line_scores": [],
+  "fault_line": 2323,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/black_21/dump_to_file_constraints.json",
+  "report_path": "/tmp/bip_semloc/black_21/violations.jsonl"
+}

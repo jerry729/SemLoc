@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "windowed_error_rate",
+  "fault_hypothesis": "Line 69 divides errors by `window` (the time duration) instead of `len(recent)` (the total number of events), producing an incorrect error rate.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "errors__1 / len(recent__1) == errors__1 / window or len(recent__1) == window"
+      },
+      "intent": "Check that dividing by window equals dividing by count only when they are equal; otherwise the divisor is wrong.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "errors__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0 and errors__1 <= len(recent__1)"
+      },
+      "intent": "Verify that errors count does not exceed total recent events, confirming the denominator should be len(recent) not window.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "errors__1"
+        }
+      },
+      "spec": {
+        "expr": "0 <= errors__1 <= len(recent__1)"
+      },
+      "intent": "Assert errors count is within valid bounds relative to the number of recent events.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "0.0 <= __cbfl_result <= 1.0"
+      },
+      "intent": "The returned error rate must always be between 0.0 and 1.0; dividing by window instead of count can violate this.",
+      "confidence": 0.8
+    }
+  ]
+}

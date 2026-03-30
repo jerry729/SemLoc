@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "read_throttle",
+  "fault_hypothesis": "The rate limit check on line 70 uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal-to (`>=`). This off-by-one error allows one more request than permitted when the number of active requests exactly equals the limit.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The number of active events should not be exactly equal to the limit, as this is the incorrectly handled boundary case.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "When allowing a request, the number of active events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "limit - len(active__1) > 0"
+      },
+      "intent": "If a request is allowed, the number of remaining slots must be positive.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] and __cbfl_result[1] == 0)"
+      },
+      "intent": "It is invalid to grant access (allowed=True) while reporting zero remaining slots.",
+      "confidence": 0.9
+    }
+  ]
+}

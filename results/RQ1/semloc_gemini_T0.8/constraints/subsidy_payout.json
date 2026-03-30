@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "subsidy_payout",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's individual share on line 71, causing the fee to be deducted multiple times. The fee should be deducted once from the total `amount` before the shares are calculated in the loop starting on line 68.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all final payouts must equal the total amount minus a single fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LOOP_HEAD",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(ratios) == 1 or amount <= fee"
+      },
+      "intent": "The buggy fee logic only produces a correct result if there is no fee, a single participant, or the fee meets or exceeds the amount (triggering clamping to zero).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "max(0.0, (r / total_ratio__1) * amount - fee) == max(0.0, (r / total_ratio__1) * (amount - fee))"
+      },
+      "intent": "The clamped payout for each participant should be the same whether the fee is incorrectly applied after splitting or correctly applied before.",
+      "confidence": 0.9
+    }
+  ]
+}

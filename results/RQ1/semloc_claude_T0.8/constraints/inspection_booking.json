@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "inspection_booking",
+  "fault_hypothesis": "The `overlaps` function on line 65 uses strict inequalities (`<=` and `>=`) that treat adjacent windows sharing only an endpoint as non-overlapping, but the tests expect adjacent windows to be considered conflicting (overlapping).",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == 100 and candidate[0] == 70) or (not (100 <= 70 or 70 >= 100))"
+      },
+      "intent": "Check that when candidate end equals existing start, overlaps returns True (conflict detected), which fails with the current strict inequality logic.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0] or candidate[1] == slot[0]) or not (slot[1] <= candidate[0] or candidate[0] >= slot[1])"
+      },
+      "intent": "At each loop iteration, when slot and candidate share an endpoint, overlaps should detect a conflict (return True), but the current condition incorrectly treats them as non-overlapping.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (s[1] == candidate[0] or candidate[1] == s[0]) for s in existing)"
+      },
+      "intent": "Before building the merged schedule, ensure no existing slot shares an endpoint with candidate (which should have been caught as a conflict).",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0] or candidate[1] == slot[0])"
+      },
+      "intent": "After the non-overlapping branch, verify that the slot and candidate do not share an endpoint boundary, which should have been flagged as overlapping.",
+      "confidence": 0.82
+    }
+  ]
+}

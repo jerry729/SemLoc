@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "water_allocator",
+  "fault_hypothesis": "The function simply truncates fractional shares with `int(v)` on line 29 without applying a largest-remainder correction, causing the sum of allocated integers to be less than `total` when remainders exist.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == total"
+      },
+      "intent": "The sum of integer-truncated shares must equal total; fails when remainders are discarded without correction.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9 or sum(shares__1) >= total"
+      },
+      "intent": "After building shares, their sum should equal total (before flooring); verifies the pre-floor values are correct.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= 0 for s in shares__1)"
+      },
+      "intent": "Each appended share should be non-negative throughout the loop.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The final returned list must sum to total regardless of flooring.",
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "energy_window_avg",
+  "fault_hypothesis": "The mean calculation on line 74 incorrectly divides by the original `window` size instead of the number of samples actually used (`len(recent)`). When the number of values is less than the window size, this results in an erroneously small average.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "The calculated mean, when multiplied by the number of samples, should equal the total sum of those samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_window__1"
+        }
+      },
+      "spec": {
+        "expr": "(window <= len(values) and effective_window__1 == window) or (window > len(values) and effective_window__1 == len(values))"
+      },
+      "intent": "The effective window size should be the smaller of the requested window and the number of available values.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == effective_window__1"
+      },
+      "intent": "The number of recent samples must match the calculated effective window size.",
+      "confidence": 0.9
+    }
+  ]
+}

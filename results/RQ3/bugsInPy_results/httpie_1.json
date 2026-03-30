@@ -1,0 +1,31 @@
+{
+  "bug_id": "httpie_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "httpie.downloads.get_unique_filename",
+    "buggy_methods": [
+      "httpie.downloads.get_unique_filename"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "httpie.downloads.get_unique_filename",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "httpie/downloads.py": [
+      142,
+      143
+    ],
+    "tests/test_downloads.py": [
+      77,
+      89,
+      90,
+      91
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

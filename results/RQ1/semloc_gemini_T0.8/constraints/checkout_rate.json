@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "checkout_rate",
+  "fault_hypothesis": "The condition `len(recent) > limit` on line 66 is an off-by-one error. It should be `len(recent) >= limit` to correctly deny a checkout when the number of recent events is already equal to the limit.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not equal the limit, as this is the boundary case mishandled by the '>' comparison.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "The code path that allows a checkout should only be taken when there is at least one slot available, i.e., recent events are strictly fewer than the limit.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > limit"
+      },
+      "intent": "This branch, which denies a checkout, should only be taken when the number of recent events strictly exceeds the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[1] == 0) or (__cbfl_result[0] == False)"
+      },
+      "intent": "If the number of remaining checkouts is zero, the checkout attempt must be denied.",
+      "confidence": 0.95
+    }
+  ]
+}

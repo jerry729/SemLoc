@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "invoice_merge_stream",
+  "fault_hypothesis": "Lines 83-84 contain a spurious post-processing step that pops the last element of the merged list when both input streams end with the same value, incorrectly removing a valid duplicate that should be preserved.",
+  "fault_line": 83,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 83
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left__1 and right__1 and merged__1[-1] == left__1[-1] == right__1[-1])"
+      },
+      "intent": "The condition that triggers the spurious pop should never be true for valid inputs where duplicates must be preserved.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == 0"
+      },
+      "intent": "After initialization, merged must be empty before any elements are appended.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) >= 1"
+      },
+      "intent": "After each loop iteration at least one element must have been appended to merged.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The then-branch of the spurious condition should never execute \u2014 popping a valid duplicate is always wrong.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The merged result must contain exactly as many elements as both input streams combined.",
+      "confidence": 0.9
+    }
+  ]
+}

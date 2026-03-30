@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "credit_share",
+  "fault_hypothesis": "On line 70, the fee is subtracted per-share rather than from the total pool before splitting. The correct approach is to deduct the fee from `amount` first (or equivalently from the total), not from each individual share.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_share(s - fee) for s in shares__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of returned shares should equal amount minus one fee (not amount minus fee*n), which fails when fee>0 and len(ratios)>1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (sum(ratios[:len(shares__1)]) / total_ratio__1) * amount) < 1e-6"
+      },
+      "intent": "After each iteration, the accumulated shares should reflect the raw proportional split of amount (before any fee deduction).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before the return comprehension, shares should sum to amount (fee not yet deducted); if this holds, the fee must be deducted once from the total, not per element.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6 or any(r < 0 for r in ratios) or amount < 0"
+      },
+      "intent": "The total payout should equal amount minus a single fee deduction, not amount minus fee multiplied by the number of participants.",
+      "confidence": 0.9
+    }
+  ]
+}

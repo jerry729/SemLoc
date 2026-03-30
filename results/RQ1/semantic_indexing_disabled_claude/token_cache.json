@@ -1,0 +1,38 @@
+{
+  "function": "token_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify what's faulty.\n\nThe function `token_cache` is supposed to return a cached token if it's still valid (not expired). The expiration check is on line 67:\n\n```python\nif now > effective_ttl:\n    return None\n```\n\nThis returns `None` when `now > effective_ttl`, meaning it returns the payload when `now <= effective_ttl`. This seems correct.\n\nWait, let me re-read. The `ttl` is described as \"a UNIX timestamp after which the entry is stale.\" So if `now >= ttl`, the entry is stale (expired). The current code returns `None` only when `now > effective_ttl`, meaning it returns the payload when `now == effective_ttl` (exactly at expiration). That could be a minor issue, but the more significant bug would be using `>` vs `>=`.\n\nActually, looking more carefully at the clock skew tolerance: `_CLOCK_SKEW_TOLERANCE = 0`. The `effective_ttl = ttl + _CLOCK_SKEW_TOLERANCE`. The intention of clock skew tolerance is typically to give a buffer *before* expiration (i.e., treat the token as expired slightly earlier than its actual TTL), which would mean `effective_ttl = ttl - _CLOCK_SKEW_TOLERANCE`. But with 0 tolerance, it doesn't matter.\n\nThe main suspicious bug: line 66 adds `_CLOCK_SKEW_TOLERANCE` when it should subtract it. Clock skew tolerance should make tokens expire *earlier* (to account for clock differences), so `effective_ttl = ttl - _CLOCK_SKEW_TOLERANCE`. Adding it extends the valid window, which is the wrong direction for a \"tolerance\" meant to protect against stale tokens.\n\nAlso line 67: `now > effective_ttl` should probably be `now >= effective_ttl` since \"after which the entry is stale\" means at exactly `ttl`, it should be stale.\n\n{\n  \"function_name\": \"token_cache\",\n  \"faulty_lines\": [66, 67],\n  \"explanation\": \"Line 66 adds _CLOCK_SKEW_TOLERANCE when it should subtract it (clock skew tolerance should make expiration earlier, not later). Line 67 uses strict `>` instead of `>=`, allowing a token to be returned at exactly its expiration timestamp when it should be considered stale.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

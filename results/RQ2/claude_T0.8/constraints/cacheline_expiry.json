@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cacheline_expiry",
+  "fault_hypothesis": "The expiry comparison on line 67 uses strict greater-than (`now > adjusted_ttl`) instead of greater-than-or-equal (`now >= adjusted_ttl`), so when `now` equals `adjusted_ttl` the entry is incorrectly returned as valid instead of expired.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "After the branch condition on line 67, if we did NOT return _DEFAULT_PAYLOAD, now must be strictly less than adjusted_ttl (not equal), meaning the payload is genuinely still valid.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1 or now >= adjusted_ttl__1"
+      },
+      "intent": "Sanity check: after computing adjusted_ttl, the boundary condition now==adjusted_ttl should be treated as expired, so the subsequent check must use >= not >.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "In the else branch (payload is returned), now must be strictly less than adjusted_ttl; equality should have caused expiry.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or now < adjusted_ttl"
+      },
+      "intent": "If a non-None payload is returned, the current time must be strictly before the adjusted TTL.",
+      "confidence": 0.8
+    }
+  ]
+}

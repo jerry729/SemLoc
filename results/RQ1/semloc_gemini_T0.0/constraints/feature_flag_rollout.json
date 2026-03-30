@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_flag_rollout",
+  "fault_hypothesis": "The comparison on line 63 is inverted. To enroll users whose deterministic hash bucket is within the rollout fraction, the check should be `bucket <= percentage`, but the code incorrectly uses `bucket > percentage`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(not (percentage == 1.0) or __cbfl_result) and (not (percentage == 0.0) or not __cbfl_result)"
+      },
+      "intent": "The result must be true for a 100% rollout and false for a 0% rollout.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= bucket__1 < 1.0"
+      },
+      "intent": "The computed bucket value must be a probability-like value between 0 and 1.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_CALL",
+        "anchor": {
+          "callee": "_validate_percentage"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= percentage <= 1.0"
+      },
+      "intent": "The percentage must be within the valid [0, 1] range after validation.",
+      "confidence": 1.0
+    }
+  ]
+}

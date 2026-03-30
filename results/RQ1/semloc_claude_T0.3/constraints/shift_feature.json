@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shift_feature",
+  "fault_hypothesis": "The function is missing a normalization step after computing the adjusted values. The docstring promises outputs summing to 1.0, but `_clamp_values` on line 59 does not normalize \u2014 it only clamps \u2014 so when inputs are large (e.g., [10.0, 20.0]), the output sum is far from 1.0.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-6"
+      },
+      "intent": "After _clamp_values, the adjusted list must sum to 1.0 as promised by the docstring.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__2) - 1.0) < 1e-6"
+      },
+      "intent": "Immediately after _clamp_values assigns adjusted__2, the values must form a valid probability distribution summing to 1.0.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-6 or all(0.0 <= v <= 1.0 for v in adjusted__1)"
+      },
+      "intent": "After interpolation, the raw adjusted values should already sum to 1.0 when inputs are valid probability distributions, but fail when inputs are large unnormalized weights.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-6"
+      },
+      "intent": "The returned allocation must always sum to 1.0 regardless of the magnitude of input weights.",
+      "confidence": 0.9
+    }
+  ]
+}

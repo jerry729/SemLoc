@@ -1,0 +1,44 @@
+{
+  "function": "sales_window_avg",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        71
+      ],
+      "explanation": "The mean is calculated by dividing the sum of recent values by the `window` size, but it should be divided by the actual number of values in the `recent` list (`len(recent)`), which can be smaller than the window size.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"sales_window_avg\",\n  \"faulty_lines\": [\n    71\n  ],\n  \"explanation\": \"The mean is calculated by dividing the sum of recent values by the `window` size, but it should be divided by the actual number of values in the `recent` list (`len(recent)`), which can be smaller than the window size.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        71
+      ],
+      "valid_preds": [
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 71,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

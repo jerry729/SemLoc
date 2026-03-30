@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lru_evictor",
+  "fault_hypothesis": "The loop condition on line 56 should be `len(order) >= capacity` instead of `len(order) > capacity`. The current condition fails to evict entries when the cache size is exactly at capacity, violating the requirement to keep the size strictly under capacity.",
+  "fault_line": 56,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 56
+        }
+      },
+      "spec": {
+        "expr": "(len(order) < capacity) if capacity > 0 else (len(order) == 0)"
+      },
+      "intent": "The loop must terminate only when the number of entries is strictly under capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_CALL",
+        "anchor": {
+          "callee": "_validate_capacity"
+        }
+      },
+      "spec": {
+        "expr": "capacity >= 0"
+      },
+      "intent": "Capacity must be a non-negative integer after validation.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total_evicted__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(order) < capacity) if capacity > 0 else (len(order) == 0)"
+      },
+      "intent": "After the eviction loop, the number of entries must be strictly under capacity.",
+      "confidence": 1.0
+    }
+  ]
+}

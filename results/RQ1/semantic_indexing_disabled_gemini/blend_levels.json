@@ -1,0 +1,47 @@
+{
+  "function": "blend_levels",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [
+        75,
+        74
+      ],
+      "explanation": "The function incorrectly removes the last element from the merged list if the last elements of both input lists are identical. This violates the function's documented contract to return a list containing all elements from both inputs.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"blend_levels\",\n  \"faulty_lines\": [\n    75,\n    74\n  ],\n  \"explanation\": \"The function incorrectly removes the last element from the merged list if the last elements of both input lists are identical. This violates the function's documented contract to return a list containing all elements from both inputs.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        75,
+        74
+      ],
+      "valid_preds": [
+        75,
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 75,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

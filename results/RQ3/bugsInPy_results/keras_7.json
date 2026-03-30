@@ -1,0 +1,24 @@
+{
+  "bug_id": "keras_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.wrappers.scikit_learn.KerasRegressor.predict",
+    "buggy_methods": [
+      "keras.wrappers.scikit_learn.KerasRegressor.predict"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.wrappers.scikit_learn.KerasRegressor.predict",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/wrappers/scikit_learn.py": [
+      323
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

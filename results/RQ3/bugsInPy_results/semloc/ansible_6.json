@@ -1,0 +1,16 @@
+{
+  "bug_id": "ansible_6",
+  "function": "_meets_requirements",
+  "src_path": "lib/ansible/galaxy/collection.py",
+  "fn_begin": 199,
+  "fn_end": 235,
+  "n_constraints": 4,
+  "n_tests_passing": 35,
+  "n_tests_failing": 5,
+  "line_scores": [],
+  "fault_line": 213,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/ansible_6/_meets_requirements_constraints.json",
+  "report_path": "/tmp/bip_semloc/ansible_6/violations.jsonl"
+}

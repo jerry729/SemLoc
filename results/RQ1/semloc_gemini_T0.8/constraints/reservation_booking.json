@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_booking",
+  "fault_hypothesis": "The conflict check on line 67 fails to account for strict adjacency conflicts. It uses the condition `end <= s or start >= e`, which incorrectly permits intervals that touch at their boundaries, whereas it should incorporate the `buffer` variable to reject them as conflicts.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(end__1 <= s or start__1 >= e) == (end__1 + buffer__1 <= s or start__1 >= e + buffer__1)"
+      },
+      "intent": "The result of the non-overlap check should match the result of a correct check that uses the adjacency buffer.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "If the code proceeds assuming no conflict, the new interval must not be merely touching the existing one.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "buffer__1 == 0 or (end__1 < s or start__1 > e)"
+      },
+      "intent": "At the end of each iteration, if strict checking is enabled, there must be a clear gap between the intervals.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not any(interval[1] == ex[0] or interval[0] == ex[1] for ex in existing) or __cbfl_result[0] == False"
+      },
+      "intent": "If the new interval touches any existing interval, the booking must be rejected.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_booking",
+  "fault_hypothesis": "The overlap check on line 67 does not use the `buffer` variable to account for adjacent intervals when `_CONFLICT_STRICT` is enabled. The condition should incorporate `buffer` so that touching boundaries (end == s or start == e) are also treated as conflicts.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (_CONFLICT_STRICT) or buffer__1 == _ADJACENCY_BUFFER"
+      },
+      "intent": "When _CONFLICT_STRICT is True, buffer must equal _ADJACENCY_BUFFER so that the overlap check uses it; if buffer is unused in the condition the adjacent-touching tests fail.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buffer__1"
+        }
+      },
+      "spec": {
+        "expr": "buffer__1 == (_ADJACENCY_BUFFER if _CONFLICT_STRICT else 0)"
+      },
+      "intent": "Verify buffer is correctly assigned based on _CONFLICT_STRICT immediately after its definition.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (_CONFLICT_STRICT) or (end__1 + buffer__1 <= s or start__1 - buffer__1 >= e) or not (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "When _CONFLICT_STRICT is True, the conflict check must consider buffer so that touching boundaries are detected as overlaps at each loop iteration.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "buffer__1"
+        }
+      },
+      "spec": {
+        "expr": "buffer__1 >= 0"
+      },
+      "intent": "Buffer must be non-negative before it is used in any conflict detection logic.",
+      "confidence": 0.7
+    }
+  ]
+}

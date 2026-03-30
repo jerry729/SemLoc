@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_capacity",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers by simple truncation on line 78. This causes a loss of total capacity when fractional shares are present, as the sum of the truncated integers is less than the original total.",
+  "fault_line": 78,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum([int(v) for v in shares__1]) == total"
+      },
+      "intent": "The sum of integer-cast shares must equal the total capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The sum of raw floating-point shares must be nearly equal to the total capacity.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(int(s) for s in shares__1) == total"
+      },
+      "intent": "The sum of truncated shares must equal the total integer capacity before returning.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(__cbfl_result) == total"
+      },
+      "intent": "If integer allocation is requested, the sum of results must equal the total.",
+      "confidence": 0.8
+    }
+  ]
+}

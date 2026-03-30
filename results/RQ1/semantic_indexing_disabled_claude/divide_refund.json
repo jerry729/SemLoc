@@ -1,0 +1,47 @@
+{
+  "function": "divide_refund",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        59,
+        61
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the fee should be deducted from the total amount before distribution, not from each individual participant's payout.\n\nLine 59 computes base proportions of the full `amount` (correct so far), but line 61 subtracts `fee` from each individual participant's share. This means the total fee deducted equals `fee * len(ratios)` instead of just `fee`.\n\nThe correct approach should be to compute `net = amount - fee` first, then distribute `net` proportionally. So line 59 should use `amount - fee` instead of `amount`, and line 61 should just be `payouts = base`.\n\n{\n  \"function_name\": \"divide_refund\",\n  \"faulty_lines\": [59, 61],\n  \"explanation\": \"The fee should be deducted from the total amount before proportional distribution (net = amount - fee), but instead line 59 distributes the full amount and line 61 subtracts fee from each participant's share, causing total deducted fee to be fee * len(ratios) rather than just fee.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        59,
+        61
+      ],
+      "valid_preds": [
+        59,
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 59,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

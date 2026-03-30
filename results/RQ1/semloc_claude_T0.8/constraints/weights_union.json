@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "weights_union",
+  "fault_hypothesis": "Lines 74-75 incorrectly remove one copy of the last element when both streams end with the same value, but the merged result should keep both copies. The pop() logic is wrong and should be removed entirely.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition triggering the pop() should never be true for valid equal-last-element inputs; it incorrectly removes a duplicate that must be preserved.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) >= 0 and (len(merged__1) == 0 or merged__1[-1] <= max(left[i__1 - 1] if i__1 > 0 else 0, right[j - 1] if j > 0 else 0))"
+      },
+      "intent": "After each merge iteration the last appended element should not exceed the most recently consumed elements from either stream.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The then-branch (pop) should never execute because removing a duplicate last element is always incorrect for this merge function.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__2"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__2) >= len(left) + len(right) - len([x for x in left if x in right])"
+      },
+      "intent": "The filtered merged result should contain at least as many elements as the simple union requires, ensuring no duplicate was incorrectly removed.",
+      "confidence": 0.7
+    }
+  ]
+}

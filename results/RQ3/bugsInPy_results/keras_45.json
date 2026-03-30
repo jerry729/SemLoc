@@ -1,0 +1,27 @@
+{
+  "bug_id": "keras_45",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.layers.recurrent.LSTMCell.call",
+    "buggy_methods": [
+      "keras.layers.recurrent.LSTMCell.call"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.layers.recurrent.LSTMCell.call",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/layers/recurrent.py": [
+      1806,
+      1807,
+      1808,
+      1809
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

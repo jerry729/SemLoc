@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_conference_slot",
+  "fault_hypothesis": "The conflict check on line 80 fails for adjacent slots because the underlying `overlaps` function logic is incorrect. It should treat touching slots as conflicts, but its use of non-strict inequalities (`<=`, `>=`) on line 76 causes it to classify them as non-overlapping.",
+  "fault_line": 80,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == (slot[0] - buffer__1) or candidate[0] == (slot[1] + buffer__1))"
+      },
+      "intent": "A slot should not be considered non-conflicting if it is merely touching an existing one.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == (slot[0] - buffer__1) or candidate[0] == (slot[1] + buffer__1))"
+      },
+      "intent": "Any iteration that continues must be for a candidate that is not touching the current existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (candidate[1] == (s[0] - buffer__1) or candidate[0] == (s[1] + buffer__1)) for s in existing)"
+      },
+      "intent": "If execution proceeds to merge the new slot, it must be because it did not touch any existing slots.",
+      "confidence": 0.9
+    }
+  ]
+}

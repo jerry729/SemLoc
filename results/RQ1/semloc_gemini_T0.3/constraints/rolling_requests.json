@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_requests",
+  "fault_hypothesis": "The average calculation on line 65 incorrectly divides by the `window` size instead of the actual number of samples (`len(tail)`). This leads to a wrong average when the series has fewer samples than the window size.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window or len(tail__1) < warmup_min"
+      },
+      "intent": "The divisor `window` is only valid if the tail fills the window, or if the result is discarded by the warmup check.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) <= window"
+      },
+      "intent": "The number of samples considered for the average cannot exceed the window size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "If a result is returned, the average must be the correct mean of the samples in the tail.",
+      "confidence": 1.0
+    }
+  ]
+}

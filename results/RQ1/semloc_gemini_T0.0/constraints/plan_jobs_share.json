@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_jobs_share",
+  "fault_hypothesis": "The function truncates fractional shares to integers on line 72, causing the sum of allocations to be less than the total capacity. The discarded remainder from the fractional parts should be distributed.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of the final integer allocations must equal the total capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(s % 1.0 for s in shares__1) < 1e-9"
+      },
+      "intent": "Simple integer truncation is only correct if there are no fractional parts to be discarded.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "abs(total - sum(int(v) for v in shares__1)) < 1"
+      },
+      "intent": "The total capacity lost to integer truncation should be less than one unit.",
+      "confidence": 0.9
+    }
+  ]
+}

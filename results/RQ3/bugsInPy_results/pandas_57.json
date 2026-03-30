@@ -1,0 +1,35 @@
+{
+  "bug_id": "pandas_57",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.categorical.Categorical.replace",
+    "buggy_methods": [
+      "pandas.core.arrays.categorical.Categorical.replace"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.categorical.Categorical.replace",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/_testing.py": [
+      1213
+    ],
+    "pandas/core/arrays/categorical.py": [
+      2444,
+      2445,
+      2446,
+      2447,
+      2449,
+      2450,
+      2451,
+      2453,
+      2455
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

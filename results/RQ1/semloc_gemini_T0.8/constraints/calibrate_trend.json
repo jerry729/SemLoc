@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_trend",
+  "fault_hypothesis": "The condition on line 63 to apply clamping is inverted. It should be `if clamp:`, but is `if not clamp:`, causing clamping to be applied when disabled and skipped when enabled.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "The bug only manifests during extrapolation, when the interpolation parameter is outside the [0, 1] range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "The clamping logic should only be executed if clamping is explicitly enabled.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "(y0 <= y1 and y__1 >= y0 and y__1 <= y1) or (y1 < y0 and y__1 >= y1 and y__1 <= y0)"
+      },
+      "intent": "If clamping is enabled but the clamping logic is skipped, the value must already be within the valid range.",
+      "confidence": 1.0
+    }
+  ]
+}

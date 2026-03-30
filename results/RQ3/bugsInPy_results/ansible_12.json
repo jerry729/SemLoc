@@ -1,0 +1,52 @@
+{
+  "bug_id": "ansible_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.plugins.lookup.env.LookupModule.run",
+    "buggy_methods": [
+      "lib.ansible.plugins.lookup.env.LookupModule.run"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.plugins.lookup.env.LookupModule.run",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/plugins/lookup/env.py": [
+      30,
+      31,
+      42
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      30,
+      31,
+      42
+    ],
+    "best_rank": null,
+    "fn_lines": 8,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 42,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "ansible_12",
+    "function": "run",
+    "src_path": "lib/ansible/plugins/lookup/env.py",
+    "fn_begin": 37,
+    "fn_end": 44,
+    "n_constraints": 4,
+    "n_tests_passing": 0,
+    "n_tests_failing": 4,
+    "line_scores": [],
+    "fault_line": 42,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/ansible_12/run_constraints.json",
+    "report_path": "/tmp/bip_semloc/ansible_12/violations.jsonl"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "scrapy_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.item.ItemMeta.__new__",
+    "buggy_methods": [
+      "scrapy.item.ItemMeta.__new__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.item.ItemMeta.__new__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/test_item.py": [
+      3
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

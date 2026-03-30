@@ -1,0 +1,24 @@
+{
+  "bug_id": "thefuck_5",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.git_push.match",
+    "buggy_methods": [
+      "thefuck.rules.git_push.match"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.git_push.match",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "thefuck/rules/git_push.py": [
+      9
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

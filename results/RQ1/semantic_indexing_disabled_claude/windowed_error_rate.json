@@ -1,0 +1,44 @@
+{
+  "function": "windowed_error_rate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        69
+      ],
+      "explanation": "The error rate should be computed as `errors / len(recent)` (fraction of events that are errors), but the code divides by `window` (the time duration in seconds), producing an incorrect result.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"windowed_error_rate\",\n  \"faulty_lines\": [69],\n  \"explanation\": \"The error rate should be computed as `errors / len(recent)` (fraction of events that are errors), but the code divides by `window` (the time duration in seconds), producing an incorrect result.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        69
+      ],
+      "valid_preds": [
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

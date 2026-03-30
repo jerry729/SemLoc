@@ -1,0 +1,65 @@
+{
+  "bug_id": "ansible_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.plugins.shell.powershell.ShellModule.join_path",
+    "buggy_methods": [
+      "lib.ansible.plugins.shell.powershell.ShellModule.join_path"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.plugins.shell.powershell.ShellModule.join_path",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/plugins/shell/powershell.py": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103
+    ],
+    "test/units/plugins/shell/test_powershell.py": [
+      1
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103
+    ],
+    "best_rank": null,
+    "fn_lines": 9,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 101,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "ansible_8",
+    "function": "join_path",
+    "src_path": "lib/ansible/plugins/shell/powershell.py",
+    "fn_begin": 95,
+    "fn_end": 103,
+    "n_constraints": 4,
+    "n_tests_passing": 4,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 101,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/ansible_8/join_path_constraints.json",
+    "report_path": "/tmp/bip_semloc/ansible_8/violations.jsonl"
+  }
+}

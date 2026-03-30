@@ -1,0 +1,24 @@
+{
+  "bug_id": "matplotlib_28",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axes._base._AxesBase.set_xlim",
+    "buggy_methods": [
+      "lib.matplotlib.axes._base._AxesBase.set_xlim"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axes._base._AxesBase.set_xlim",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/axes/_base.py": [
+      3252
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

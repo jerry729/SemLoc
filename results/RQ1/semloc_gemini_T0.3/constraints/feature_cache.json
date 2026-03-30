@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_cache",
+  "fault_hypothesis": "The expiration check on line 66 incorrectly handles the boundary case where `now == ttl`. It should consider the item expired and return `None`, but instead it returns the payload.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "now != ttl__1"
+      },
+      "intent": "An item at its exact expiry time should be handled by the expiry branch, not the success path.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "If an item is not considered expired, the current time must be strictly less than its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "A payload should only be returned if its TTL has not been reached.",
+      "confidence": 1.0
+    }
+  ]
+}

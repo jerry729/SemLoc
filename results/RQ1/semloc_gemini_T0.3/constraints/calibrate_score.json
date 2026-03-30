@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_score",
+  "fault_hypothesis": "The clamping logic is incorrectly inverted. The condition on line 65 should be `if clamp:` instead of `if not clamp:`, causing the function to clamp when it should extrapolate and vice-versa.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "The logic for handling extrapolation (when t is outside [0,1]) is faulty, and this condition separates passing interpolation tests from failing extrapolation tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamp is False, the value should not be modified, so this clamping path should only be taken for values already in range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamp is True, this path is taken but fails to clamp extrapolated values; it should only be taken if the value is already in range.",
+      "confidence": 0.9
+    }
+  ]
+}

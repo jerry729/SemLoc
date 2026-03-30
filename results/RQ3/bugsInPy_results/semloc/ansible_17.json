@@ -1,0 +1,16 @@
+{
+  "bug_id": "ansible_17",
+  "function": "get_mount_info",
+  "src_path": "lib/ansible/module_utils/facts/hardware/linux.py",
+  "fn_begin": 463,
+  "fn_end": 472,
+  "n_constraints": 4,
+  "n_tests_passing": 0,
+  "n_tests_failing": 3,
+  "line_scores": [],
+  "fault_line": 470,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/ansible_17/get_mount_info_constraints.json",
+  "report_path": "/tmp/bip_semloc/ansible_17/violations.jsonl"
+}

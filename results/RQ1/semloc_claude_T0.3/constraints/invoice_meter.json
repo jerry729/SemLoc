@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "invoice_meter",
+  "fault_hypothesis": "On line 64, when new_value exceeds effective_max, the code sets new_value to effective_max - 1 instead of effective_max, causing the counter to be capped one below the ceiling.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_max__1"
+      },
+      "intent": "After capping, new_value should equal effective_max, not effective_max - 1.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_max__1"
+      },
+      "intent": "The capped value must equal the ceiling, not one less than it.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_max__1"
+      },
+      "intent": "Inside the capping branch, the result must be exactly effective_max.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "max_value is None or __cbfl_result <= max_value"
+      },
+      "intent": "The returned value must never exceed max_value when a cap is provided.",
+      "confidence": 0.85
+    }
+  ]
+}

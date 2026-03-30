@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_trend",
+  "fault_hypothesis": "The condition on line 63 is inverted: `if not clamp` applies clamping when clamp is False and skips clamping when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True the branch that restricts y should be entered, so the condition should be `if clamp` not `if not clamp`.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "After the then-branch executes, clamp should be False (meaning clamping was NOT requested), but the inverted condition causes it to execute when clamp is True.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp and low__1 <= y__2 <= high__1"
+      },
+      "intent": "y__2 is the clamped value; it should only be computed (and used) when clamping is disabled according to the inverted logic, but semantically clamping should only happen when clamp is True.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (min(y0, y1) - 1e-9 <= __cbfl_result <= max(y0, y1) + 1e-9)"
+      },
+      "intent": "When clamp is True the returned value must lie within the segment range [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.95
+    }
+  ]
+}

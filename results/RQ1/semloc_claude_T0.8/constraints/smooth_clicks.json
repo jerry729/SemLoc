@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_clicks",
+  "fault_hypothesis": "On line 58, the mean is computed as `total / window` instead of `total / len(tail)`. When the window is larger than the available data, this divides by the window size rather than the actual number of elements, producing a value that is too small.",
+  "fault_line": 58,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 58
+        }
+      },
+      "spec": {
+        "expr": "mean__1 == total__1 / len(tail__1)"
+      },
+      "intent": "The mean must be total divided by the actual number of tail elements, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window or mean__1 == total__1 / len(tail__1)"
+      },
+      "intent": "When fewer samples than window exist, mean must be based on actual sample count.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "mean__1 * len(tail__1) == total__1"
+      },
+      "intent": "Before returning, mean times actual sample count must equal total.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "round(total__1 / len(tail__1), _PRECISION_DIGITS) == round(mean__1, _PRECISION_DIGITS)"
+      },
+      "intent": "After the warmup branch, the rounded mean must equal total divided by actual sample count.",
+      "confidence": 0.88
+    }
+  ]
+}

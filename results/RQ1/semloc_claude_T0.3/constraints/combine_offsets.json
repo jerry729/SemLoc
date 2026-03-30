@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_offsets",
+  "fault_hypothesis": "Lines 70-71 incorrectly pop the last element when both lists share the same last value, removing a legitimate duplicate. This post-processing block should not exist at all.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "len(merged) == len(left) + len(right)"
+      },
+      "intent": "After the pop, the merged list must still have exactly len(left)+len(right) elements, which is violated when both lists share a last element.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged) == len(left) + len(right)"
+      },
+      "intent": "Inside the then-branch that pops an element, the resulting length must still equal the sum of input lengths.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "Before returning, the merged list length must equal the total number of input elements.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned list must contain exactly as many elements as both inputs combined.",
+      "confidence": 0.85
+    }
+  ]
+}

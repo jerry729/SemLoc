@@ -1,0 +1,28 @@
+{
+  "bug_id": "luigi_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.contrib.beam_dataflow.BeamDataflowJobTask.get_target_path",
+    "buggy_methods": [
+      "luigi.contrib.beam_dataflow.BeamDataflowJobTask.get_target_path"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.contrib.beam_dataflow.BeamDataflowJobTask.get_target_path",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/contrib/beam_dataflow.py": [
+      477,
+      479
+    ],
+    "test/contrib/beam_dataflow_test.py": [
+      20
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

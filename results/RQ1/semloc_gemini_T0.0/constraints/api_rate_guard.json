@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "api_rate_guard",
+  "fault_hypothesis": "The condition `len(recent) > limit` on line 72 is an off-by-one error. It should be `len(recent) >= limit` to correctly deny requests when the number of recent requests is exactly equal to the limit.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent requests should not be exactly equal to the limit, as this boundary case is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "The 'allowed' branch should only be taken if the number of recent requests is strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(t >= cutoff__1 for t in recent__1)"
+      },
+      "intent": "All timestamps considered 'recent' must be within the time window starting at the cutoff.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] and __cbfl_result[1] > 0) or (not __cbfl_result[0] and __cbfl_result[1] == 0)"
+      },
+      "intent": "If a request is allowed, there must be remaining slots; if denied, remaining must be zero.",
+      "confidence": 0.95
+    }
+  ]
+}

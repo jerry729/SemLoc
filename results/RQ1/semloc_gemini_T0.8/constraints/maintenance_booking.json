@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "maintenance_booking",
+  "fault_hypothesis": "The overlap detection on line 77 uses a condition for strict overlap, which incorrectly misses cases where intervals touch at a boundary. The logic should treat adjacent windows as conflicts.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not any(a__1 <= e and b__1 >= s for s, e in timeline)"
+      },
+      "intent": "If the code proceeds past the overlap check, there must be no overlaps at all, including adjacent windows.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "A successful booking must result in a timeline where all intervals are strictly non-overlapping and sorted.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "a__1 < b__1"
+      },
+      "intent": "After validation, the window start must be strictly less than the window end.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(a__1 <= e and b__1 >= s for s, e in timeline)"
+      },
+      "intent": "If the code's overlap check passes, there must be no true overlaps, including touching boundaries.",
+      "confidence": 1.0
+    }
+  ]
+}

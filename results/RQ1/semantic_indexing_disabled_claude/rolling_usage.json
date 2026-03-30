@@ -1,0 +1,38 @@
+{
+  "function": "rolling_usage",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    66
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, the key issue is on line 67:\n\n```python\navg = total / window\n```\n\nThe average should be computed over the actual number of samples in `tail` (i.e., `len(tail)`), not over `window`. When `len(series) < window`, the tail has fewer elements than `window`, so dividing by `window` gives an incorrect (lower) average instead of the true mean of the available samples.\n\nFor example, if `series = [10, 20]` and `window = 5`, then `tail = [10, 20]`, `total = 30`, but `avg = 30/5 = 6.0` instead of the correct `30/2 = 15.0`.\n\n{\n  \"function_name\": \"rolling_usage\",\n  \"faulty_lines\": [67],\n  \"explanation\": \"The average is computed by dividing by `window` instead of `len(tail)`. When the series has fewer elements than the window, this produces an incorrect (too-small) mean because it divides by the window size rather than the actual number of samples in the tail.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

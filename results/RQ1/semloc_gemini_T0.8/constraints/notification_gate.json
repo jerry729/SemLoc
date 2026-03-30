@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "notification_gate",
+  "fault_hypothesis": "The comparison on line 63 should be `>=` instead of `>`. The current logic incorrectly permits a new notification when the number of recent events is exactly equal to the limit, whereas it should be blocked.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "The number of recent events should not be exactly equal to the limit, as this case should be handled by the 'deny' logic.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If control flow proceeds to allow a notification, the count of recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] and len(recent__1) == limit) if 'recent__1' in locals() and '__cbfl_result' in locals() else True"
+      },
+      "intent": "It should not be possible to both allow a notification and have the number of recent events be exactly at the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

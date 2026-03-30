@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_delivery_slot",
+  "fault_hypothesis": "The overlap detection on line 67 incorrectly uses non-strict inequalities (`<=`, `>=`), which fails to identify touching intervals as conflicts. The correct logic should use strict inequalities (`<`, `>`) to reject windows that are adjacent to existing slots.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(any(not (b__1 <= s or a__1 >= e) for s, e in timeline)) == (any(not (b__1 < s or a__1 > e) for s, e in timeline))"
+      },
+      "intent": "The buggy overlap check should yield the same result as a correct check using strict inequalities.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 != s and a__1 != e for s, e in timeline)"
+      },
+      "intent": "If no overlap is detected, then the new window must not be touching any existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1) - 1))"
+      },
+      "intent": "The updated timeline must not contain any touching or overlapping slots after sorting.",
+      "confidence": 0.9
+    }
+  ]
+}

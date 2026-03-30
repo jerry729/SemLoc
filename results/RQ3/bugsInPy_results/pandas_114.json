@@ -1,0 +1,39 @@
+{
+  "bug_id": "pandas_114",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.base.Index.get_value",
+    "buggy_methods": [
+      "pandas.core.indexes.base.Index.get_value"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.base.Index.get_value",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      4492,
+      4493,
+      4494,
+      4495,
+      4496,
+      4497,
+      4498,
+      4499,
+      4500,
+      4501,
+      4502,
+      4503,
+      4504,
+      4505,
+      4506,
+      4507
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

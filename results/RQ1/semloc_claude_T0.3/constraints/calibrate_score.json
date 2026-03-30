@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_score",
+  "fault_hypothesis": "The condition on line 65 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior described in the docstring.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or clamp == False"
+      },
+      "intent": "When clamp is True the branch body (clamping logic) should execute, but the condition `not clamp` causes it to execute only when clamp is False \u2014 this constraint flags that the branch condition is inverted relative to the parameter.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True (the else branch of `if not clamp`), the result should be unclamped \u2014 but actually it should be clamped; this checks the invariant that is violated by the inverted condition.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "After y__5 is finalized, if clamp is True the value must lie within [min(y0,y1), max(y0,y1)]; the inverted branch condition causes this to fail.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "lo__1"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "lo__1 is only computed and used inside the clamping block; if clamp is True this block should not execute, so reaching this point with clamp=True indicates the branch condition is wrong.",
+      "confidence": 0.85
+    }
+  ]
+}

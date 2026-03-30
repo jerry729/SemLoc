@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bill_payout",
+  "fault_hypothesis": "The fee is incorrectly deducted from each participant's individual share on line 70, rather than from the total amount before distribution. This results in the total fee being multiplied by the number of participants.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the initial amount minus the single fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(shares__1) == 1"
+      },
+      "intent": "The fee deduction logic is only correct if there is no fee or only one participant.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(ratios) == 1"
+      },
+      "intent": "The subsequent fee logic is only valid if there is no fee or a single ratio.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "luigi_25",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.contrib.redshift.S3CopyToTable.run",
+    "buggy_methods": [
+      "luigi.contrib.redshift.S3CopyToTable.run"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.contrib.redshift.S3CopyToTable.run",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/contrib/redshift.py": [
+      166
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

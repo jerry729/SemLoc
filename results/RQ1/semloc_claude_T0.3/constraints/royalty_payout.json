@@ -1,0 +1,81 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "royalty_payout",
+  "fault_hypothesis": "The fee is deducted per-participant share (s - fee) instead of being deducted once from the total pool before splitting. The bug is on line 69 where `s - fee` should instead be computed from `(amount - fee)` distributed proportionally, or equivalently the fee should be deducted from the pool before computing shares.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(s - fee) for s in shares__1]) - max(0.0, amount - fee * len(ratios))) < 1e-6 or abs(sum([_clamp_payout(s - fee) for s in shares__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of payouts should equal amount minus fee (deducted once), not amount minus fee*n (deducted per participant).",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before fee deduction, the raw shares should sum exactly to amount.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == len(ratios)"
+      },
+      "intent": "The shares list must have one entry per participant before being used in the return expression.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - sum(ratios[:len(shares__1)]) / total_ratio__1 * amount) < 1e-6"
+      },
+      "intent": "At each loop iteration the accumulated shares should equal the proportional amount for ratios seen so far.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "fee == 0.0 or abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The total payout should equal amount minus the fee deducted once from the pool.",
+      "confidence": 0.85
+    }
+  ]
+}

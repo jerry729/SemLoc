@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gradient_clip_budget",
+  "fault_hypothesis": "The scaling factor on line 66 is calculated incorrectly using `norm + 1` in the denominator instead of just `norm`. This causes the rescaled gradient vector's norm to be smaller than the required `max_norm`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "scale__1 == max_norm / norm__1"
+      },
+      "intent": "The scaling factor should be the ratio of the target norm to the original norm.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "scale__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((scale__1 * norm__1) - max_norm) < 1e-9"
+      },
+      "intent": "The product of the scale factor and the original norm must equal the target norm.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum((g * scale__1)**2 for g in gradients) - max_norm**2) < 1e-9"
+      },
+      "intent": "The L2 norm of the gradients returned from this branch must equal `max_norm`.",
+      "confidence": 0.9
+    }
+  ]
+}

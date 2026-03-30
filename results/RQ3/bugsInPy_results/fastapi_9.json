@@ -1,0 +1,24 @@
+{
+  "bug_id": "fastapi_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.dependencies.utils.get_body_field",
+    "buggy_methods": [
+      "fastapi.dependencies.utils.get_body_field"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.dependencies.utils.get_body_field",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/dependencies/utils.py": [
+      577
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "votes_apportion",
+  "fault_hypothesis": "The function simply floors each share independently (line 29) without applying a largest-remainder correction, so fractional votes are discarded and the sum of allocations can be less than total.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "sum(int(v) for v in shares__1) == total"
+      },
+      "intent": "After flooring, the sum of integer allocations must equal total (largest-remainder not applied, so this fails).",
+      "confidence": 0.93
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9 or sum(shares__1) >= total"
+      },
+      "intent": "After building shares list, the raw (pre-floor) sum should equal total; if it does not, remainder will be lost after flooring.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= minimum for s in shares__1)"
+      },
+      "intent": "Every accumulated share must be at least minimum after each iteration.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The returned allocations must sum exactly to total regardless of rounding strategy.",
+      "confidence": 0.88
+    }
+  ]
+}

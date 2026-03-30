@@ -1,0 +1,45 @@
+{
+  "bug_id": "fastapi_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.applications.FastAPI.get",
+    "buggy_methods": [
+      "fastapi.applications.FastAPI.get"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.applications.FastAPI.get",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/encoders.py": [
+      37,
+      71,
+      90,
+      97,
+      105,
+      121,
+      156
+    ],
+    "fastapi/openapi/utils.py": [
+      84,
+      313
+    ],
+    "fastapi/routing.py": [
+      52,
+      56,
+      59,
+      63,
+      67,
+      86
+    ],
+    "tests/test_skip_defaults.py": [
+      25
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

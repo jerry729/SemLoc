@@ -1,0 +1,28 @@
+{
+  "bug_id": "luigi_11",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.scheduler.Scheduler.get_work",
+    "buggy_methods": [
+      "luigi.scheduler.Scheduler.get_work"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.scheduler.Scheduler.get_work",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/scheduler.py": [
+      897
+    ],
+    "test/scheduler_api_test.py": [
+      1492,
+      1496
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

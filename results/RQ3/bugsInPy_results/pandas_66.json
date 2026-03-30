@@ -1,0 +1,34 @@
+{
+  "bug_id": "pandas_66",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.managers.SingleBlockManager.fast_xs",
+    "buggy_methods": [
+      "pandas.core.internals.managers.SingleBlockManager.fast_xs"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.managers.SingleBlockManager.fast_xs",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/generic.py": [
+      3445,
+      3447,
+      3448,
+      3449,
+      3450,
+      3451,
+      3452,
+      3453
+    ],
+    "pandas/core/internals/managers.py": [
+      1568
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

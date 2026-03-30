@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prediction_cache",
+  "fault_hypothesis": "The expiration check on line 73 uses a strict inequality (`>`), which incorrectly treats an entry as valid when the current time is exactly equal to its deadline. The check should be `>=` to correctly expire entries when their deadline is reached.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "An entry is only considered valid if the current time is strictly less than its deadline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "If the non-expired branch is taken, the current time must be strictly before the deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "A cached value should only be used if the current time is strictly before its deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in store and now == store[key][1]) or (__cbfl_result == default)"
+      },
+      "intent": "If the current time exactly matches an entry's deadline, the default value must be returned.",
+      "confidence": 0.3
+    }
+  ]
+}

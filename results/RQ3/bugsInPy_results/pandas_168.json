@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_168",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.grouper._get_grouper",
+    "buggy_methods": [
+      "pandas.core.groupby.grouper._get_grouper"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.grouper._get_grouper",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/grouper.py": [
+      609,
+      612
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_jobs_share",
+  "fault_hypothesis": "The code on line 72 truncates floating-point shares to integers using `int()`, which discards any fractional remainder. This causes the sum of the resulting integer allocations to be less than the original total capacity.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum([int(v) for v in shares__1]) == total"
+      },
+      "intent": "The sum of the final integer allocations must equal the total capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or total - sum([int(v) for v in shares__1]) == 0"
+      },
+      "intent": "When converting to integers, no capacity should be lost due to simple truncation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) >= total"
+      },
+      "intent": "The sum of integer allocations must not be less than the total capacity.",
+      "confidence": 0.9
+    }
+  ]
+}

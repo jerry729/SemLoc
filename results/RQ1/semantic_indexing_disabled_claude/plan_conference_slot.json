@@ -1,0 +1,38 @@
+{
+  "function": "plan_conference_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    76
+  ],
+  "total_source_lines": 86,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `overlaps` function on line 76:\n\n```python\nreturn not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nThis checks if `b` overlaps with `a`. Two intervals `a` and `b` do NOT overlap if `b` ends at or before `a` starts (`b[1] <= a[0]`) or `b` starts at or after `a` ends (`b[0] >= a[1]`). This logic seems correct for standard overlap detection.\n\nHowever, the issue is with the `overlaps` call on line 80:\n\n```python\nif overlaps((slot[0] - buffer, slot[1] + buffer), candidate):\n```\n\nThe `overlaps` function uses `b[1] <= a[0]` (strict less-than-or-equal), meaning touching slots (where one ends exactly where another begins) are NOT considered overlapping. This is correct for the default case (`_CONFLICT_STRICT = False`).\n\nWait, let me reconsider line 76 more carefully. The condition `b[1] <= a[0]` means b ends before or exactly at a's start (no overlap). And `b[0] >= a[1]` means b starts at or after a's end (no overlap). This is the standard interval overlap check and appears correct.\n\nBut looking at the `_validate_slot` function on line 28:\n\n```python\nif duration < _MIN_SLOT_DURATION_MINUTES and duration > 0:\n```\n\nThis allows negative duration slots (where `start > end`) to pass validation without error, since a negative duration is not `> 0`. The `plan_conference_slot` function then checks `candidate[0] >= candidate[1]` separately, but `_validate_slot` is called first and should catch invalid slots. However, existing slots with negative durations would pass `_validate_slot` without error, which seems like a bug.\n\nThe main bug: line 28 uses `and duration > 0` which means negative durations (invalid slots where start > end) pass validation silently.\n\n{\n  \"function_name\": \"plan_conference_slot\",\n  \"faulty_lines\": [28, 76],\n  \"explanation\": \"Line 28 in `_validate_slot` uses `and duration > 0` which allows negative durations (start > end) to pass validation since negative values are not > 0. Line 76's overlap check uses `b[0] >= a[1]` which means touching slots (adjacent) are not flagged as overlapping even when they should be in strict mode.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

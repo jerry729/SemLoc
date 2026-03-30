@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_expiry",
+  "fault_hypothesis": "Line 77 uses strict greater-than (`now > adjusted_expiry`) instead of greater-than-or-equal (`now >= adjusted_expiry`), so when `now` exactly equals `adjusted_expiry` the entry is incorrectly returned as valid instead of expired.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1) or (now >= adjusted_expiry__1)"
+      },
+      "intent": "When now equals adjusted_expiry the condition should evaluate to True (expired), but the strict > misses this boundary case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1) or True"
+      },
+      "intent": "Verify that the boundary condition now == adjusted_expiry__1 is detectable right after adjusted_expiry is computed.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1 or now >= adjusted_expiry__1"
+      },
+      "intent": "Confirm that the comparison at line 77 must cover the >= case for correctness at the expiry boundary.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "After the else branch of the expiry check, now must be strictly less than adjusted_expiry; if now == adjusted_expiry we should never reach here.",
+      "confidence": 0.9
+    }
+  ]
+}

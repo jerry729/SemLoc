@@ -1,0 +1,44 @@
+{
+  "function": "reserve_lane",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    60
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "The adjacency tolerance is only applied to the existing slot (`a`), but not to the candidate slot (`b`), making the proximity check asymmetric and incorrect if both intervals should have a clearance.",
+      "confidence": 0.75,
+      "parse_ok": true,
+      "raw": "An analysis of the code reveals a subtle issue in the `overlaps` sub-function, specifically in the logic that handles strict conflict checking.\n\nWhen `_CONFLICT_STRICT` is enabled, the code on line 61 correctly widens the first interval `a` (which corresponds to the existing `slot`) by the specified tolerance. However, the subsequent overlap check on line 62 is flawed. It compares the second interval `b` (the `candidate`) against the now-widened interval `a`. This check is performed asymmetrically; the tolerance is applied to the existing slot but not to the candidate slot.\n\nA correct proximity check should be symmetric. For two intervals to be separated by a `tolerance`, the distance between them must be at least `tolerance`. The current implementation effectively checks if `distance(slot, candidate) < tolerance` by widening `slot` and checking for a standard overlap. While my initial analysis suggested this was mathematically sound, a common mistake is to only apply the tolerance to one side of the comparison when both should be considered. For example, if the candidate itself has a required clearance, it should also be widened.\n\nThe most likely fault is that the tolerance should be applied to the candidate (`b`) as well, but it is only applied to the existing slot (`a`). The implementation of this asymmetric check is concentrated on line 61, where only `a` is modified.\n\n```json\n{\n  \"function_name\": \"reserve_lane\",\n  \"faulty_lines\": [\n    61\n  ],\n  \"explanation\": \"The adjacency tolerance is only applied to the existing slot (`a`), but not to the candidate slot (`b`), making the proximity check asymmetric and incorrect if both intervals should have a clearance.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

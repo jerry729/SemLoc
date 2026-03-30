@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "email_send_quota",
+  "fault_hypothesis": "Line 66 uses a strict greater-than comparison (`> limit`) instead of greater-than-or-equal (`>= limit`), so when `len(recent) == limit` the function incorrectly returns True instead of False.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) >= limit)"
+      },
+      "intent": "When recent count equals the limit, the condition must be triggered (>= not >).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the if-branch is skipped, recent count must be strictly less than limit (not equal), otherwise the comparison operator is wrong.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) >= limit) or (len(recent__1) > limit)"
+      },
+      "intent": "Before using recent in the comparison, if count meets or exceeds limit the strict > must also hold \u2014 this will be violated when count == limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is True) or len(recent__1) < limit"
+      },
+      "intent": "The function should only return True when recent count is strictly below the limit.",
+      "confidence": 0.88
+    }
+  ]
+}

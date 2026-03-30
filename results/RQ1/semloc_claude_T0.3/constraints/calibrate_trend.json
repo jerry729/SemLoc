@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_trend",
+  "fault_hypothesis": "The condition on line 63 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True, the branch that restricts y to [low, high] should be entered; the condition `not clamp` is inverted so this check is FALSE on failing tests.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch (which applies clamping) should only be reached when clamp is False due to the inverted condition; this exposes the logic inversion.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "y__2 >= min(y0, y1) and y__2 <= max(y0, y1)"
+      },
+      "intent": "After clamping, y__2 must lie within the segment range [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "The else-branch (no clamping applied) should only be reached when clamp is False; due to the bug it is reached when clamp is True.",
+      "confidence": 0.9
+    }
+  ]
+}

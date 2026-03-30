@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_overlap_check",
+  "fault_hypothesis": "Line 69 uses strict inequalities (`c_end <= start` and `c_start >= end`) which excludes shared endpoints from being considered overlaps. The condition should use strict inequalities `c_end < start` and `c_start > end` so that touching endpoints are treated as overlapping under the closed-interval model.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (c_end__1 <= start or c_start__1 >= end) == (c_end__1 > start and c_start__1 < end)"
+      },
+      "intent": "The overlap condition using <= and >= misses boundary touches; the correct check should use strict inequalities so shared endpoints count as overlapping.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (c_end__1 == start) or True"
+      },
+      "intent": "When c_end equals start the condition c_end <= start is True, incorrectly skipping an overlapping reservation \u2014 a boundary-equal pair should trigger overlap detection.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "c_end__1"
+        }
+      },
+      "spec": {
+        "expr": "c_end__1 > c_start__1"
+      },
+      "intent": "Confirm that c_end is strictly greater than c_start before it is used in the overlap comparison, ensuring the validated interval is non-degenerate.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is True) or all(c_end < s or c_start > e for s, e in reservations)"
+      },
+      "intent": "If no overlap is returned, every existing reservation must be strictly disjoint from the candidate under the closed-interval model.",
+      "confidence": 0.8
+    }
+  ]
+}

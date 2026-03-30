@@ -1,0 +1,20 @@
+{
+  "bug_id": "tornado_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.httputil.url_concat",
+    "buggy_methods": [
+      "tornado.httputil.url_concat"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.httputil.url_concat",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "function": "histogram_bucket_merge",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    77
+  ],
+  "total_source_lines": 81,
+  "runs": [
+    {
+      "faulty_lines": [
+        77,
+        78
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, lines 77-78 stand out as suspicious. After the merge, there's a condition that pops the last element if it equals the last elements of both `left` and `right`. This is incorrect behavior - when both sequences share the same last edge, the merge algorithm (lines 69-72) already appended both copies. Then this code removes one of them, which is actually wrong in the other direction too.\n\nBut more importantly, the docstring says \"both copies are retained\" when edges are equal, yet lines 77-78 remove one copy when both sequences end with the same value. This is a bug that removes a legitimately merged edge.\n\nThe standard sorted-merge algorithm should just merge all elements without this post-processing removal. Lines 77 and 78 introduce incorrect behavior by conditionally removing the last element.\n\n{\n  \"function_name\": \"histogram_bucket_merge\",\n  \"faulty_lines\": [77, 78],\n  \"explanation\": \"Lines 77-78 incorrectly remove the last merged element when both input sequences share the same last edge value. This contradicts the documented behavior of retaining both copies for equal edges and corrupts the merged result.\",\n  \"confidence\": 0.88\n}",
+      "predicted": [
+        77,
+        78
+      ],
+      "valid_preds": [
+        77,
+        78
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

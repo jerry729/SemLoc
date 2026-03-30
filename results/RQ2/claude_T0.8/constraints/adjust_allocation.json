@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_allocation",
+  "fault_hypothesis": "The function is missing a re-normalization step before returning; line 67 returns the blended weights directly without dividing by their sum, so when 'current' does not sum to 1.0, the result also fails to sum to 1.0.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The updated list must sum to 1.0 before being returned; fails when current weights don't sum to 1 and no normalization is applied.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(w >= 0.0 for w in updated__1)"
+      },
+      "intent": "All blended weights must remain non-negative throughout loop iterations.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "updated__1 == []"
+      },
+      "intent": "After initialization, updated must be an empty list before the loop populates it.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation weights must always sum to 1.0 regardless of whether input weights were normalized.",
+      "confidence": 0.9
+    }
+  ]
+}

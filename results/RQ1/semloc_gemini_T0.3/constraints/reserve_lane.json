@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_lane",
+  "fault_hypothesis": "The overlap detection on line 62 incorrectly uses non-strict inequalities (`<=`, `>=`). This causes adjacent time windows that touch at a boundary to be considered non-overlapping, when they should conflict.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "((candidate[1] <= slot[0] or candidate[0] >= slot[1])) == ((candidate[1] < slot[0] or candidate[0] > slot[1]))"
+      },
+      "intent": "The buggy non-overlap logic should be equivalent to the correct logic using strict inequalities.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "If the loop continues to the next iteration, the candidate must be strictly separate from the current slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all((candidate[1] < s[0] or candidate[0] > s[1]) for s in existing)"
+      },
+      "intent": "If the candidate is accepted, it must not overlap with any of the pre-existing slots.",
+      "confidence": 0.9
+    }
+  ]
+}

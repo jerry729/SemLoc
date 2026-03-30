@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_conference_slot",
+  "fault_hypothesis": "The `overlaps` function on line 76 uses strict inequality `b[1] <= a[0] or b[0] >= a[1]`, which means touching/adjacent slots (where one ends exactly where the other begins) are NOT considered overlapping. The correct check should use `b[1] < a[0] or b[0] > a[1]` so that touching slots are treated as conflicts.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] < a[0] or b[0] > a[1])"
+      },
+      "intent": "The overlaps function should return True when slots touch (adjacent), meaning the non-overlap condition must use strict inequalities; the current <= and >= allow touching slots to pass as non-overlapping.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0] and True) or False"
+      },
+      "intent": "When an existing slot ends exactly where the candidate starts, the overlaps check should have caught it and returned early; if we reach loop tail with such a slot, the overlap detection is broken.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buffer__1"
+        }
+      },
+      "spec": {
+        "expr": "buffer__1 >= 0"
+      },
+      "intent": "The buffer value should be non-negative; if _CONFLICT_STRICT is enabled, buffer should equal _ADJACENCY_BUFFER_MINUTES which must be positive to make adjacent slot detection work.",
+      "confidence": 0.55
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and any(s[1] == candidate[0] or candidate[1] == s[0] for s in existing))"
+      },
+      "intent": "If the candidate touches any existing slot at a boundary, the function should not return accepted=True; touching should be treated as a conflict.",
+      "confidence": 0.85
+    }
+  ]
+}

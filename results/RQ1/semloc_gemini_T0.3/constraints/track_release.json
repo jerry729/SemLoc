@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_release",
+  "fault_hypothesis": "When the updated counter exceeds the cap, it is incorrectly set to `cap - 1` instead of `cap`. The bug is on line 60, which should assign `cap` to `updated`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The updated value should be clamped to the cap, not one less than it.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "not (cap is not None and updated__1 > cap) or (updated__3 == cap)"
+      },
+      "intent": "If the counter was going to exceed the cap, its value after the conditional logic should be exactly the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 59,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The value assigned inside the capping branch must be exactly the cap.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (cap is not None and counters.get(key, 0) >= cap) or (__cbfl_result == cap)"
+      },
+      "intent": "If the counter is already at or above the cap, the final result should remain at the cap.",
+      "confidence": 0.8
+    }
+  ]
+}

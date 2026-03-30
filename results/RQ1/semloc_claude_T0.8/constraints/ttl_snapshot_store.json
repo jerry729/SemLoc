@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ttl_snapshot_store",
+  "fault_hypothesis": "The expiry comparison on line 68 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now == effective` the entry is incorrectly returned as valid instead of expired.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now >= effective__1 or now < effective__1"
+      },
+      "intent": "When now equals effective, the branch should treat the entry as expired (return None), so the condition now > effective is too strict.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "After the expiry check, if we did not return None, now must be strictly less than effective (not equal), confirming the boundary condition is wrong.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1 or True"
+      },
+      "intent": "Placeholder to instrument the point before effective__1 is used in the comparison, confirming the value is correctly computed.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 == expires_at__1 or effective__1 != expires_at__1"
+      },
+      "intent": "Check that effective__1 is properly set before the comparison; the real bug is in how it is compared, not computed.",
+      "confidence": 0.4
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or now < effective__1"
+      },
+      "intent": "If a value is returned (not None), now must be strictly less than effective; equality should yield None.",
+      "confidence": 0.85
+    }
+  ]
+}

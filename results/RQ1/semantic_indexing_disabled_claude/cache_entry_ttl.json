@@ -1,0 +1,44 @@
+{
+  "function": "cache_entry_ttl",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        73
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the key logic is on line 73: `if now > effective: return None`\n\nThe condition checks if `now > effective` (strictly greater than). This means an entry is considered valid when `now == effective` (i.e., exactly at expiry time). However, the typical expectation for TTL is that an entry has expired when `now >= effective` (the entry should not be returned when it's exactly at expiry).\n\nThe boundary condition is off-by-one in terms of the comparison operator. The entry should be expired when `now >= effective`, not just when `now > effective`.\n\n{\n  \"function_name\": \"cache_entry_ttl\",\n  \"faulty_lines\": [73],\n  \"explanation\": \"The expiry check uses `now > effective` (strict greater-than), which means an entry is still returned when `now == effective` (exactly at expiry). The correct condition should be `now >= effective` to properly expire entries at their expiration boundary.\",\n  \"confidence\": 0.75\n}",
+      "predicted": [
+        73
+      ],
+      "valid_preds": [
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

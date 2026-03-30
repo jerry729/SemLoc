@@ -1,0 +1,20 @@
+{
+  "bug_id": "scrapy_6",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.pipelines.images.ImagesPipeline.convert_image",
+    "buggy_methods": [
+      "scrapy.pipelines.images.ImagesPipeline.convert_image"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.pipelines.images.ImagesPipeline.convert_image",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

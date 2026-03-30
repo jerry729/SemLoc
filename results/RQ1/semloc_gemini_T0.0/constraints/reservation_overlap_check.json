@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_overlap_check",
+  "fault_hypothesis": "The non-overlap check on line 69 uses non-strict inequalities (`<=`, `>=`), which incorrectly classifies intervals that share an endpoint as disjoint. It should use strict inequalities (`<`, `>`) to correctly identify these boundary cases as overlaps.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "(c_end <= start or c_start >= end) == (c_end < start or c_start > end)"
+      },
+      "intent": "The buggy non-overlap condition should be equivalent to a strict non-overlap condition, which is false for the failing boundary cases.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (c_end == start or c_start == end)"
+      },
+      "intent": "If an iteration does not find a clear overlap, it must also be because the intervals do not touch at an endpoint.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "c_end__1"
+        }
+      },
+      "spec": {
+        "expr": "c_start__1 < c_end__1"
+      },
+      "intent": "The candidate interval must be valid, with the start time preceding the end time, as validated by `_validate_interval`.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result == any(not (c_end < r[0] or c_start > r[1]) for r in reservations)"
+      },
+      "intent": "The function's return value must correctly reflect whether any reservation overlaps with the candidate, using strict boundaries for non-overlap.",
+      "confidence": 0.95
+    }
+  ]
+}

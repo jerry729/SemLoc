@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "award_payout",
+  "fault_hypothesis": "The fee is subtracted from each participant's individual share on line 69, instead of being deducted from the total amount before distribution. This incorrectly multiplies the total fee deduction by the number of participants.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts must equal the initial amount minus the fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "The sum of the calculated shares before fee deduction must equal the total initial amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "shares[-1] >= 0"
+      },
+      "intent": "Each calculated share before fee deduction must be non-negative.",
+      "confidence": 0.9
+    }
+  ]
+}

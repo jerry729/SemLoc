@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "checkout_rate",
+  "fault_hypothesis": "The condition on line 66 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly returns `True` with `remaining=0` instead of `False, 0`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) == (len(recent__1) >= limit)"
+      },
+      "intent": "When len(recent) equals limit the strict > check is False but >= would be True; this expression is False precisely in the boundary case that causes failures.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the else branch (not blocked), the number of recent events must be strictly less than the limit; equality should have been blocked.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "If recent count equals limit the function should block, but with the buggy > it does not; this flags the boundary case immediately after recent is computed.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and __cbfl_result[1] == 0)"
+      },
+      "intent": "A return of (True, 0) is semantically inconsistent \u2014 allowed but zero remaining \u2014 which is the symptom produced by the off-by-one bug at the boundary.",
+      "confidence": 0.8
+    }
+  ]
+}

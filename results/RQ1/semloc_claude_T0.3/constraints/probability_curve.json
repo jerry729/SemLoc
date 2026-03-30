@@ -1,0 +1,83 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "probability_curve",
+  "fault_hypothesis": "The condition on line 73 is inverted: clamping is applied when `clamp` is False instead of when `clamp` is True, so extrapolation is never bounded when the user requests clamping.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__1 >= min(y0, y1) and y__1 <= max(y0, y1)) or True"
+      },
+      "intent": "When clamp is True the branch that restricts y should be entered, not skipped \u2014 the condition `not clamp` is backwards.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True and y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "After the else branch (clamp=True path), y__5 should be clamped to [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of `if not clamp` should only execute when clamp is False.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "After y__5 is finalized, if clamp is True it must lie within the anchor probability range.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamp=True the returned value must be bounded by the anchor probabilities.",
+      "confidence": 0.9
+    }
+  ]
+}

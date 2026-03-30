@@ -1,0 +1,49 @@
+{
+  "bug_id": "pandas_92",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.generic.NDFrame.asof",
+    "buggy_methods": [
+      "pandas.core.generic.NDFrame.asof"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.generic.NDFrame.asof",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/generic.py": [
+      6975,
+      6976
+    ],
+    "pandas/core/indexes/period.py": [
+      472,
+      473,
+      474,
+      475,
+      478,
+      482,
+      706,
+      707
+    ],
+    "pandas/core/resample.py": [
+      1589
+    ],
+    "pandas/tests/frame/methods/test_asof.py": [
+      4
+    ],
+    "pandas/tests/indexes/period/test_period.py": [
+      454,
+      464
+    ],
+    "pandas/tests/indexes/period/test_tools.py": [
+      234,
+      238
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

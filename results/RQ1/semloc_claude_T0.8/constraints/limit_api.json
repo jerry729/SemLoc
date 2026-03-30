@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_api",
+  "fault_hypothesis": "The condition on line 66 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly allows the request and returns remaining=0 instead of denying it.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or len(recent__1) == limit"
+      },
+      "intent": "When len(recent) equals limit the branch should be taken (deny), so the condition len(recent) > limit is FALSE at this point \u2014 flagging the off-by-one bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "limit - len(recent__1) > 0"
+      },
+      "intent": "If the request is allowed (else branch), remaining must be strictly positive; when len(recent)==limit this is violated, exposing the off-by-one.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= limit or len(recent__1) > limit"
+      },
+      "intent": "Sanity check that the boundary case len(recent)==limit is handled by the subsequent condition using >= rather than >.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and __cbfl_result[1] == 0)"
+      },
+      "intent": "The result (True, 0) is logically inconsistent \u2014 allowed but no remaining capacity \u2014 and should never be returned.",
+      "confidence": 0.85
+    }
+  ]
+}

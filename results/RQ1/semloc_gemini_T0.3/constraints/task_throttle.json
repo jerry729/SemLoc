@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "task_throttle",
+  "fault_hypothesis": "The condition on line 62 uses `>` instead of `>=`, incorrectly allowing a new task when the number of recent events is exactly equal to the limit.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The check should correctly handle the boundary case where recent events exactly match the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a task is allowed by falling through, the number of recent events must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) or (limit - len(recent__1) > 0)"
+      },
+      "intent": "Before checking, it must be true that either the task will be denied or there is capacity for it.",
+      "confidence": 0.9
+    }
+  ]
+}

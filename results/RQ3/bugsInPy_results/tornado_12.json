@@ -1,0 +1,31 @@
+{
+  "bug_id": "tornado_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.auth.FacebookGraphMixin._on_access_token",
+    "buggy_methods": [
+      "tornado.auth.FacebookGraphMixin._on_access_token"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.auth.FacebookGraphMixin._on_access_token",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/auth.py": [
+      78,
+      988,
+      1065,
+      1066
+    ],
+    "tornado/test/auth_test.py": [
+      8,
+      280
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

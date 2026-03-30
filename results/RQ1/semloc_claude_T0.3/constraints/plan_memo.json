@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_memo",
+  "fault_hypothesis": "The expiry check on line 65 uses strict greater-than (`now > expires_at`) instead of greater-than-or-equal (`now >= expires_at`), so an entry accessed at exactly its expiry timestamp is incorrectly returned as valid instead of expired.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (now == expires_at__1 and __cbfl_result is not None)"
+      },
+      "intent": "When now equals expires_at the function must not return a value; the strict > comparison fails this boundary case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= expires_at__1) or True"
+      },
+      "intent": "Capture the value of expires_at__1 before the comparison to verify the boundary condition is handled correctly.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "After the else branch of the expiry check, now must be strictly less than expires_at; equality should have triggered the then-branch (return None).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in entries and now >= entries[key][1] and __cbfl_result is not None)"
+      },
+      "intent": "The function must never return a non-None value when now is at or past the expiry timestamp.",
+      "confidence": 0.88
+    }
+  ]
+}

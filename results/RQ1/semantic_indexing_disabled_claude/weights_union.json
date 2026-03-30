@@ -1,0 +1,47 @@
+{
+  "function": "weights_union",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 80,
+  "runs": [
+    {
+      "faulty_lines": [
+        74,
+        75
+      ],
+      "explanation": "Lines 74-75 incorrectly remove the last merged element when both input streams share the same last value, contradicting the documented behavior that equal elements from both streams should both be kept in the result.",
+      "confidence": 0.93,
+      "parse_ok": true,
+      "raw": "Looking at the code, I can identify two bugs:\n\n1. **Line 57**: `i = j = DUPLICATE_TOLERANCE` \u2014 `DUPLICATE_TOLERANCE` is 0, which happens to be correct for initialization, but this is semantically wrong (it's using a tolerance constant as an index initializer). However, since `DUPLICATE_TOLERANCE = 0`, this doesn't cause a bug in practice.\n\n2. **Lines 74-75**: The post-merge deduplication logic is wrong. After correctly merging both streams (preserving duplicates from both sides as per the docstring), the code removes the last element if it equals the last elements of both input streams. This incorrectly removes a duplicate that should be preserved. The docstring says \"when equal elements are found in both streams, both copies are kept,\" but lines 74-75 undo that by removing one copy of the last equal element.\n\nThe primary bug is lines 74-75 \u2014 this logic should not exist at all, as it contradicts the stated behavior of preserving duplicates from both streams.\n\n```json\n{\n  \"function_name\": \"weights_union\",\n  \"faulty_lines\": [74, 75],\n  \"explanation\": \"Lines 74-75 incorrectly remove the last merged element when both input streams share the same last value, contradicting the documented behavior that equal elements from both streams should both be kept in the result.\",\n  \"confidence\": 0.93\n}\n```",
+      "predicted": [
+        74,
+        75
+      ],
+      "valid_preds": [
+        74,
+        75
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 74,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

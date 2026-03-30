@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "probability_curve",
+  "fault_hypothesis": "The condition to enable clamping is inverted. The code on line 73 checks `if not clamp:`, but the clamping logic should execute when `clamp` is `True`.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "If clamping is disabled, or if the interpolated value is already within the anchor range, the clamping logic should be skipped.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If the clamping logic is skipped when clamping is enabled, the value must have already been within the valid range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "The final value before returning must be within the anchor range if clamping is enabled.",
+      "confidence": 0.9
+    }
+  ]
+}

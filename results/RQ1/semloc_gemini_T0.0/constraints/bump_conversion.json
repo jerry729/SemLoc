@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_conversion",
+  "fault_hypothesis": "When the updated counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being clamped to `cap`. The bug is on line 58.",
+  "fault_line": 58,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 58
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The capped value should be exactly the cap, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The value assigned to 'updated' when capping should be equal to the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 56,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 >= current__1"
+      },
+      "intent": "The updated counter value should never be less than its previous value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result == cap if counters.get(key, 0) >= cap else __cbfl_result <= cap"
+      },
+      "intent": "If the counter is at or over the cap, the result must be exactly the cap.",
+      "confidence": 0.3
+    }
+  ]
+}

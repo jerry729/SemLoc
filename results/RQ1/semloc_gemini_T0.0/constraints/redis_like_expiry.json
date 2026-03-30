@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "redis_like_expiry",
+  "fault_hypothesis": "The expiry check on line 83 uses a strict greater-than comparison (>), which incorrectly considers an item unexpired when the current time is exactly equal to its expiry time. The check should use a non-strict comparison (>=).",
+  "fault_line": 83,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 83
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1)"
+      },
+      "intent": "An item should not be considered valid if the current time is exactly its expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If an item is considered unexpired (the 'else' path is taken), the current time must be strictly before its expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "now >= effective__1"
+      },
+      "intent": "If an item is considered expired (the 'then' path is taken), the current time must be greater than or equal to its expiry.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(key not in store) or ((now >= store[key][1]) == (__cbfl_result is None))"
+      },
+      "intent": "The function should return None if and only if the key is missing or the current time is at or after the expiry time.",
+      "confidence": 1.0
+    }
+  ]
+}

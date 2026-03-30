@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_106",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.base.Index.get_indexer_non_unique",
+    "buggy_methods": [
+      "pandas.core.indexes.base.Index.get_indexer_non_unique"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.base.Index.get_indexer_non_unique",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      4554
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

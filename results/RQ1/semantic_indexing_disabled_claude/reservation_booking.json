@@ -1,0 +1,38 @@
+{
+  "function": "reservation_booking",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the bug in `reservation_booking`.\n\nThe key issue is on line 64:\n```python\nbuffer = _ADJACENCY_BUFFER if _CONFLICT_STRICT else 0\n```\n\nThe `buffer` variable is computed but **never used** in the overlap check on line 67:\n```python\nif not (end <= s or start >= e):\n```\n\nWhen `_CONFLICT_STRICT` is `True`, adjacent intervals that touch at a boundary should also be considered conflicts. The check should use `buffer` to expand the conflict detection. The correct check when `_CONFLICT_STRICT` is enabled should be something like:\n```python\nif not (end + buffer <= s or start >= e + buffer):\n```\nor more precisely:\n```python\nif not (end <= s - buffer or start >= e + buffer):\n```\n\nThe `buffer` variable is assigned but never applied to the overlap condition, meaning the strict mode doesn't actually work as documented. The faulty lines are 64 (where buffer is computed but not used properly) and 67 (where the overlap check ignores the buffer).\n\n```json\n{\n  \"function_name\": \"reservation_booking\",\n  \"faulty_lines\": [67, 64],\n  \"explanation\": \"The `buffer` variable computed on line 64 is never used in the overlap check on line 67. When `_CONFLICT_STRICT` is True, adjacent intervals should be treated as conflicts, but the condition `not (end <= s or start >= e)` ignores the adjacency buffer entirely.\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

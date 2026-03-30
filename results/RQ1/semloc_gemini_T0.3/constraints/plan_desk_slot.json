@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_desk_slot",
+  "fault_hypothesis": "The overlap check on line 76 uses non-strict inequalities (`<=`, `>=`), which incorrectly permits adjacent intervals. The failing tests require adjacent intervals to be treated as conflicts, so strict inequalities (`<`, `>`) should be used instead.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "(end__1 <= s or start__1 >= e) == (end__1 < s or start__1 > e)"
+      },
+      "intent": "The overlap check should treat adjacent intervals as conflicts.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "Each existing interval must be strictly non-overlapping with the new interval.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "An accepted interval cannot be adjacent to any original booking.",
+      "confidence": 0.9
+    }
+  ]
+}

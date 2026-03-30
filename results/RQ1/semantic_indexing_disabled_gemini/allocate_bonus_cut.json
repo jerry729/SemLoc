@@ -1,0 +1,47 @@
+{
+  "function": "allocate_bonus_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        72,
+        70
+      ],
+      "explanation": "The fee is incorrectly subtracted from each participant's individual share. According to the function's documentation, the fee should be deducted from the total amount once, before the shares are calculated.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"allocate_bonus_cut\",\n  \"faulty_lines\": [\n    72,\n    70\n  ],\n  \"explanation\": \"The fee is incorrectly subtracted from each participant's individual share. According to the function's documentation, the fee should be deducted from the total amount once, before the shares are calculated.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        72,
+        70
+      ],
+      "valid_preds": [
+        72,
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

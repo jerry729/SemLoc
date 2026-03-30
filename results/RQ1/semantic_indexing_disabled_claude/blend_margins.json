@@ -1,0 +1,47 @@
+{
+  "function": "blend_margins",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        73,
+        74
+      ],
+      "explanation": "Lines 73-74 incorrectly remove the last element when both streams end with the same value, but the docstring explicitly states that duplicate values appearing in both streams should both be emitted. This post-processing step contradicts the merge logic in the else branch (lines 63-67) which correctly appends both copies.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the code, the merge logic is mostly correct, but lines 73-74 contain suspicious post-processing that removes an element from the merged result when the last elements of both left and right are equal. This is incorrect behavior - if both streams end with the same value, both copies should be preserved (as stated in the docstring: \"Duplicate values that appear in both streams are preserved (both copies are emitted)\"). The else branch (lines 63-67) correctly appends both copies when duplicates are found mid-stream, but then lines 73-74 incorrectly remove one copy when the duplicate is at the end.\n\n```json\n{\n  \"function_name\": \"blend_margins\",\n  \"faulty_lines\": [73, 74],\n  \"explanation\": \"Lines 73-74 incorrectly remove the last element when both streams end with the same value, but the docstring explicitly states that duplicate values appearing in both streams should both be emitted. This post-processing step contradicts the merge logic in the else branch (lines 63-67) which correctly appends both copies.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        73,
+        74
+      ],
+      "valid_preds": [
+        73,
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

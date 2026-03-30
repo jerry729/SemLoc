@@ -1,0 +1,16 @@
+{
+  "bug_id": "matplotlib_6",
+  "function": "_parse_scatter_color_args",
+  "src_path": "lib/matplotlib/axes/_axes.py",
+  "fn_begin": 4180,
+  "fn_end": 4320,
+  "n_constraints": 4,
+  "n_tests_passing": 0,
+  "n_tests_failing": 3,
+  "line_scores": [],
+  "fault_line": 4314,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/matplotlib_6/_parse_scatter_color_args_constraints.json",
+  "report_path": "/tmp/bip_semloc/matplotlib_6/violations.jsonl"
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "royalty_payout",
+  "fault_hypothesis": "The processing fee is incorrectly deducted from each participant's individual share on line 69. The fee should be deducted from the total `amount` before the pool is split.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts should equal the distributable amount (pool minus fee), clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(ratios) > 1 and fee > 0 and amount >= fee) or abs(sum(shares__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of calculated shares should reflect a pool where the fee has already been deducted, except in cases where the buggy logic produces a correct result.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The total ratio must be positive for a valid distribution.",
+      "confidence": 0.7
+    }
+  ]
+}

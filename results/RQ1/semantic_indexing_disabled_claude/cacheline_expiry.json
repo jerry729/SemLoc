@@ -1,0 +1,44 @@
+{
+  "function": "cacheline_expiry",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        67
+      ],
+      "explanation": "The expiry check on line 67 uses `now > adjusted_ttl` but should use `now >= adjusted_ttl` to correctly treat entries as expired when the current time equals the TTL deadline, consistent with the docstring's 'strictly before' requirement.",
+      "confidence": 0.7,
+      "parse_ok": true,
+      "raw": "Looking at the code, I need to identify the faulty line.\n\nThe function `cacheline_expiry` is supposed to return the payload if `now` is **strictly before** the TTL deadline. The check on line 67 is `if now > adjusted_ttl`, which means it returns `_DEFAULT_PAYLOAD` when `now > adjusted_ttl` and returns `payload` when `now <= adjusted_ttl`. This seems correct for \"strictly before\" \u2014 wait, actually \"strictly before\" means `now < adjusted_ttl`, so equality should also return `_DEFAULT_PAYLOAD`. But that's a minor edge case.\n\nThe more suspicious line is 61: `if ttl > _MAX_TTL_SECONDS + now`. This is checking if the TTL exceeds the maximum allowed TTL. The intent seems to be checking if the TTL is unreasonably large (more than 24 hours from now). The condition `ttl > _MAX_TTL_SECONDS + now` means if the TTL timestamp is more than 86400 seconds in the future, treat as expired. This seems logically correct.\n\nWait, let me reconsider line 67: `if now > adjusted_ttl` \u2014 this returns `_DEFAULT_PAYLOAD` when expired. But the docstring says \"strictly before the entry's time-to-live deadline\". So if `now == adjusted_ttl`, it should also be expired. The condition should be `if now >= adjusted_ttl`. This is a bug \u2014 when `now == adjusted_ttl`, the entry is considered valid but should be expired.\n\nAlso, line 61 logic: if `ttl > _MAX_TTL_SECONDS + now`, this seems backwards. It should probably be checking if `ttl - now > _MAX_TTL_SECONDS`, which is the same thing, so that's actually correct.\n\nThe main bug is on line 67 where it should be `>=` instead of `>`.\n\n```json\n{\n  \"function_name\": \"cacheline_expiry\",\n  \"faulty_lines\": [67],\n  \"explanation\": \"The expiry check on line 67 uses `now > adjusted_ttl` but should use `now >= adjusted_ttl` to correctly treat entries as expired when the current time equals the TTL deadline, consistent with the docstring's 'strictly before' requirement.\",\n  \"confidence\": 0.7\n}\n```",
+      "predicted": [
+        67
+      ],
+      "valid_preds": [
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

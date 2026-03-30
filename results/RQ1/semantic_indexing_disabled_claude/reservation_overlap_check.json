@@ -1,0 +1,44 @@
+{
+  "function": "reservation_overlap_check",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        69
+      ],
+      "explanation": "The non-overlap condition uses `c_end <= start or c_start >= end`, which treats adjacent reservations (sharing only an endpoint) as non-overlapping. According to the docstring and the closed-interval model, the correct condition should be `c_end < start or c_start > end` so that shared endpoints are flagged as conflicts.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the overlap check logic, the function uses an open-interval model for the existing reservations (checking `c_end <= start or c_start >= end`), but the docstring says it uses a closed-interval model where endpoints are included.\n\nFor a closed-interval model `[s, e]`, two intervals `[c_start, c_end]` and `[start, end]` do NOT overlap if `c_end < start` or `c_start > end`. They DO overlap if `c_end >= start` AND `c_start <= end`.\n\nThe current code uses `c_end <= start or c_start >= end` as the non-overlap condition, which means touching endpoints (e.g., c_end == start) are treated as non-overlapping. But the docstring says \"Two reservations sharing only an endpoint are still considered overlapping unless `_CONFLICT_STRICT` is enabled.\"\n\nSince `_CONFLICT_STRICT = False`, adjacency should be treated as a conflict (overlap). The correct non-overlap condition for the closed-interval model should be `c_end < start or c_start > end`.\n\nThe faulty line is line 69, where `<=` should be `<` and `>=` should be `>`.\n\n```json\n{\n  \"function_name\": \"reservation_overlap_check\",\n  \"faulty_lines\": [69],\n  \"explanation\": \"The non-overlap condition uses `c_end <= start or c_start >= end`, which treats adjacent reservations (sharing only an endpoint) as non-overlapping. According to the docstring and the closed-interval model, the correct condition should be `c_end < start or c_start > end` so that shared endpoints are flagged as conflicts.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        69
+      ],
+      "valid_preds": [
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

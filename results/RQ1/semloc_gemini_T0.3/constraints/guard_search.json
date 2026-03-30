@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_search",
+  "fault_hypothesis": "The check at line 74 uses a strict greater-than comparison (`>`), which allows a new request even when the rate limit has been exactly met. It should use a greater-than-or-equal-to comparison (`>=`) to deny requests when `len(active)` is equal to `limit`.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "The boundary condition where active requests exactly match the limit is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If a request is allowed, the count of active requests must be strictly under the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "limit - len(active__1) > 0"
+      },
+      "intent": "The number of remaining requests must be positive if the request is allowed.",
+      "confidence": 1.0
+    }
+  ]
+}

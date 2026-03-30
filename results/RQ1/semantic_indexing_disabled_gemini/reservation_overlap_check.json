@@ -1,0 +1,44 @@
+{
+  "function": "reservation_overlap_check",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        69
+      ],
+      "explanation": "The non-overlap condition `c_end <= start or c_start >= end` incorrectly treats adjacent intervals as non-overlapping (e.g., [5, 10] and [10, 15]), which contradicts the docstring's specification that sharing an endpoint constitutes an overlap.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"reservation_overlap_check\",\n  \"faulty_lines\": [\n    69\n  ],\n  \"explanation\": \"The non-overlap condition `c_end <= start or c_start >= end` incorrectly treats adjacent intervals as non-overlapping (e.g., [5, 10] and [10, 15]), which contradicts the docstring's specification that sharing an endpoint constitutes an overlap.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        69
+      ],
+      "valid_preds": [
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

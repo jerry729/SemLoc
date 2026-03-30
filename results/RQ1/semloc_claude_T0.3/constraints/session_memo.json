@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "session_memo",
+  "fault_hypothesis": "The expiry check on line 71 uses strict greater-than (`now > deadline`) instead of greater-than-or-equal (`now >= deadline`), so a session is incorrectly returned as valid when `now` equals the deadline.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "not (now >= deadline__2) or now > deadline__2"
+      },
+      "intent": "At the expiry check, when now equals deadline the condition must be true (expired), but strict > misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "deadline__2"
+        }
+      },
+      "spec": {
+        "expr": "not (now == deadline__2) or True"
+      },
+      "intent": "Verify that when now equals deadline__2 the subsequent branch will treat the session as expired (now >= deadline__2 should trigger expiry).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__2"
+      },
+      "intent": "In the else branch (session considered valid), now must be strictly less than deadline; equality should not reach here.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is not None and __cbfl_result != default) or now < deadline__2"
+      },
+      "intent": "The cached value should only be returned when now is strictly before the deadline.",
+      "confidence": 0.8
+    }
+  ]
+}

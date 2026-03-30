@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "search_result_pager",
+  "fault_hypothesis": "On line 72, the slice uses `end + 1` instead of `end`, causing one extra element to be included in every page result.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size__1"
+      },
+      "intent": "The returned page must never contain more items than page_size.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 == start__1 + page_size__1"
+      },
+      "intent": "end must equal start plus page_size exactly, without any off-by-one.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 - start__1 == page_size__1"
+      },
+      "intent": "Before use, the slice width (end - start) must equal page_size.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size"
+      },
+      "intent": "At any return, the result length must not exceed page_size.",
+      "confidence": 0.85
+    }
+  ]
+}

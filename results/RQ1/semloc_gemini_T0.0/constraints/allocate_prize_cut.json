@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_prize_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 74, instead of being deducted from the total prize pool before the shares are calculated. This results in the total fee deduction being scaled by the number of participants.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(amount < fee) or (abs(sum(result__1) - (amount - fee)) < 1e-9)"
+      },
+      "intent": "The sum of shares after fee deduction should equal the initial amount minus a single fee, unless the fee exceeds the amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "(amount < fee) or (abs(sum(shares__1) - (amount - fee)) < 1e-9)"
+      },
+      "intent": "The sum of calculated shares before fee application should equal the total amount available for distribution.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0) or (amount < fee) or (abs(shares[-1] - (r / total_ratio__1) * (amount - fee)) < 1e-9)"
+      },
+      "intent": "Each calculated share within the loop should be based on the net distributable amount, not the gross amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all final payouts must equal the distributable amount after the fee, floored at zero.",
+      "confidence": 0.8
+    }
+  ]
+}

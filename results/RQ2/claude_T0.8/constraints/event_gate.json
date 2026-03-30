@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "event_gate",
+  "fault_hypothesis": "The condition on line 62 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the gate incorrectly allows the event instead of blocking it.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) >= limit)"
+      },
+      "intent": "When recent event count equals the limit, the condition should be true (gate should close), but with > it is false.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) >= limit) or (len(recent__1) > limit - 1)"
+      },
+      "intent": "Checks that when recent count meets or exceeds limit the comparison used in the branch will correctly trigger blocking.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed path), recent count must be strictly less than limit; if it equals limit the else branch should not be taken.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True) or __cbfl_result[1] >= 0"
+      },
+      "intent": "When allowed is True, remaining must be non-negative (catches off-by-one leaks at the boundary).",
+      "confidence": 0.6
+    }
+  ]
+}

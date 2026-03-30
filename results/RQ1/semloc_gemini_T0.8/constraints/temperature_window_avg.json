@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "temperature_window_avg",
+  "fault_hypothesis": "The mean is calculated by dividing by the fixed `window` size on line 67, but it should use the actual number of samples in `tail`, which can be smaller when the input `values` are shorter than the window.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (abs(mean__1 - (total__1 / len(tail__1))) < 1e-9)"
+      },
+      "intent": "The mean must be the total sum divided by the actual number of samples in the tail, unless the warmup period isn't met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (window == len(tail__1))"
+      },
+      "intent": "The divisor `window` is only correct if it matches the tail length, unless the warmup period isn't met.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or ((min(tail__1) <= mean__1) and (mean__1 <= max(tail__1)))"
+      },
+      "intent": "The computed mean must be within the min/max range of the samples, unless the result is discarded due to warmup.",
+      "confidence": 0.8
+    }
+  ]
+}

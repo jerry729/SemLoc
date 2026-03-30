@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_upgrade_slot",
+  "fault_hypothesis": "The overlap detection on line 63 is incorrect. It uses `<=` and `>=` which allows adjacent (touching) windows, but the tests expect these to be rejected as conflicts.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "Adjacent windows should not be accepted, so there should be no slot where the boundaries touch.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1) - 1))"
+      },
+      "intent": "The updated timeline should not contain any adjacent or overlapping slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "If a window is accepted, it must not be adjacent to any existing slot.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If the booking is successful, the resulting timeline must not contain any adjacent slots.",
+      "confidence": 0.9
+    }
+  ]
+}

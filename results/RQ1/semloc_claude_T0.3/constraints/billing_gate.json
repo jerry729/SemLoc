@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "billing_gate",
+  "fault_hypothesis": "The condition on line 72 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(active) == limit` the function incorrectly returns `True` (allowed) instead of `False` (denied).",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit or len(active__1) > limit"
+      },
+      "intent": "At the branch condition, the comparison should trigger denial when len(active) >= limit, not only when strictly greater.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "In the else branch (allowed path), the number of active timestamps must be strictly less than the limit; equality should have been caught by the if-branch.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "Before using active__1 in the limit comparison, verify that the boundary case (equal to limit) will be handled as a denial, which the current strict-greater check misses.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(active__1) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when the number of active timestamps meets or exceeds the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

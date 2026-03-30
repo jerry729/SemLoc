@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "fuel_moving_mean",
+  "fault_hypothesis": "The mean calculation on line 65 incorrectly divides by the fixed `window` size. It should divide by the actual number of recent samples, `len(recent)`, which can be smaller than the window size.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (mean__1 * len(recent__1) == total__1)"
+      },
+      "intent": "The mean must be the total divided by the actual sample count, unless the warmup threshold is not met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (len(recent__1) == window)"
+      },
+      "intent": "The number of recent samples should equal the window size whenever the calculated mean is actually used.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "mean__1 * len(recent__1) == total__1"
+      },
+      "intent": "If a mean is returned, it must have been calculated using the correct number of samples.",
+      "confidence": 1.0
+    }
+  ]
+}

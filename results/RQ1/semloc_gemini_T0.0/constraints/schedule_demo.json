@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_demo",
+  "fault_hypothesis": "The overlap detection on line 67 is incorrect. It uses `<=` and `>=` which considers intervals touching at their boundaries as non-overlapping, but the tests require them to be treated as conflicts.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(end__1 < s or start__1 > e) == (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "The correct non-overlap logic should be equivalent to the program's logic, which fails for adjacent intervals.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "If the loop continues, the new interval must be strictly non-overlapping with the slot just checked.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "An interval merely touching an existing slot's boundary should have been rejected as a conflict.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If an interval is accepted, it must not overlap (including touching boundaries) with any of the original slots.",
+      "confidence": 0.8
+    }
+  ]
+}

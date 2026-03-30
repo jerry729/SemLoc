@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "audit_window_filter",
+  "fault_hypothesis": "The list comprehension on line 68 uses a greater-than-or-equal-to comparison ('>='), which incorrectly includes timestamps exactly at the cutoff boundary. The specification requires a strict comparison ('>') to exclude boundary values.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "all(t > cutoff__1 for t in __cbfl_result)"
+      },
+      "intent": "All returned timestamps must be strictly greater than the cutoff value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 == now - window"
+      },
+      "intent": "The cutoff value must be correctly computed as the start of the window.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 < now"
+      },
+      "intent": "The cutoff time must be strictly earlier than the 'now' time, assuming a positive window.",
+      "confidence": 0.8
+    }
+  ]
+}

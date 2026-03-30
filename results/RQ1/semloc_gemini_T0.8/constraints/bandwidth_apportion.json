@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_apportion",
+  "fault_hypothesis": "The function incorrectly truncates fractional allocations on line 69 by calling `int()` on each raw share. This causes the sum of the final allocations to be less than the total bandwidth when the division is not exact.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "sum([int(x) for x in raw__1]) == total"
+      },
+      "intent": "The sum of the final integer allocations must equal the total available bandwidth.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(raw__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the raw floating-point shares should be equal to the total bandwidth.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(int(x) for x in raw__1) == int(round(sum(raw__1)))"
+      },
+      "intent": "The sum of truncated allocations should equal the rounded sum of raw allocations to preserve the total.",
+      "confidence": 0.9
+    }
+  ]
+}

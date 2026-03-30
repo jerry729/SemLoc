@@ -1,0 +1,16 @@
+[
+  {
+    "cid": "C1",
+    "status": "Primary",
+    "patch": "return [_clamp_payout((r / total_ratio) * max(0.0, amount - fee)) for r in ratios]",
+    "original_failing": [
+      "test_fee_deducted_from_total_pool",
+      "test_weighted_split_with_fee",
+      "test_total_payouts_equal_net_pool",
+      "test_fee_applied_once_not_per_participant"
+    ],
+    "patched_failing": [],
+    "pruned": false,
+    "prune_reason": ""
+  }
+]

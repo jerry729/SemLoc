@@ -1,0 +1,27 @@
+{
+  "bug_id": "scrapy_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.mail.MailSender.send",
+    "buggy_methods": [
+      "scrapy.mail.MailSender.send"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.mail.MailSender.send",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/test_mail.py": [
+      13,
+      29,
+      93,
+      102
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

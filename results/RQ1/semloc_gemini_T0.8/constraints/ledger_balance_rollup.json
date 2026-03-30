@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ledger_balance_rollup",
+  "fault_hypothesis": "On line 66, for 'debit' entries, the transaction amount is added to the balance instead of being subtracted.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "balance <= sum(e[0] for e in entries if e[1] == 'credit')"
+      },
+      "intent": "After a debit operation, the balance should not exceed the total value of all credits.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "balance == sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'credit') - sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'debit')"
+      },
+      "intent": "At the end of each transaction, the running balance must equal cumulative credits minus cumulative debits.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "balance == sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'credit') - sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'debit')"
+      },
+      "intent": "After processing a credit, the balance must correctly reflect the new running total.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(balance__1 - (sum(e[0] for e in entries if e[1] == 'credit') - sum(e[0] for e in entries if e[1] == 'debit'))) < 1e-9"
+      },
+      "intent": "The final unrounded balance must equal the total of all credits minus the total of all debits.",
+      "confidence": 0.9
+    }
+  ]
+}

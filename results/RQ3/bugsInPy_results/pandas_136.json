@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_136",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.merge._AsOfMerge._get_merge_keys",
+    "buggy_methods": [
+      "pandas.core.reshape.merge._AsOfMerge._get_merge_keys"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.merge._AsOfMerge._get_merge_keys",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/reshape/merge.py": [
+      31,
+      1644
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "function": "allocate_bonus_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        72
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the fee is described as \"a one-time processing fee subtracted from the pool before shares are computed.\" This means the fee should be deducted from `amount` before distributing, not from each individual share.\n\nHowever, in line 72, the fee is subtracted from each individual share `s - fee`, which means the total fee deducted is `fee * len(ratios)` instead of just `fee` once.\n\nThe correct implementation should compute `net_amount = amount - fee` and then distribute `net_amount`, or equivalently subtract `fee` from `amount` before computing shares (line 70 should use `amount - fee`).\n\nThe bug is on line 70 where `amount` should be `(amount - fee)`, or alternatively line 72 should not subtract `fee` from each share individually. The fee deduction logic is wrong - it's applied per-participant instead of once.\n\n{\n  \"function_name\": \"allocate_bonus_cut\",\n  \"faulty_lines\": [70, 72],\n  \"explanation\": \"The fee should be deducted once from the total pool before distribution, but instead it is subtracted from each individual share on line 72, effectively multiplying the fee by the number of participants. Line 70 should use `(amount - fee)` instead of `amount`, and line 72 should not subtract `fee`.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        70,
+        72
+      ],
+      "valid_preds": [
+        70,
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

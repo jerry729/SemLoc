@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "time_range_filter",
+  "fault_hypothesis": "The condition `p[0] <= end` on line 75 incorrectly includes points at the exclusive upper boundary of the time range. It should be `p[0] < end` to match the documented half-open interval `[start, end)`.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "all(p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "The returned points must have timestamps strictly less than the end boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(p[0] == end for p in points)"
+      },
+      "intent": "The buggy code only produces a correct result for tests where no input point lies exactly on the end boundary.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "ANY_RETURN",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == sum(1 for p in points if start <= p[0] < end)"
+      },
+      "intent": "The number of returned points must match the count of points satisfying the correct half-open interval condition.",
+      "confidence": 0.9
+    }
+  ]
+}

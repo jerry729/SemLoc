@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "draft_cache",
+  "fault_hypothesis": "The expiration check on line 73 uses a strict greater-than `>` comparison. This incorrectly treats an entry as valid when the current time is exactly equal to the expiration time, whereas it should use `>=` to consider such entries expired.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now != expires_at__1"
+      },
+      "intent": "The check for expiration should handle the boundary case where the current time equals the expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "If an entry is considered valid (not expired), the current time must be strictly less than the expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "Before returning a cached value, ensure its expiration time has not been reached.",
+      "confidence": 0.9
+    }
+  ]
+}

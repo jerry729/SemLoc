@@ -1,0 +1,47 @@
+{
+  "bug_id": "thefuck_23",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.utils.cache",
+    "buggy_methods": [
+      "thefuck.utils.cache"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.utils.cache",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/test_utils.py": [
+      1,
+      130,
+      131,
+      132,
+      134,
+      149,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      159,
+      164,
+      165,
+      166,
+      167,
+      169,
+      170,
+      171
+    ],
+    "thefuck/utils.py": [
+      183
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

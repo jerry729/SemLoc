@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "credit_share",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 70. It should be subtracted from the total `amount` before the shares are calculated, not from each share individually.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0 or len(ratios) == 1) or (amount <= fee)"
+      },
+      "intent": "The per-share fee deduction is only correct if there's no fee, one participant, or the fee makes the net amount non-positive.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of gross shares before fee deduction must equal the original total amount, indicating the fee has not yet been applied.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= 0 for s in shares)"
+      },
+      "intent": "All calculated gross shares must be non-negative, as they are based on non-negative inputs.",
+      "confidence": 0.8
+    }
+  ]
+}

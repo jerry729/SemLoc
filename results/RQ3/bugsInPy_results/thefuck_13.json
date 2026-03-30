@@ -1,0 +1,32 @@
+{
+  "bug_id": "thefuck_13",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.git_branch_exists.match",
+    "buggy_methods": [
+      "thefuck.rules.git_branch_exists.match"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.git_branch_exists.match",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_git_branch_exists.py": [
+      15,
+      19,
+      20,
+      25,
+      31
+    ],
+    "thefuck/rules/git_branch_exists.py": [
+      9,
+      10
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

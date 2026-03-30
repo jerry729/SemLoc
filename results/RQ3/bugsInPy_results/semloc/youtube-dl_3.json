@@ -1,0 +1,25 @@
+{
+  "bug_id": "youtube-dl_3",
+  "function": "unescapeHTML",
+  "src_path": "youtube_dl/utils.py",
+  "fn_begin": 593,
+  "fn_end": 599,
+  "n_constraints": 4,
+  "n_tests_passing": 75,
+  "n_tests_failing": 1,
+  "line_scores": [
+    {
+      "line": 595,
+      "score": 0.3
+    },
+    {
+      "line": 598,
+      "score": 0.3
+    }
+  ],
+  "fault_line": 598,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_3/unescapeHTML_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_3/violations.jsonl"
+}

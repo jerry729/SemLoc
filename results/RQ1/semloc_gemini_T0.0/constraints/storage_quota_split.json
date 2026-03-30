@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "storage_quota_split",
+  "fault_hypothesis": "The fee is subtracted from each participant's share after the split (line 70), instead of being deducted from the total pool before the split. The root cause is on line 66, where shares are calculated from the gross `total` instead of the net `total - fee`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (fee > 0 and total > fee) or abs(sum(shares__1) - (total - fee)) < 1e-9"
+      },
+      "intent": "The sum of raw shares should equal the distributable pool (total - fee), except in cases where later operations mask the error.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "floored__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(floored__1) - max(0, total - fee)) < 1e-9"
+      },
+      "intent": "The sum of the final shares must equal the total pool available after the fee, clamped at zero.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "total <= fee or fee < 1e-9 or len(ratios) <= 1"
+      },
+      "intent": "Subtracting the fee from each share is only arithmetically correct if there is one participant, the fee is zero, or the net pool is zero anyway.",
+      "confidence": 0.8
+    }
+  ]
+}

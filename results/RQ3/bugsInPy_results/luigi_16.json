@@ -1,0 +1,24 @@
+{
+  "bug_id": "luigi_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.scheduler.CentralPlannerScheduler.prune",
+    "buggy_methods": [
+      "luigi.scheduler.CentralPlannerScheduler.prune"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.scheduler.CentralPlannerScheduler.prune",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/scheduler.py": [
+      570
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

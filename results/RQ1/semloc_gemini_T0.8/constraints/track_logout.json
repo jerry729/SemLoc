@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_logout",
+  "fault_hypothesis": "The logic for capping the counter is incorrect. On line 69, when the updated value exceeds the cap, it is incorrectly set to `cap - 1` instead of `cap`.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "(cap == 1) or (updated__2 == cap)"
+      },
+      "intent": "When the counter exceeds the cap, it should be set to the cap value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "updated__1 == current__1 + 1"
+      },
+      "intent": "The counter should be incremented by 1 before any capping logic is applied.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 <= cap"
+      },
+      "intent": "When a cap is active, the final updated value must not exceed it.",
+      "confidence": 0.8
+    }
+  ]
+}

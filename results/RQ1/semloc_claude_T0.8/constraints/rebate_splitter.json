@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rebate_splitter",
+  "fault_hypothesis": "On line 64, the fee is subtracted from each individual share rather than from the total amount before splitting. The correct approach is to deduct the fee once from `amount` before computing shares, or equivalently distribute `(amount - fee)` proportionally.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "base should sum to amount (before fee deduction), which is correct only if fee is not pre-subtracted here; failing tests expose that fee logic is wrong at line 64 because base is computed from full amount.",
+      "confidence": 0.55
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - (amount - fee)) < 1e-9 or fee == 0"
+      },
+      "intent": "After computing base shares, their sum should equal amount minus fee (net distributable), not the full amount.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - (amount - fee)) < 1e-9 or fee == 0"
+      },
+      "intent": "Before using base in the return expression, verify it already accounts for the fee deduction so per-share subtraction is not needed.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "The total of all payouts should equal max(0, amount - fee), not amount - n*fee.",
+      "confidence": 0.9
+    }
+  ]
+}

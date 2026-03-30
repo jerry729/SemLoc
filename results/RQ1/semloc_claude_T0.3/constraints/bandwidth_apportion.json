@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_apportion",
+  "fault_hypothesis": "The return statement on line 69 simply truncates each raw share with `int()` (floor), discarding fractional remainders without redistributing them, so the sum of allocations can be less than `total`. A largest-remainder rounding algorithm is needed instead.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "sum(int(x) for x in raw__1) == int(total)"
+      },
+      "intent": "The sum of floored raw shares must equal total; fails when fractional remainders are discarded.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(raw__1) - total) < 1e-6"
+      },
+      "intent": "The raw shares must sum exactly to total before integer conversion.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned allocations must sum to total; fails for non-divisible splits.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "len(raw__1) == len(weights)"
+      },
+      "intent": "The number of raw shares must match the number of weights before use in the return expression.",
+      "confidence": 0.75
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "notification_gate",
+  "fault_hypothesis": "The rate limit check at line 63 uses a strict inequality `>` which is incorrect. When the number of recent events is exactly equal to the limit, it should be blocked, but the code permits it, requiring the check to be `>=`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not be exactly at the limit when this check is performed, as that is the failing boundary case.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a notification is allowed (i.e., this branch is taken), the number of recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not equal the limit, as this is the specific boundary condition that fails.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0]) == (sum(1 for t in timestamps if t >= now - window) < limit)"
+      },
+      "intent": "The 'allowed' flag in the output must correctly reflect whether recent events are under the limit.",
+      "confidence": 1.0
+    }
+  ]
+}

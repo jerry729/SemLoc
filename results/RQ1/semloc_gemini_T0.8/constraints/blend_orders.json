@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "blend_orders",
+  "fault_hypothesis": "The code on line 73 incorrectly removes an element from the `merged` list when the last elements of both input streams are identical. This violates the requirement that all original elements must be preserved.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The total number of merged elements must equal the sum of input elements; this pop violates that invariant.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that removes a duplicate tail element should never be taken, as all elements should be preserved.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_CALL",
+        "anchor": {
+          "callee": "pop"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The pop operation must not cause the final list to have fewer elements than the sum of the inputs.",
+      "confidence": 1.0
+    }
+  ]
+}

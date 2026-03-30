@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_queue",
+  "fault_hypothesis": "The function computes interpolated weights but never normalizes the result to sum to 1.0 before returning. The return statement on line 66 returns `adjusted` without dividing each element by the total sum.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 as guaranteed by the docstring, but the function never normalizes.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(v >= 0.0 for v in adjusted__1)"
+      },
+      "intent": "Each appended value should be non-negative during the loop; this is a sanity check on intermediate values.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0"
+      },
+      "intent": "Immediately after initialization, adjusted__1 must be empty before the loop fills it.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation weights must always sum to 1.0 per the function contract.",
+      "confidence": 0.9
+    }
+  ]
+}

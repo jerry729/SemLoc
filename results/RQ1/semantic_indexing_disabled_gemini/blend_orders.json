@@ -1,0 +1,47 @@
+{
+  "function": "blend_orders",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        73,
+        72
+      ],
+      "explanation": "The code incorrectly removes the last element from the merged list if the largest value is present in both input streams, which violates the function's documented contract to preserve all original orders.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"blend_orders\",\n  \"faulty_lines\": [\n    73,\n    72\n  ],\n  \"explanation\": \"The code incorrectly removes the last element from the merged list if the largest value is present in both input streams, which violates the function's documented contract to preserve all original orders.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        73,
+        72
+      ],
+      "valid_preds": [
+        73,
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

@@ -1,0 +1,44 @@
+{
+  "function": "cacheline_refresh",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "Line 70 updates the local variable `expires_at` but never writes the new expiration timestamp back to `store[key]`, so the sliding-window extension is never persisted in the cache.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "Looking at the code, the function is supposed to implement sliding-window expiration by updating the store with the new expiration timestamp. However, on line 70, `expires_at = now + ttl` only updates the local variable but never writes the updated expiration back to the `store`. The store entry remains unchanged, so the sliding window behavior is not actually implemented.\n\n```json\n{\n  \"function_name\": \"cacheline_refresh\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"Line 70 updates the local variable `expires_at` but never writes the new expiration timestamp back to `store[key]`, so the sliding-window extension is never persisted in the cache.\",\n  \"confidence\": 0.97\n}\n```",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

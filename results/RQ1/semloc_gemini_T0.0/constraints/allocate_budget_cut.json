@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_budget_cut",
+  "fault_hypothesis": "The fee is incorrectly deducted from each participant's individual share on line 67, instead of being deducted from the total amount before distribution. This causes the fee to be effectively subtracted for each participant, rather than once for the entire pool.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the total amount less the single fee, floored at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of the calculated gross shares must equal the total gross amount before the fee is applied.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(total_ratio__1 - sum(ratios)) < 1e-9"
+      },
+      "intent": "The calculated total ratio must equal the sum of the input ratios.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "ENTRY",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(fee == 0) or (amount <= fee)"
+      },
+      "intent": "The buggy logic produces a correct result only if the fee is zero or if it exceeds the total amount.",
+      "confidence": 0.8
+    }
+  ]
+}

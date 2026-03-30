@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_rebalance",
+  "fault_hypothesis": "The function returns the raw `updated` list without normalizing the weights to sum to 1.0; the normalization step is missing before the return on line 65.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9 or sum(updated__1) == 0.0"
+      },
+      "intent": "The list about to be returned must already sum to 1.0 (normalized), which fails when clamping distorts weights.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) <= len(current) and all(0.0 <= w for w in updated__1)"
+      },
+      "intent": "After each iteration the partial updated list should only grow and contain non-negative weights.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "updated__1 == []"
+      },
+      "intent": "At initialization, updated must be an empty list before any appends occur.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9 or sum(__cbfl_result) == 0.0"
+      },
+      "intent": "The returned weights must sum to 1.0 for any valid non-zero input.",
+      "confidence": 0.88
+    }
+  ]
+}

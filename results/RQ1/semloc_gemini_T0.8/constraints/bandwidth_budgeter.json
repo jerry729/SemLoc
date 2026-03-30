@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_budgeter",
+  "fault_hypothesis": "The conversion from floating-point `planned` shares to integer `allocations` on line 65 incorrectly truncates values using `int()`, causing the sum of the final allocations to fall short of the total budget.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "minimum > 0 or sum(allocations__1) == total"
+      },
+      "intent": "The sum of integer allocations must equal the total budget, unless a minimum is enforced.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(planned__1) - sum(allocations__1) < 1.0"
+      },
+      "intent": "The total amount lost during integer conversion should be less than one unit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "minimum > 0 or sum(allocations__1) == total"
+      },
+      "intent": "After creation, the sum of integer shares must match the budget, unless a minimum is enforced.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "ANY_RETURN",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(minimum > 0) or not _INTEGER_ALLOCATION or (sum(__cbfl_result) == total)"
+      },
+      "intent": "The final allocations should sum to the total budget unless a minimum is enforced.",
+      "confidence": 0.8
+    }
+  ]
+}

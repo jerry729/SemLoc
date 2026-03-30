@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "time_range_filter",
+  "fault_hypothesis": "On line 75, the filter condition uses `<= end` (inclusive) instead of `< end` (exclusive), causing points at the exact end boundary to be incorrectly included.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "all(p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "Every returned point must have a timestamp strictly less than end (exclusive upper bound).",
+      "confidence": 0.98
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "__cbfl_result"
+        }
+      },
+      "spec": {
+        "expr": "not any(p[0] == end for p in __cbfl_result)"
+      },
+      "intent": "No point at exactly the end boundary should appear in the result.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end"
+        }
+      },
+      "spec": {
+        "expr": "all(p[0] < end for p in points if start <= p[0])"
+      },
+      "intent": "Before end is used in the comprehension filter, confirm that only points strictly below end would satisfy the correct half-open condition.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(start <= p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "All returned points must satisfy the half-open interval [start, end).",
+      "confidence": 0.95
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sensor_window_avg",
+  "fault_hypothesis": "The mean on line 73 is calculated by dividing the total sum by the requested `window` size. It should instead be divided by the actual number of recent samples, `len(recent)`, which can be smaller if not enough samples are available.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The computed mean must equal the total sum divided by the actual number of samples considered.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window"
+      },
+      "intent": "The current division logic is only correct when the number of recent samples equals the window size.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) < window) or (len(recent__1) < min_samples)"
+      },
+      "intent": "If there are fewer samples than the window size, it should be because the minimum sample threshold has not been met.",
+      "confidence": 0.9
+    }
+  ]
+}

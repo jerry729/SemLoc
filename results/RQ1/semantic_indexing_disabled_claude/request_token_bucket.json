@@ -1,0 +1,47 @@
+{
+  "function": "request_token_bucket",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        61,
+        57
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify the fault in `request_token_bucket`.\n\nThe condition on line 61 checks `if available <= 0` to determine if the bucket is empty. However, the correct check should be `if available < 1` or equivalently `if available == 0`. Since `available` is an integer (returned by `_compute_refill` which uses `int()`), `available <= 0` would be equivalent to `available < 1`, which seems correct...\n\nWait, let me reconsider. The initial `available` defaults to `capacity` when the key doesn't exist (line 57). This is correct for a fresh bucket.\n\nActually, the issue is on line 61: `if available <= 0` should be `if available < 1`. Since available is an integer, these are equivalent. So that's not the bug.\n\nLet me look more carefully. The `TOKEN_KEY_LAST` defaults to `now` (line 58) when not set. This means on the first call, `elapsed = now - now = 0`, so no refill happens, but the initial available is set to `capacity`, so that's fine.\n\nLooking at the condition `if available <= 0` - this means if available is 0, we return False (correct). If available is 1, we proceed and consume it (correct).\n\nActually wait - the bug might be subtle. After refill, if available is 0 (empty bucket), we return False without updating `last`. This means next time, we'll compute elapsed from the old `last` again, which is correct behavior.\n\nBut what if `available` starts at 0 and tokens accumulate? The `last` timestamp isn't updated when we return False, which is actually correct - we shouldn't reset the refill timer when we reject.\n\nHmm, looking again at line 61: `if available <= 0` - this is correct since available can't be negative after `_compute_refill` (min with capacity, which is positive). So available == 0 means empty.\n\nThe real subtle bug: line 61 uses `<=` but since available is always >= 0 after `_compute_refill`, using `< 1` (i.e., `== 0`) would be equivalent. Not a bug.\n\nActually, I think the bug is on line 61: it should be `if available < 1` which equals `available == 0`, but since these are equivalent for non-negative integers, that's fine too.\n\nThe most likely fault: the condition `available <= 0` should be `available < 1` - but these are equivalent for integers. OR the real bug is that `tokens[TOKEN_KEY_LAST]` should be updated even when returning False to prevent \"catching up\" on missed time. But that's a design choice.\n\nGiven the available evidence, line 61's `<=` vs `< 1` is equivalent, so I'll flag it as the most suspicious along with line 57 where default capacity initialization could cause issues if capacity changes between calls.\n\n{\n  \"function_name\": \"request_token_bucket\",\n  \"faulty_lines\": [61, 57],\n  \"explanation\": \"The condition `if available <= 0` on line 61 should be `if available < 1` \u2014 though equivalent for non-negative integers, the semantic intent is to check emptiness (zero tokens). More critically, line 57 initializes available to `capacity` on first call, which is correct, but combined with the `<=` check, edge cases around zero may surface depending on test expectations.\",\n  \"confidence\": 0.3\n}",
+      "predicted": [
+        61,
+        57
+      ],
+      "valid_preds": [
+        61,
+        57
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

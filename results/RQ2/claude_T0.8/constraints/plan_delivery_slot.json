@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_delivery_slot",
+  "fault_hypothesis": "On line 67, the overlap check uses `<=` and `>=` instead of `<` and `>`, causing adjacent (touching) windows to be incorrectly treated as non-overlapping. The correct condition should be `not (b < s or a > e)` to detect touching endpoints as overlaps.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "all(not (b__1 < s or a__1 > e) == (not (b__1 <= s or a__1 >= e)) for s, e in timeline if b__1 != s and a__1 != e)"
+      },
+      "intent": "The strict and non-strict overlap checks differ exactly when endpoints touch; the buggy line uses <= and >= which fails to detect touching-endpoint overlaps.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) == (b__1 <= s or a__1 >= e) for s, e in timeline if b__1 != s and a__1 != e)"
+      },
+      "intent": "Before using b__1 in the overlap check, verify that strict vs non-strict comparisons only differ when endpoints are equal (touching), exposing the bug for touching cases.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "After the non-overlap branch (window accepted), no existing slot should touch the new window at either endpoint under the correct strict-comparison semantics.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "After result is computed (window accepted), verify that no touching-endpoint conflicts exist, which would be violated by the buggy <= / >= condition.",
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "bug_id": "scrapy_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.utils.url.canonicalize_url",
+    "buggy_methods": [
+      "scrapy.utils.url.canonicalize_url"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.utils.url.canonicalize_url",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/utils/url.py": [
+      12,
+      18,
+      45,
+      46,
+      49,
+      50,
+      52,
+      53,
+      57,
+      58,
+      59,
+      63,
+      64,
+      65,
+      67,
+      75,
+      84
+    ],
+    "tests/test_utils_url.py": [
+      8,
+      126,
+      129,
+      131,
+      147,
+      170
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

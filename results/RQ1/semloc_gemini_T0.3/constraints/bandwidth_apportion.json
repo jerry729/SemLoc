@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_apportion",
+  "fault_hypothesis": "The bug is on line 69. The list comprehension `[int(x) for x in raw]` truncates fractional bandwidth shares, causing the sum of the allocated bandwidth to be less than the total available bandwidth.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of the final integer allocations must equal the total bandwidth.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(raw__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the computed raw (floating-point) shares must equal the total available bandwidth.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "all(x >= minimum for x in raw__1)"
+      },
+      "intent": "Each raw share must be at least the specified minimum before integer conversion.",
+      "confidence": 0.8
+    }
+  ]
+}

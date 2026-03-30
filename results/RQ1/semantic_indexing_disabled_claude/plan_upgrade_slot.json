@@ -1,0 +1,38 @@
+{
+  "function": "plan_upgrade_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the overlap detection logic on line 63:\n\n```python\nif any(not (b <= s or a >= e) for s, e in timeline):\n```\n\nThis checks if the new window [a, b) overlaps with any existing slot [s, e). Two intervals overlap if NOT (b <= s OR a >= e), which means they overlap if (b > s AND a < e). This is the standard overlap check for open intervals.\n\nHowever, the issue depends on whether touching intervals (e.g., [1,2] and [2,3]) should be considered overlapping or not. The condition `b <= s` means if b equals s, there's no overlap (touching at a point is OK). Similarly `a >= e` means if a equals e, there's no overlap. This seems correct for most scheduling scenarios.\n\nLet me reconsider - actually the logic looks mathematically correct for detecting overlaps. The function returns `False, timeline` on conflict and `True, sorted_result` on success. The sorted operation on line 66 uses `timeline + [window]` which creates a new list - this is correct.\n\nWait, let me check line 58: `if a >= b: raise ValueError(\"empty window\")`. The docstring says \"zero or negative duration\" should raise ValueError. If `a == b`, duration is zero - this is correctly handled. If `a > b`, negative duration - also handled. This seems correct.\n\nActually, looking more carefully at line 63, the overlap condition `not (b <= s or a >= e)` - this is correct. Two intervals [a,b] and [s,e] overlap if a < e AND b > s.\n\nThe logic appears correct. But wait - if this is supposed to handle the `_MIN_WINDOW_DURATION = 0` constraint and `_SLOT_PRECISION = 1`, maybe line 58 should use `b - a < _MIN_WINDOW_DURATION` or similar? But `_MIN_WINDOW_DURATION = 0` so `a >= b` would correctly reject zero-duration windows only when duration <= 0.\n\nActually line 58 raises ValueError for `a >= b` but the docstring says \"zero or negative duration\". A zero duration window has `a == b`, which IS caught. This seems fine.\n\nThe code looks functionally correct to me, but if there's a bug, the most likely candidate is line 63 where the overlap logic might need `<=` vs `<` adjustments, or line 58 for the boundary condition.\n\n{\n  \"function_name\": \"plan_upgrade_slot\",\n  \"faulty_lines\": [63, 58],\n  \"explanation\": \"The overlap check on line 63 uses strict inequality (`b <= s` and `a >= e`), meaning touching intervals (where one ends exactly where another begins) are not considered overlapping. Depending on requirements, this should use strict or non-strict comparisons. Additionally, line 58 raises ValueError for zero-duration windows but the module constant `_MIN_WINDOW_DURATION = 0` suggests the threshold might need to be applied differently.\",\n  \"confidence\": 0.35\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

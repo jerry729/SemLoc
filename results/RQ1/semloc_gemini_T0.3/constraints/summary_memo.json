@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "summary_memo",
+  "fault_hypothesis": "The expiration check on line 73 uses a strict inequality (`>`), which incorrectly validates an entry when the current time is exactly equal to the expiration time. It should use `>=` to correctly treat such entries as expired.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "(adjusted_now__1 > expires_at__1) == (adjusted_now__1 >= expires_at__1)"
+      },
+      "intent": "The buggy strict inequality should behave identically to the correct non-strict one.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 < expires_at__1"
+      },
+      "intent": "If the function is about to return a cached value, that value must be strictly non-expired.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "not (adjusted_now__1 == expires_at__1)"
+      },
+      "intent": "The adjusted time should not be exactly at the expiry boundary, where the logic is faulty.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_split_rebate",
+  "fault_hypothesis": "The function incorrectly subtracts the full rebate from each individual share on line 66. This causes the total rebate to be effectively multiplied by the number of participants, leading to an incorrect total payout.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, total - rebate)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the distributable total (total minus rebate, clamped at zero).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((sum(shares__1) - len(shares__1) * rebate) - max(0, total - rebate)) < 1e-9"
+      },
+      "intent": "The final payout sum, which can be derived from the raw shares and the rebate, must match the expected distributable amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "len(ratios) <= 1 or rebate == 0"
+      },
+      "intent": "The implemented logic of applying the rebate per-share is only correct for a single participant or when no rebate is applied.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cost_trendline",
+  "fault_hypothesis": "The condition on line 65 is inverted. Clamping logic is incorrectly executed when `clamp` is `False` and skipped when it is `True`.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "0 <= ratio__1 <= 1"
+      },
+      "intent": "The buggy function only produces correct results for interpolation (ratio is between 0 and 1), not extrapolation.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "The clamping logic block should only be entered if clamping is enabled.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__4 >= min(y0, y1) and y__4 <= max(y0, y1)) or (not clamp and y__4 == y__1)"
+      },
+      "intent": "The final value must be clamped if requested; otherwise, it must be the original interpolated value.",
+      "confidence": 1.0
+    }
+  ]
+}

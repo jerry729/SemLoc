@@ -1,0 +1,47 @@
+{
+  "function": "combine_scores",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        68,
+        69
+      ],
+      "explanation": "Lines 68-69 incorrectly remove the last element from the merged list when the last elements of both left and right are equal to the last merged element. This causes a valid score to be dropped, resulting in an incorrect merged output with one fewer element than expected.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"combine_scores\",\n  \"faulty_lines\": [68, 69],\n  \"explanation\": \"Lines 68-69 incorrectly remove the last element from the merged list when the last elements of both left and right are equal to the last merged element. This causes a valid score to be dropped, resulting in an incorrect merged output with one fewer element than expected.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [
+        68,
+        69
+      ],
+      "valid_preds": [
+        68,
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 68,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

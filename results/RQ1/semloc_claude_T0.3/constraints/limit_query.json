@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_query",
+  "fault_hypothesis": "The condition on line 69 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when the number of active queries exactly equals the limit the function incorrectly allows the query instead of denying it.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) >= limit) == (len(active__1) > limit or len(active__1) == limit)"
+      },
+      "intent": "When active count equals limit the branch must be taken (denied), so the guard must use >= not >.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "After the else branch (query allowed), active count must be strictly less than limit, not equal.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit) or len(active__1) >= limit"
+      },
+      "intent": "When active equals limit, the condition len(active) >= limit must hold so the denial branch is entered.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(active__1) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when active count is at or above the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

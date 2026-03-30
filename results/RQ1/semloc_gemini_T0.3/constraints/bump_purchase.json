@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_purchase",
+  "fault_hypothesis": "When the updated counter exceeds the cap, it is incorrectly set to `cap - 1` on line 64, instead of being clamped to `cap`.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The value after clamping should be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The value assigned to updated when clamping occurs must be the cap itself.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "cap is None or not (updated__1 > cap) or updated__3 == cap"
+      },
+      "intent": "If the pre-clamped value exceeded the cap, the final value must equal the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

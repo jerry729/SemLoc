@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_route",
+  "fault_hypothesis": "The expiration check on line 68 uses a strict greater-than comparison (`>`) instead of greater-than-or-equal (`>=`). This causes entries to be considered valid when the current time is exactly equal to the expiration time, but they should be treated as expired.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The check for expiration fails at the exact boundary; this condition holds for all passing tests but is false for all failing tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "A cached route should only be returned if the current time is strictly before its effective expiration.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 >= expires_at__1"
+      },
+      "intent": "The effective expiration time, which may include a tolerance, should not be earlier than the stored expiration time.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or isinstance(__cbfl_result, str)"
+      },
+      "intent": "The function must return either a string route or None, matching its type hint Optional[str].",
+      "confidence": 0.5
+    }
+  ]
+}

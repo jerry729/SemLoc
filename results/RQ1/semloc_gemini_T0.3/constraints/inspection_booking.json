@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "inspection_booking",
+  "fault_hypothesis": "The overlap check on line 65 uses non-strict inequalities (`<=`, `>=`), incorrectly treating adjacent time slots as non-overlapping. It should use strict inequalities (`<`, `>`) to correctly identify touching slots as conflicts.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (a[1] == b[0] or b[1] == a[0]) or __cbfl_result"
+      },
+      "intent": "The overlaps function must return true if two slots are adjacent.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "A candidate that doesn't cause an early exit must not be adjacent to the slot just checked.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the candidate is merged, it implies it was not adjacent to any existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "An accepted candidate must not be adjacent to any slot in the original schedule.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_cpu",
+  "fault_hypothesis": "The mean is calculated by dividing the total by the fixed window size on line 68. It should instead be divided by the actual number of samples in the tail, which can be smaller than the window when not enough data is available.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the sum of tail values divided by the number of elements in the tail.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "The number of samples in the tail should match the window size, which is not true in failing cases.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or mean__1 >= total__1 / len(tail__1)"
+      },
+      "intent": "The calculated mean should not be smaller than the sum of samples divided by the actual sample count.",
+      "confidence": 0.9
+    }
+  ]
+}

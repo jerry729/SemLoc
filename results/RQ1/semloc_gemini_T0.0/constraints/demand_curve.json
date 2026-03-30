@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_curve",
+  "fault_hypothesis": "The conditional on line 60 for clamping the output is inverted. It checks `if not clamp:` instead of `if clamp:`, causing clamping to be applied when disabled and skipped when enabled.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (t__1 >= 0 and t__1 <= 1)"
+      },
+      "intent": "The implementation is only correct when clamping is disabled, or when the query point is within the segment and clamping is not needed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "When the code path that skips clamping is taken, it should only be because the query point is within the segment's bounds.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or ((y__3 >= y0 and y__3 <= y1) or (y__3 >= y1 and y__3 <= y0))"
+      },
+      "intent": "If clamping is enabled, the final computed demand `y` must lie between the endpoint demands `y0` and `y1`.",
+      "confidence": 0.9
+    }
+  ]
+}

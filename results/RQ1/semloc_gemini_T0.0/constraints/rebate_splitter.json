@@ -1,0 +1,64 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rebate_splitter",
+  "fault_hypothesis": "The proportional shares are calculated based on the total `amount` on line 62, without first deducting the `fee`. The fee should be subtracted from the `amount` before splitting it, which would make the sum of the `base` shares equal to `amount - fee`.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(amount <= fee or fee <= 0) or abs(sum(base__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of base shares should equal the distributable amount (amount - fee) in all cases where the bug is not masked by later clamping.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of final payouts must equal the distributable amount, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive for a valid distribution.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "ENTRY",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "amount >= 0"
+      },
+      "intent": "The total rebate amount cannot be negative.",
+      "confidence": 0.8
+    }
+  ]
+}

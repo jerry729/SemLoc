@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_message",
+  "fault_hypothesis": "The rate limit check at line 73 uses a strict `>` comparison, which incorrectly allows a message when the number of recent messages is exactly equal to the limit. It should use `>=` to deny messages once the limit is reached.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit)"
+      },
+      "intent": "The logic for handling the boundary case where the message count exactly equals the limit is incorrect.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a message is allowed, the count of recent messages must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == sum(1 for t in timestamps if t > cutoff__1)"
+      },
+      "intent": "The count of recent messages must match the number of timestamps inside the sliding window.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] and __cbfl_result[1] == 0)"
+      },
+      "intent": "If a message is allowed, there must be remaining slots available.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tasks_allocator",
+  "fault_hypothesis": "The integer conversion on line 70 uses `int()` (truncation) instead of a rounding method that preserves the total sum, causing the sum of allocations to be less than `total` when fractional parts are truncated.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == sum(int(x) for x in planned__1) and sum(allocations__1) == int(sum(planned__1))"
+      },
+      "intent": "After integer conversion, the sum of allocations must equal the rounded total, not the truncated sum.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "The sum of integer allocations must equal the rounded sum of planned floats (i.e., the original total).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == total"
+      },
+      "intent": "Before returning, the sum of final allocations must equal the requested total.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == total"
+      },
+      "intent": "After the integer-allocation branch, allocations must still sum to total.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The returned allocations must always sum to the requested total.",
+      "confidence": 0.8
+    }
+  ]
+}

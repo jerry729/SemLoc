@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sales_window_avg",
+  "fault_hypothesis": "The calculation of the mean on line 71 is incorrect. It divides the total by the requested `window` size instead of the actual number of samples in `recent`, which can be smaller if there is insufficient data.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (window == len(recent__1))"
+      },
+      "intent": "The number of recent samples must equal the window size, unless the warmup threshold has not been met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "window == len(recent__1)"
+      },
+      "intent": "If an average is returned, it must have been computed over a full window of data.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (abs(mean__1 * len(recent__1) - total__1) < 1e-9)"
+      },
+      "intent": "The computed mean must be the correct average of recent samples, unless it is discarded due to the warmup threshold.",
+      "confidence": 1.0
+    }
+  ]
+}

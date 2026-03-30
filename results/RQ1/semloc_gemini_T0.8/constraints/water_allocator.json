@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "water_allocator",
+  "fault_hypothesis": "The function incorrectly floors each calculated share independently using `int()`. This discards the fractional remainder, causing the sum of the final allocations to be less than the original `total`. The bug is on line 29.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == total"
+      },
+      "intent": "The sum of the integer-floored shares must equal the original total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 28,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(int(v) for v in shares__1) == total"
+      },
+      "intent": "After flooring, the sum of shares must be consistent with the total input.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 28,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "If not flooring, the sum of float shares should still equal the total.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not floor_to_int and abs(sum(__cbfl_result) - total) < 1e-9) or (floor_to_int and sum(__cbfl_result) == total)"
+      },
+      "intent": "The sum of the final allocations must equal the total, respecting the output type.",
+      "confidence": 0.9
+    }
+  ]
+}

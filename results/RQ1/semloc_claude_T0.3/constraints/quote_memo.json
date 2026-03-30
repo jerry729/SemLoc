@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quote_memo",
+  "fault_hypothesis": "The expiry check on line 61 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now == effective` (exact boundary) the entry is incorrectly returned as valid instead of expired.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or __cbfl_result is None"
+      },
+      "intent": "When now equals effective, the function must return None (expired); the strict > check fails this at the boundary.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or True"
+      },
+      "intent": "Capture the relationship between now and effective immediately after effective is computed, to verify the boundary condition is handled.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "In the else branch (entry not expired), now must be strictly less than effective; equality should have triggered expiry.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or now < effective__1"
+      },
+      "intent": "The payload should only be returned when now is strictly less than the effective TTL.",
+      "confidence": 0.85
+    }
+  ]
+}

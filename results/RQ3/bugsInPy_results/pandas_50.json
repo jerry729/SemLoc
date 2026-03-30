@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_50",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.categorical._cat_compare_op",
+    "buggy_methods": [
+      "pandas.core.arrays.categorical._cat_compare_op"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.categorical._cat_compare_op",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/categorical.py": [
+      106
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

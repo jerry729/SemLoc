@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "log_sampling_decider",
+  "fault_hypothesis": "The comparison on line 67 uses `>` instead of `<`. With `bucket > rate`, a rate of 0 never samples (bucket is always > 0) and a rate of 1 always samples only when bucket > 1 (never), which is backwards. The correct expression should be `bucket < rate` so that higher rates include more buckets.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(rate == 0 and not (bucket__1 > rate)) or (rate == 1 and (bucket__1 > rate)) or (rate > 0 and rate < 1)"
+      },
+      "intent": "At rate=0 the result must be False (no item sampled) and at rate=1 it must be True (all sampled); bucket>rate violates both boundary conditions.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= bucket__1 <= 1.0"
+      },
+      "intent": "The computed bucket must be in [0,1] so that comparison with rate is meaningful for boundary rates 0 and 1.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "not (rate == 1 and not (bucket__1 < rate))"
+      },
+      "intent": "If rate==1, every bucket in [0,1) should be sampled; bucket<rate would be True for all valid buckets, but bucket>rate would be False for all, exposing the wrong operator.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (rate == 0 and __cbfl_result == True)"
+      },
+      "intent": "When rate is 0, the function must never return True (no log line should be sampled).",
+      "confidence": 0.92
+    }
+  ]
+}

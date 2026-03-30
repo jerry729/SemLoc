@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_deployment",
+  "fault_hypothesis": "On line 67, when new_value exceeds the ceiling, it is set to `effective_ceiling - 1` instead of `effective_ceiling`, causing the counter to be clamped one below the ceiling rather than at the ceiling itself.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "After clamping, new_value should equal the ceiling, not ceiling minus 1.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "The clamped value must equal the ceiling, not be one less than it.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "After the clamping branch, new_value should be exactly the ceiling value.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "effective_ceiling__1 is None or new_value__3 <= effective_ceiling__1"
+      },
+      "intent": "Before storing the result, new_value must not exceed the ceiling.",
+      "confidence": 0.93
+    }
+  ]
+}

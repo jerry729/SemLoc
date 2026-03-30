@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_coupon",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's individual share on line 67, rather than being deducted once from the total amount before distribution as specified in the docstring.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of final payouts must equal the distributable amount (total less fee), clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "not ((fee > 0.0) and (len(ratios) > 1) and (amount > fee)) or (abs(sum(base__1) - (amount - fee)) < 1e-6)"
+      },
+      "intent": "In cases where the fee is applicable, the pre-fee payout distribution should be based on the net amount (amount - fee).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "After its computation, the sum of payouts must equal the distributable amount (total less fee), clamped at zero.",
+      "confidence": 0.95
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "inspection_booking",
+  "fault_hypothesis": "The `overlaps` function on line 65 uses non-strict inequalities (`<=`, `>=`) for its check. This incorrectly treats adjacent time slots as non-overlapping, causing the function to accept candidates that should be rejected.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "__cbfl_result == (not (b[1] < a[0] or b[0] > a[1]))"
+      },
+      "intent": "The overlaps check should return True for adjacent slots (where endpoints touch).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == slot[0] or candidate[0] == slot[1])"
+      },
+      "intent": "If no overlap is detected for a slot, it must not be adjacent to the candidate.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(candidate[1] == e[0] or candidate[0] == e[1] for e in existing)"
+      },
+      "intent": "If the candidate is accepted, it must not have been adjacent to any existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not __cbfl_result[0]) or (not any(candidate[1] == e[0] or candidate[0] == e[1] for e in existing))"
+      },
+      "intent": "A candidate cannot be accepted if it is adjacent to an existing slot.",
+      "confidence": 0.8
+    }
+  ]
+}

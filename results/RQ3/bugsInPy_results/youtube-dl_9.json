@@ -1,0 +1,33 @@
+{
+  "bug_id": "youtube-dl_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.YoutubeDL.YoutubeDL.build_format_selector",
+    "buggy_methods": [
+      "youtube_dl.YoutubeDL.YoutubeDL.build_format_selector"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.YoutubeDL.YoutubeDL.build_format_selector",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/YoutubeDL.py": [
+      934,
+      944,
+      946,
+      947,
+      950,
+      955,
+      966,
+      969,
+      970,
+      971
+    ]
+  },
+  "semloc": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  },
+  "semloc_detail": {
+    "error": "Constraint inference failed: Expecting value: line 1 column 1 (char 0)"
+  }
+}

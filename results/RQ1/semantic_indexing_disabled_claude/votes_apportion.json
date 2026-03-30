@@ -1,0 +1,47 @@
+{
+  "function": "votes_apportion",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    29
+  ],
+  "total_source_lines": 30,
+  "runs": [
+    {
+      "faulty_lines": [
+        25,
+        26
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify what's buggy.\n\nThe function computes weighted allocations. Let me trace through the logic:\n\n1. It computes `portion = (w / weight_sum) * total` for each weight\n2. It applies `minimum` if the portion is less than minimum\n3. If `floor_to_int`, it returns integer values\n\nThe key issue: when `minimum` is applied to some shares, the total allocation can exceed `total`. For example, if total=10, weights=[1,1,1,1,1,1,1,1,1,100], minimum=5, then small weights get bumped up to 5, and the sum of allocations would greatly exceed total=10.\n\nBut more specifically, there's a subtle bug: after applying minimums, the shares that were bumped up to `minimum` should be accounted for, and the remaining shares should be rescaled. The current implementation doesn't do this.\n\nHowever, without specific test cases, let me look for a more clear-cut bug.\n\nLooking at line 26: `shares.append(portion if portion > minimum else minimum)`\n\nThis uses `>` (strict greater than). If `portion == minimum`, it uses `minimum` anyway, so that's fine.\n\nActually, the real issue is that when minimums are enforced, the total can exceed `total`, but the function doesn't adjust for this. The remaining weights should be rescaled to fit within `total - (count_of_minimums * minimum)`.\n\nBut also, there's another issue: after applying minimums, the `floor_to_int` truncates values, which means the sum of allocations will typically be less than `total` (due to rounding down). A proper implementation would distribute the remainder. But that might be intentional.\n\nThe most likely bug based on common implementations: the minimum enforcement doesn't properly rescale the remaining allocations. The portions that exceed minimum should be computed from the remaining total after subtracting minimum allocations.\n\nThe faulty logic is on line 25-26: when some weights get the minimum, the remaining weights should be recalculated based on `total - (number_of_minimum_items * minimum)` and the remaining weight sum.\n\n{\n  \"function_name\": \"votes_apportion\",\n  \"faulty_lines\": [25, 26],\n  \"explanation\": \"When minimum is applied to some shares, the remaining shares are not rescaled to account for the capacity consumed by the minimum allocations. The portions for weights that exceed the minimum should be recalculated using the remaining total (total minus the sum of minimum allocations) and the sum of only the non-minimum weights.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [
+        25,
+        26
+      ],
+      "valid_preds": [
+        25,
+        26
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 25,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

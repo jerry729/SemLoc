@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_window",
+  "fault_hypothesis": "The overlap condition on line 65 uses strict inequalities (`end <= s or start >= e`), which incorrectly allows touching boundaries (end == s or start == e) to pass without conflict. It should use `end < s or start > e` to treat touching as non-overlapping, or the test expectations require `end <= s or start >= e` to be changed to strict: the failing tests expect that touching boundaries ARE conflicts, so the condition should be `end < s or start > e` (i.e., no-overlap only when strictly separated).",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) or not (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "When end equals s (touching boundary), the condition `end <= s` is True so no conflict is detected \u2014 this should be False for touching boundaries to be treated as overlapping.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) or not (start__1 == e) or False"
+      },
+      "intent": "At each loop iteration, if end equals s or start equals e (touching), the function should have already returned False \u2014 but with the buggy condition it does not.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "all((end__1 < s or start__1 > e) for s, e in existing) or not all((end__1 <= s or start__1 >= e) for s, e in existing)"
+      },
+      "intent": "Before end__1 is used in the overlap check, verify that the no-overlap condition uses strict inequalities so touching boundaries are correctly identified as conflicts.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and any(interval[1] == s or interval[0] == e for s, e in existing))"
+      },
+      "intent": "The function must not accept an interval that touches any existing slot boundary.",
+      "confidence": 0.88
+    }
+  ]
+}

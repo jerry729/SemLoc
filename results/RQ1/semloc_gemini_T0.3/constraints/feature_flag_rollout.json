@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_flag_rollout",
+  "fault_hypothesis": "The comparison on line 63 is inverted. It should be `bucket < percentage` to enroll users whose bucket value is within the percentage threshold, but it is currently `bucket > percentage`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "not ((percentage == 1.0 and not (bucket__1 > percentage)) or (percentage == 0.0 and (bucket__1 > percentage)))"
+      },
+      "intent": "The rollout logic must correctly handle the boundary cases of 0% and 100% enrollment.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= bucket__1 <= 1.0"
+      },
+      "intent": "The computed user bucket must be a value between 0.0 and 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 58
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= percentage <= 1.0"
+      },
+      "intent": "After validation, the rollout percentage must be within the [0, 1] range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(percentage == 1.0) implies __cbfl_result"
+      },
+      "intent": "A 100% rollout must always enroll the user.",
+      "confidence": 1.0
+    }
+  ]
+}

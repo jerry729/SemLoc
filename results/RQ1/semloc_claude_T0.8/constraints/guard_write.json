@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_write",
+  "fault_hypothesis": "The condition on line 70 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly returns `True` (allowed) instead of `False` (denied).",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or len(recent__1) == limit"
+      },
+      "intent": "When len(recent) equals limit the branch condition should be True (deny), but with > it is False \u2014 catches the off-by-one bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) >= limit)"
+      },
+      "intent": "Asserts that when recent count equals the limit the denial threshold has been reached, exposing the strict-inequality bug.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= limit or len(recent__1) > limit"
+      },
+      "intent": "Checks that the comparison covers the equality case \u2014 len(recent) == limit must trigger denial, not allowance.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed path) recent count must be strictly less than limit; equality means it should have been denied.",
+      "confidence": 0.92
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "function": "batch_rate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "The condition `len(recent) > limit` is an off-by-one error. It allows a new request when the number of recent events is exactly equal to the limit, which results in exceeding the rate limit by one; the check should be `len(recent) >= limit` to correctly deny the request when the limit has been reached.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"batch_rate\",\n  \"faulty_lines\": [\n    70\n  ],\n  \"explanation\": \"The condition `len(recent) > limit` is an off-by-one error. It allows a new request when the number of recent events is exactly equal to the limit, which results in exceeding the rate limit by one; the check should be `len(recent) >= limit` to correctly deny the request when the limit has been reached.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

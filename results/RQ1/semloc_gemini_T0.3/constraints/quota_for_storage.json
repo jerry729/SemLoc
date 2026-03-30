@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_storage",
+  "fault_hypothesis": "The function truncates floating-point allocations to integers on line 66 using `int()`, which causes the sum of the final allocations to be less than the intended total. A rounding or remainder-distribution algorithm is needed to preserve the total sum.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "The sum of integer allocations must equal the rounded sum of the planned floating-point allocations.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) >= sum(int(x) for x in planned__1)"
+      },
+      "intent": "The sum of allocations after distributing remainders should be greater than or equal to the sum of simple truncations.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the computed floating-point plan should be nearly identical to the total to be distributed.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == round(total)"
+      },
+      "intent": "The sum of the final returned allocations must equal the rounded total.",
+      "confidence": 0.8
+    }
+  ]
+}

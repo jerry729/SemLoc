@@ -1,0 +1,38 @@
+{
+  "function": "cached_inventory",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the key logic is on line 70:\n\n```python\nif now > adjusted_deadline:\n    return default\n```\n\nThe docstring says \"If the current time `now` has reached or passed the adjusted deadline the function returns `default`\". This means when `now >= adjusted_deadline`, it should return default. But the current code uses strictly greater than (`>`), so when `now == adjusted_deadline`, it would incorrectly return the cached value instead of `default`.\n\nThe condition should be `if now >= adjusted_deadline:` to match the documented behavior of returning default when the entry \"has reached or passed\" the deadline.\n\n```json\n{\n  \"function_name\": \"cached_inventory\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"The expiration check uses `now > adjusted_deadline` but the docstring states the entry should be considered stale when `now` has 'reached or passed' the deadline, meaning the condition should be `now >= adjusted_deadline` to also return default when now equals the deadline.\",\n  \"confidence\": 0.82\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

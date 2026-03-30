@@ -1,0 +1,38 @@
+{
+  "function": "catalog_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the key logic is on line 64:\n\n```python\nif now > adjusted_expiry:\n    return None\n```\n\nThe docstring says \"The entry is returned only when the current time has not yet reached the expiration time.\" This means the entry should be returned when `now < expires_at` (strictly less than). The current condition returns `None` when `now > adjusted_expiry`, which means when `now == adjusted_expiry`, it returns the value. \n\nHowever, the more likely bug is the comparison operator. The condition should use `>=` instead of `>` to properly handle the case where the current time equals the expiration time (the entry has expired). When `now == adjusted_expiry`, the entry has technically expired (the current time has \"reached\" the expiration time), but the current code returns the value instead of `None`.\n\nThis is a boundary condition bug - the entry should be considered expired when `now >= adjusted_expiry`, not just when `now > adjusted_expiry`.\n\n```json\n{\n  \"function_name\": \"catalog_cache\",\n  \"faulty_lines\": [64],\n  \"explanation\": \"The expiry check uses `now > adjusted_expiry` but should use `now >= adjusted_expiry`. When `now` equals `adjusted_expiry`, the entry has reached its expiration time and should be considered stale, but the current code incorrectly returns the cached value.\",\n  \"confidence\": 0.72\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

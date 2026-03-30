@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sensor_window_avg",
+  "fault_hypothesis": "The mean is calculated by dividing the total by the fixed window size on line 73. It should instead be divided by the number of recent samples, `len(recent)`, as there may be fewer samples than the window size.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "window == len(recent__1)"
+      },
+      "intent": "The divisor 'window' should equal the actual number of recent samples for the mean to be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= window"
+      },
+      "intent": "The number of recent samples cannot exceed the window size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0"
+      },
+      "intent": "The average should only be calculated for a non-empty set of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (len(samples[-window:]) >= min_samples)"
+      },
+      "intent": "A valid mean should only be returned if the minimum sample count is met.",
+      "confidence": 0.3
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_jobs_share",
+  "fault_hypothesis": "Line 72 uses `int(v)` (truncation) instead of a proper integer rounding/redistribution that preserves the total sum. When fractional shares are truncated, the sum of allocations is less than `total`, causing the failing tests.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == int(total)"
+      },
+      "intent": "After integer truncation, the sum of allocations must equal total; this fails when floor truncation discards remainders.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) <= len(weights) and all(s >= minimum for s in shares__1)"
+      },
+      "intent": "Each appended share must be at least the minimum, and the list grows by one per iteration.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "shares__1 == []"
+      },
+      "intent": "Immediately after initialization, shares must be an empty list.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total) if floor_to_int else abs(sum(__cbfl_result) - total) < 1e-9"
+      },
+      "intent": "The returned allocations must sum exactly to total (integer or float).",
+      "confidence": 0.9
+    }
+  ]
+}

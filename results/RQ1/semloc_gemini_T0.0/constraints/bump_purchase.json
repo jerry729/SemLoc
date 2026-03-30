@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_purchase",
+  "fault_hypothesis": "The logic for capping the counter is incorrect. On line 64, when the updated value exceeds the cap, it is set to `cap - 1` instead of being clamped to `cap`.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The capped value should be exactly the cap, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The value assigned for capping should be the cap itself.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 == cap"
+      },
+      "intent": "After the clamping logic is applied, the updated value must equal the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (cap is not None and current__1 + INCREMENT_STEP > cap) or __cbfl_result == cap"
+      },
+      "intent": "If the incremented value would exceed the cap, the final result must be clamped to the cap.",
+      "confidence": 0.8
+    }
+  ]
+}

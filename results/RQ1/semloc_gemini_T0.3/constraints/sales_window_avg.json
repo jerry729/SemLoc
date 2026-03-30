@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sales_window_avg",
+  "fault_hypothesis": "The fault is on line 71. The mean is calculated by dividing the total by the requested `window` size, instead of the actual number of recent samples (`len(recent)`), which can be smaller. This leads to an incorrect average when the number of values is less than the window size.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the total sum divided by the actual number of samples averaged.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "window == len(recent__1)"
+      },
+      "intent": "If a mean is returned, the window size used for the division must match the number of samples that were summed.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (window == len(recent__1))"
+      },
+      "intent": "The divisor `window` is only valid if it matches the sample count, unless the result is discarded due to warmup.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - (sum(values[-window:]) / len(values[-window:]))) < 1e-9"
+      },
+      "intent": "The returned average must be None or correctly calculated from the most recent values.",
+      "confidence": 0.8
+    }
+  ]
+}

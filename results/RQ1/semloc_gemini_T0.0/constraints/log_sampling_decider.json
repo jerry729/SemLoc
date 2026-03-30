@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "log_sampling_decider",
+  "fault_hypothesis": "The fault is on line 67. The sampling decision logic is inverted; it uses `>` instead of `<`. A log entry should be sampled if its computed `bucket` value is less than the sampling `rate`, not greater.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (rate == 0.0 and __cbfl_result) and not (rate == 1.0 and not __cbfl_result)"
+      },
+      "intent": "The sampling decision must be false when rate is 0 and true when rate is 1.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= bucket__1 < 1.0"
+      },
+      "intent": "The computed bucket value must be in the standard [0, 1) range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "rate"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= rate <= 1.0"
+      },
+      "intent": "The rate must be in the valid [0, 1] range before being used in the comparison.",
+      "confidence": 0.9
+    }
+  ]
+}

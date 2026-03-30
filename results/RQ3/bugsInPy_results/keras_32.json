@@ -1,0 +1,33 @@
+{
+  "bug_id": "keras_32",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.callbacks.ReduceLROnPlateau.__init__",
+    "buggy_methods": [
+      "keras.callbacks.ReduceLROnPlateau.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.callbacks.ReduceLROnPlateau.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/callbacks.py": [
+      901,
+      909,
+      918,
+      939,
+      942,
+      981
+    ],
+    "tests/keras/test_callbacks.py": [
+      337,
+      343
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

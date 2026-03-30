@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_throughput",
+  "fault_hypothesis": "The average throughput on line 61 is calculated by dividing the sum of the tail samples by the requested window size, instead of the actual number of samples in the tail. This is incorrect when the series is shorter than the window.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) == window) or (len(tail__1) < warmup_min)"
+      },
+      "intent": "The average is correctly calculated only if the window is full, or its value is irrelevant if below the warmup threshold.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(series) < window and len(tail__1) == len(series)) or (len(series) >= window and len(tail__1) == window)"
+      },
+      "intent": "The tail length must match the minimum of the series length and the window size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - total__1 / len(tail__1)) > 1e-9"
+      },
+      "intent": "When the bug is active, the calculated average will not equal the sum of the tail divided by the tail's actual length.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) == (len(series[-window:]) < warmup_min)"
+      },
+      "intent": "The function should return None if and only if the number of available samples is below the warmup minimum.",
+      "confidence": 1.0
+    }
+  ]
+}

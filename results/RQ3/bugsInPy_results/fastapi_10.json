@@ -1,0 +1,20 @@
+{
+  "bug_id": "fastapi_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.routing.serialize_response",
+    "buggy_methods": [
+      "fastapi.routing.serialize_response"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.routing.serialize_response",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

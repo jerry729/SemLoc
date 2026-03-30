@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batch_rate",
+  "fault_hypothesis": "The rate limit check on line 70 uses a strict greater-than comparison (`>`), which incorrectly allows requests when the number of recent events is exactly equal to the limit. It should use a greater-than-or-equal comparison (`>=`) to correctly deny requests when the limit is met.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not be exactly at the limit, as this boundary case is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a request is allowed by falling through to the 'else' case, the number of recent events must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == sum(1 for ts in timestamps if ts >= cutoff__1)"
+      },
+      "intent": "The number of recent events should match a direct calculation based on the cutoff time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (sum(1 for ts in timestamps if ts >= now - window) >= limit)"
+      },
+      "intent": "A request should be denied if and only if the number of recent events meets or exceeds the limit.",
+      "confidence": 0.8
+    }
+  ]
+}

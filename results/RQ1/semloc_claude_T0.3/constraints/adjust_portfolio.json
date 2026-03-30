@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_portfolio",
+  "fault_hypothesis": "The function does not normalize the adjusted weights before returning them. Line 68 returns `adjusted` without dividing each element by the total sum, so when inputs don't already sum to 1.0, the output won't sum to 1.0 either.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 before being returned; if not normalized, this fails when inputs don't sum to 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted__1 == []"
+      },
+      "intent": "After initialization, adjusted__1 should be an empty list before the loop populates it.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) > 0 and all(w >= 0 for w in adjusted__1)"
+      },
+      "intent": "After each loop iteration, adjusted__1 should have at least one non-negative element.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation weights must always sum to 1.0.",
+      "confidence": 0.9
+    }
+  ]
+}

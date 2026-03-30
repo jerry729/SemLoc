@@ -1,0 +1,47 @@
+{
+  "function": "grant_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        65,
+        63
+      ],
+      "explanation": "The fee should be deducted from the total pool before distribution (net = amount - fee), but instead the code computes shares from the full amount and then subtracts fee from each individual share, making the total fee deducted equal to fee * number_of_recipients rather than just fee.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the code, the bug is in line 63 where the fee deduction happens after computing base shares, but the fee should be deducted from the total `amount` before distributing, not from each individual share.\n\nAccording to the docstring: \"The total fee is deducted from the pool before distribution.\" This means `net = amount - fee`, and then shares should be computed as `(r / total_ratio) * net`.\n\nInstead, the code computes shares based on the full `amount` and then subtracts `fee` from each individual share (line 65), which means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe fault is on line 63 (using `amount` instead of `amount - fee`) and line 65 (subtracting `fee` from each share instead of having already deducted it).\n\nThe primary fix should be: line 63 should use `(amount - fee)` instead of `amount`, and line 65 should not subtract fee. Or equivalently, compute `net = amount - fee` and use that in line 63 without the per-share fee deduction in line 65.\n\n```json\n{\n  \"function_name\": \"grant_share\",\n  \"faulty_lines\": [65, 63],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution (net = amount - fee), but instead the code computes shares from the full amount and then subtracts fee from each individual share, making the total fee deducted equal to fee * number_of_recipients rather than just fee.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        65,
+        63
+      ],
+      "valid_preds": [
+        65,
+        63
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

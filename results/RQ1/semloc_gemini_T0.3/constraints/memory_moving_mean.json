@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "memory_moving_mean",
+  "fault_hypothesis": "The moving average on line 65 is incorrectly calculated by dividing the sum of tail samples by the fixed `window` size. The divisor should be `len(tail)`, the actual number of samples being averaged, which can be less than `window`.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated average must be the sum of tail samples divided by the number of tail samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (len(tail__1) == window)"
+      },
+      "intent": "If an average is computed and returned, the number of samples must match the window size for the division by `window` to be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The average value must be correct before it is rounded and returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (abs(__cbfl_result - round(total__1 / len(tail__1), 2)) < 1e-6)"
+      },
+      "intent": "The returned value must be None or the correctly computed and rounded average.",
+      "confidence": 0.7
+    }
+  ]
+}

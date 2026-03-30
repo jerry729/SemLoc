@@ -1,0 +1,50 @@
+{
+  "bug_id": "thefuck_30",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.fix_file.match",
+    "buggy_methods": [
+      "thefuck.rules.fix_file.match"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.fix_file.match",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_fix_file.py": [
+      161,
+      167
+    ],
+    "thefuck/rules/fix_file.py": [
+      53
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [],
+    "best_rank": null,
+    "fn_lines": 4,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 7,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "thefuck_30",
+    "function": "match",
+    "src_path": "thefuck/rules/tsuru_login.py",
+    "fn_begin": 4,
+    "fn_end": 7,
+    "n_constraints": 4,
+    "n_tests_passing": 20,
+    "n_tests_failing": 60,
+    "line_scores": [],
+    "fault_line": 7,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/thefuck_30/match_constraints.json",
+    "report_path": "/tmp/bip_semloc/thefuck_30/violations.jsonl"
+  }
+}

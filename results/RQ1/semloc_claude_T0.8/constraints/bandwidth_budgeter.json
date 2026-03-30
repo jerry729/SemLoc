@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_budgeter",
+  "fault_hypothesis": "Line 65 uses `int(x)` (truncation) instead of a rounding scheme that preserves the total budget; truncation causes the sum of allocations to be less than `total` when shares are non-integer.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "After integer conversion, the sum of allocations must equal the total budget.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == sum(int(x) for x in planned__1) and sum(allocations__1) >= int(total) - len(planned__1)"
+      },
+      "intent": "Truncation can lose at most len-1 units; if it loses more the conversion is wrong.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-6"
+      },
+      "intent": "The planned shares must sum to exactly total before integer rounding is applied.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "After the then-branch, the integer allocations must still sum to the budget.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "function": "allocate_budget_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [
+        65,
+        67
+      ],
+      "explanation": "The fee should be deducted from the total pool before distribution (i.e., use `amount - fee` as the distributable amount), but instead the code distributes the full `amount` and then subtracts `fee` from each individual share, causing the total fee deducted to be `fee * len(ratios)` rather than just `fee`.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "The fee should be deducted from the total amount before distributing shares, not subtracted from each individual share after distribution. The current code subtracts the fee from every participant's share, which means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe fix should be on line 65 where the net amount should be `(amount - fee)` used in the distribution, or alternatively the fee deduction logic on line 67 is wrong.\n\nThe most direct fault is on line 65: the distribution should use `(amount - fee)` as the pool, and line 67 should just clamp without subtracting fee. Or equivalently, line 67 should not subtract fee per share.\n\n```json\n{\n  \"function_name\": \"allocate_budget_cut\",\n  \"faulty_lines\": [65, 67],\n  \"explanation\": \"The fee should be deducted from the total pool before distribution (i.e., use `amount - fee` as the distributable amount), but instead the code distributes the full `amount` and then subtracts `fee` from each individual share, causing the total fee deducted to be `fee * len(ratios)` rather than just `fee`.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        65,
+        67
+      ],
+      "valid_preds": [
+        65,
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

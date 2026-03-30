@@ -1,0 +1,27 @@
+{
+  "bug_id": "httpie_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "httpie.client.get_response",
+    "buggy_methods": [
+      "httpie.client.get_response"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "httpie.client.get_response",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "httpie/core.py": [
+      195
+    ],
+    "tests/test_redirects.py": [
+      20
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "bug_id": "pandas_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.base.Index._get_nearest_indexer",
+    "buggy_methods": [
+      "pandas.core.indexes.base.Index._get_nearest_indexer"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.base.Index._get_nearest_indexer",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      3076,
+      3077,
+      3078
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

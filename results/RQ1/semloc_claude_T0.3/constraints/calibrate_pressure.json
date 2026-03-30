@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_pressure",
+  "fault_hypothesis": "The condition on line 70 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True (default), the branch that performs clamping should be entered \u2014 but with `if not clamp`, it is skipped.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch (clamping logic) should only execute when clamp is False, confirming the inverted condition.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp and min(y0, y1) <= y__2 <= max(y0, y1)"
+      },
+      "intent": "y__2 (the clamped value) should only be computed when clamp is False, and must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (min(y0, y1) <= __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, the returned value must be within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_mix",
+  "fault_hypothesis": "The function calculates blended allocations but omits the final, required step of normalizing them to sum to 1.0. This causes the return value on line 68 to be incorrect when the inputs are not already distributions summing to 1.0.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__1) < 1e-9 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of allocations must be normalized to sum to 1.0 before returning.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__1) < 1e-9 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The adjusted allocations vector must represent a valid probability distribution before it is used.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_CALL",
+        "anchor": {
+          "callee": "_log.debug"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__1) < 1e-9 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The allocations list should be normalized after its computation is complete.",
+      "confidence": 0.9
+    }
+  ]
+}

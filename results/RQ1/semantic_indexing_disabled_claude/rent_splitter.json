@@ -1,0 +1,47 @@
+{
+  "function": "rent_splitter",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        65,
+        63
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the fee should be deducted from the total `amount` before splitting, not from each individual share. The current implementation deducts the fee from each participant's share, which means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe fix should be on line 63: `base = [(r / total_ratio) * (amount - fee) for r in ratios]`, and line 65 should just be `shares = [_clamp_share(share) for share in base]`.\n\nThe faulty line is 65 (deducting fee from each share instead of from the total), and potentially line 63 should have the fee deducted there instead.\n\n{\n  \"function_name\": \"rent_splitter\",\n  \"faulty_lines\": [65, 63],\n  \"explanation\": \"The fee is incorrectly deducted from each individual share (line 65), causing the total fee deducted to be `fee * len(ratios)` instead of just `fee`. The fee should be subtracted from `amount` before distribution (on line 63), not from each participant's computed share.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        65,
+        63
+      ],
+      "valid_preds": [
+        65,
+        63
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

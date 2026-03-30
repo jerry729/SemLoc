@@ -1,0 +1,38 @@
+{
+  "function": "cached_preference",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    83
+  ],
+  "total_source_lines": 87,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify what's faulty in `cached_preference`.\n\nThe function is supposed to return the payload if the entry is **not expired**. The expiry check on line 85 uses `now > ttl + _CLOCK_SKEW_TOLERANCE`, which matches `_is_expired` on line 50.\n\nHowever, looking at line 82:\n```python\nif ttl > _MAX_TTL_SECONDS + _DEFAULT_TTL_SECONDS:\n```\n\nThis check compares `ttl` (which is an expiration Unix timestamp like `1700000000`) against `_MAX_TTL_SECONDS + _DEFAULT_TTL_SECONDS` (which is `86400 + 3600 = 90000`). This comparison makes no sense because a Unix timestamp like `1700000000` will always be greater than `90000`, so this log message will always trigger for any real timestamp. This is a logical bug.\n\nThe `ttl` in the cache is described as an \"Expiration Unix timestamp\" (from the docstring of `_is_expired`), so comparing it to `_MAX_TTL_SECONDS + _DEFAULT_TTL_SECONDS` is wrong. The check might be intended to detect if the TTL *duration* is too large, but since `ttl` is stored as an absolute timestamp, this comparison is meaningless.\n\nAdditionally, looking at line 85 - the condition `now > ttl + _CLOCK_SKEW_TOLERANCE` - if `_CLOCK_SKEW_TOLERANCE = 0`, this is equivalent to `now > ttl`, which means expired. This seems correct for expiry detection.\n\nThe main bug is line 82 where the absolute timestamp `ttl` is compared against a relative duration value, making the condition always true for real Unix timestamps.\n\n{\n  \"function_name\": \"cached_preference\",\n  \"faulty_lines\": [82],\n  \"explanation\": \"Line 82 compares `ttl` (an absolute Unix timestamp, e.g., ~1.7 billion) against `_MAX_TTL_SECONDS + _DEFAULT_TTL_SECONDS` (90000), which means the condition is always true for any real cached entry, causing spurious debug log messages. The check likely intended to compare a TTL duration rather than an absolute timestamp.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

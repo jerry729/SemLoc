@@ -1,0 +1,26 @@
+{
+  "bug_id": "thefuck_22",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.types.SortedCorrectedCommandsSequence._realise",
+    "buggy_methods": [
+      "thefuck.types.SortedCorrectedCommandsSequence._realise"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.types.SortedCorrectedCommandsSequence._realise",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "thefuck/types.py": [
+      84,
+      85,
+      86
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

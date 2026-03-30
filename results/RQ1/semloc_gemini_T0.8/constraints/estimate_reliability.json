@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_reliability",
+  "fault_hypothesis": "The condition on line 68, `if not clamp:`, incorrectly inverts the clamping logic. The clamping code block should execute when `clamp` is true, but instead it executes when `clamp` is false.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The bug only manifests when the interpolated value is outside the initial y-range, which happens during extrapolation.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__4 >= min(y0, y1) and y__4 <= max(y0, y1)"
+      },
+      "intent": "When clamping is requested (the 'else' branch is taken), the result must lie within the calibration range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 == y__1"
+      },
+      "intent": "When clamping is not requested (the 'then' branch is taken), the interpolated value should be returned unmodified.",
+      "confidence": 1.0
+    }
+  ]
+}

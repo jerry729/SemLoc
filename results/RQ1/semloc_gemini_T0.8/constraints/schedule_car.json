@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_car",
+  "fault_hypothesis": "The overlap check on line 61 uses non-strict inequalities (`<=`, `>=`), which incorrectly accepts bookings that are adjacent to existing ones (e.g., end time of new booking equals start time of an existing one). The check should use strict inequalities (`<`, `>`) to reject such cases.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "A new window must be strictly non-overlapping with all existing bookings in the timeline.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "a__1"
+        }
+      },
+      "spec": {
+        "expr": "all(a__1 != e for s, e in timeline)"
+      },
+      "intent": "The new booking's start time must not coincide with any existing booking's end time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 != s for s, e in timeline)"
+      },
+      "intent": "The new booking's end time must not coincide with any existing booking's start time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or not any(window[1] == s or window[0] == e for s, e in timeline)"
+      },
+      "intent": "If a booking is accepted, it must not be merely adjacent to any existing booking.",
+      "confidence": 0.8
+    }
+  ]
+}

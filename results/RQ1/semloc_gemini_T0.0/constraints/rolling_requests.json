@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_requests",
+  "fault_hypothesis": "The average on line 65 is calculated by dividing the total by `window`, but it should be divided by the actual number of samples, `len(tail)`. This causes an incorrect result when the series has fewer samples than the window size.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (abs(avg__1 * len(tail__1) - total__1) < 1e-9)"
+      },
+      "intent": "The computed average must be consistent with the total and the number of samples, unless it's a warmup period.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) == window) or (len(tail__1) < warmup_min)"
+      },
+      "intent": "The number of samples should match the window size for the subsequent division to be correct, unless it's a warmup period.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "If a value is returned, it must be the correct average of the samples in the tail.",
+      "confidence": 0.95
+    }
+  ]
+}

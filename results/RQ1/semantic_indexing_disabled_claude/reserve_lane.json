@@ -1,0 +1,38 @@
+{
+  "function": "reserve_lane",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    60
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `reserve_lane` function, I need to identify the fault.\n\nThe key issue is in the `overlaps` function at line 62. The overlap check is:\n```python\nreturn not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nFor two windows `a = (start_a, end_a)` and `b = (start_b, end_b)`, they do NOT overlap if `b[1] <= a[0]` (b ends before or when a starts) OR `b[0] >= a[1]` (b starts after or when a ends). This is actually the standard non-overlapping condition, so they overlap if neither of those is true.\n\nWait, let me reconsider. The standard overlap condition: two intervals `[a0, a1)` and `[b0, b1)` overlap if `a0 < b1 AND b0 < a1`. They don't overlap if `b1 <= a0 OR b0 >= a1`. So `not (b[1] <= a[0] or b[0] >= a[1])` is correct for detecting overlap.\n\nNow let me check the `_MIN_LANE_DURATION` check at line 69:\n```python\nif (candidate[1] - candidate[0]) < _MIN_LANE_DURATION:\n```\n`_MIN_LANE_DURATION = 0`, so `candidate[1] - candidate[0] < 0` would be false since we already validated `candidate[0] >= candidate[1]` raises an error. This check is redundant but not buggy.\n\nLooking more carefully at line 62 - the `overlaps` function applies tolerance to `a` (the existing slot) when `_CONFLICT_STRICT` is True. This seems intentional per the docstring.\n\nActually, wait - the `_MIN_LANE_DURATION` check at line 69 happens AFTER the overlap check. If `_MIN_LANE_DURATION` were non-zero, a short valid candidate that passes overlap checks would still be rejected. But since `_MIN_LANE_DURATION = 0` and we already ensure `candidate[1] > candidate[0]`, this is always false (duration >= 1 > 0). So it's dead code but not wrong.\n\nThe check at line 52: `if candidate[0] >= candidate[1]` correctly rejects invalid windows.\n\nThe overlap logic at line 62 looks correct. Let me reconsider whether the adjacency tolerance should be applied differently - perhaps it should be applied to the candidate, not the existing slot, or to both. The docstring says \"widens each existing slot before the overlap test\" which matches the code.\n\nActually, looking more carefully at line 62, I think the logic might be subtly wrong in edge cases with tolerance=0, but with default settings it works fine. The most likely bug is that the `_MIN_LANE_DURATION` check (line 69) should come BEFORE the overlap checks, not after - but this is a logic ordering issue, not really a bug with current defaults.\n\nGiven the defaults, everything seems to work correctly. The most suspicious line is 62 where the overlap logic could have boundary condition issues (using `<=` vs `<`).\n\n{\n  \"function_name\": \"reserve_lane\",\n  \"faulty_lines\": [62, 69, 52],\n  \"explanation\": \"The overlap check at line 62 uses `b[1] <= a[0]` and `b[0] >= a[1]` which treats adjacent (touching) windows as non-overlapping; depending on requirements this boundary condition may be incorrect. Additionally, the `_MIN_LANE_DURATION` check at line 69 is placed after overlap validation rather than before, which is a logical ordering issue.\",\n  \"confidence\": 0.3\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

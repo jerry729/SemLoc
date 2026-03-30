@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_forecast_curve",
+  "fault_hypothesis": "The condition to apply clamping is inverted. The code clamps the result when `clamp` is `False` instead of when it is `True`, due to the `if not clamp:` check on line 66.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(y__1 >= min(y0, y1)) and (y__1 <= max(y0, y1))"
+      },
+      "intent": "The raw interpolated value must be within the anchor y-bounds for the buggy logic to produce a correct result.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "(y__1 >= min(y0, y1)) and (y__1 <= max(y0, y1))"
+      },
+      "intent": "When the code incorrectly skips clamping (clamp=True), the result is only correct if the value was already within bounds.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 == y__1"
+      },
+      "intent": "When the code incorrectly applies clamping (clamp=False), the value of y should not have been modified.",
+      "confidence": 0.9
+    }
+  ]
+}

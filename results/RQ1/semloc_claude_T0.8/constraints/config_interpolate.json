@@ -1,0 +1,83 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_interpolate",
+  "fault_hypothesis": "The condition on line 68 is inverted: clamping is applied when `clamp` is False and skipped when `clamp` is True. It should be `if clamp:` not `if not clamp:`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or clamp == False"
+      },
+      "intent": "The branch that performs clamping should be entered when clamp is True, not when it is False \u2014 the condition `not clamp` is inverted.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "Inside the then-branch of `if not clamp`, the clamp flag must be False; if clamp is True the branch should not have been entered.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "Inside the else-branch of `if not clamp`, clamp must be True \u2014 this is where clamping logic should actually live.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True the final result must be within the anchor range [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.92
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "The returned value must be clamped to the anchor range when clamp=True.",
+      "confidence": 0.88
+    }
+  ]
+}

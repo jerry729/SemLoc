@@ -1,0 +1,56 @@
+{
+  "bug_id": "ansible_18",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.cli.galaxy.GalaxyCLI.init_parser",
+    "buggy_methods": [
+      "lib.ansible.cli.galaxy.GalaxyCLI.init_parser"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.cli.galaxy.GalaxyCLI.init_parser",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/cli/galaxy.py": [
+      58,
+      416,
+      528
+    ],
+    "test/units/cli/test_galaxy.py": [
+      497,
+      640
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      58,
+      416,
+      528
+    ],
+    "best_rank": null,
+    "fn_lines": 176,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 90,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "ansible_18",
+    "function": "init_parser",
+    "src_path": "lib/ansible/cli/galaxy.py",
+    "fn_begin": 54,
+    "fn_end": 229,
+    "n_constraints": 4,
+    "n_tests_passing": 69,
+    "n_tests_failing": 13,
+    "line_scores": [],
+    "fault_line": 90,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/ansible_18/init_parser_constraints.json",
+    "report_path": "/tmp/bip_semloc/ansible_18/violations.jsonl"
+  }
+}

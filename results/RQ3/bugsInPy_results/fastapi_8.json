@@ -1,0 +1,24 @@
+{
+  "bug_id": "fastapi_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.routing.APIRouter.add_api_route",
+    "buggy_methods": [
+      "fastapi.routing.APIRouter.add_api_route"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.routing.APIRouter.add_api_route",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/routing.py": [
+      352
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

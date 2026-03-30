@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "email_send_quota",
+  "fault_hypothesis": "The quota check on line 66 uses '>' instead of '>=', incorrectly permitting a new email when the number of recent emails is exactly at the limit.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) == (len(recent__1) >= limit)"
+      },
+      "intent": "The buggy decision logic should be equivalent to the correct logic, which includes the equality case.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result and len(recent) < limit) or (not __cbfl_result and len(recent) >= limit)"
+      },
+      "intent": "The function should allow sending if and only if the number of recent emails is strictly less than the limit.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= len(sent)"
+      },
+      "intent": "The count of recent emails cannot be greater than the total number of emails sent.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 < now"
+      },
+      "intent": "The cutoff timestamp for the sliding window must be earlier than the current time, assuming a positive window.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_sensor",
+  "fault_hypothesis": "The condition on line 64 uses a strict inequality `>` where it should use `>=`. This causes the function to incorrectly permit a new action when the number of actions within the window is exactly equal to the limit.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) > limit) == (len(active__1) >= limit)"
+      },
+      "intent": "The result of the buggy comparison should match the result of the correct comparison.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If an action is allowed (the 'then' branch is not taken), the number of active actions must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == False) == (len(active) >= limit)"
+      },
+      "intent": "The sensor should be denied if and only if the number of active actions has reached or exceeded the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

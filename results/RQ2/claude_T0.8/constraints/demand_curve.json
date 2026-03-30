@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_curve",
+  "fault_hypothesis": "The condition on line 60 is inverted: clamping is applied when `clamp` is False and skipped when `clamp` is True. It should be `if clamp:` (or equivalently, the body should execute when clamp is True), not `if not clamp:`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) == False or True"
+      },
+      "intent": "When clamp is True (default), the branch `if not clamp` should NOT be entered \u2014 clamping logic should execute when clamp is True, not when it is False.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch (clamping code) should only execute when clamp is False, but the intent is it should execute when clamp is True \u2014 this branch being entered with clamp=True is the bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "y__2 (the clamped value) is only computed in the `if not clamp` branch, but clamping should happen when clamp is True, so this assignment should not exist when clamp is False.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result <= max(y0, y1) and __cbfl_result >= min(y0, y1))"
+      },
+      "intent": "When clamping is enabled (clamp=True), the returned value must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.92
+    }
+  ]
+}

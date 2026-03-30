@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "throughput_trendline",
+  "fault_hypothesis": "The condition on line 60 is inverted. Clamping is performed when `clamp` is `False` and skipped when `clamp` is `True`, which is the opposite of the intended behavior.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__3 == min(max(y__1, min(y0, y1)), max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "Ensures the result after the conditional block is clamped if and only if clamp is true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__3 == min(max(y__1, min(y0, y1)), max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "Verifies that the value entering the precision check is correctly clamped based on the clamp flag.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic branch should only be executed if clamp is True.",
+      "confidence": 0.8
+    }
+  ]
+}

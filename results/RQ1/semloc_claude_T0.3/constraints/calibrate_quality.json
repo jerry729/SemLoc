@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_quality",
+  "fault_hypothesis": "The condition on line 68 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) == (y__1 == y__1)"
+      },
+      "intent": "When clamp is True the clamping block should execute, but the inverted condition means it is skipped \u2014 the branch condition should be `if clamp` not `if not clamp`.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "The else branch (no clamping applied) should only be reached when clamp is False, but due to the inverted condition it is reached when clamp is True.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "The then branch (clamping applied) should only be reached when clamp is True, but the inverted condition causes it to execute when clamp is False.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, the final y value must be within [min(y0,y1), max(y0,y1)]; the bug causes clamping to be skipped when clamp=True.",
+      "confidence": 0.9
+    }
+  ]
+}

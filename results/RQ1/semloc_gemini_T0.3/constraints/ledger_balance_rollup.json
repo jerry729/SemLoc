@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ledger_balance_rollup",
+  "fault_hypothesis": "The bug is on line 66. When processing a 'debit' transaction, the amount is incorrectly added to the balance instead of being subtracted.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(balance - (sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'credit') - sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'debit'))) < 1e-9"
+      },
+      "intent": "The running balance must equal the sum of credits minus the sum of debits processed so far.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "abs(balance - (sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'credit') - sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'debit'))) < 1e-9"
+      },
+      "intent": "The running balance must be correct after processing a credit entry, exonerating this branch.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(balance - (sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'credit') - sum(e[0] for i, e in enumerate(entries) if i <= idx and e[1] == 'debit'))) < 1e-9"
+      },
+      "intent": "The running balance must be correct at the end of each transaction processing step.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(balance - (sum(e[0] for e in entries if e[1] == 'credit') - sum(e[0] for e in entries if e[1] == 'debit'))) < 1e-9"
+      },
+      "intent": "The final unrounded balance must equal the total credits minus total debits.",
+      "confidence": 0.8
+    }
+  ]
+}

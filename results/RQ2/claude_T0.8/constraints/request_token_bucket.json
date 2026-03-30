@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "request_token_bucket",
+  "fault_hypothesis": "When a request is denied (available <= 0), the function returns False without updating tokens[TOKEN_KEY_LAST] to 'now'. This means the timestamp is never updated on denial, causing subsequent refill calculations to use a stale 'last' value.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "tokens.get('last', now) == now"
+      },
+      "intent": "After returning False on denial, the 'last' timestamp in tokens should be updated to 'now'.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "tokens.get('last', now) == now"
+      },
+      "intent": "At the end of the denial branch, 'last' key in tokens must equal the current timestamp 'now'.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "last__1"
+        }
+      },
+      "spec": {
+        "expr": "last__1 <= now"
+      },
+      "intent": "The last-access timestamp retrieved from tokens should not be greater than the current time.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "tokens.get('last', now) == now"
+      },
+      "intent": "On every return path, the 'last' key in tokens should be updated to 'now'.",
+      "confidence": 0.88
+    }
+  ]
+}

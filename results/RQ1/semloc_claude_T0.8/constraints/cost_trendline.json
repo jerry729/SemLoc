@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cost_trendline",
+  "fault_hypothesis": "The condition on line 65 is inverted: clamping is applied when `clamp` is False and skipped when `clamp` is True. It should be `if clamp:` instead of `if not clamp:`.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (clamp and True)"
+      },
+      "intent": "When clamp is True the clamping block should execute, but the inverted condition `if not clamp` means it is skipped, so the result is unclamped when it should be clamped.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of `if not clamp` should only execute when clamp is False; if clamp is True and we are inside the branch, the condition was inverted.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True the final y value must be within [min(y0,y1), max(y0,y1)]; if clamping is incorrectly skipped this will be violated on extrapolated inputs.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "lo__1"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "lo__1 is computed and used only inside the `if not clamp` block; if clamp is True, execution should never reach this point.",
+      "confidence": 0.9
+    }
+  ]
+}

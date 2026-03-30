@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_deployment",
+  "fault_hypothesis": "The counter clamping logic is incorrect. On line 67, when the new value exceeds the ceiling, it is set to `effective_ceiling - 1` instead of being set to `effective_ceiling`.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "The clamped value must be set to the ceiling exactly, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "The value assigned after clamping should be exactly the ceiling.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_ceiling__1"
+      },
+      "intent": "After the clamping branch, the new value must be the ceiling.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "not (effective_ceiling__1 is not None and new_value__1 > effective_ceiling__1) or new_value__3 == effective_ceiling__1"
+      },
+      "intent": "If the value was clamped, it must be set to the ceiling.",
+      "confidence": 0.9
+    }
+  ]
+}

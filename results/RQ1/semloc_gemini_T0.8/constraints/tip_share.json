@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tip_share",
+  "fault_hypothesis": "The base shares on line 60 are calculated from the gross `amount` before the `fee` is deducted. The fee should be subtracted from the `amount` before calculating the proportional shares.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(ratios) <= 1 or abs(sum(base__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The base shares should be calculated from the net amount (amount - fee), not the gross amount, unless there is no fee or only one recipient.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all final payouts must equal the initial amount minus a single fee.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "len(ratios) < 2 or all(abs(result__1[i] * ratios[0] - result__1[0] * ratios[i]) < 1e-9 for i in range(len(ratios)))"
+      },
+      "intent": "The final payouts must maintain the same proportions as the input ratios.",
+      "confidence": 0.8
+    }
+  ]
+}

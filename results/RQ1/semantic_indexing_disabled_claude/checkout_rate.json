@@ -1,0 +1,47 @@
+{
+  "function": "checkout_rate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    66
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        66,
+        68
+      ],
+      "explanation": "The condition on line 66 uses `> limit` instead of `>= limit`, allowing a checkout when the count exactly equals the limit (remaining would be 0 but it still returns allowed=True). Additionally, line 68's remaining calculation may be off-by-one since it doesn't account for the new checkout being added.",
+      "confidence": 0.85,
+      "parse_ok": true,
+      "raw": "Looking at the rate limiter logic:\n\nThe function should return `False` when the number of recent events has **reached or exceeded** the limit (i.e., `>= limit`), but line 66 uses `> limit` (strictly greater than). This means when `len(recent) == limit`, the function incorrectly returns `True` with `remaining = 0` instead of `False, 0`.\n\nAlso, the `remaining` calculation on line 68: when allowed, the remaining should account for the new checkout that's about to happen, so it might need to be `limit - len(recent) - 1`, but the primary bug is the comparison on line 66.\n\n```json\n{\n  \"function_name\": \"checkout_rate\",\n  \"faulty_lines\": [66, 68],\n  \"explanation\": \"The condition on line 66 uses `> limit` instead of `>= limit`, allowing a checkout when the count exactly equals the limit (remaining would be 0 but it still returns allowed=True). Additionally, line 68's remaining calculation may be off-by-one since it doesn't account for the new checkout being added.\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [
+        66,
+        68
+      ],
+      "valid_preds": [
+        66,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

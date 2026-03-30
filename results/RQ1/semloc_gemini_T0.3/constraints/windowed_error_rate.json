@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "windowed_error_rate",
+  "fault_hypothesis": "The error rate calculation on line 69 is incorrect. It divides the error count by the window duration (`window`) instead of by the total number of events within the window (`len(recent)`).",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(__cbfl_result * len(recent__1) - errors__1) < 1e-9"
+      },
+      "intent": "The returned rate, when multiplied by the number of recent events, should equal the number of errors.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "errors__1"
+        }
+      },
+      "spec": {
+        "expr": "errors__1 <= len(recent__1)"
+      },
+      "intent": "The number of errors cannot exceed the total number of recent events.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0"
+      },
+      "intent": "On the path where the rate is calculated, the number of recent events must be positive.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result >= 0.0 and __cbfl_result <= 1.0"
+      },
+      "intent": "The final error rate must be between 0.0 and 1.0, as specified in the docstring.",
+      "confidence": 0.7
+    }
+  ]
+}

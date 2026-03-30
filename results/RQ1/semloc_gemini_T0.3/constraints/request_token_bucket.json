@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "request_token_bucket",
+  "fault_hypothesis": "The last-access timestamp `tokens['last']` is not updated when a request is denied. The function returns on line 62 without updating this state, causing subsequent calls to over-calculate token refills.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "last__1 == now"
+      },
+      "intent": "If a request is denied, the last access time used for calculation should have been up-to-date with the current time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "last__1"
+        }
+      },
+      "spec": {
+        "expr": "last__1 <= now"
+      },
+      "intent": "The last access timestamp cannot be in the future.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "available__2"
+        }
+      },
+      "spec": {
+        "expr": "available__2 <= capacity"
+      },
+      "intent": "The number of available tokens should not exceed the bucket's capacity.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is False) or (tokens[TOKEN_KEY_LAST__1] == now)"
+      },
+      "intent": "If a request is denied, the last-access timestamp must be updated to the current time upon exit.",
+      "confidence": 0.8
+    }
+  ]
+}

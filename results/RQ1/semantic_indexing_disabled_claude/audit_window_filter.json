@@ -1,0 +1,44 @@
+{
+  "function": "audit_window_filter",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        68
+      ],
+      "explanation": "The docstring states events exactly on the boundary are considered outside the window (strictly after cutoff), but line 68 uses `t >= cutoff` which includes the boundary. It should be `t > cutoff` to correctly exclude events exactly at the cutoff.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"audit_window_filter\",\n  \"faulty_lines\": [68],\n  \"explanation\": \"The docstring states events exactly on the boundary are considered outside the window (strictly after cutoff), but line 68 uses `t >= cutoff` which includes the boundary. It should be `t > cutoff` to correctly exclude events exactly at the cutoff.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [
+        68
+      ],
+      "valid_preds": [
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 68,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

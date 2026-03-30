@@ -1,0 +1,31 @@
+{
+  "bug_id": "luigi_8",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.contrib.redshift.S3CopyToTable.does_table_exist",
+    "buggy_methods": [
+      "luigi.contrib.redshift.S3CopyToTable.does_table_exist"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.contrib.redshift.S3CopyToTable.does_table_exist",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/contrib/redshift.py": [
+      335,
+      339
+    ],
+    "test/contrib/redshift_test.py": [
+      126,
+      191,
+      215,
+      216
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "sanic_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "sanic.server.AsyncioServer.__await__",
+    "buggy_methods": [
+      "sanic.server.AsyncioServer.__await__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "sanic.server.AsyncioServer.__await__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/test_app.py": [
+      47
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

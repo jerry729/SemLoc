@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_forecast_curve",
+  "fault_hypothesis": "The condition on line 66 for clamping the result is inverted. It uses `if not clamp:` when it should be `if clamp:`, causing the clamping logic to be applied when it's disabled and skipped when it's enabled.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "clamp and (y__1 >= min(y0, y1)) and (y__1 <= max(y0, y1))"
+      },
+      "intent": "The current implementation only behaves correctly if clamping is enabled and the value is already within bounds.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping code block should only execute when clamp is True.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "(y__1 >= min(y0, y1)) and (y__1 <= max(y0, y1))"
+      },
+      "intent": "If the clamping logic is skipped, the interpolated value must already be within the target bounds.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "bug_id": "luigi_29",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.task_register.Register.__get_reg",
+    "buggy_methods": [
+      "luigi.task_register.Register.__get_reg"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.task_register.Register.__get_reg",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/task_register.py": [
+      138,
+      139
+    ],
+    "test/cmdline_test.py": [
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      138,
+      139
+    ],
+    "best_rank": null,
+    "fn_lines": 24,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 150,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "luigi_29",
+    "function": "__get_reg",
+    "src_path": "luigi/task_register.py",
+    "fn_begin": 129,
+    "fn_end": 152,
+    "n_constraints": 4,
+    "n_tests_passing": 5,
+    "n_tests_failing": 1,
+    "line_scores": [
+      {
+        "line": 152,
+        "score": 0.3
+      }
+    ],
+    "fault_line": 150,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/luigi_29/__get_reg_constraints.json",
+    "report_path": "/tmp/bip_semloc/luigi_29/violations.jsonl"
+  }
+}

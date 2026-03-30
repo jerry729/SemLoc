@@ -1,0 +1,24 @@
+{
+  "bug_id": "PySnooper_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "pysnooper.pysnooper.get_write_function",
+    "buggy_methods": [
+      "pysnooper.pysnooper.get_write_function"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pysnooper.pysnooper.get_write_function",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pysnooper/pysnooper.py": [
+      26
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "queue_window_avg",
+  "fault_hypothesis": "The mean is incorrectly calculated on line 66 by dividing the sum of the tail by `window` instead of the actual number of samples in the tail (`len(tail)`). This leads to an incorrect average when the number of available values is less than the window size.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The computed mean multiplied by the actual number of samples should equal the total sum of those samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "any(mean__1 >= x for x in tail__1) and any(mean__1 <= x for x in tail__1)"
+      },
+      "intent": "The arithmetic mean must fall within the min/max range of its constituent values.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "If a result is to be returned, the computed mean must be consistent with the samples that were summed.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "function": "batchnorm_running_mean",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    70
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the update formula on line 70 is:\n\n```python\nupdated = (1 - momentum) * current_mean + momentum * batch_mean\n```\n\nThe standard exponential moving average formula for batch normalization running mean is:\n```\nupdated = momentum * current_mean + (1 - momentum) * batch_mean\n```\n\nWhen `momentum` is close to 1.0, the running mean should change slowly (weight heavily on `current_mean`). But the current implementation does the opposite: when `momentum` is close to 1.0, it weights `batch_mean` heavily, making it follow the batch mean closely.\n\nThe docstring even states: \"A value close to 1.0 makes the running mean change slowly\" \u2014 which confirms the formula is inverted.\n\n{\n  \"function_name\": \"batchnorm_running_mean\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"The EMA formula has the momentum weights swapped. It should be `momentum * current_mean + (1 - momentum) * batch_mean` so that momentum close to 1.0 preserves the current mean, but the code does the opposite.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

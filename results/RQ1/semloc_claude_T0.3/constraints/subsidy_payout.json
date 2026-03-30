@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "subsidy_payout",
+  "fault_hypothesis": "The fee is deducted per-participant in the return statement (s - fee for each s), but it should be deducted once from the total pool before computing shares. Line 69 should compute shares from (amount - fee) instead of amount, and line 71 should not subtract fee.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - (sum(r2 / total_ratio__1 * amount for r2 in ratios[:len(shares)]) - fee * len(shares) / len(ratios)) ) < 1e-6 or True"
+      },
+      "intent": "Check that shares are computed from (amount - fee) not amount, so fee is deducted once from the pool rather than per participant",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "After building shares, their sum should equal amount (before fee deduction), confirming the per-share computation uses the full amount",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-6 or sum(__cbfl_result) == 0.0"
+      },
+      "intent": "The total distributed should equal amount minus fee (deducted once), not amount minus fee*n",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - sum(r2 / total_ratio__1 * amount for r2 in ratios[:len(shares)])) < 1e-6"
+      },
+      "intent": "Each share appended should be proportional to amount (not amount-fee), confirming the bug is in the return line where fee is subtracted per participant",
+      "confidence": 0.8
+    }
+  ]
+}

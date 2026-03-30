@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_supply",
+  "fault_hypothesis": "The function calculates blended weights but omits the required normalization step before returning. The bug is the missing normalization logic, making the return statement on line 64 produce an incorrect result when inputs do not sum to 1.0.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of weights at the return line must be normalized to sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "idx != len(current) - 1 or len(updated) == 0 or abs(sum(updated) - 1.0) < 1e-9"
+      },
+      "intent": "The fully-blended list of weights, at the end of the loop, should sum to 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == 0 or abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The function must always return a list of weights that sums to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

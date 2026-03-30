@@ -1,0 +1,24 @@
+{
+  "bug_id": "keras_25",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.applications.imagenet_utils._preprocess_numpy_input",
+    "buggy_methods": [
+      "keras.applications.imagenet_utils._preprocess_numpy_input"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.applications.imagenet_utils._preprocess_numpy_input",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/keras/applications/imagenet_utils_test.py": [
+      11
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

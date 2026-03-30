@@ -1,0 +1,16 @@
+{
+  "bug_id": "youtube-dl_14",
+  "function": "_real_extract",
+  "src_path": "youtube_dl/extractor/youtube.py",
+  "fn_begin": 1690,
+  "fn_end": 2445,
+  "n_constraints": 4,
+  "n_tests_passing": 0,
+  "n_tests_failing": 1,
+  "line_scores": [],
+  "fault_line": 366,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_14/_real_extract_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_14/violations.jsonl"
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_training",
+  "fault_hypothesis": "The overlap detection logic on line 67 is incorrect for boundary cases. It uses `<=` and `>=` which treats intervals that touch at their endpoints as non-overlapping, whereas the specification requires them to be considered conflicts.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(not (end <= s or start >= e)) == (not (end < s or start > e))"
+      },
+      "intent": "The implemented overlap logic should be equivalent to the correct logic that treats touching intervals as conflicts.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end < s or start > e"
+      },
+      "intent": "If a loop iteration completes without returning, it must be because the new interval and the current existing interval are truly non-overlapping.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If the schedule is updated, the new interval must not conflict with any of the pre-existing intervals, including touching boundaries.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "A successful update must result in a schedule where all intervals are strictly non-overlapping.",
+      "confidence": 0.8
+    }
+  ]
+}

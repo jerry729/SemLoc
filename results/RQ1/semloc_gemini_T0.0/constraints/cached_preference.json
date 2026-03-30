@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_preference",
+  "fault_hypothesis": "The expiry check on line 85 uses a strict greater-than comparison (>), which incorrectly considers an item valid when the current time is exactly equal to its TTL. It should use a greater-than-or-equal-to comparison (>=) to correctly expire items at their TTL boundary.",
+  "fault_line": 85,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 85
+        }
+      },
+      "spec": {
+        "expr": "(now > ttl__1 + _CLOCK_SKEW_TOLERANCE) == (now >= ttl__1 + _CLOCK_SKEW_TOLERANCE)"
+      },
+      "intent": "The actual expiry logic should match the correct logic, which includes the equality case.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 85,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1 + _CLOCK_SKEW_TOLERANCE"
+      },
+      "intent": "If an item is considered valid (not expired), the current time must be strictly less than its TTL.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "item__1"
+        }
+      },
+      "spec": {
+        "expr": "item__1 is None or len(item__1) == 2"
+      },
+      "intent": "A valid cache item must be a tuple of (payload, ttl), hence length 2.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "ttl__1 >= 0"
+      },
+      "intent": "The TTL timestamp must be a non-negative value.",
+      "confidence": 0.8
+    }
+  ]
+}

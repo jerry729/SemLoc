@@ -1,0 +1,20 @@
+{
+  "bug_id": "matplotlib_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.transforms.nonsingular",
+    "buggy_methods": [
+      "lib.matplotlib.transforms.nonsingular"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.transforms.nonsingular",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

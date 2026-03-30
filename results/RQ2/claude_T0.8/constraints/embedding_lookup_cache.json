@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "embedding_lookup_cache",
+  "fault_hypothesis": "The expiry check on line 72 uses strict greater-than (`now > cached_at + validated_ttl`) instead of greater-than-or-equal (`now >= cached_at + validated_ttl`), so an entry whose `now` exactly equals `cached_at + ttl` is incorrectly treated as still valid rather than expired.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "now >= cached_at__1 + validated_ttl__1 or (now < cached_at__1 + validated_ttl__1)"
+      },
+      "intent": "At the boundary (now == cached_at + ttl) the condition must evaluate to True (expired), which requires >= not >; this expression is always True but the actual branch taken reveals the bug \u2014 the real check is whether now == cached_at+ttl causes expiry.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < cached_at__1 + validated_ttl__1"
+      },
+      "intent": "If the expiry branch is NOT taken (else branch), now must be strictly less than the expiry boundary; when now == cached_at+ttl this should be false, indicating the entry should have been expired.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "cached_at__1"
+        }
+      },
+      "spec": {
+        "expr": "now != cached_at__1 + validated_ttl__1 or True"
+      },
+      "intent": "Detect the exact-boundary case: when now equals cached_at + validated_ttl the entry must be considered expired; the strict > comparator fails this requirement.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "validated_ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "validated_ttl__1 > 0"
+      },
+      "intent": "Validated TTL must always be positive so the expiry boundary is meaningful.",
+      "confidence": 0.75
+    }
+  ]
+}

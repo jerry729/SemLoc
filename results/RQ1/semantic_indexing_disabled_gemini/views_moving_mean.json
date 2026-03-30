@@ -1,0 +1,44 @@
+{
+  "function": "views_moving_mean",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        62
+      ],
+      "explanation": "The mean is calculated by dividing the sum of recent values by the requested window size (`window`) instead of the actual number of values available (`len(recent)`). This leads to an incorrect result when the number of values is less than the window size.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"views_moving_mean\",\n  \"faulty_lines\": [\n    62\n  ],\n  \"explanation\": \"The mean is calculated by dividing the sum of recent values by the requested window size (`window`) instead of the actual number of values available (`len(recent)`). This leads to an incorrect result when the number of values is less than the window size.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        62
+      ],
+      "valid_preds": [
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,20 @@
+{
+  "bug_id": "pandas_49",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.strings.str_repeat",
+    "buggy_methods": [
+      "pandas.core.strings.str_repeat"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.strings.str_repeat",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

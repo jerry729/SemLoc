@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_seats_share",
+  "fault_hypothesis": "Line 82 uses simple `int()` (floor/truncation) instead of the largest-remainder (Hamilton) method, so when allocations are non-integer the remainders are discarded and the sum of results is less than `total`.",
+  "fault_line": 82,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 82
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == int(total)"
+      },
+      "intent": "The integer allocations produced by truncation must sum exactly to total; this is FALSE when remainders are discarded.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "Raw shares must sum to total before integer rounding is applied.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 81,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "After the floor_to_int branch, the returned integer list must sum to total.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == len(weights)"
+      },
+      "intent": "Shares list length must match weights length before being consumed.",
+      "confidence": 0.7
+    }
+  ]
+}

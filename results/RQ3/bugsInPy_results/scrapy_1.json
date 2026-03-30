@@ -1,0 +1,36 @@
+{
+  "bug_id": "scrapy_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.spidermiddlewares.offsite.OffsiteMiddleware.get_host_regex",
+    "buggy_methods": [
+      "scrapy.spidermiddlewares.offsite.OffsiteMiddleware.get_host_regex"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.spidermiddlewares.offsite.OffsiteMiddleware.get_host_regex",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/spidermiddlewares/offsite.py": [
+      58,
+      62
+    ],
+    "tests/test_spidermiddleware_offsite.py": [
+      58,
+      59,
+      64,
+      65,
+      66,
+      69,
+      70,
+      71,
+      72
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

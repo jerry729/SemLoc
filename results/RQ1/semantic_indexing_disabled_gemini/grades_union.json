@@ -1,0 +1,47 @@
+{
+  "function": "grades_union",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    76
+  ],
+  "total_source_lines": 79,
+  "runs": [
+    {
+      "faulty_lines": [
+        77,
+        76
+      ],
+      "explanation": "The code incorrectly removes a duplicate value when the largest element is present in both input lists, which violates the 'keep_all' duplicate retention policy.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"grades_union\",\n  \"faulty_lines\": [\n    77,\n    76\n  ],\n  \"explanation\": \"The code incorrectly removes a duplicate value when the largest element is present in both input lists, which violates the 'keep_all' duplicate retention policy.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        77,
+        76
+      ],
+      "valid_preds": [
+        77,
+        76
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

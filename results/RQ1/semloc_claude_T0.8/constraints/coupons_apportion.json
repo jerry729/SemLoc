@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "coupons_apportion",
+  "fault_hypothesis": "Line 81 uses a simple `int(v)` (floor) conversion which truncates fractional shares, causing the sum of integer allocations to be less than `total` when weights don't divide evenly. The correct approach should use a largest-remainder or rounding method to ensure the sum is preserved.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == int(total)"
+      },
+      "intent": "After flooring all shares, their sum must still equal the original total.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "Raw shares must sum to total before any integer conversion is applied.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 80,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The integer-floored result list must sum exactly to total.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(int(v) for v in shares__1) == total or not floor_to_int"
+      },
+      "intent": "If floor_to_int is True, flooring each share individually must still preserve the total sum.",
+      "confidence": 0.8
+    }
+  ]
+}

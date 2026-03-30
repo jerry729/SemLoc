@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_call",
+  "fault_hypothesis": "The `overlaps` function on line 72 uses non-strict inequalities (`<=`, `>=`), incorrectly treating adjacent time slots as non-overlapping. This causes the check on line 76 to fail for touching slots, which should be considered conflicts.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[0] == effective[1] or candidate[1] == effective[0])"
+      },
+      "intent": "The `overlaps` check should evaluate to true if slots are adjacent, but the `if` condition is false in failing tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[0] == slot[1] or candidate[1] == slot[0])"
+      },
+      "intent": "At the end of an iteration, the checked slot must not be adjacent to the candidate, as that should have been detected as an overlap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (s[1] == candidate[0] or s[0] == candidate[1]) for s in existing)"
+      },
+      "intent": "If the candidate is added to the schedule, it must not be merely adjacent to any existing slot.",
+      "confidence": 0.9
+    }
+  ]
+}

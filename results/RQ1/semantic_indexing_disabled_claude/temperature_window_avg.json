@@ -1,0 +1,44 @@
+{
+  "function": "temperature_window_avg",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [
+        67
+      ],
+      "explanation": "Line 67 divides `total` by `window` instead of `len(tail)`. When the series has fewer elements than the window size, `tail` contains fewer than `window` elements, so dividing by `window` produces an incorrect (too low) average instead of the true mean of the available samples.",
+      "confidence": 0.93,
+      "parse_ok": true,
+      "raw": "Looking at the function, the issue is on line 67: `mean = total / window` divides by `window` instead of `len(tail)`. When `len(tail) < window` (i.e., there are fewer values than the window size), the mean should be computed over the actual number of samples available, not the full window size. This would produce an incorrect (too small) result when the series is shorter than the window.\n\n```json\n{\n  \"function_name\": \"temperature_window_avg\",\n  \"faulty_lines\": [67],\n  \"explanation\": \"Line 67 divides `total` by `window` instead of `len(tail)`. When the series has fewer elements than the window size, `tail` contains fewer than `window` elements, so dividing by `window` produces an incorrect (too low) average instead of the true mean of the available samples.\",\n  \"confidence\": 0.93\n}\n```",
+      "predicted": [
+        67
+      ],
+      "valid_preds": [
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

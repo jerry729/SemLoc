@@ -1,0 +1,26 @@
+{
+  "bug_id": "youtube-dl_39",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.extractor.facebook.FacebookIE._real_extract",
+    "buggy_methods": [
+      "youtube_dl.extractor.facebook.FacebookIE._real_extract"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.extractor.facebook.FacebookIE._real_extract",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/extractor/facebook.py": [
+      15,
+      134,
+      135
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "bug_id": "luigi_20",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.task.Task.to_str_params",
+    "buggy_methods": [
+      "luigi.task.Task.to_str_params"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.task.Task.to_str_params",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/task.py": [
+      309,
+      310
+    ],
+    "test/task_test.py": [
+      53
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      309,
+      310
+    ],
+    "best_rank": null,
+    "fn_lines": 11,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 308,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "luigi_20",
+    "function": "to_str_params",
+    "src_path": "luigi/task.py",
+    "fn_begin": 302,
+    "fn_end": 312,
+    "n_constraints": 4,
+    "n_tests_passing": 6,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 308,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/luigi_20/to_str_params_constraints.json",
+    "report_path": "/tmp/bip_semloc/luigi_20/violations.jsonl"
+  }
+}

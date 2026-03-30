@@ -1,0 +1,20 @@
+{
+  "bug_id": "tornado_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.gen.WaitIterator.__init__",
+    "buggy_methods": [
+      "tornado.gen.WaitIterator.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.gen.WaitIterator.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "bug_id": "keras_35",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.preprocessing.image.ImageDataGenerator.standardize",
+    "buggy_methods": [
+      "keras.preprocessing.image.ImageDataGenerator.standardize"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.preprocessing.image.ImageDataGenerator.standardize",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/preprocessing/image.py": [
+      583,
+      584,
+      1230
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

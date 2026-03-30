@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_bonus_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's individual share on line 72, rather than being deducted once from the total `amount` before distribution. This causes the fee to be deducted multiple times, once for each participant.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "((amount >= fee) and abs(sum(__cbfl_result) - (amount - fee)) < 1e-9) or ((amount < fee) and abs(sum(__cbfl_result)) < 1e-9)"
+      },
+      "intent": "The sum of all payouts must equal the initial amount minus the single fee, or zero if the fee exceeds the amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "((amount >= fee) and abs(sum(shares__1) - (amount - fee)) < 1e-9) or ((amount < fee) and abs(sum(shares__1)) < 1e-9)"
+      },
+      "intent": "The sum of calculated shares should represent the net distributable amount (pool minus fee), not the gross amount.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(total_ratio__1 - sum(ratios)) < 1e-9"
+      },
+      "intent": "The calculated total ratio must equal the sum of the input ratios.",
+      "confidence": 1.0
+    }
+  ]
+}

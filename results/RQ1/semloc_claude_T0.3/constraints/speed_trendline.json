@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "speed_trendline",
+  "fault_hypothesis": "The condition on line 71 is inverted: clamping is applied when `clamp=False` and skipped when `clamp=True`, because the guard is `if not clamp` instead of `if clamp`.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) or (clamp == False)"
+      },
+      "intent": "The branch should execute when clamp is True, not when it is False \u2014 the condition `not clamp` is inverted relative to the docstring semantics.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "The then-branch (clamping logic) should only execute when clamp is True, so inside it clamp must be True.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, y__4 must be within [min(y0,y1), max(y0,y1)] after the clamping block.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "Before y__4 is used in the final max/min, it should already be clamped if clamp=True.",
+      "confidence": 0.9
+    }
+  ]
+}

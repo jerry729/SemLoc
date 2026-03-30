@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_shift_allocator",
+  "fault_hypothesis": "The function truncates fractional shares to integers on line 68 using `int()`, causing the sum of allocated shifts to be less than the total when the division is not even.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(shares__1) - sum(int(x) for x in shares__1) < 1.0"
+      },
+      "intent": "The total number of shifts lost to integer truncation must be less than one whole shift.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "The sum of raw floating-point shares must be equal to the total number of shifts.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of the final allocated integer shifts must equal the total shifts.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "weight_sum__1"
+        }
+      },
+      "spec": {
+        "expr": "weight_sum__1 > 0"
+      },
+      "intent": "The sum of weights must be positive to allow for allocation.",
+      "confidence": 0.6
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_errors",
+  "fault_hypothesis": "The rolling mean on line 62 is calculated by dividing the total by the fixed `window` size, not the actual number of recent samples. This is incorrect when the number of available samples is less than the window size.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (mean__1 == total__1 / len(recent__1))"
+      },
+      "intent": "The calculated mean must be correct, unless it's for a warmup period where the value is discarded.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "If a mean is returned, it must be the total sum divided by the actual number of samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (window == len(recent__1))"
+      },
+      "intent": "The divisor `window` is only correct if it matches the number of samples, unless the result is discarded during warmup.",
+      "confidence": 0.9
+    }
+  ]
+}

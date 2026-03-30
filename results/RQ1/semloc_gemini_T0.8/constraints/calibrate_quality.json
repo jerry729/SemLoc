@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_quality",
+  "fault_hypothesis": "The condition on line 68 is `if not clamp:`, but it should be `if clamp:`. This inverts the clamping logic, causing values to be clamped when `clamp=False` and not clamped when `clamp=True`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0.0 and t__1 <= 1.0"
+      },
+      "intent": "All failing tests involve extrapolation (where t is outside [0,1]), which is where the buggy clamping logic is exposed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__5 >= min(y0, y1) and y__5 <= max(y0, y1)) or (not clamp and y__5 == y__1)"
+      },
+      "intent": "The final value must be clamped if and only if clamping was requested.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "This branch, taken when clamp is false, should only process non-extrapolated values for the tests to pass.",
+      "confidence": 0.9
+    }
+  ]
+}

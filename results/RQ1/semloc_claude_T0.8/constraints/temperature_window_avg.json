@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "temperature_window_avg",
+  "fault_hypothesis": "On line 67, the mean is computed by dividing by `window` instead of `len(tail)`. When the series is shorter than the window, `tail` has fewer elements than `window`, so dividing by `window` gives a wrong (too small) result instead of dividing by the actual number of samples used.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "After computing mean, verify it equals total divided by the actual tail length, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "Check that mean times actual tail length equals total, catching division by wrong denominator.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before returning mean, confirm it was computed using len(tail) as the divisor.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result * min(len(values), window) - sum(values[-window:])) < 1e-9"
+      },
+      "intent": "Returned mean times actual sample count should equal the sum of the tail slice.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_window",
+  "fault_hypothesis": "The overlap detection logic on line 65 uses non-strict inequalities (`<=`, `>=`), which incorrectly treats intervals touching at their boundaries as non-overlapping. The condition should use strict inequalities (`<`, `>`) to correctly identify these adjacent intervals as conflicts.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(end__1 <= s or start__1 >= e) == (end__1 < s or start__1 > e)"
+      },
+      "intent": "The buggy non-overlap condition (with <=, >=) should be equivalent to the correct strict condition (with <, >).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "If a loop iteration completes without finding a conflict, the new interval must not touch or overlap the existing interval from that iteration.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If the program proceeds to merge the new interval, it implies no overlaps (including adjacent ones) were found with any existing interval.",
+      "confidence": 0.9
+    }
+  ]
+}

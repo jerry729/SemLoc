@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "subsidy_payout",
+  "fault_hypothesis": "On line 69, the share is computed as `(r / total_ratio) * amount` without deducting the fee from `amount` first; the fee is instead subtracted per-participant in the return statement, causing it to be deducted N times instead of once from the total pool.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - (sum(r2 / total_ratio__1 * amount for r2 in ratios[:len(shares)]))) < 1e-9 and all(s <= (amount - fee) for s in shares)"
+      },
+      "intent": "After each append, the accumulated shares should be proportional to (amount - fee), not to amount alone.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s <= (amount - fee) for s in shares)"
+      },
+      "intent": "Each accumulated share should not exceed amount minus fee, ensuring fee is deducted from the pool before splitting.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (amount - fee)) < 1e-9 or sum(shares__1) == 0.0"
+      },
+      "intent": "The raw shares before clamping should sum to amount minus fee, not amount.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "Total distributed amount must equal pool minus fee (clamped to zero), not pool minus N*fee.",
+      "confidence": 0.9
+    }
+  ]
+}

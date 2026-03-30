@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cache_entry_ttl",
+  "fault_hypothesis": "The expiry check on line 73 uses a strict inequality `now > effective`, which fails to expire entries when the current time is exactly equal to the expiration time. It should be `now >= effective`.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1)"
+      },
+      "intent": "The check should correctly handle the boundary case where the current time is exactly the effective expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "The branch that returns the cached value should only be taken if the entry has not yet expired.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective__1"
+      },
+      "intent": "The current time should not be exactly equal to the effective expiry time when performing the check.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in entries and now == entries[key][1]) or (__cbfl_result is None)"
+      },
+      "intent": "If an entry is queried exactly at its expiration time, the result must be None.",
+      "confidence": 0.8
+    }
+  ]
+}

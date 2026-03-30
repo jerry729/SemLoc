@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "award_payout",
+  "fault_hypothesis": "On line 67, each share is computed from the full `amount` rather than `amount - fee`, causing the fee to be deducted once per participant instead of once from the total pool. The correct formula is `(r / total_ratio) * (amount - fee)`.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - (sum(ratios[:len(shares)]) / total_ratio) * (amount - fee)) < 1e-6"
+      },
+      "intent": "After each append, the running sum of shares should reflect the fee-adjusted pool, not the raw amount.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(abs(s - (ratios[i] / total_ratio__1) * (amount - fee)) < 1e-6 for i, s in enumerate(shares__1))"
+      },
+      "intent": "At each loop iteration, every accumulated share must equal its ratio fraction of the fee-adjusted pool.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "shares__1 == []"
+      },
+      "intent": "Immediately after initialization, shares__1 must be an empty list before the loop fills it.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-6 or sum(__cbfl_result) == 0.0"
+      },
+      "intent": "The total payout must equal amount minus fee (or zero if clamped), not amount minus n*fee.",
+      "confidence": 0.92
+    }
+  ]
+}

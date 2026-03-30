@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_depths",
+  "fault_hypothesis": "The code at line 78 incorrectly removes the last element from the merged list if it is common to the end of both input lists. This violates the documented requirement to preserve all original entries.",
+  "fault_line": 78,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "This branch, which incorrectly removes a shared element, should not be taken.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The list length must not be reduced after merging, as all elements must be preserved.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "merged__1.count(left[-1]) == left.count(left[-1]) + right.count(left[-1])"
+      },
+      "intent": "The count of the shared last element in the merged list must equal the sum of its counts in the inputs.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(len(left) + len(right) > MAX_DEPTH_LEVELS) or (len(__cbfl_result) == len(left) + len(right))"
+      },
+      "intent": "The final list must have the combined length of inputs, unless it was truncated.",
+      "confidence": 0.8
+    }
+  ]
+}

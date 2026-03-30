@@ -1,0 +1,44 @@
+{
+  "function": "quota_for_storage",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "Line 66 uses `int(x)` (truncation/floor) instead of proper integer allocation that preserves the total. The docstring states the sum should equal `round(sum(planned))`, but truncation loses fractional parts without redistributing the remainder, causing the sum of allocations to be less than expected.",
+      "confidence": 0.85,
+      "parse_ok": true,
+      "raw": "Looking at the function, the issue is in the integer allocation logic. When `_INTEGER_ALLOCATION` is `True`, the code uses `int(x)` which truncates (floors) the float values. This means the sum of allocations may not equal `round(sum(planned))` as documented in the docstring.\n\nThe correct approach for proportional allocation with integer rounding typically uses the \"largest remainder method\" - round down all values, compute remainders, then distribute remaining units to recipients with the largest fractional parts.\n\nThe fault is on line 66 where `int(x)` truncates instead of properly rounding, causing the sum to potentially be less than expected, and there's no redistribution of the remainder to ensure the total matches `round(sum(planned))`.\n\n```json\n{\n  \"function_name\": \"quota_for_storage\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"Line 66 uses `int(x)` (truncation/floor) instead of proper integer allocation that preserves the total. The docstring states the sum should equal `round(sum(planned))`, but truncation loses fractional parts without redistributing the remainder, causing the sum of allocations to be less than expected.\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

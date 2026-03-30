@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_upgrade_slot",
+  "fault_hypothesis": "The overlap check on line 63 uses strict inequalities (`b <= s` and `a >= e`), treating touching boundaries (e.g., b == s or a == e) as non-overlapping. The tests expect touching boundaries to be treated as conflicts, so the conditions should be `b < s` and `a > e`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "not any(not (b__1 <= s or a__1 >= e) for s, e in timeline) or not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "When the new window touches an existing slot boundary (b==s or a==e), the overlap check should detect a conflict; the current strict-inequality logic fails to do so.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s for s, e in timeline) or False"
+      },
+      "intent": "Before using b__1 in the overlap check, assert that if b__1 equals any existing slot start, the check will correctly flag it as a conflict (which the current code does not).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "a__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(a__1 == e for s, e in timeline) or False"
+      },
+      "intent": "Before using a__1 in the overlap check, assert that if a__1 equals any existing slot end, the check will correctly flag it as a conflict (which the current code does not).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "After passing the conflict check (else branch), every existing slot must be strictly non-touching with the new window; touching boundaries should have been caught.",
+      "confidence": 0.9
+    }
+  ]
+}

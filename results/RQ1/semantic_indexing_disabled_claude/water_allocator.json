@@ -1,0 +1,47 @@
+{
+  "function": "water_allocator",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    29
+  ],
+  "total_source_lines": 30,
+  "runs": [
+    {
+      "faulty_lines": [
+        26,
+        29
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify potential bugs.\n\nThe function computes weighted allocations. Let me analyze the logic:\n\n1. Line 26: `shares.append(portion if portion > minimum else minimum)` - This enforces a minimum floor on each share, but it doesn't adjust the total to account for the fact that applying minimums could make the sum of shares exceed `total`. This is a logical issue.\n\n2. Line 29: `return [int(v) for v in shares]` - Using `int()` truncates toward zero rather than rounding. This could cause the sum of allocated shares to be less than `total` due to truncation errors. However, this might be intentional behavior.\n\n3. Line 26: The condition `portion > minimum` should likely be `portion < minimum` - wait, no. If `portion > minimum`, keep `portion`; otherwise use `minimum`. This means if the computed portion is less than the minimum, we use the minimum. That seems correct for enforcing a floor.\n\nWait, actually the bug on line 26 is subtle: if `portion > minimum`, we use `portion`, else we use `minimum`. But what if `minimum` is 0 and `portion` is 0? Then `0 > 0` is False, so we'd use `minimum` which is 0. That's fine.\n\nBut what if the minimum enforcement causes the sum to exceed total? That's a real issue but might be \"by design.\"\n\nThe more likely bug: line 26 uses `portion > minimum` but should use `portion >= minimum` or alternatively the logic is inverted - we want to use `minimum` when `portion < minimum`, which is equivalent to `portion > minimum` being False... actually the logic seems correct.\n\nLet me reconsider: `portion if portion > minimum else minimum` - if portion is greater than minimum, use portion; otherwise use minimum. This is correct floor behavior.\n\nThe real bug might be on line 29 - using `int()` (truncation) instead of `round()`, which causes systematic under-allocation. But the function is named with `floor_to_int` suggesting truncation is intentional.\n\nActually, looking more carefully at line 26: when `minimum=0`, `portion > 0` would be False for zero-weight items (w=0), giving them `minimum=0`. That's fine.\n\nThe bug is likely on line 26 where negative weights aren't validated, or the truncation on line 29 causes issues. Given test failures likely involve sum not matching total after truncation, line 29 is suspect.\n\n{\n  \"function_name\": \"water_allocator\",\n  \"faulty_lines\": [26, 29],\n  \"explanation\": \"Line 26 applies minimum floors without compensating the total, which can cause the sum of allocations to exceed `total`. Line 29 uses `int()` (floor truncation) which may cause the sum of returned values to be less than `total`, neither of which corrects for the rounding/minimum adjustments.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [
+        26,
+        29
+      ],
+      "valid_preds": [
+        26,
+        29
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 26,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

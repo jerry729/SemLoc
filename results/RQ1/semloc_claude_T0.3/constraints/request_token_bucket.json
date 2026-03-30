@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "request_token_bucket",
+  "fault_hypothesis": "When a token request is denied (available <= 0), the function returns False at line 62 without updating tokens[TOKEN_KEY_LAST] to `now`. This means subsequent calls compute elapsed time from the old timestamp, causing incorrect refill calculations.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "tokens.get('last', now) == now"
+      },
+      "intent": "After a denial, the 'last' timestamp in the tokens dict should be updated to now before returning False.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "tokens.get('last', now) == now"
+      },
+      "intent": "Inside the denial branch, the tokens dict must have 'last' set to the current timestamp to correctly track time for future refill computations.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "last__1"
+        }
+      },
+      "spec": {
+        "expr": "last__1 <= now"
+      },
+      "intent": "The last timestamp read from the tokens dict must not exceed the current time, ensuring elapsed time is non-negative.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "tokens.get('last', now) == now"
+      },
+      "intent": "On every return path (both True and False), the 'last' key in tokens should be updated to now so future refill windows are computed correctly.",
+      "confidence": 0.9
+    }
+  ]
+}

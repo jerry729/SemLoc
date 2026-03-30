@@ -1,0 +1,44 @@
+{
+  "function": "token_expiry_check",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        64
+      ],
+      "explanation": "The condition `expires_at > now + _MAX_TOKEN_LIFETIME` incorrectly rejects tokens whose expiry is more than 24 hours in the future, which would invalidate legitimate tokens with longer lifetimes. The comparison logic is inverted or the condition is semantically wrong for the intended validation.",
+      "confidence": 0.72,
+      "parse_ok": true,
+      "raw": "Looking at the function, I need to identify the faulty logic.\n\nThe check on line 64 `if expires_at > now + _MAX_TOKEN_LIFETIME` is suspicious. This condition returns `None` when the token's expiry is more than 24 hours in the future from now. However, this logic doesn't make sense for a token validation function - you wouldn't want to reject a valid token just because it has a long lifetime. The maximum lifetime check should compare against the token's creation time or simply shouldn't be there, OR the condition should be checking if the expiry is unreasonably far in the future (which could be a sanity check).\n\nBut more critically, the condition `now > adjusted_expiry` on line 69 checks if the current time is past the expiry - this seems correct for detecting expired tokens.\n\nThe real bug: line 64 checks `expires_at > now + _MAX_TOKEN_LIFETIME`, which returns `None` (treating as invalid) when the token expires more than 24 hours from now. This would incorrectly reject tokens with long but valid lifetimes. The correct check should likely be `expires_at < now - _MAX_TOKEN_LIFETIME` (token was issued too long ago and its max lifetime exceeded) or this check should be removed/reformulated.\n\nActually, thinking more carefully: the intended logic seems to be to reject tokens whose expiry timestamp is suspiciously far in the future (possibly forged). But if the intent is to check that the token hasn't been alive longer than `_MAX_TOKEN_LIFETIME`, the condition should be checking something like `now - (expires_at - _MAX_TOKEN_LIFETIME) > _MAX_TOKEN_LIFETIME`, which doesn't match what's written.\n\nThe condition on line 64 returns None for tokens expiring more than 24 hours in the future, which would incorrectly invalidate legitimate long-lived tokens. This is the faulty line.\n\n```json\n{\n  \"function_name\": \"token_expiry_check\",\n  \"faulty_lines\": [64],\n  \"explanation\": \"The condition `expires_at > now + _MAX_TOKEN_LIFETIME` incorrectly rejects tokens whose expiry is more than 24 hours in the future, which would invalidate legitimate tokens with longer lifetimes. The comparison logic is inverted or the condition is semantically wrong for the intended validation.\",\n  \"confidence\": 0.72\n}\n```",
+      "predicted": [
+        64
+      ],
+      "valid_preds": [
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 64,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

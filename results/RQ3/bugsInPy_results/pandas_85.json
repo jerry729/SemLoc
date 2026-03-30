@@ -1,0 +1,20 @@
+{
+  "bug_id": "pandas_85",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.multi.MultiIndex._get_grouper_for_level",
+    "buggy_methods": [
+      "pandas.core.indexes.multi.MultiIndex._get_grouper_for_level"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.multi.MultiIndex._get_grouper_for_level",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

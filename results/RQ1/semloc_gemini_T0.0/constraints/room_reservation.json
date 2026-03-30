@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "room_reservation",
+  "fault_hypothesis": "The overlap detection logic on line 70 is incorrect. It uses non-strict inequalities (`<=`, `>=`) which fails to detect intervals that are adjacent (touching at the boundaries), treating them as non-overlapping.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(end__1 <= s or start__1 >= e) == (end__1 < s or start__1 > e)"
+      },
+      "intent": "The buggy overlap check should be equivalent to the correct check with strict inequalities.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "At the end of each loop iteration, the new interval must not overlap with the current existing interval.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all((interval[1] < s or interval[0] > e) for s, e in existing)"
+      },
+      "intent": "If the schedule is updated, the new interval must not have had a boundary overlap with any existing interval.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == True) implies all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a reservation is accepted, the resulting schedule must not contain any overlapping or adjacent intervals.",
+      "confidence": 0.8
+    }
+  ]
+}

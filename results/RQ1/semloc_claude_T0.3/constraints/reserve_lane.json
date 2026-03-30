@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_lane",
+  "fault_hypothesis": "The `overlaps` inner function uses strict inequality (`b[1] <= a[0] or b[0] >= a[1]`) to detect non-overlap, which means touching boundaries (where b[1]==a[0] or b[0]==a[1]) are incorrectly treated as non-overlapping. The bug is on line 62 where the overlap condition should use `<` instead of `<=` and `>` instead of `>=`.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == slot[0] or candidate[0] == slot[1]) or overlaps(slot, candidate)"
+      },
+      "intent": "When candidate touches an existing slot at a boundary, overlaps must return True (touching should be treated as overlapping).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (candidate[1] == slot[0] or candidate[0] == slot[1])"
+      },
+      "intent": "After each loop iteration, if candidate touches slot at a boundary, the function should have already returned False (not reached loop tail).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "If overlaps returned False (else branch taken), candidate must be strictly non-adjacent to slot \u2014 touching boundaries should have triggered the then-branch.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] is False or all(r[1] < candidate[0] or r[0] > candidate[1] for r in existing)"
+      },
+      "intent": "If accepted is True, candidate must not touch or overlap any existing slot.",
+      "confidence": 0.8
+    }
+  ]
+}

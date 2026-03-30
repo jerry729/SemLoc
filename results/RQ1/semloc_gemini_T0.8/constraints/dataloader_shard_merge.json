@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "dataloader_shard_merge",
+  "fault_hypothesis": "The function incorrectly removes the last element from the merged list if both input lists are non-empty and end with the same value. The faulty action is the `merged.pop()` call on line 74.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left_ids) + len(right_ids)"
+      },
+      "intent": "The total number of elements after the merge logic must equal the sum of elements from the inputs.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(1 for x in merged__1 if x == right_ids[-1]) == sum(1 for x in left_ids if x == right_ids[-1]) + sum(1 for x in right_ids if x == right_ids[-1])"
+      },
+      "intent": "The count of the final element in the merged list must equal its total count from the inputs, even if it's the shared last element.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left_ids) + len(right_ids)"
+      },
+      "intent": "The merged list must contain all elements from both input lists before filtering.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (stride == 1) or (len(__cbfl_result) == len(left_ids) + len(right_ids))"
+      },
+      "intent": "The length of the returned list must be consistent with the input lengths when no stride is applied.",
+      "confidence": 0.8
+    }
+  ]
+}

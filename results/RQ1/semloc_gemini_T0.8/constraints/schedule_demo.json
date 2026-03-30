@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_demo",
+  "fault_hypothesis": "The overlap check on line 67 uses non-strict inequalities (`<=`, `>=`), incorrectly permitting adjacent intervals that touch at a boundary. The logic should use strict inequalities (`<`, `>`) to correctly reject such cases as overlaps.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "Adjacent intervals that touch at a boundary should be considered overlapping, so this check for non-adjacency must fail for them.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "If no conflict is detected in an iteration, the new interval must be strictly separate from the current existing slot.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "start__1 < end__1"
+      },
+      "intent": "A validated interval must have a start time strictly less than its end time.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_desk_slot",
+  "fault_hypothesis": "The overlap check on line 76 incorrectly allows adjacent intervals by using '>=' and '<=' comparisons. This causes intervals that touch at their boundaries to be considered non-overlapping, when the business logic requires them to be rejected.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "Adjacent intervals should be rejected, so the non-overlap condition must use strict inequalities.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "The new interval must be strictly separated from every existing interval checked so far.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "start__1"
+        }
+      },
+      "spec": {
+        "expr": "all(start__1 != e for s, e in existing)"
+      },
+      "intent": "A new booking cannot start exactly when an existing booking ends.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If an interval is accepted, it must be strictly separated from all original bookings.",
+      "confidence": 0.95
+    }
+  ]
+}

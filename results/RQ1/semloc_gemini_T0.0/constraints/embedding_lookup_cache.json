@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "embedding_lookup_cache",
+  "fault_hypothesis": "The expiration check on line 72 uses a strict inequality (>), but it should be non-strict (>=) to correctly expire entries exactly at their TTL boundary.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "now != cached_at__1 + validated_ttl__1"
+      },
+      "intent": "The expiration check should correctly handle the boundary case where the current time equals the expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < cached_at__1 + validated_ttl__1"
+      },
+      "intent": "If an entry is considered valid and returned, the current time must be strictly less than its expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "now >= cached_at__1 + validated_ttl__1"
+      },
+      "intent": "If an entry is considered expired, the current time must be greater than or equal to its expiration time.",
+      "confidence": 1.0
+    }
+  ]
+}

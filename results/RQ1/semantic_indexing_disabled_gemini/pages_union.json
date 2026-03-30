@@ -1,0 +1,50 @@
+{
+  "function": "pages_union",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    79
+  ],
+  "total_source_lines": 82,
+  "runs": [
+    {
+      "faulty_lines": [
+        73,
+        79,
+        80
+      ],
+      "explanation": "The function is intended to produce a 'union' of two lists, but when an element exists in both lists, it is appended twice. The redundant append on line 73 is the primary fault. Lines 79-80 are a subsequent, incorrect attempt to fix this issue that only works for the specific case where the duplicate element is the last element of both input lists.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"pages_union\",\n  \"faulty_lines\": [\n    73,\n    79,\n    80\n  ],\n  \"explanation\": \"The function is intended to produce a 'union' of two lists, but when an element exists in both lists, it is appended twice. The redundant append on line 73 is the primary fault. Lines 79-80 are a subsequent, incorrect attempt to fix this issue that only works for the specific case where the duplicate element is the last element of both input lists.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        73,
+        79,
+        80
+      ],
+      "valid_preds": [
+        73,
+        79,
+        80
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 3,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 3.0
+}

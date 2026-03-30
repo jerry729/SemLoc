@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_click",
+  "fault_hypothesis": "When a counter exceeds its cap, it is incorrectly set to `cap - 1` instead of being clamped at the cap value itself. This logic error is on line 64.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "The counter value should be exactly the cap when clamped.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After clamping, the counter must be equal to the cap value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "cap is None or counters__1[key__1] <= cap"
+      },
+      "intent": "If not clamped, the counter value must be at or below the cap.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "TEMPORAL_CALL_SNAPSHOT",
+      "instrument": {
+        "region": "ON_EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "guard": "cap is not None and key in counters and counters[key] == cap",
+        "snapshot": [],
+        "require": "__cbfl_result == cap"
+      },
+      "intent": "If a counter is already at its cap, another bump should not change its value.",
+      "confidence": 0.7
+    }
+  ]
+}

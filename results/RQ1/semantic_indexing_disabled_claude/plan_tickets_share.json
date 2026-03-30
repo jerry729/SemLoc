@@ -1,0 +1,47 @@
+{
+  "function": "plan_tickets_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    80
+  ],
+  "total_source_lines": 82,
+  "runs": [
+    {
+      "faulty_lines": [
+        72,
+        71
+      ],
+      "explanation": "Line 72 immediately overwrites the `weight_sum` computed on line 71 (which included `_PRECISION_GUARD` to prevent floating-point issues), making the precision guard completely ineffective and line 71 dead code.",
+      "confidence": 0.85,
+      "parse_ok": true,
+      "raw": "Looking at the code, I can see a clear issue on lines 71-72. Line 71 computes `weight_sum` with a precision guard (`+ _PRECISION_GUARD`), but then line 72 immediately overwrites it without the guard. This makes line 71 completely useless dead code, and the purpose of `_PRECISION_GUARD` (to prevent division by zero or floating point drift) is defeated.\n\nAdditionally, on line 81, `int(v)` truncates (floors) the values, which for a weighted allocation could cause the sum of allocated values to be less than `total`. A proper implementation would typically use a largest-remainder method or `math.floor` with adjustment, but the `int()` truncation is likely the intended floor behavior described. However, the primary bug is the overwrite of `weight_sum`.\n\nThe main fault is line 72 overwriting the carefully computed `weight_sum` from line 71 (removing the precision guard), effectively making `_PRECISION_GUARD` do nothing. Line 71 is also suspicious as dead code, but line 72 is the actual bug.\n\n```json\n{\n  \"function_name\": \"plan_tickets_share\",\n  \"faulty_lines\": [72, 71],\n  \"explanation\": \"Line 72 immediately overwrites the `weight_sum` computed on line 71 (which included `_PRECISION_GUARD` to prevent floating-point issues), making the precision guard completely ineffective and line 71 dead code.\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [
+        72,
+        71
+      ],
+      "valid_preds": [
+        72,
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

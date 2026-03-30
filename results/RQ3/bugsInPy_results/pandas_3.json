@@ -1,0 +1,28 @@
+{
+  "bug_id": "pandas_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.series.Series.to_timestamp",
+    "buggy_methods": [
+      "pandas.core.series.Series.to_timestamp"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.series.Series.to_timestamp",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/series.py": [
+      4687,
+      4714
+    ],
+    "pandas/tests/series/methods/test_to_timestamp.py": [
+      3
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

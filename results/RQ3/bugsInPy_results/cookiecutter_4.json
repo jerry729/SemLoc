@@ -1,0 +1,59 @@
+{
+  "bug_id": "cookiecutter_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "cookiecutter.generate.generate_files",
+    "buggy_methods": [
+      "cookiecutter.generate.generate_files"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "cookiecutter.generate.generate_files",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "cookiecutter/generate.py": [
+      31,
+      260
+    ],
+    "cookiecutter/hooks.py": [
+      72,
+      94,
+      108,
+      109
+    ],
+    "tests/test_hooks.py": [
+      15
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      31,
+      260
+    ],
+    "best_rank": null,
+    "fn_lines": 99,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 260,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "cookiecutter_4",
+    "function": "generate_files",
+    "src_path": "cookiecutter/generate.py",
+    "fn_begin": 225,
+    "fn_end": 323,
+    "n_constraints": 4,
+    "n_tests_passing": 6,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 260,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/cookiecutter_4/generate_files_constraints.json",
+    "report_path": "/tmp/bip_semloc/cookiecutter_4/violations.jsonl"
+  }
+}

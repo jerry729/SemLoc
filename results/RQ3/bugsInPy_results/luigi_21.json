@@ -1,0 +1,28 @@
+{
+  "bug_id": "luigi_21",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.interface.run",
+    "buggy_methods": [
+      "luigi.interface.run"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.interface.run",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "examples/foo.py": [
+      67
+    ],
+    "test/interface_test.py": [
+      25,
+      30
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

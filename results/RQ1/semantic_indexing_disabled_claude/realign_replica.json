@@ -1,0 +1,44 @@
+{
+  "function": "realign_replica",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    58
+  ],
+  "total_source_lines": 60,
+  "runs": [
+    {
+      "faulty_lines": [
+        60
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, it's supposed to return normalized allocations that sum to 1.0, but the final normalization step is missing. The function computes blended values and clamps them, but never divides by the total sum to normalize the result.\n\n{\n  \"function_name\": \"realign_replica\",\n  \"faulty_lines\": [60],\n  \"explanation\": \"The function is documented to return normalized allocations summing to 1.0, but line 60 returns `adjusted` without normalizing by dividing each element by the total sum of `adjusted`.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        60
+      ],
+      "valid_preds": [
+        60
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 60,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

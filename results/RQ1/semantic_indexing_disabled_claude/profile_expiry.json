@@ -1,0 +1,44 @@
+{
+  "function": "profile_expiry",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        73
+      ],
+      "explanation": "The condition `if now > effective` should be `if now >= effective`. The docstring states the value is returned only when `now` is strictly before the effective expiry, meaning at `now == effective` the entry should be expired and return None, but the current code incorrectly returns the value in that case.",
+      "confidence": 0.85,
+      "parse_ok": true,
+      "raw": "Looking at the function, the docstring says it returns the cached value \"only when the current timestamp `now` is strictly before the entry's effective expiry time.\" This means the entry is valid when `now < effective`, and expired when `now >= effective`.\n\nHowever, line 73 checks `if now > effective`, which means it only returns `None` when `now > effective`, but when `now == effective` (exactly at expiry), it still returns the value. This contradicts \"strictly before\" the expiry time \u2014 at the exact expiry moment, the entry should be considered expired.\n\nThe correct condition should be `if now >= effective` to properly handle the \"strictly before\" requirement.\n\n```json\n{\n  \"function_name\": \"profile_expiry\",\n  \"faulty_lines\": [73],\n  \"explanation\": \"The condition `if now > effective` should be `if now >= effective`. The docstring states the value is returned only when `now` is strictly before the effective expiry, meaning at `now == effective` the entry should be expired and return None, but the current code incorrectly returns the value in that case.\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [
+        73
+      ],
+      "valid_preds": [
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

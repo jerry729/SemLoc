@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_flag_rollout",
+  "fault_hypothesis": "The comparison on line 63 is inverted. It should be `bucket < percentage`, not `bucket > percentage`, to correctly enroll a fraction of users matching the percentage and handle edge cases like 0% and 100% rollout.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(not (percentage == 1.0) or (bucket__1 > percentage)) and (not (percentage == 0.0) or not (bucket__1 > percentage))"
+      },
+      "intent": "The result must be true for 100% rollout and false for 0% rollout.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= bucket__1 < 1.0"
+      },
+      "intent": "The user's bucket value must be a fraction between 0.0 and 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_CALL",
+        "anchor": {
+          "callee": "_validate_percentage"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= percentage <= 1.0"
+      },
+      "intent": "The rollout percentage must be a valid fraction after validation.",
+      "confidence": 0.9
+    }
+  ]
+}

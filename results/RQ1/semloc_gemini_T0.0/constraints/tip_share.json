@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tip_share",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each recipient's individual share on line 62, rather than being deducted once from the total amount before the split. This causes the fee to be effectively multiplied by the number of recipients.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - max(0, amount - fee)) < len(ratios) * 0.01"
+      },
+      "intent": "The sum of payouts should equal the total amount less a single fee, accounting for rounding.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "len(result__1) == 0 or abs(result__1[0] - (ratios[0] / total_ratio__1) * max(0, amount - fee)) < 0.01"
+      },
+      "intent": "Each recipient's share should be proportional to their ratio of the net amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "amount == 0 or len(result__1) == 0 or abs(result__1[0] - base__1[0] * max(0, amount - fee) / amount) < 0.01"
+      },
+      "intent": "The final share should be the initial share scaled by the fee factor.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "ENTRY",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "fee >= 0"
+      },
+      "intent": "The service fee cannot be negative.",
+      "confidence": 0.8
+    }
+  ]
+}

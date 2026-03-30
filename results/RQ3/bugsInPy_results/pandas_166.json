@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_166",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.frame.DataFrame._join_compat",
+    "buggy_methods": [
+      "pandas.core.frame.DataFrame._join_compat"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.frame.DataFrame._join_compat",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/frame.py": [
+      7213,
+      7216
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

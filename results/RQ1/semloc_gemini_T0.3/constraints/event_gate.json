@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "event_gate",
+  "fault_hypothesis": "The condition on line 62 uses a strict greater-than `>` comparison, but it should be greater-than-or-equal `>=`. This off-by-one error allows one more event than the specified limit when the number of recent events is exactly equal to the limit.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) == (len(recent__1) >= limit)"
+      },
+      "intent": "The boolean logic of the rate limit check is incorrect for the boundary case where the event count equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the gate allows an event, the count of recent events must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "all(t >= window_start__1 for t in recent__1)"
+      },
+      "intent": "All timestamps considered 'recent' must have occurred at or after the calculated window start time.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (len(recent__1) < limit)"
+      },
+      "intent": "An event is allowed if and only if the number of prior recent events is strictly less than the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "growth_trendline",
+  "fault_hypothesis": "The condition on line 66 is `if not clamp` but it should be `if clamp`. This causes clamping to happen when clamp=False and no clamping when clamp=True, which is the opposite of the intended behavior.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or (clamp == False)"
+      },
+      "intent": "When clamp=True the branch should be entered (clamping applied), but `not clamp` inverts this so clamping is skipped when clamp=True and applied when clamp=False.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "The then-branch (clamping logic) should only execute when clamp is False, but with `not clamp` it executes when clamp is False \u2014 which is backwards from the documented intent that clamp=True restricts output.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, the returned y value must be within [min(y0,y1), max(y0,y1)]; the bug causes this invariant to be violated.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lo__1"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False"
+      },
+      "intent": "lo__1 and hi__1 are only defined inside the `if not clamp` branch, so they should only exist when clamp is False; if clamp=True but we still enter this branch, the logic is inverted.",
+      "confidence": 0.88
+    }
+  ]
+}

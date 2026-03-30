@@ -1,0 +1,44 @@
+{
+  "function": "limit_message",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        73
+      ],
+      "explanation": "The rate-limiting check on this line contains an off-by-one error; it uses `>` instead of `>=`. When the number of recent messages is exactly equal to the limit, a new message should be denied, but the current logic incorrectly allows it, permitting `limit + 1` messages instead of `limit`.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"limit_message\",\n  \"faulty_lines\": [\n    73\n  ],\n  \"explanation\": \"The rate-limiting check on this line contains an off-by-one error; it uses `>` instead of `>=`. When the number of recent messages is exactly equal to the limit, a new message should be denied, but the current logic incorrectly allows it, permitting `limit + 1` messages instead of `limit`.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        73
+      ],
+      "valid_preds": [
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

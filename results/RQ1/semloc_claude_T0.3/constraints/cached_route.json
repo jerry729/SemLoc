@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_route",
+  "fault_hypothesis": "The condition on line 68 uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), so when `now == effective` the entry is incorrectly treated as still valid rather than expired.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or __cbfl_result is None"
+      },
+      "intent": "When now equals effective, the function must return None (expired); the strict > comparison fails this.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or True"
+      },
+      "intent": "After computing effective, verify that the subsequent expiry check will use >= semantics (now >= effective means expired).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "In the else branch (entry considered valid), now must be strictly less than effective; equality should have triggered expiry.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "isinstance(effective__1, (int, float))"
+      },
+      "intent": "Confirm effective is a numeric value before the comparison so the boundary check is meaningful.",
+      "confidence": 0.6
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "slots_apportion",
+  "fault_hypothesis": "The code on line 70 uses `int()` to truncate floating-point allocations, which incorrectly discards remainders. This causes the sum of the final allocations to be less than the required total, violating the principle of apportionment.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "The sum of the final integer allocations must equal the rounded sum of the ideal float allocations.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "(minimum != 0) or (abs(sum(planned__1) - total) < 1e-9)"
+      },
+      "intent": "The sum of planned allocations should equal the total, unless a minimum is applied.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(minimum != 0) or (sum(__cbfl_result) == total)"
+      },
+      "intent": "The sum of final allocations must equal the total when no minimum is specified.",
+      "confidence": 0.7
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cost_trendline",
+  "fault_hypothesis": "The condition on line 65 is inverted. The clamping logic is executed when `clamp` is `False`, but it should be executed when `clamp` is `True`.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "min(y0, y1) <= y__1 <= max(y0, y1)"
+      },
+      "intent": "For all passing tests, the raw interpolated value is within the anchor bounds, unlike in failing tests where extrapolation occurs.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "min(y0, y1) <= y__1 <= max(y0, y1)"
+      },
+      "intent": "The raw interpolated value should be within the bounds of the anchor costs for all passing tests.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(y__4 == y__1) == ((not clamp) or (min(y0, y1) <= y__1 <= max(y0, y1)))"
+      },
+      "intent": "The final value should equal the raw value if and only if clamping is disabled or was not needed.",
+      "confidence": 0.9
+    }
+  ]
+}

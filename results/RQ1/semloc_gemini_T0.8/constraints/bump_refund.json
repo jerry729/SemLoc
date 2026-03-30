@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_refund",
+  "fault_hypothesis": "When the counter exceeds max_value, it is incorrectly clamped to `max_value - 1` on line 59, instead of being set to `max_value`.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The new value, when clamped, must be exactly max_value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "(max_value is None) or (new_value__3 == min(new_value__1, max_value))"
+      },
+      "intent": "The final value must be the incremented value, clamped at max_value if applicable.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 58,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 >= new_value__1 - INCREMENT_STEP"
+      },
+      "intent": "The counter value should not decrease relative to its value before the increment.",
+      "confidence": 0.9
+    }
+  ]
+}

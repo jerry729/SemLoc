@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "upload_gate",
+  "fault_hypothesis": "The bug is on line 74. The condition `len(active) > limit` incorrectly allows an upload when the number of active uploads is exactly equal to the limit; it should be `len(active) >= limit` to correctly block the upload.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit"
+      },
+      "intent": "The logic fails specifically when the number of active uploads is exactly equal to the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If an upload is allowed, the number of active uploads must have been strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts >= cutoff__1 for ts in active__1)"
+      },
+      "intent": "All timestamps considered active must be within the time window, starting from the cutoff time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (len(active) < limit)"
+      },
+      "intent": "The gate should be open if and only if the number of active uploads is strictly less than the limit.",
+      "confidence": 0.8
+    }
+  ]
+}

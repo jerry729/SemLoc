@@ -1,0 +1,38 @@
+{
+  "function": "plan_appointment_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the conflict detection logic on line 65:\n\n```python\nif any(not (b <= s or a >= e) for s, e in timeline):\n```\n\nThis checks for overlap: a conflict exists when NOT (b <= s OR a >= e), which means the new window [a, b) overlaps with existing slot [s, e).\n\nWhen `_CONFLICT_STRICT = False`, adjacent intervals should NOT be considered conflicts. The condition `b <= s` handles the case where the new slot ends before or at the start of an existing slot (touching = not conflict \u2713). The condition `a >= e` handles the case where the new slot starts at or after the end of an existing slot (touching = not conflict \u2713).\n\nThis logic seems correct for `_CONFLICT_STRICT = False`.\n\nHowever, looking at `_MIN_SLOT_DURATION = 0` and the check on line 60:\n```python\nif b - a < _MIN_SLOT_DURATION:\n```\n\nSince `_MIN_SLOT_DURATION = 0` and `_validate_window` already ensures `b > a` (so `b - a >= 1` for integers), this check is redundant but not wrong.\n\nWait, let me reconsider. The `_validate_window` raises if `a >= b`, meaning it requires `b > a`, so `b - a >= 1`. But `_MIN_SLOT_DURATION = 0`, so `b - a < 0` can never be true after validation. The check on line 60 is unreachable/redundant but not a bug per se.\n\nActually, looking more carefully at the conflict check: `not (b <= s or a >= e)` simplifies to `b > s and a < e`, which is the standard overlap condition. This is correct.\n\nThe issue might be with the strict vs non-strict boundaries. When `_CONFLICT_STRICT = False`, touching should not be a conflict. The current condition uses strict inequalities (`b <= s` and `a >= e`), which means touching (b == s or a == e) is NOT a conflict \u2014 this is correct for non-strict mode.\n\nBut what about when `_CONFLICT_STRICT = True`? The code doesn't change behavior based on `_CONFLICT_STRICT`. This seems like the bug \u2014 `_CONFLICT_STRICT` is defined but never used in the logic.\n\n```json\n{\n  \"function_name\": \"plan_appointment_slot\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The conflict detection on line 65 ignores the `_CONFLICT_STRICT` flag entirely. When `_CONFLICT_STRICT` is True, touching/adjacent intervals should also be considered conflicts (using strict `<` instead of `<=` and `>`  instead of `>=`), but the condition always uses the non-strict overlap check regardless of the flag value.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

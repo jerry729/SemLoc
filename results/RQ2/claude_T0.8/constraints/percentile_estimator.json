@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "percentile_estimator",
+  "fault_hypothesis": "On line 59, `idx = int(len(values) * q)` computes an index equal to `len(values)` when `q=1.0`, causing an out-of-bounds IndexError on line 60. The index should be clamped to `len(values) - 1`.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "Ensure the computed index is strictly less than the length of values to avoid IndexError.",
+      "confidence": 0.98
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "idx__1"
+        }
+      },
+      "spec": {
+        "expr": "idx__1 >= 0 and idx__1 <= len(values) - 1"
+      },
+      "intent": "After computing idx, verify it is a valid index into values.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "idx__1"
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "Before using idx to index into values, confirm it does not exceed the last valid index.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result in values"
+      },
+      "intent": "The returned value must be an element that actually exists in the input sequence.",
+      "confidence": 0.8
+    }
+  ]
+}

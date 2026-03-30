@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_rebalance",
+  "fault_hypothesis": "The function fails to normalize the `updated` list of weights before returning it on line 65. This causes the sum of the returned weights to not equal 1.0 when the input `target` distribution doesn't sum to 1.0.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "sum(updated__1) == 0.0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The final list of weights returned by the function must sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(updated__1) == 0.0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The `updated` list must represent a valid probability distribution just before it is returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_HEAD",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "sum(target) == 0.0 or abs(sum(target) - 1.0) < 1e-9"
+      },
+      "intent": "The interpolation logic implicitly assumes the target weights sum to 1.0 to preserve the sum property.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == 0.0 or abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "Any value returned by the function should be a list of weights that sums to 1.0.",
+      "confidence": 0.3
+    }
+  ]
+}

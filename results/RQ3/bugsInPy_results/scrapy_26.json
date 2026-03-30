@@ -1,0 +1,35 @@
+{
+  "bug_id": "scrapy_26",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.settings.__init__.BaseSettings.getbool",
+    "buggy_methods": [
+      "scrapy.settings.__init__.BaseSettings.getbool"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.settings.__init__.BaseSettings.getbool",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/settings/__init__.py": [
+      119,
+      121,
+      206,
+      207,
+      209,
+      210
+    ],
+    "tests/test_settings/__init__.py": [
+      255,
+      256,
+      258,
+      259
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

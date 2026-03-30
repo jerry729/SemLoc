@@ -1,0 +1,47 @@
+{
+  "bug_id": "keras_19",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.layers.recurrent.StackedRNNCells.__init__",
+    "buggy_methods": [
+      "keras.layers.recurrent.StackedRNNCells.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.layers.recurrent.StackedRNNCells.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/backend/cntk_backend.py": [
+      1442
+    ],
+    "keras/layers/recurrent.py": [
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      69,
+      79,
+      86,
+      101,
+      102,
+      103,
+      104,
+      116,
+      226,
+      227,
+      228,
+      417
+    ],
+    "tests/keras/layers/recurrent_test.py": [
+      502
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

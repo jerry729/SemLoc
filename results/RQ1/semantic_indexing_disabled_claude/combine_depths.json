@@ -1,0 +1,47 @@
+{
+  "function": "combine_depths",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    77
+  ],
+  "total_source_lines": 83,
+  "runs": [
+    {
+      "faulty_lines": [
+        77,
+        78
+      ],
+      "explanation": "Lines 77-78 incorrectly remove the last merged element when both left and right share the same final value. The merge loop already correctly appends both duplicate entries, so popping one violates the contract that every original entry is represented in the output.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the code, lines 77-78 are suspicious. After merging, there's a condition that pops the last element if it equals the last elements of both `left` and `right`. This logic is incorrect \u2014 when both streams share the same last value, the merge loop (lines 69-73) already appends it twice (both `a` and `b`), which is correct per the docstring (\"Duplicate price levels that appear in both streams are preserved so that every original entry is represented\"). Then popping one of them removes a valid entry, making the output incorrect.\n\n```json\n{\n  \"function_name\": \"combine_depths\",\n  \"faulty_lines\": [77, 78],\n  \"explanation\": \"Lines 77-78 incorrectly remove the last merged element when both left and right share the same final value. The merge loop already correctly appends both duplicate entries, so popping one violates the contract that every original entry is represented in the output.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        77,
+        78
+      ],
+      "valid_preds": [
+        77,
+        78
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

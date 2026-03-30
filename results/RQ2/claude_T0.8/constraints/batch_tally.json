@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batch_tally",
+  "fault_hypothesis": "On line 62, when new_value exceeds max_value, it is clamped to `max_value - 1` instead of `max_value`, causing the counter to be set one below the ceiling rather than at it.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "After clamping, new_value should equal max_value, not max_value - 1.",
+      "confidence": 0.98
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value stored in new_value__2 must equal max_value, not be one less.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 <= max_value and new_value__2 == max_value"
+      },
+      "intent": "Inside the clamping branch, new_value must be set to exactly max_value.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "max_value is None or new_value__3 <= max_value"
+      },
+      "intent": "Before storing the result, new_value must not exceed max_value when a ceiling is set.",
+      "confidence": 0.92
+    }
+  ]
+}

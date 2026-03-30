@@ -1,0 +1,47 @@
+{
+  "function": "budget_budgeter",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        30,
+        68
+      ],
+      "explanation": "The proportional allocation on line 30 incorrectly applies minimums, which can cause the sum of allocations to exceed the total budget. Additionally, line 68 uses simple integer truncation, which causes under-allocation by discarding all fractional budget units.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"budget_budgeter\",\n  \"faulty_lines\": [\n    30,\n    68\n  ],\n  \"explanation\": \"The proportional allocation on line 30 incorrectly applies minimums, which can cause the sum of allocations to exceed the total budget. Additionally, line 68 uses simple integer truncation, which causes under-allocation by discarding all fractional budget units.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        30,
+        68
+      ],
+      "valid_preds": [
+        30,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 30,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

@@ -1,0 +1,28 @@
+{
+  "bug_id": "pandas_133",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.generic.NDFrame.interpolate",
+    "buggy_methods": [
+      "pandas.core.generic.NDFrame.interpolate"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.generic.NDFrame.interpolate",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/generic.py": [
+      7057,
+      7058
+    ],
+    "pandas/tests/frame/test_missing.py": [
+      394
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

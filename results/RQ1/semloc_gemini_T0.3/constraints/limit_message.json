@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_message",
+  "fault_hypothesis": "The check at line 73 uses a strict `>` comparison, but should use `>=`. This off-by-one error allows a new message when the rate limit has been exactly met, whereas it should be denied.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The failing tests are precisely those where the number of recent messages equals the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If a message is allowed, the count of recent messages must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == sum(1 for t in timestamps if t >= cutoff__1)"
+      },
+      "intent": "The 'recent' list should correctly contain all timestamps within the sliding window.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len([t for t in timestamps if t >= now - window]) >= limit)"
+      },
+      "intent": "The 'allowed' return value must be false if and only if the message count is at or over the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

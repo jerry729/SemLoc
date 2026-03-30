@@ -1,0 +1,28 @@
+{
+  "bug_id": "pandas_69",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexing._AtIndexer._convert_key",
+    "buggy_methods": [
+      "pandas.core.indexing._AtIndexer._convert_key"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexing._AtIndexer._convert_key",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexing.py": [
+      2127
+    ],
+    "pandas/tests/indexes/test_numeric.py": [
+      405,
+      428
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "function": "limit_api",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "The condition `len(recent) > limit` should be `len(recent) >= limit`. When the number of recent requests equals the limit, the request should be denied (remaining=0), but the current code incorrectly allows it and returns `True, 0`.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the function, I need to identify the fault in the rate limiting logic.\n\nThe key issue is on line 66: `if len(recent) > limit:` should be `if len(recent) >= limit:`.\n\nWhen `len(recent) == limit`, the caller has already used all their allowed requests, so the next request should be denied (allowed=False, remaining=0). But with `>`, when `len(recent) == limit`, it returns `True, 0` \u2014 meaning it allows a request even though the limit is exhausted.\n\nAlso, line 61: `cutoff = now - window` \u2014 the cutoff should use `>` strictly (i.e., `t > cutoff` in `_filter_recent`) or the cutoff should be `now - window` with `t > cutoff`. Currently `t >= cutoff` means the boundary timestamp is included. But this is a design choice, not necessarily a bug.\n\nThe clearest bug is line 66 where `>` should be `>=`.\n\n```json\n{\n  \"function_name\": \"limit_api\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"The condition `len(recent) > limit` should be `len(recent) >= limit`. When the number of recent requests equals the limit, the request should be denied (remaining=0), but the current code incorrectly allows it and returns `True, 0`.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

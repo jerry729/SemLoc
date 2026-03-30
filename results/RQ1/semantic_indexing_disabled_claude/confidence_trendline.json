@@ -1,0 +1,44 @@
+{
+  "function": "confidence_trendline",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    79
+  ],
+  "total_source_lines": 86,
+  "runs": [
+    {
+      "faulty_lines": [
+        77
+      ],
+      "explanation": "The condition `if not clamp:` on line 77 is inverted; it should be `if clamp:`. As written, the output is clamped to [min(y0,y1), max(y0,y1)] when clamp=False and not clamped when clamp=True, which is the opposite of the intended behavior.",
+      "confidence": 0.98,
+      "parse_ok": true,
+      "raw": "The bug is on line 77: the condition `if not clamp:` should be `if clamp:`. The clamping logic is inverted \u2014 it clamps when `clamp=False` and skips clamping when `clamp=True`.\n\n```json\n{\n  \"function_name\": \"confidence_trendline\",\n  \"faulty_lines\": [77],\n  \"explanation\": \"The condition `if not clamp:` on line 77 is inverted; it should be `if clamp:`. As written, the output is clamped to [min(y0,y1), max(y0,y1)] when clamp=False and not clamped when clamp=True, which is the opposite of the intended behavior.\",\n  \"confidence\": 0.98\n}\n```",
+      "predicted": [
+        77
+      ],
+      "valid_preds": [
+        77
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

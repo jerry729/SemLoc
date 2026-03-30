@@ -1,0 +1,24 @@
+{
+  "bug_id": "scrapy_22",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.exporters.XmlItemExporter._export_xml_field",
+    "buggy_methods": [
+      "scrapy.exporters.XmlItemExporter._export_xml_field"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.exporters.XmlItemExporter._export_xml_field",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/exporters.py": [
+      147
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

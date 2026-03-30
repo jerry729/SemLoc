@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_demo",
+  "fault_hypothesis": "The overlap condition on line 67 uses strict inequalities (`end <= s` and `start >= e`), which incorrectly allows adjacent intervals (where end==s or start==e) to be accepted instead of rejected.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) and not (start__1 == e) or not (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "The overlap check must treat touching boundaries as overlapping; if end==s or start==e the condition should detect a conflict, so the non-overlap guard must use strict inequalities in the opposite sense (end < s or start > e).",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 > start__1"
+      },
+      "intent": "After unpacking the validated interval, end must be strictly greater than start.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "At the end of each loop iteration, if the new interval merely touches an existing slot boundary it should have already triggered a conflict return; touching is not allowed.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "When the overlap condition is not triggered (else branch), the new interval must be strictly non-adjacent to the existing slot, meaning end < s or start > e.",
+      "confidence": 0.9
+    }
+  ]
+}

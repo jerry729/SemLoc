@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_pressure",
+  "fault_hypothesis": "The condition on line 70, `if not clamp:`, inverts the clamping logic. Clamping is incorrectly applied when `clamp` is `False` and skipped when it is `True`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(not clamp and y__3 == y__1) or (clamp and ((y0 <= y1 and y__3 >= y0 and y__3 <= y1) or (y1 < y0 and y__3 >= y1 and y__3 <= y0)))"
+      },
+      "intent": "If clamping is off, y is unchanged; if on, y is within the [y0, y1] range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic block should only be executed when clamping is enabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "(y0 <= y1 and y__1 >= y0 and y__1 <= y1) or (y1 < y0 and y__1 >= y1 and y__1 <= y0)"
+      },
+      "intent": "If clamping is enabled but the clamping logic is skipped, the value must already be within the valid range.",
+      "confidence": 0.9
+    }
+  ]
+}

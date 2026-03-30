@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "percentile_estimator",
+  "fault_hypothesis": "The index calculation on line 59, `int(len(values) * q)`, does not handle the case where `q` is 1.0. This results in an index equal to `len(values)`, which is out of bounds and causes an `IndexError` on line 60.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "The calculated index must be a valid index for the `values` sequence.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "idx__1"
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "The calculated index must be within the bounds of the `values` list.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "idx__1"
+        }
+      },
+      "spec": {
+        "expr": "idx__1 < len(values)"
+      },
+      "intent": "The index must be less than the length of the sequence before it is used for access.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (q == 1.0) or (__cbfl_result == values[len(values) - 1])"
+      },
+      "intent": "If the 100th percentile is requested, the maximum value should be returned.",
+      "confidence": 0.9
+    }
+  ]
+}

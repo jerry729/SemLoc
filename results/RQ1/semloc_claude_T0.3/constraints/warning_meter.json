@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "warning_meter",
+  "fault_hypothesis": "On line 65, when the counter exceeds the cap, it is set to `cap - 1` instead of `cap`, causing the counter to be pinned one below the cap value rather than at the cap.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "counters[key__1] == cap__1"
+      },
+      "intent": "After capping, the counter must equal cap, not cap-1.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters[key__1] == cap__1"
+      },
+      "intent": "Inside the capping branch, the stored counter value must equal cap exactly.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "cap__1"
+        }
+      },
+      "spec": {
+        "expr": "cap__1 is None or counters.get(key__1, DEFAULT_INITIAL_COUNT) + 1 <= cap__1 or counters.get(key__1, DEFAULT_INITIAL_COUNT) + 1 - 1 == cap__1 - 1"
+      },
+      "intent": "Verify that when cap is applied, the resulting value would be cap not cap-1.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The returned counter value must never exceed the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

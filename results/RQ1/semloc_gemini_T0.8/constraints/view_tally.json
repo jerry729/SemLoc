@@ -1,0 +1,74 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "view_tally",
+  "fault_hypothesis": "The clamping logic on line 68 is incorrect. When the new value exceeds `max_value`, it is set to `max_value - 1` instead of being capped at `max_value`, causing the counter to decrease incorrectly when it hits the ceiling.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value assigned when the counter exceeds the maximum should be exactly max_value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "When the branch for clamping a value is taken, the resulting value should be max_value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "not (max_value is not None and current__1 >= max_value) or new_value__3 == max_value"
+      },
+      "intent": "If the counter was already at or above the ceiling, it should not decrease.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "TEMPORAL_CALL_SNAPSHOT",
+      "instrument": {
+        "region": "ON_EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "guard": "max_value is not None",
+        "snapshot": [
+          {
+            "name": "initial_count",
+            "expr": "counts.get(key, 0)"
+          }
+        ],
+        "require": "not (initial_count >= max_value) or counts[key] == max_value"
+      },
+      "intent": "The final count in the dictionary should be correctly clamped relative to its initial value.",
+      "confidence": 0.8
+    }
+  ]
+}

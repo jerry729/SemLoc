@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_latency",
+  "fault_hypothesis": "The condition on line 70 is inverted: `if not clamp` applies clamping when clamp is False and skips clamping when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp=True is passed, the branch that restricts y to [low, high] should be entered; with `if not clamp` the branch is skipped for clamp=True, causing failures.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__2 >= min(y0, y1) and y__2 <= max(y0, y1)"
+      },
+      "intent": "After the clamping branch executes, y must lie within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True, y__3 should be bounded by the latency endpoints; the inverted condition causes y__3 to be unclamped when clamp=True.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1) or __cbfl_result == MAX_LATENCY_MS)"
+      },
+      "intent": "When clamping is requested, the returned value must not exceed the interpolation bounds.",
+      "confidence": 0.85
+    }
+  ]
+}

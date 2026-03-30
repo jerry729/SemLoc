@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_lane",
+  "fault_hypothesis": "The overlap check on line 62 incorrectly uses non-strict inequalities (`<=`, `>=`) to define non-overlapping intervals. This fails to detect conflicts when time windows are adjacent, which should be considered an overlap.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(b[1] < a[0] or b[0] > a[1]) == (b[1] <= a[0] or b[0] >= a[1])"
+      },
+      "intent": "The logic for non-overlap should correctly handle boundary conditions where intervals touch.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "If an overlap is not detected for a slot, the candidate must be strictly outside that slot's window.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "An accepted candidate must not have a boundary conflict with any existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a candidate is accepted, the final returned schedule must not contain any adjacent or overlapping slots.",
+      "confidence": 0.8
+    }
+  ]
+}

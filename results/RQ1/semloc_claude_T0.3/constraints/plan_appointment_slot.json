@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_appointment_slot",
+  "fault_hypothesis": "The overlap condition on line 65 uses strict inequalities (`b <= s` and `a >= e`), which allows touching/adjacent intervals to pass through without conflict. The tests expect that touching intervals (where b==s or a==e) should be treated as conflicts, so the condition should use strict inequalities in the opposite sense: `b < s or a > e` for non-conflict.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not any((b__1 == s or a__1 == e) and not any(not (b__1 <= s or a__1 >= e) for s, e in timeline) for s, e in timeline)"
+      },
+      "intent": "When the new window touches (but does not strictly overlap) an existing slot, the conflict check should still detect it as a conflict; this expression is FALSE when touching intervals are incorrectly allowed through.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) for s, e in timeline) == (not any(not (b__1 < s or a__1 > e) for s, e in timeline))"
+      },
+      "intent": "The non-overlap condition should use strict inequalities so that touching endpoints are treated as conflicts.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s for s, e in timeline) and not any(a__1 == e for s, e in timeline) or any(not (b__1 <= s or a__1 >= e) for s, e in timeline)"
+      },
+      "intent": "If the new window's end equals any existing slot's start, or its start equals any existing slot's end, there should be a detected conflict; this is violated when touching is not treated as overlap.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "After passing the conflict check (else branch), the new window must not touch or overlap any existing slot \u2014 strict non-adjacency must hold.",
+      "confidence": 0.9
+    }
+  ]
+}

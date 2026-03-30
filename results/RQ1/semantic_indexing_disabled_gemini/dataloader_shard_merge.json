@@ -1,0 +1,47 @@
+{
+  "function": "dataloader_shard_merge",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [
+        73,
+        74
+      ],
+      "explanation": "The function incorrectly removes the last element from the merged list if it is common to the end of both input lists. This contradicts the docstring's stated purpose of preserving duplicates.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"dataloader_shard_merge\",\n  \"faulty_lines\": [\n    73,\n    74\n  ],\n  \"explanation\": \"The function incorrectly removes the last element from the merged list if it is common to the end of both input lists. This contradicts the docstring's stated purpose of preserving duplicates.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        73,
+        74
+      ],
+      "valid_preds": [
+        73,
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

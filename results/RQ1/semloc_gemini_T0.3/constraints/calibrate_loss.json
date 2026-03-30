@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_loss",
+  "fault_hypothesis": "The condition on line 65 is inverted. Clamping is performed when `clamp` is `False`, but it should be performed when `clamp` is `True`.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "The interpolation parameter t should be within [0, 1] for the current clamping logic to be correct, but it is not for failing cases.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The uninterpolated value y should lie between the start and end y-values, which is not true for extrapolation cases that fail.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 == y__1"
+      },
+      "intent": "When not clamping, the value of y should not be modified, but the buggy code modifies it during extrapolation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(clamp and __cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1)) or (not clamp and abs(__cbfl_result - (y0 + (x - x0) * (y1 - y0) / (x1 - x0))) < 1e-9)"
+      },
+      "intent": "The function's output must match the specified behavior for clamping or non-clamping mode.",
+      "confidence": 0.8
+    }
+  ]
+}

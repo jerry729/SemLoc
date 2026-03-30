@@ -1,0 +1,27 @@
+{
+  "bug_id": "thefuck_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.utils.get_all_executables",
+    "buggy_methods": [
+      "thefuck.utils.get_all_executables"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.utils.get_all_executables",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/test_utils.py": [
+      5
+    ],
+    "thefuck/utils.py": [
+      121
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "downtime_booking",
+  "fault_hypothesis": "The `overlaps` function at line 64 incorrectly uses non-strict inequalities (`<=`, `>=`) to check for non-overlapping intervals. This fails to detect when two intervals are adjacent, which should be treated as an overlap.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] == a[0] or b[0] == a[1]) or __cbfl_result"
+      },
+      "intent": "The overlaps function should return True if intervals are adjacent (touching boundaries).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "If the loop continues to the next iteration, the candidate must not overlap or be adjacent to the current slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the candidate is merged into the schedule, it must not overlap or be adjacent to any of the original slots.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the function accepts the candidate, then the candidate must not have overlapped (including adjacency) any existing slot.",
+      "confidence": 0.8
+    }
+  ]
+}

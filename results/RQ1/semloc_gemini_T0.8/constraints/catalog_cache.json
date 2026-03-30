@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "catalog_cache",
+  "fault_hypothesis": "The expiration check at line 64 uses a strict greater-than comparison (`>`). It should use greater-than-or-equal (`>=`) to correctly consider an entry expired when the current time is exactly at the expiration boundary.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "now != adjusted_expiry__1"
+      },
+      "intent": "The expiration check should correctly handle the boundary case where 'now' equals the adjusted expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 64,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "If an entry is considered valid (not expired), the current time must be strictly less than its adjusted expiration time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "Just before returning a cached value, it must be confirmed that the current time is strictly before the expiration time.",
+      "confidence": 0.9
+    }
+  ]
+}

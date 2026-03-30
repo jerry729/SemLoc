@@ -1,0 +1,25 @@
+{
+  "bug_id": "youtube-dl_26",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.js_to_json",
+    "buggy_methods": [
+      "youtube_dl.utils.js_to_json"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.js_to_json",
+  "autofl_matched_info": [],
+  "semloc_error": "Unsupported version: None",
+  "faulty_lines": {
+    "youtube_dl/utils.py": [
+      1973
+    ]
+  },
+  "semloc": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 555, in run_semloc_on_bip\n    _fn_name_parsed, constraints = parse_constraints(json.dumps(constraints_obj))\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/instrumentation.py\", line 601, in parse_constraints\n    raise ValueError(f\"Unsupported version: {obj.get('version')}\")\nValueError: Unsupported version: None\n"
+  },
+  "semloc_detail": {
+    "error": "Traceback (most recent call last):\n  File \"/workspace/semloc/run_bip_pipeline.py\", line 248, in run_one_bug\n    semloc_result = run_semloc_on_bip(\n                    ^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/bip_semloc.py\", line 555, in run_semloc_on_bip\n    _fn_name_parsed, constraints = parse_constraints(json.dumps(constraints_obj))\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/semloc/instrumentation.py\", line 601, in parse_constraints\n    raise ValueError(f\"Unsupported version: {obj.get('version')}\")\nValueError: Unsupported version: None\n"
+  }
+}

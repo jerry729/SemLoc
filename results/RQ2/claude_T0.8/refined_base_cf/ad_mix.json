@@ -1,0 +1,47 @@
+[
+  {
+    "cid": "C3",
+    "status": "Irrelevant",
+    "patch": "adjusted: List[float] = []",
+    "original_failing": [
+      "TestNormalizationWithNonUnitSum::test_current_not_summing_to_one",
+      "TestNormalizationWithNonUnitSum::test_target_not_summing_to_one"
+    ],
+    "patched_failing": [
+      "TestNormalizationWithNonUnitSum::test_current_not_summing_to_one",
+      "TestNormalizationWithNonUnitSum::test_target_not_summing_to_one"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  },
+  {
+    "cid": "C1",
+    "status": "OverApproximate",
+    "patch": "",
+    "original_failing": [
+      "TestNormalizationWithNonUnitSum::test_current_not_summing_to_one",
+      "TestNormalizationWithNonUnitSum::test_target_not_summing_to_one"
+    ],
+    "patched_failing": [
+      "TestNormalizationWithNonUnitSum::test_current_not_summing_to_one",
+      "TestNormalizationWithNonUnitSum::test_target_not_summing_to_one"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  },
+  {
+    "cid": "C2",
+    "status": "OverApproximate",
+    "patch": "",
+    "original_failing": [
+      "TestNormalizationWithNonUnitSum::test_current_not_summing_to_one",
+      "TestNormalizationWithNonUnitSum::test_target_not_summing_to_one"
+    ],
+    "patched_failing": [
+      "TestNormalizationWithNonUnitSum::test_current_not_summing_to_one",
+      "TestNormalizationWithNonUnitSum::test_target_not_summing_to_one"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  }
+]

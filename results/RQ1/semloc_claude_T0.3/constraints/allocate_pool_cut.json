@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_pool_cut",
+  "fault_hypothesis": "On line 68, the fee is not deducted before computing shares; the fee should be subtracted from `amount` before the proportional split (i.e., `(r / total_ratio) * (amount - fee)`), but instead it is subtracted per-participant from each share in the return statement, causing each participant to bear the full fee rather than a proportional share.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - (sum(r2 / total_ratio * (amount - fee) for r2 in ratios[:len(shares)])) ) < 1e-9"
+      },
+      "intent": "After each append, the running sum of shares should reflect (amount - fee) distributed proportionally, not amount.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(shares) > 0 and abs(shares[-1] - (ratios[len(shares)-1] / total_ratio) * (amount - fee)) < 1e-9"
+      },
+      "intent": "Each appended share should equal the participant's ratio fraction of (amount - fee), not of amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (amount - fee)) < 1e-9 or (amount - fee) <= 0"
+      },
+      "intent": "After the loop, the sum of raw shares should equal (amount - fee) so that the final clamp step is correct.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(amount - fee, 0.0)) < 1e-9 or (amount - fee) <= 0"
+      },
+      "intent": "The total of all payouts should equal the pool minus the fee (when fee < amount).",
+      "confidence": 0.75
+    }
+  ]
+}

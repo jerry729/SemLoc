@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_54",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.dtypes.dtypes.CategoricalDtype._from_values_or_dtype",
+    "buggy_methods": [
+      "pandas.core.dtypes.dtypes.CategoricalDtype._from_values_or_dtype"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.dtypes.dtypes.CategoricalDtype._from_values_or_dtype",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/tests/indexes/common.py": [
+      608
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

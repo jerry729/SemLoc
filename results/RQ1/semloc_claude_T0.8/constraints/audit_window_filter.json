@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "audit_window_filter",
+  "fault_hypothesis": "Line 68 uses `>= cutoff` (inclusive) instead of `> cutoff` (exclusive/strict), causing events exactly at the cutoff boundary to be incorrectly included in the results.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "all(t > cutoff__1 for t in [t for t in timestamps if t >= cutoff__1])"
+      },
+      "intent": "Every returned timestamp must be strictly greater than the cutoff, not equal to it.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "cutoff__1 == now - window"
+      },
+      "intent": "The cutoff must equal now minus window so boundary semantics are correct.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "cutoff__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(t == cutoff__1 for t in timestamps) or len([t for t in timestamps if t >= cutoff__1]) < len([t for t in timestamps if t == cutoff__1]) + len([t for t in timestamps if t > cutoff__1])"
+      },
+      "intent": "Verify that events exactly at the cutoff are not included by the filter expression before it executes.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(t > (now - window) for t in __cbfl_result)"
+      },
+      "intent": "All returned timestamps must be strictly greater than the cutoff (now - window).",
+      "confidence": 0.9
+    }
+  ]
+}

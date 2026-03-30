@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_retries",
+  "fault_hypothesis": "On line 62, the mean is computed by dividing `total` by `window` instead of `len(tail)`. When `len(tail) < window` (fewer values than window width), this produces a smaller result than the true average of available data.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "The mean should be total divided by the actual number of tail elements, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) >= 1 and abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing mean, mean * len(tail) should equal total when tail is shorter than window.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window or abs(total__1 / len(tail__1) - total__1 / window) < 1e-9"
+      },
+      "intent": "Before returning mean, if tail is shorter than window the two divisors differ and the wrong one was used.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) > 0 and total__1 / len(tail__1) >= total__1 / window"
+      },
+      "intent": "When tail has fewer elements than window, dividing by len(tail) gives a larger or equal mean than dividing by window.",
+      "confidence": 0.88
+    }
+  ]
+}

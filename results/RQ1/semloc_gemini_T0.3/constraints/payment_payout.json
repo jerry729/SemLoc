@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_payout",
+  "fault_hypothesis": "The share calculation on line 70 uses the gross `amount`. The fee should be deducted from `amount` before this calculation, as it is incorrectly deducted from each share later on line 73, effectively multiplying the fee by the number of participants.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs((raw - fee) - (r / total_ratio__1) * (amount - fee)) < 1e-6"
+      },
+      "intent": "The final payout for this ratio, derived from the current raw share and the flawed logic on L73, should match the payout calculated from the net pool.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts must equal the initial amount minus the fee.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (len(shares) == len(ratios)) or (len(ratios) == 1 or fee == 0)"
+      },
+      "intent": "The buggy fee logic only works if there is one participant or no fee; this check should fail on the last iteration of a multi-participant, non-zero fee payout.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive to allow for valid distribution.",
+      "confidence": 0.7
+    }
+  ]
+}

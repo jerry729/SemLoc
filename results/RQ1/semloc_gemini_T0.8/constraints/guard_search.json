@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_search",
+  "fault_hypothesis": "The condition on line 74 uses a strict greater than `>` comparison, which incorrectly allows a new request when the number of active requests is exactly at the limit. It should use greater than or equal to `>=` to deny requests when the limit has been reached.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "The boundary condition where active requests exactly match the limit is where the bug manifests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the request is allowed by falling through the if-statement, the number of active requests must have been strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) <= len(timestamps)"
+      },
+      "intent": "The count of active timestamps cannot exceed the total number of timestamps provided.",
+      "confidence": 0.9
+    }
+  ]
+}

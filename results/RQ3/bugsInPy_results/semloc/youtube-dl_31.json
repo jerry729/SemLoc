@@ -1,0 +1,45 @@
+{
+  "bug_id": "youtube-dl_31",
+  "function": "parse_duration",
+  "src_path": "youtube_dl/utils.py",
+  "fn_begin": 1201,
+  "fn_end": 1223,
+  "n_constraints": 4,
+  "n_tests_passing": 31,
+  "n_tests_failing": 1,
+  "line_scores": [
+    {
+      "line": 1218,
+      "score": 1.0
+    },
+    {
+      "line": 1217,
+      "score": 1.0
+    },
+    {
+      "line": 1219,
+      "score": 1.0
+    },
+    {
+      "line": 1220,
+      "score": 1.0
+    },
+    {
+      "line": 1221,
+      "score": 1.0
+    },
+    {
+      "line": 1222,
+      "score": 1.0
+    },
+    {
+      "line": 1223,
+      "score": 1.0
+    }
+  ],
+  "fault_line": 1218,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_31/parse_duration_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_31/violations.jsonl"
+}

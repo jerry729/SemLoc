@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "grant_share",
+  "fault_hypothesis": "On line 65, the fee is subtracted from each individual share rather than from the total pool before distribution. The correct approach is to compute the net amount (amount - fee) first and distribute that, or equivalently subtract fee/n from each share, not the full fee from each share.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(share - fee) for share in base__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "After line 65, the sum of payouts should equal amount minus fee (not amount minus fee*n_recipients).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "After computing base shares, their sum should equal the full amount (fee not yet deducted).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6 and len(base__1) > 0"
+      },
+      "intent": "Before using base__1 in the return expression, verify it sums to amount so the fee deduction logic can be validated.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The total payout returned must equal amount minus the single fee, not amount minus fee times the number of recipients.",
+      "confidence": 0.92
+    }
+  ]
+}

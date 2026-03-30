@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "login_tally",
+  "fault_hypothesis": "The bug is on line 74. When the updated counter exceeds the cap, it is incorrectly clamped to `cap - 1` instead of `cap`.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "After clamping, the updated value should be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "updated__1 == current__1 + 1"
+      },
+      "intent": "The pre-clamped value should be the current value plus one.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "not (updated__1 > cap) or updated__3 == cap"
+      },
+      "intent": "If the value was supposed to be capped, it should now equal the cap.",
+      "confidence": 0.9
+    }
+  ]
+}

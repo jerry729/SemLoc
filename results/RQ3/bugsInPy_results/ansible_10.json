@@ -1,0 +1,24 @@
+{
+  "bug_id": "ansible_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.modules.system.pamd.PamdRule.__init__",
+    "buggy_methods": [
+      "lib.ansible.modules.system.pamd.PamdRule.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.modules.system.pamd.PamdRule.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/modules/system/pamd.py": [
+      481
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "function": "demands_union",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        66,
+        67
+      ],
+      "explanation": "The function incorrectly removes the last element from the merged list if the last elements of both input lists are identical, leading to an incorrect result for a standard merge operation.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"demands_union\",\n  \"faulty_lines\": [\n    66,\n    67\n  ],\n  \"explanation\": \"The function incorrectly removes the last element from the merged list if the last elements of both input lists are identical, leading to an incorrect result for a standard merge operation.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        66,
+        67
+      ],
+      "valid_preds": [
+        66,
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

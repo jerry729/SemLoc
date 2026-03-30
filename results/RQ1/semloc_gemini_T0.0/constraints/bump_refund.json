@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_refund",
+  "fault_hypothesis": "The function incorrectly clamps the value to `max_value - 1` instead of `max_value` when the ceiling is exceeded. The bug is on line 59, which should assign `max_value` to `new_value`.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped value should be exactly the maximum allowed value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "new_value__3 >= new_value__1 - 1"
+      },
+      "intent": "The new count should never be less than the original count.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 58,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "When clamping, the value must be set to the ceiling, not below it.",
+      "confidence": 1.0
+    }
+  ]
+}

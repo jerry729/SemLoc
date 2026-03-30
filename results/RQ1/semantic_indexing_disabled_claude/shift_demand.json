@@ -1,0 +1,44 @@
+{
+  "function": "shift_demand",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        64
+      ],
+      "explanation": "The function is supposed to normalise the result so it sums to 1, but line 64 returns the clamped `adjusted` list without dividing by its total sum, violating the documented contract.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "The function is missing the normalization step - after clamping, it should divide each value by the total sum so the result sums to 1, but it just returns the clamped `adjusted` list directly.\n\n```json\n{\n  \"function_name\": \"shift_demand\",\n  \"faulty_lines\": [64],\n  \"explanation\": \"The function is supposed to normalise the result so it sums to 1, but line 64 returns the clamped `adjusted` list without dividing by its total sum, violating the documented contract.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        64
+      ],
+      "valid_preds": [
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 64,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_113",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.integer.IntegerArray._create_comparison_method",
+    "buggy_methods": [
+      "pandas.core.arrays.integer.IntegerArray._create_comparison_method"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.integer.IntegerArray._create_comparison_method",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/integer.py": [
+      649
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

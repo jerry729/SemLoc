@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_delivery",
+  "fault_hypothesis": "On line 72, when `updated` exceeds `cap`, it is set to `cap - 1` instead of `cap`, causing the counter to be clamped one below the cap rather than at the cap.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "After clamping, updated should equal cap, not cap-1.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The clamped value must equal cap exactly, not be one less than cap.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 <= cap and updated__2 >= cap"
+      },
+      "intent": "After the clamping branch, updated must be exactly cap.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "cap is None or updated__3 <= cap"
+      },
+      "intent": "The final updated value must not exceed cap before being stored.",
+      "confidence": 0.9
+    }
+  ]
+}

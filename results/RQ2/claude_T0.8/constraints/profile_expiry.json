@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "profile_expiry",
+  "fault_hypothesis": "The comparison on line 73 uses `now > effective` (strict greater-than), but the docstring and failing tests require that `now >= effective` also be treated as expired. The boundary case where `now == effective` incorrectly returns the cached value instead of None.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective__1) or True"
+      },
+      "intent": "When now equals effective, the condition `now > effective` is False so the entry is incorrectly returned; the check should be `now >= effective`.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective__1) or (now >= effective__1)"
+      },
+      "intent": "After computing effective, when now equals effective the entry should be expired, so the guard must use >= not >.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "In the else branch (entry returned), now must be strictly less than effective; if now == effective the entry should not be returned.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or (key in entries and now < _effective_expiry(_validate_entry(entries[key])[1]))"
+      },
+      "intent": "The function should only return a non-None value when now is strictly less than the effective expiry.",
+      "confidence": 0.85
+    }
+  ]
+}

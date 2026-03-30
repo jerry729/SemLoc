@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_manifest",
+  "fault_hypothesis": "The expiry check on line 65 uses a strict greater-than comparison (`>`), but it should use greater-than-or-equal-to (`>=`) to correctly invalidate entries at the exact moment of expiry.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(now >= effective__1) == (now > effective__1)"
+      },
+      "intent": "The buggy expiry check logic diverges from the correct logic exactly at the expiry time boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "If an entry is considered valid (not expired), the current time must be strictly before its effective expiry.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < effective__1"
+      },
+      "intent": "Before returning a cached value, we must ensure it has not expired; expiry occurs if time is not strictly less than effective expiry.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in entries) or (__cbfl_result is not None) == (now < entries[key][1])"
+      },
+      "intent": "A cached value should be returned if and only if the key exists and the current time is strictly before its expiry timestamp.",
+      "confidence": 0.8
+    }
+  ]
+}

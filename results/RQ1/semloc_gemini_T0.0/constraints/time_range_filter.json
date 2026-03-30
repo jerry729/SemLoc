@@ -1,0 +1,49 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "time_range_filter",
+  "fault_hypothesis": "The list comprehension on line 75 uses an inclusive upper bound (`<= end`), but the specification requires an exclusive upper bound (`< end`). This causes points with timestamps exactly equal to `end` to be incorrectly included in the result.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "all(p[0] < end for p in __cbfl_result)"
+      },
+      "intent": "The timestamp of every returned point must be strictly less than the end of the range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not any(p[0] == end for p in __cbfl_result)"
+      },
+      "intent": "No returned point should have a timestamp exactly equal to the end boundary.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == sum(1 for p in points if start <= p[0] < end)"
+      },
+      "intent": "The number of returned points must equal the count of input points satisfying the correct half-open interval condition.",
+      "confidence": 0.9
+    }
+  ]
+}

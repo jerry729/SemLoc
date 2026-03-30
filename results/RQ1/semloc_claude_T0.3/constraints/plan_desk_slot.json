@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_desk_slot",
+  "fault_hypothesis": "The overlap condition on line 76 uses strict inequalities (`end <= s` and `start >= e`), which allows adjacent intervals (touching at endpoints) to be accepted. The condition should use strict inequalities in the other direction, i.e., `end < s or start > e` to treat touching as a conflict, or the logic should be `end < s or start > e` depending on the desired semantics \u2014 here the tests require that touching endpoints also count as overlap.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or e == start__1) or (not (end__1 <= s or start__1 >= e))"
+      },
+      "intent": "When new interval touches an existing one at exactly one endpoint, the condition should detect overlap (return False), but the current strict-inequality check fails to do so.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) and not (e == start__1)"
+      },
+      "intent": "At each loop iteration, if the new interval is adjacent (touching) to an existing slot, the loop should have already returned False \u2014 so we should never reach the tail with a touching pair.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 > start__1"
+      },
+      "intent": "Confirm that end is strictly greater than start before using them in the overlap check.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "After the non-overlap branch (no return), the new interval must be strictly non-adjacent to the current existing slot \u2014 touching endpoints should have triggered a return.",
+      "confidence": 0.88
+    }
+  ]
+}

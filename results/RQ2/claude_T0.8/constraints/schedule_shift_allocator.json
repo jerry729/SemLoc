@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_shift_allocator",
+  "fault_hypothesis": "Line 68 applies `int()` (truncation) to each raw share independently, which loses fractional remainders and causes the sum to be less than `total` when shares are non-integer. The rounding/remainder adjustment must be done before converting to int.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "sum(int(x) for x in shares__1) == total"
+      },
+      "intent": "After truncating shares to int, their sum must still equal total \u2014 violated when fractional parts are discarded.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The raw shares returned by _compute_raw_shares should sum exactly to total before any rounding.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == len(weights)"
+      },
+      "intent": "Shares list length must match weights length before it is consumed by the list comprehension.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The final returned list of integers must sum to total \u2014 catches the truncation bug at the output level.",
+      "confidence": 0.9
+    }
+  ]
+}

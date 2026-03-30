@@ -1,0 +1,47 @@
+{
+  "function": "subsidy_payout",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        69,
+        71
+      ],
+      "explanation": "The fee should be deducted from the total amount before computing shares (i.e., `(r / total_ratio) * (amount - fee)`), but instead the raw amount is used on line 69 and then the fee is incorrectly subtracted from each individual share on line 71, causing the total deducted fee to be `fee * len(ratios)` instead of just `fee`.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the function, the fee should be deducted from the total pool before splitting, as stated in the docstring: \"The administrative fee is deducted from the total pool before shares are calculated.\"\n\nHowever, in the implementation:\n- Line 69: shares are calculated as `(r / total_ratio) * amount` (without fee deduction)\n- Line 71: fee is subtracted from each individual share: `s - fee`\n\nThis is wrong in two ways:\n1. The fee should be deducted from the total amount first, then shares calculated: `(r / total_ratio) * (amount - fee)`\n2. Instead, the fee is being subtracted from each participant's share individually, which means the total fee deducted is `fee * len(ratios)` instead of just `fee`\n\nThe correct implementation should be either:\n- Line 69: `shares.append((r / total_ratio) * (amount - fee))` and line 71 returns shares directly, or\n- Keep line 69 as is but fix line 71\n\nThe bug is on line 69 (not deducting fee from amount before distributing) and line 71 (incorrectly subtracting fee per participant).\n\n```json\n{\n  \"function_name\": \"subsidy_payout\",\n  \"faulty_lines\": [69, 71],\n  \"explanation\": \"The fee should be deducted from the total amount before computing shares (i.e., `(r / total_ratio) * (amount - fee)`), but instead the raw amount is used on line 69 and then the fee is incorrectly subtracted from each individual share on line 71, causing the total deducted fee to be `fee * len(ratios)` instead of just `fee`.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        69,
+        71
+      ],
+      "valid_preds": [
+        69,
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

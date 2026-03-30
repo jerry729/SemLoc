@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "file_chunk_stitch",
+  "fault_hypothesis": "The function incorrectly truncates the last byte from the stitched payload on line 80 by using the slice `[:-1]`. The return statement should return the entire concatenated data.",
+  "fault_line": 80,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 80
+        }
+      },
+      "spec": {
+        "expr": "len(data__1[:-1]) == sum(len(part) for _, part in chunk_list__2)"
+      },
+      "intent": "The length of the data being returned must match the total length of all input chunks.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "chunk_list__2"
+        }
+      },
+      "spec": {
+        "expr": "all(chunk_list__2[i][0] <= chunk_list__2[i+1][0] for i in range(len(chunk_list__2) - 1))"
+      },
+      "intent": "The list of chunks must be sorted by their integer index before concatenation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not separator"
+      },
+      "intent": "The simple concatenation logic should only run when no separator is provided.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) >= sum(len(part) for _, part in chunks)"
+      },
+      "intent": "The final payload must contain at least all bytes from the original chunks.",
+      "confidence": 0.8
+    }
+  ]
+}

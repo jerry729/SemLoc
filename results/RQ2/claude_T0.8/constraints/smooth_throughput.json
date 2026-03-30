@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_throughput",
+  "fault_hypothesis": "On line 61, the average is computed by dividing `total` by `window` instead of by `len(tail)`. When the series is shorter than the window, this produces a value smaller than the true arithmetic mean of the available samples.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "After computing avg, it must equal total divided by the actual tail length, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) >= window or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "When tail is shorter than window, avg must reflect the mean of only the tail elements.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before avg is used in the return, it must be the true mean of the tail samples.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) > 0 and abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "After passing the warmup check, avg must be the arithmetic mean of the tail, not total/window.",
+      "confidence": 0.92
+    }
+  ]
+}

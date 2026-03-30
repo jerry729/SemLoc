@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_allocator_service",
+  "fault_hypothesis": "The function incorrectly truncates floating-point shares to integers on line 71 using `int()`, which discards fractional parts. This causes the sum of the final allocations to be less than the total quota for failing tests.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The sum of the final integer allocations must equal the total available quota.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(int(x) for x in raw__1) == int(total)"
+      },
+      "intent": "The sum of the truncated raw shares must equal the integer part of the total quota.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "raw__1"
+        }
+      },
+      "spec": {
+        "expr": "int(total) - sum(int(x) for x in raw__1) == int(sum(x % 1 for x in raw__1))"
+      },
+      "intent": "The shortfall from truncation must equal the integer part of the sum of the discarded fractions.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The sum of allocated quotas must equal the total available quota.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "volume_moving_mean",
+  "fault_hypothesis": "The mean calculation on line 60 is incorrect. It divides the total sum by the fixed `window` size instead of the actual number of samples in `recent`, leading to an erroneously small result when `len(recent) < window`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the total divided by the actual number of recent samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) >= window) or (abs(mean__1 - (total__1 / len(recent__1))) < 1e-9)"
+      },
+      "intent": "If there are fewer samples than the window size, the mean must be the average of those samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "If a mean is about to be returned, it must be the correct average of the available samples.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "bug_id": "matplotlib_23",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axes._base._AxesBase.apply_aspect",
+    "buggy_methods": [
+      "lib.matplotlib.axes._base._AxesBase.apply_aspect"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axes._base._AxesBase.apply_aspect",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/axes/_base.py": [
+      1510,
+      1511
+    ],
+    "lib/matplotlib/tests/test_axes.py": [
+      6557,
+      6558,
+      6562
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      1510,
+      1511
+    ],
+    "best_rank": null,
+    "fn_lines": 115,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 1541,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "matplotlib_23",
+    "function": "apply_aspect",
+    "src_path": "lib/matplotlib/axes/_base.py",
+    "fn_begin": 1438,
+    "fn_end": 1552,
+    "n_constraints": 4,
+    "n_tests_passing": 0,
+    "n_tests_failing": 3,
+    "line_scores": [],
+    "fault_line": 1541,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/matplotlib_23/apply_aspect_constraints.json",
+    "report_path": "/tmp/bip_semloc/matplotlib_23/violations.jsonl"
+  }
+}

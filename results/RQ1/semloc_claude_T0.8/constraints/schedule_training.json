@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_training",
+  "fault_hypothesis": "On line 67, the overlap condition uses `<=` and `>=` instead of `<` and `>`, causing touching intervals (where end == s or start == e) to be incorrectly treated as non-overlapping.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 < s or start__1 > e) == (not (end__1 <= s or start__1 >= e))"
+      },
+      "intent": "The condition using < and > should produce the same result as <= and >= only when intervals do not touch at boundaries; this is FALSE when end==s or start==e (the failing cases).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 > start__1"
+      },
+      "intent": "Verify that end is strictly greater than start before using it in the overlap check.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 < s or start__1 > e) or (end__1 <= s or start__1 >= e)"
+      },
+      "intent": "If the correct strict-inequality check detects a conflict, the buggy <= / >= check must also detect it (but not vice versa); this is FALSE when end==s or start==e and the correct check fires but the buggy one does not.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b[0] >= a[1] for a, b in zip(updated__1, updated__1[1:]))"
+      },
+      "intent": "After inserting the new interval, every consecutive pair in the sorted schedule must be strictly non-touching (no boundary contact), which would be violated when a touching interval is incorrectly inserted.",
+      "confidence": 0.85
+    }
+  ]
+}

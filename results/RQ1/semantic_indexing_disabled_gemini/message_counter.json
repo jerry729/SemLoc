@@ -1,0 +1,44 @@
+{
+  "function": "message_counter",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    60
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        61
+      ],
+      "explanation": "When a counter exceeds its cap, it is incorrectly set to `cap - 1`, causing it to decrease instead of staying at the maximum allowed value.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"message_counter\",\n  \"faulty_lines\": [\n    61\n  ],\n  \"explanation\": \"When a counter exceeds its cap, it is incorrectly set to `cap - 1`, causing it to decrease instead of staying at the maximum allowed value.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        61
+      ],
+      "valid_preds": [
+        61
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,29 @@
+{
+  "bug_id": "pandas_83",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.concat._Concatenator._get_comb_axis",
+    "buggy_methods": [
+      "pandas.core.reshape.concat._Concatenator._get_comb_axis"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.concat._Concatenator._get_comb_axis",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/api.py": [
+      66,
+      90,
+      108
+    ],
+    "pandas/core/reshape/concat.py": [
+      520
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

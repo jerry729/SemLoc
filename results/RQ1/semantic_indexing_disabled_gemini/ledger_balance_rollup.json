@@ -1,0 +1,44 @@
+{
+  "function": "ledger_balance_rollup",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "The function incorrectly adds debit amounts to the balance instead of subtracting them. The operation on line 66 should be `balance -= amount` to correctly decrease the balance for a debit entry.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"ledger_balance_rollup\",\n  \"faulty_lines\": [\n    66\n  ],\n  \"explanation\": \"The function incorrectly adds debit amounts to the balance instead of subtracting them. The operation on line 66 should be `balance -= amount` to correctly decrease the balance for a debit entry.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

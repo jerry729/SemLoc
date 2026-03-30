@@ -1,0 +1,38 @@
+{
+  "function": "schedule_demo",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify what's buggy. Let me analyze the overlap detection logic.\n\nThe overlap check on line 67:\n```python\nif not (end <= s or start >= e):\n```\n\nTwo intervals `(start, end)` and `(s, e)` do NOT overlap if:\n- `end <= s` (new interval ends before existing starts), OR\n- `start >= e` (new interval starts after existing ends)\n\nSo they DO overlap if `not (end <= s or start >= e)`, which equals `end > s and start < e`.\n\nThis is actually the correct overlap detection for strict overlaps. However, the issue might be with touching intervals. If `end == s` (new interval ends exactly when existing starts), they don't actually overlap - they just touch. The condition `end <= s` correctly handles this (touching is not overlapping).\n\nWait, let me reconsider. The condition `not (end <= s or start >= e)` means overlap when `end > s AND start < e`. This is correct for detecting overlaps where touching boundaries are NOT considered overlaps.\n\nActually, looking more carefully - the logic seems correct for the standard interval overlap problem. But wait - what if `_CONFLICT_STRICT = False` is supposed to be used somewhere but isn't? The variable `_CONFLICT_STRICT` is defined but never used in the function.\n\nThe `_CONFLICT_STRICT` flag on line 8 is defined but never referenced in the overlap check. If `_CONFLICT_STRICT` were `True`, touching intervals might be considered conflicts. The overlap check might need to use `_CONFLICT_STRICT` to determine whether touching boundaries (e.g., `end == s`) constitute a conflict.\n\nAlso, `_MIN_INTERVAL_DURATION = 0` means `end - start <= 0` raises an error, but `start >= end` already catches that case first. These two checks are redundant and the second check (line 21) can never trigger independently.\n\nThe most suspicious issue is that `_CONFLICT_STRICT` is defined but never used, suggesting the overlap condition should conditionally use strict vs non-strict comparison based on this flag.\n\n{\n  \"function_name\": \"schedule_demo\",\n  \"faulty_lines\": [67, 8, 21],\n  \"explanation\": \"The variable `_CONFLICT_STRICT` is defined on line 8 but never used in the overlap check on line 67. The overlap condition should likely vary based on `_CONFLICT_STRICT` (e.g., using `<` vs `<=` for boundary comparisons), meaning touching intervals may be incorrectly accepted or rejected. Additionally, the `_MIN_INTERVAL_DURATION` check on line 21 is redundant since line 17 already catches `start >= end`.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

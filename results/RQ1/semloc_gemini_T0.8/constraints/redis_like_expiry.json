@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "redis_like_expiry",
+  "fault_hypothesis": "The expiry check on line 83 uses a strict greater-than comparison (`>`), but it should use greater-than-or-equal-to (`>=`) to correctly expire keys when the current time exactly matches the expiry time.",
+  "fault_line": 83,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 83
+        }
+      },
+      "spec": {
+        "expr": "(now > effective__1) == (now >= effective__1)"
+      },
+      "intent": "The result of the strict inequality check should match the result of the correct non-strict check.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (item is not None and now == _effective_expiry(item[1]) and __cbfl_result is not None)"
+      },
+      "intent": "If a key exists and the current time is exactly its expiry time, the result must be None.",
+      "confidence": 0.3
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= 0"
+      },
+      "intent": "Stored expiry timestamps must be non-negative.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective__1"
+        }
+      },
+      "spec": {
+        "expr": "effective__1 == expires_at__1"
+      },
+      "intent": "The effective expiry time should directly correspond to the stored expiry time.",
+      "confidence": 0.9
+    }
+  ]
+}

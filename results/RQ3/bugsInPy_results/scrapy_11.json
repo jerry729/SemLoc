@@ -1,0 +1,24 @@
+{
+  "bug_id": "scrapy_11",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.utils.gz.gunzip",
+    "buggy_methods": [
+      "scrapy.utils.gz.gunzip"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.utils.gz.gunzip",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/utils/gz.py": [
+      46
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

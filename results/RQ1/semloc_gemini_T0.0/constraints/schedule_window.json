@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_window",
+  "fault_hypothesis": "The overlap detection on line 65 uses non-strict inequalities (`<=`, `>=`), which incorrectly fails to detect conflicts when intervals are adjacent (touching at boundaries). The non-overlap condition should use strict inequalities (`<`, `>`).",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "end < s or start > e"
+      },
+      "intent": "If the code proceeds past the conflict check, the intervals must be strictly non-overlapping.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end < s or start > e"
+      },
+      "intent": "At the end of each check, if no conflict was found, the new interval must be strictly before or after the existing one.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If the function is about to accept the interval, it must not have had any boundary conflicts with any of the original slots.",
+      "confidence": 0.9
+    }
+  ]
+}

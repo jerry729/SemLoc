@@ -1,0 +1,53 @@
+{
+  "bug_id": "youtube-dl_14",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.extractor.youtube.YoutubeIE._real_extract",
+    "buggy_methods": [
+      "youtube_dl.extractor.youtube.YoutubeIE._real_extract"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.extractor.youtube.YoutubeIE._real_extract",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "test/test_youtube_chapters.py": [
+      270
+    ],
+    "youtube_dl/extractor/youtube.py": [
+      1656,
+      2327
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      1656,
+      2327
+    ],
+    "best_rank": null,
+    "fn_lines": 756,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 366,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "youtube-dl_14",
+    "function": "_real_extract",
+    "src_path": "youtube_dl/extractor/youtube.py",
+    "fn_begin": 1690,
+    "fn_end": 2445,
+    "n_constraints": 4,
+    "n_tests_passing": 0,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 366,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/youtube-dl_14/_real_extract_constraints.json",
+    "report_path": "/tmp/bip_semloc/youtube-dl_14/violations.jsonl"
+  }
+}

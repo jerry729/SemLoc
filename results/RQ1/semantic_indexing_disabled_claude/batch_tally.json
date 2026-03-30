@@ -1,0 +1,44 @@
+{
+  "function": "batch_tally",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        62
+      ],
+      "explanation": "When the new value exceeds max_value, it should be clamped to max_value, but the code incorrectly sets it to max_value - 1, which means the counter never actually reaches the ceiling value.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"batch_tally\",\n  \"faulty_lines\": [62],\n  \"explanation\": \"When the new value exceeds max_value, it should be clamped to max_value, but the code incorrectly sets it to max_value - 1, which means the counter never actually reaches the ceiling value.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [
+        62
+      ],
+      "valid_preds": [
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

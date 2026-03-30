@@ -1,0 +1,44 @@
+{
+  "function": "cpu_allocator",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        68
+      ],
+      "explanation": "Line 68 uses `int(x)` which truncates (floors) the planned allocations instead of properly rounding them, causing the total allocated CPUs to potentially be less than `total`. The correct approach should use `round()` or a largest-remainder method to ensure allocations sum to exactly `total`.",
+      "confidence": 0.75,
+      "parse_ok": true,
+      "raw": "Looking at this code, I need to identify what's faulty about the `cpu_allocator` function.\n\nThe function is supposed to distribute CPU units proportionally and round to whole units. The key issue is in how rounding is done.\n\nWhen rounding floating-point allocations to integers, simply using `int(x)` (which truncates toward zero) can result in the total allocation being less than the `total` input. The standard approach for this type of problem is to use a \"largest remainder\" method or round properly to ensure the sum of allocations equals `total`.\n\nAdditionally, `int(x)` truncates (floors for positive numbers), but the description says \"rounded to whole units\" which typically implies rounding to nearest, not truncating.\n\nThe faulty line is line 68: `allocations = [int(x) for x in planned]`\n\nThis uses truncation instead of proper rounding, which means:\n1. The sum of allocations may be less than `total` (lost CPU units)\n2. It doesn't properly round (e.g., 2.9 becomes 2 instead of 3)\n\nThe correct approach would typically use `round()` or a largest-remainder method to ensure allocations sum to `total`.\n\n```json\n{\n  \"function_name\": \"cpu_allocator\",\n  \"faulty_lines\": [68],\n  \"explanation\": \"Line 68 uses `int(x)` which truncates (floors) the planned allocations instead of properly rounding them, causing the total allocated CPUs to potentially be less than `total`. The correct approach should use `round()` or a largest-remainder method to ensure allocations sum to exactly `total`.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [
+        68
+      ],
+      "valid_preds": [
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 68,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

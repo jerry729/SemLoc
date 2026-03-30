@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_api",
+  "fault_hypothesis": "On line 67, when new_value exceeds max_value, the clamped value is set to `max_value - 1` instead of `max_value`, causing the counter to be one less than the ceiling and never stabilizing at the ceiling on repeated calls.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "After clamping, new_value should equal max_value, not max_value - 1.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == max_value"
+      },
+      "intent": "The clamped new_value__2 must equal max_value, not be one below it.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 <= max_value and new_value__2 == max_value"
+      },
+      "intent": "After the clamping branch, new_value must equal max_value (not max_value - 1).",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "max_value is None or __cbfl_result <= max_value"
+      },
+      "intent": "The returned value must never exceed max_value when a ceiling is given.",
+      "confidence": 0.8
+    }
+  ]
+}

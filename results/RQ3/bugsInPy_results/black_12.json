@@ -1,0 +1,31 @@
+{
+  "bug_id": "black_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.BracketTracker.maybe_increment_for_loop_variable",
+    "buggy_methods": [
+      "black.BracketTracker.maybe_increment_for_loop_variable"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.BracketTracker.maybe_increment_for_loop_variable",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      880,
+      881,
+      954,
+      961,
+      963,
+      976,
+      983,
+      985
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

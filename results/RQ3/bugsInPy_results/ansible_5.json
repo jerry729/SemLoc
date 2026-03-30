@@ -1,0 +1,53 @@
+{
+  "bug_id": "ansible_5",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.module_utils.common.validation.check_required_arguments",
+    "buggy_methods": [
+      "lib.ansible.module_utils.common.validation.check_required_arguments"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.module_utils.common.validation.check_required_arguments",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/module_utils/common/validation.py": [
+      192
+    ],
+    "test/units/module_utils/common/validation/test_check_mutually_exclusive.py": [
+      37,
+      41,
+      56
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      192
+    ],
+    "best_rank": null,
+    "fn_lines": 27,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 192,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "ansible_5",
+    "function": "check_required_arguments",
+    "src_path": "lib/ansible/module_utils/common/validation.py",
+    "fn_begin": 169,
+    "fn_end": 195,
+    "n_constraints": 4,
+    "n_tests_passing": 4,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 192,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/ansible_5/check_required_arguments_constraints.json",
+    "report_path": "/tmp/bip_semloc/ansible_5/violations.jsonl"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rent_splitter",
+  "fault_hypothesis": "On line 65, the fee is subtracted from each individual share rather than being deducted once from the total amount before splitting. The correct logic should compute `base = [(r / total_ratio) * (amount - fee) for r in ratios]` or deduct the fee from `amount` before computing `base`.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "After computing shares, their sum should equal amount minus the fee (deducted once), not amount minus N*fee.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all shares must equal the total amount minus the fee deducted once, not per participant.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "Before applying fee deduction, the base shares should sum to the full amount (fee not yet deducted).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The returned shares must sum to amount minus fee (deducted once from total).",
+      "confidence": 0.85
+    }
+  ]
+}

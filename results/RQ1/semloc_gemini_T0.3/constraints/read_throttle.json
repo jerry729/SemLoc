@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "read_throttle",
+  "fault_hypothesis": "The condition on line 70 uses a strict greater-than comparison (`>`), which incorrectly allows a new read when the number of active reads is exactly equal to the limit. It should use a greater-than-or-equal-to comparison (`>=`) to deny access at the boundary.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) > limit) == (len(active__1) >= limit)"
+      },
+      "intent": "The buggy comparison should behave like a correct greater-than-or-equal comparison.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If access is allowed, the number of active reads must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "all(ts >= cutoff__1 for ts in active__1)"
+      },
+      "intent": "All timestamps considered active must be within the time window.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == True) == (len(active__1) < limit)"
+      },
+      "intent": "A read should be allowed if and only if the number of active reads is less than the limit.",
+      "confidence": 1.0
+    }
+  ]
+}

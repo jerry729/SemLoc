@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "log_sampling_decider",
+  "fault_hypothesis": "The comparison on line 67 uses `>` instead of `<`. For sampling to work correctly (bucket in [0,1), a log_id is kept when bucket < rate), the condition should be `bucket < rate` not `bucket > rate`. This causes rate=0 to never sample (correct) but rate=1 to not always sample (wrong), and reverses the monotonicity of sampling with respect to rate.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(rate == 0 and not __cbfl_result) or (rate == 1 and __cbfl_result) or (0 < rate < 1)"
+      },
+      "intent": "At rate=0 result must be False and at rate=1 result must be True; the > comparison violates these boundary conditions.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= bucket__1 < 1.0"
+      },
+      "intent": "The bucket value must be in [0, 1) so that comparing it with rate using < (not >) gives correct sampling semantics.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "bucket__1 < 1.0"
+      },
+      "intent": "If bucket is always strictly less than 1.0, then rate=1 should always sample (bucket < rate=1 is True), confirming the operator should be < not >.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (rate == 1 and not __cbfl_result)"
+      },
+      "intent": "When rate equals 1 the function must always return True; the > comparison causes it to return False when bucket equals 1.0 or never returns True.",
+      "confidence": 0.9
+    }
+  ]
+}

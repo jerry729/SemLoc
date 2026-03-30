@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "replica_sync_offsets",
+  "fault_hypothesis": "The condition on line 70 incorrectly assumes that if the last found missing offset matches the last offset in the replica, it must be spurious. This is false when the primary list contains duplicates (which is allowed when a sentinel value is present), causing a legitimate missing offset to be removed on line 71.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (missing__1 and replica and missing__1[-1] == replica[-1])"
+      },
+      "intent": "A correctly identified missing offset should not be removed due to a flawed heuristic.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "i >= len(primary) or primary[i] != primary[i-1]"
+      },
+      "intent": "When an offset is matched in both lists, the next offset in primary should not be a duplicate of the matched one.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not replica or replica[-1] not in primary[i:]"
+      },
+      "intent": "Trailing primary offsets added after the main loop should not include the replica's last known offset.",
+      "confidence": 0.9
+    }
+  ]
+}

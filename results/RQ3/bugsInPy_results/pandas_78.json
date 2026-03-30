@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_78",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.frame.DataFrame._reduce",
+    "buggy_methods": [
+      "pandas.core.frame.DataFrame._reduce"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.frame.DataFrame._reduce",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/frame.py": [
+      8016
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

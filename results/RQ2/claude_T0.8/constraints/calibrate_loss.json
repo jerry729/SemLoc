@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_loss",
+  "fault_hypothesis": "The condition `if not clamp` on line 65 is inverted: clamping logic runs when clamp=False and is skipped when clamp=True, exactly the opposite of the intended behavior.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "clamp == (not clamp)"
+      },
+      "intent": "When clamp=True the clamping branch should be entered, but `not clamp` means it is skipped \u2014 this expr is always False, flagging the inverted condition.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "After the `if not clamp` branch body executes, clamp must indeed be False; if clamp=True caused entry here the condition is violated.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "After the else branch (no clamping applied), clamp must be True; if clamp=False caused entry here the logic is inverted.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (min(y0, y1) <= __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamp=True the returned value must lie within [min(y0,y1), max(y0,y1)]; failing tests show extrapolated values are returned instead.",
+      "confidence": 0.85
+    }
+  ]
+}

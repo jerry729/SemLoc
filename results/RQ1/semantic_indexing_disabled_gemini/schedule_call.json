@@ -1,0 +1,44 @@
+{
+  "function": "schedule_call",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 81,
+  "runs": [
+    {
+      "faulty_lines": [
+        72
+      ],
+      "explanation": "The `overlaps` function uses non-strict comparisons (`<=`, `>=`), which allows adjacent time slots to be considered non-conflicting. This behavior is incorrect when `_CONFLICT_STRICT` is True and the adjacency buffer is zero, as it violates the expectation of strict conflict checking.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "An analysis of the code reveals a subtle bug in the conflict detection logic, specifically in how strict conflicts are handled.\n\nThe `_CONFLICT_STRICT` flag suggests that when it is `True`, adjacent time slots (e.g., `(80, 90)` and `(90, 100)`) should be considered conflicts. The implementation attempts to achieve this by applying an `_ADJACENCY_BUFFER_MINUTES` to existing slots. This works correctly if the buffer is greater than zero.\n\nHowever, if `_CONFLICT_STRICT` is `True` but `_ADJACENCY_BUFFER_MINUTES` is `0`, no buffer is effectively added. The conflict check then relies on the `overlaps` function. The implementation of `overlaps` on line 72 uses `<=` and `>=`, which treats touching boundaries as non-overlapping. Consequently, adjacent slots are incorrectly accepted in strict mode when the buffer is zero, which contradicts the likely intent of the `_CONFLICT_STRICT` flag.\n\nThe root of the fault lies in the `overlaps` function, which does not have a \"strict\" mode and always permits adjacent slots.\n\n```json\n{\n  \"function_name\": \"schedule_call\",\n  \"faulty_lines\": [\n    72\n  ],\n  \"explanation\": \"The `overlaps` function uses non-strict comparisons (`<=`, `>=`), which allows adjacent time slots to be considered non-conflicting. This behavior is incorrect when `_CONFLICT_STRICT` is True and the adjacency buffer is zero, as it violates the expectation of strict conflict checking.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        72
+      ],
+      "valid_preds": [
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

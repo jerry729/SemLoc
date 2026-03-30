@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_pool_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share individually on line 70. It should be deducted from the total pool amount before the proportional split happens inside the loop at line 68.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the distributable pool amount, which is the initial amount less the fee (clamped at zero).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "(fee <= 0) or (amount <= fee) or (abs(shares[-1] - (r / total_ratio__1) * (amount - fee)) < 1e-9)"
+      },
+      "intent": "Each calculated share should be based on the distributable amount (pool minus fee), not the gross pool amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "amount"
+        }
+      },
+      "spec": {
+        "expr": "fee <= 0 or amount <= fee"
+      },
+      "intent": "Using the original 'amount' for share calculation is only correct if there is no fee or the fee makes the distributable amount non-positive.",
+      "confidence": 0.9
+    }
+  ]
+}

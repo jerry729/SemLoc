@@ -1,0 +1,25 @@
+{
+  "bug_id": "black_9",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.get_grammars",
+    "buggy_methods": [
+      "black.get_grammars"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.get_grammars",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      729,
+      735
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

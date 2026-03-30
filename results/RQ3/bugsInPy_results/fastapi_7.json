@@ -1,0 +1,34 @@
+{
+  "bug_id": "fastapi_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.exception_handlers.request_validation_exception_handler",
+    "buggy_methods": [
+      "fastapi.exception_handlers.request_validation_exception_handler"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.exception_handlers.request_validation_exception_handler",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/exception_handlers.py": [
+      22
+    ],
+    "tests/test_multi_body_errors.py": [
+      4,
+      12,
+      70,
+      111,
+      112,
+      121,
+      122,
+      140
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

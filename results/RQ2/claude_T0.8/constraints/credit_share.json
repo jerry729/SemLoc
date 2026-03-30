@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "credit_share",
+  "fault_hypothesis": "On line 70, the fee is subtracted from each individual share rather than from the total pool before splitting. The correct approach is to deduct the fee from `amount` before computing shares, or equivalently deduct `fee/n` per participant, but the current code subtracts the full `fee` from each share, causing total payout to be `amount - n*fee` instead of `amount - fee`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_share(s - fee) for s in shares__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of returned shares should equal amount minus fee (not amount minus n*fee), which fails when fee > 0 and len(ratios) > 1.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before fee deduction, the raw shares should sum to the full amount.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= 0 for s in shares__1)"
+      },
+      "intent": "Each raw share computed in the loop must be non-negative since ratios and amount are non-negative.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The total returned payout must equal the pool minus the single fee, not minus n*fee.",
+      "confidence": 0.9
+    }
+  ]
+}

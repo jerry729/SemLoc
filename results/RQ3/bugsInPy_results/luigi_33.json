@@ -1,0 +1,29 @@
+{
+  "bug_id": "luigi_33",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.task.Task.get_param_values",
+    "buggy_methods": [
+      "luigi.task.Task.get_param_values"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.task.Task.get_param_values",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/task.py": [
+      334
+    ],
+    "test/parameter_test.py": [
+      282,
+      283,
+      349
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_delivery_slot",
+  "fault_hypothesis": "The overlap check on line 67 incorrectly uses non-strict inequalities (`<=`, `>=`) instead of strict ones (`<`, `>`). This causes it to incorrectly classify adjacent, non-overlapping time slots as placeable, when they should be rejected.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) == (b__1 <= s or a__1 >= e) for s, e in timeline)"
+      },
+      "intent": "The buggy non-strict disjointness check must be equivalent to the correct strict check for all existing slots.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "a__1"
+        }
+      },
+      "spec": {
+        "expr": "all(a__1 != e and b__1 != s for s, e in timeline)"
+      },
+      "intent": "The new window's endpoints must not be equal to any existing slot's endpoints.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "If the buggy check finds no conflicts, then the correct strict check must also find no conflicts.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If the operation succeeds, all slots in the sorted result must be strictly disjoint.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "donation_share",
+  "fault_hypothesis": "The processing fee is incorrectly deducted from each recipient's individual share on line 60, rather than from the gross amount before the proportional split. This causes the total fee deducted to be multiplied by the number of recipients.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee if amount >= fee else 0.0)) < 1e-6"
+      },
+      "intent": "The sum of all payouts must equal the net donation amount (gross amount minus fee, floored at zero).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-6"
+      },
+      "intent": "The sum of the pre-fee shares must equal the gross donation amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - sum(base__1)) <= (amount if amount < fee else fee) + 1e-6"
+      },
+      "intent": "The total amount deducted due to fees and flooring must not exceed the intended single fee.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0.0"
+      },
+      "intent": "The sum of ratios must be positive for a valid distribution.",
+      "confidence": 0.8
+    }
+  ]
+}

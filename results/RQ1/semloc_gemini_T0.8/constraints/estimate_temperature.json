@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_temperature",
+  "fault_hypothesis": "The clamping logic is inverted. The condition on line 68 should be `if clamp:`, but is incorrectly `if not clamp:`, causing clamping to occur only when disabled and skipped when enabled.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))"
+      },
+      "intent": "If clamping is enabled, the resulting value y must be within the range of the sensor readings after the conditional block.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "On the non-clamping path (buggily taken when clamp=True), the interpolated value must already be within the sensor range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))"
+      },
+      "intent": "The value before rounding must respect the clamping setting.",
+      "confidence": 0.9
+    }
+  ]
+}

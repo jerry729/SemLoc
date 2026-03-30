@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_queue",
+  "fault_hypothesis": "The function fails to normalize the `adjusted` list so its elements sum to 1.0, as documented. The unnormalized list is incorrectly returned on line 66.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must be normalized to sum to 1.0 before returning.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (len(adjusted__1) == len(current)) or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "After the final iteration, the completed list of weights must sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of weights must be normalized before it is used in the return statement.",
+      "confidence": 1.0
+    }
+  ]
+}

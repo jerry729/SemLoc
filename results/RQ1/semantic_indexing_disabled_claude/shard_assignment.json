@@ -1,0 +1,44 @@
+{
+  "function": "shard_assignment",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the function is supposed to return sorted lists but line 65 returns `buckets` without sorting each bucket. The docstring says \"The returned lists are sorted so that downstream consumers can rely on a stable ordering.\"\n\n{\n  \"function_name\": \"shard_assignment\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The function returns `buckets` without sorting each sub-list, but the docstring explicitly states that each shard's list should be in sorted order. The return should sort each bucket before returning.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

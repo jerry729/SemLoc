@@ -1,0 +1,47 @@
+{
+  "function": "lru_evictor",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    27
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        56,
+        27
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the docstring says \"Evict least-recently-used keys until the cache is strictly under capacity\" and \"Eviction continues until `len(order) < capacity`\". The condition `len(order) > capacity` means eviction stops when `len(order) <= capacity`, so the list can still have exactly `capacity` entries after eviction.\n\nHowever, `_trim_oldest_entries` is called with `target_len = capacity`, and it removes entries while `len(order) > target_len`. So entries are removed until `len(order) <= capacity`.\n\nThe outer loop condition `len(order) > capacity` and the inner function both use `> capacity` (not `>= capacity`). This means the cache can hold exactly `capacity` entries, not strictly fewer than `capacity`.\n\nThe docstring says \"strictly under capacity\" and \"len(order) < capacity\", but the implementation allows `len(order) == capacity`. The faulty line is line 56 (outer while condition) and line 27 (inner while condition) - both should use `>= capacity` instead of `> capacity` to enforce strictly less than capacity.\n\n{\n  \"function_name\": \"lru_evictor\",\n  \"faulty_lines\": [56, 27],\n  \"explanation\": \"The conditions on lines 56 and 27 use `> capacity` instead of `>= capacity`, so eviction stops when `len(order) == capacity` rather than when `len(order) < capacity`. The docstring specifies the cache should be 'strictly under capacity' after eviction.\",\n  \"confidence\": 0.82\n}",
+      "predicted": [
+        56,
+        27
+      ],
+      "valid_preds": [
+        56,
+        27
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 56,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

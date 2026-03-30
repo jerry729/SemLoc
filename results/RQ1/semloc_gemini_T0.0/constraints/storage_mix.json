@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "storage_mix",
+  "fault_hypothesis": "The function fails to normalize the result vector so that its elements sum to 1, as promised by the docstring. A normalization step is missing before the value is returned on line 64.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__2) == 0 or abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The returned allocation vector must be normalized to sum to 1.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__2"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__2) == 0 or abs(sum(adjusted__2) - 1.0) < 1e-9"
+      },
+      "intent": "The allocation vector after clamping should sum to 1.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The blended allocation vector should sum to 1 before clamping.",
+      "confidence": 0.8
+    }
+  ]
+}

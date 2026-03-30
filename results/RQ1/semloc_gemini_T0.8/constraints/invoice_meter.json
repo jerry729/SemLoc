@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "invoice_meter",
+  "fault_hypothesis": "The bug is on line 64. When a counter exceeds its `max_value`, it is incorrectly set to `max_value - 1` instead of being capped at `max_value`.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_max__1"
+      },
+      "intent": "The new value, when capped, should be exactly the maximum allowed value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_max__1"
+      },
+      "intent": "When the counter exceeds the cap, it must be set to the cap value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "new_value__3"
+        }
+      },
+      "spec": {
+        "expr": "(effective_max__1 is None) or (new_value__3 <= effective_max__1)"
+      },
+      "intent": "The final counter value must never exceed the specified maximum.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "TEMPORAL_CALL_SNAPSHOT",
+      "instrument": {
+        "region": "ON_EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "guard": "max_value is not None and key in counts and counts[key] == max_value",
+        "snapshot": [],
+        "require": "__cbfl_result == max_value"
+      },
+      "intent": "If the counter is already at its maximum value, it should remain there.",
+      "confidence": 0.8
+    }
+  ]
+}

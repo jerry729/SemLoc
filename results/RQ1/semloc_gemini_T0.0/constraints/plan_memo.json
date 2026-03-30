@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_memo",
+  "fault_hypothesis": "The bug is on line 65. The expiry check `now > expires_at` incorrectly handles the boundary case where `now == expires_at`, treating the entry as valid when it should be expired. The comparison should be `now >= expires_at`.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(now > expires_at__1) == (now >= expires_at__1)"
+      },
+      "intent": "The buggy strict inequality should behave identically to the correct non-strict inequality.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "If an entry is considered valid (not expired), the current time must be strictly less than its expiry time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "Before returning a cached value, we must be certain the current time is strictly before the expiry time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is not None) implies (key in entries and now < entries[key][1])"
+      },
+      "intent": "A non-None result implies the key exists and its entry has not yet expired.",
+      "confidence": 0.8
+    }
+  ]
+}

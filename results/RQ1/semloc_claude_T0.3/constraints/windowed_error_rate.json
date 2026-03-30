@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "windowed_error_rate",
+  "fault_hypothesis": "Line 69 divides errors by `window` (the time duration) instead of `len(recent)` (the count of recent events), producing a rate relative to the window size rather than the fraction of erroneous events.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "errors__1 / len(recent__1) == errors__1 / window or len(recent__1) == window"
+      },
+      "intent": "Check that dividing by window equals dividing by len(recent); fails when window != len(recent), exposing the wrong denominator.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "errors__1"
+        }
+      },
+      "spec": {
+        "expr": "errors__1 <= len(recent__1)"
+      },
+      "intent": "Errors count must not exceed the number of recent events, confirming the correct denominator is len(recent__1).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "errors__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0 and errors__1 / len(recent__1) <= 1.0"
+      },
+      "intent": "The error rate computed with the correct denominator (len(recent__1)) must be at most 1.0, which would fail if window is used instead.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result <= 1.0 and __cbfl_result >= 0.0"
+      },
+      "intent": "The returned error rate must be in [0.0, 1.0]; dividing by window instead of count can produce values outside this range.",
+      "confidence": 0.8
+    }
+  ]
+}

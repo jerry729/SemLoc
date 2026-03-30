@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_booking",
+  "fault_hypothesis": "The conflict detection on line 67 is incorrect. It fails to use the `buffer` variable to reject adjacent, non-overlapping intervals when strict conflict checking is enabled.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(end__1 <= s or start__1 >= e) == (end__1 <= s - buffer__1 or start__1 >= e + buffer__1)"
+      },
+      "intent": "The overlap check should correctly account for the adjacency buffer.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 <= s - buffer__1 or start__1 >= e + buffer__1"
+      },
+      "intent": "The new interval must not conflict with any existing interval, considering the adjacency buffer.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(end__1 <= s - buffer__1 or start__1 >= e + buffer__1 for s, e in existing)"
+      },
+      "intent": "The updated schedule should only be computed if the new interval has no conflicts with the original schedule.",
+      "confidence": 0.8
+    }
+  ]
+}

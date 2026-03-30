@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "probability_curve",
+  "fault_hypothesis": "The boolean condition for clamping the output is inverted on line 73. The code checks `if not clamp:` when it should check `if clamp:`, causing the clamping logic to be skipped when it's requested.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamping is requested, the value after the conditional logic must be within the bounds defined by the anchors.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "t__1"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (t__1 >= 0.0 and t__1 <= 1.0)"
+      },
+      "intent": "If clamping is active, the interpolation factor should not indicate extrapolation (i.e., it should be between 0 and 1).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "The value resulting from this branch (taken when clamp is true) should be within the anchor probability range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "If clamping is enabled, the final result must be within the range of the anchor probabilities.",
+      "confidence": 0.8
+    }
+  ]
+}

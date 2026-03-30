@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "kv_snapshot_reader",
+  "fault_hypothesis": "The early-termination condition on line 70 uses `k < key` instead of `k > key`. Since the snapshot is sorted ascending, we should break when the current key is greater than the target (meaning we've passed it), but the code breaks when the current key is less than the target, causing it to stop too early and miss keys that come later in the sorted order.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (k < key)"
+      },
+      "intent": "The break condition should only trigger when k > key (past the target), so k < key should be False at the break point for a correct implementation; this is violated when the bug causes early termination before finding the key.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "k <= key"
+      },
+      "intent": "In a correctly sorted ascending snapshot, we should only continue iterating while k <= key; breaking when k < key is incorrect because it stops before reaching the target key.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "k > key"
+      },
+      "intent": "The break branch should only be taken when k > key (we have passed the target), not when k < key (we haven't reached it yet).",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_default__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_default__1 is not None or True"
+      },
+      "intent": "Sanity check that effective_default is resolved before the loop; the real bug is in the loop's break condition, not here.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is not None or any(k == key for k, v in snapshot) == False"
+      },
+      "intent": "If the key exists in the snapshot, the return value should not be None (the default); failing tests show None is returned when the key is present.",
+      "confidence": 0.85
+    }
+  ]
+}

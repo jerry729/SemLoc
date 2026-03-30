@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_fuel",
+  "fault_hypothesis": "Line 66 uses `int(x)` (truncation) instead of a rounding strategy that conserves the total, causing the sum of allocations to be less than `total` when fractional remainders are truncated away.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == int(total)"
+      },
+      "intent": "After building integer allocations via int(), their sum must equal the total; truncation causes this to fail.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "The integer allocations should sum to the rounded total of planned shares, not be truncated below it.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total) or abs(sum(allocations__3) - total) < 1"
+      },
+      "intent": "Before returning, the final allocations must sum to within 1 unit of the total; truncation violates this for non-divisible inputs.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == int(total)"
+      },
+      "intent": "At the end of the integer-allocation branch, the sum of allocated units must equal the total input.",
+      "confidence": 0.87
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - total) < 1"
+      },
+      "intent": "The returned allocations must sum to within 1 unit of the requested total.",
+      "confidence": 0.75
+    }
+  ]
+}

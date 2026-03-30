@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "download_rate",
+  "fault_hypothesis": "The condition on line 75 uses `>` (strictly greater than) instead of `>=` (greater than or equal), so when `len(active) == limit` the function incorrectly returns True with 0 remaining instead of False.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "(len(active__1) > limit) == (len(active__1) >= limit)"
+      },
+      "intent": "When len(active) equals limit, the condition should be True (block download), but with > it is False; this expr is False exactly in the failing boundary case.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "After the else branch (allowed=True), active count must be strictly less than limit, not equal to it.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit) or (len(active__1) >= limit)"
+      },
+      "intent": "When active count equals limit, the guard condition should evaluate to True (blocking), confirming >= is the correct operator.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and __cbfl_result[1] == 0)"
+      },
+      "intent": "Returning (True, 0) is semantically inconsistent: if allowed is True, remaining should be positive.",
+      "confidence": 0.85
+    }
+  ]
+}

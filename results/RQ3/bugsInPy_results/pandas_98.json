@@ -1,0 +1,41 @@
+{
+  "bug_id": "pandas_98",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.base.Index.__new__",
+    "buggy_methods": [
+      "pandas.core.indexes.base.Index.__new__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.base.Index.__new__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/base.py": [
+      298,
+      299,
+      300,
+      301,
+      302,
+      332,
+      333
+    ],
+    "pandas/tests/indexes/period/test_constructors.py": [
+      10,
+      15,
+      16,
+      17,
+      204,
+      264,
+      269,
+      277,
+      282
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

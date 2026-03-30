@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cacheline_refresh",
+  "fault_hypothesis": "The function calculates the new expiration time on line 70 but only assigns it to a local variable. It fails to update the entry in the `store` dictionary, so the cache entry's time-to-live is never actually extended.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "store[key] == (value__1, expires_at__2)"
+      },
+      "intent": "After calculating the new expiration time, the store must be updated with the new (value, expires_at) tuple.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "store[key][1] == now + ttl__1"
+      },
+      "intent": "If a cache entry is found and not expired, its expiration timestamp in the store must be updated.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__2 > now"
+      },
+      "intent": "The newly calculated expiration time must be in the future relative to the current time.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "item__1 is None or _is_expired(now, expires_at__1) or store[key][1] == now + ttl__1"
+      },
+      "intent": "Upon exit, the store must be updated if and only if a valid, non-expired item was found.",
+      "confidence": 0.3
+    }
+  ]
+}

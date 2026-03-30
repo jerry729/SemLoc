@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "retry_backoff_window",
+  "fault_hypothesis": "The bug is on line 66. When the calculated delay exceeds the cap, the code incorrectly assigns `max_delay + base` to the delay variable instead of just `max_delay`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "delay__2 == max_delay"
+      },
+      "intent": "When capping the delay, it should be set to exactly max_delay.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "delay__3 <= max_delay"
+      },
+      "intent": "After the capping logic is applied, the resulting delay must not exceed max_delay.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "delay__3"
+        }
+      },
+      "spec": {
+        "expr": "delay__3 <= max_delay"
+      },
+      "intent": "The final delay value, just before it is returned, must not be greater than max_delay.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result <= max_delay"
+      },
+      "intent": "The function's return value must always be less than or equal to max_delay.",
+      "confidence": 0.8
+    }
+  ]
+}

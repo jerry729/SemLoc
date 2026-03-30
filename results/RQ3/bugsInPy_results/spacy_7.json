@@ -1,0 +1,29 @@
+{
+  "bug_id": "spacy_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "spacy.util.filter_spans",
+    "buggy_methods": [
+      "spacy.util.filter_spans"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "spacy.util.filter_spans",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "examples/information_extraction/entity_relations.py": [
+      10,
+      41,
+      48
+    ],
+    "spacy/util.py": [
+      669
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

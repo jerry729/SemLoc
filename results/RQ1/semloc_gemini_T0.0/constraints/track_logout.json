@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_logout",
+  "fault_hypothesis": "The logic for capping the counter is incorrect on line 69. When the incremented counter exceeds the cap, it is set to `cap - 1` instead of `cap`, causing the counter to decrease when it should remain pinned at the maximum value.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "cap == 1"
+      },
+      "intent": "The buggy capping logic only happens to pass tests for the specific case where cap is 1.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "When the counter exceeds the cap, it should be set exactly to the cap value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "updated__1 == current__1 + 1"
+      },
+      "intent": "The counter value before applying the cap should be exactly one greater than the current value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "cap is None or updated__3 <= cap"
+      },
+      "intent": "The final updated value must never exceed the cap.",
+      "confidence": 0.8
+    }
+  ]
+}

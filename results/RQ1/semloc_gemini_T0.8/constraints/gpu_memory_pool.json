@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gpu_memory_pool",
+  "fault_hypothesis": "The comparison on line 75 uses strict inequality `>` which incorrectly approves memory requests that exactly fill the remaining capacity. It should use `>=` to deny requests that leave no headroom.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "used__1 + request != effective_cap__1"
+      },
+      "intent": "The combined allocation size should not exactly equal the effective capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "used__1 + request < effective_cap__1"
+      },
+      "intent": "If a request is granted, the total used memory must be strictly less than the capacity.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "used__1"
+        }
+      },
+      "spec": {
+        "expr": "used__1 <= effective_cap__1"
+      },
+      "intent": "The memory already in use should not by itself exceed the effective capacity.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result == True and sum(allocations) + request >= capacity)"
+      },
+      "intent": "A successful allocation must not result in usage equal to or greater than the capacity.",
+      "confidence": 0.3
+    }
+  ]
+}

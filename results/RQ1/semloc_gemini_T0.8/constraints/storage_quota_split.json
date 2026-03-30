@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "storage_quota_split",
+  "fault_hypothesis": "The fee is subtracted from each participant's share on line 70, instead of from the total pool before the split on line 66. This causes the fee to be effectively multiplied by the number of participants.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(abs(fee) < 1e-9) or (total <= fee)"
+      },
+      "intent": "The buggy share calculation is only correct if no fee is applied or if the fee consumes the entire total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(ratios) <= 1) or (abs(fee) < 1e-9) or (total <= fee)"
+      },
+      "intent": "The buggy logic works correctly only if there is no fee, only one participant, or the fee exceeds the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "floored__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(floored__1) - max(0, total - fee)) < 1e-9"
+      },
+      "intent": "The sum of the final allocated shares must equal the distributable pool (total minus fee, clamped at zero).",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_pickup",
+  "fault_hypothesis": "The conflict detection condition on line 62 uses strict inequalities (`b <= s` and `a >= e`), which allows touching boundaries (e.g., b==s or a==e) to pass as non-conflicting. The correct check should use strict inequalities in the opposite sense: conflict exists unless b < s or a > e.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not any((b__1 == s or a__1 == e) for s, e in timeline) or any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "When the new window touches an existing slot boundary, the conflict check must detect it as a conflict (touching boundaries should be rejected).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s for s, e in timeline) or True"
+      },
+      "intent": "After b is defined, if b equals the start of any existing slot, the conflict condition using strict b<=s would incorrectly pass it as non-conflicting rather than treating it as a conflict.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "a__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(a__1 == e for s, e in timeline) or True"
+      },
+      "intent": "After a is defined, if a equals the end of any existing slot, the conflict condition using strict a>=e would incorrectly pass it as non-conflicting rather than treating it as a conflict.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "When no conflict is detected (else branch taken), the new window must be strictly non-touching with all existing slots, meaning b < s or a > e for every existing booking.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True) or all(__cbfl_result[1][i][1] <= __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1])-1))"
+      },
+      "intent": "If booking succeeded, no two slots in the result should overlap or touch (each slot's end should be strictly before the next slot's start).",
+      "confidence": 0.5
+    }
+  ]
+}

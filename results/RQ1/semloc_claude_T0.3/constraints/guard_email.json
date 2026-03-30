@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_email",
+  "fault_hypothesis": "The condition on line 71 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(recent) == limit` the function incorrectly returns `True` (allowed) instead of `False` (blocked).",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit or len(recent__1) > limit or (len(recent__1) == limit)"
+      },
+      "intent": "When len(recent) equals limit the branch condition must be True (i.e., the email should be blocked), which fails with the strict > operator.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the else branch (not blocked), the number of recent sends must be strictly less than the limit; equality should have been caught by the if-branch.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= 0 and limit >= 1"
+      },
+      "intent": "Sanity check that recent and limit are valid before the comparison so the boundary condition is meaningful.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(_filter_recent(timestamps, now - window)) >= limit)"
+      },
+      "intent": "The returned allowed flag must be False whenever the count of recent sends is greater than or equal to the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

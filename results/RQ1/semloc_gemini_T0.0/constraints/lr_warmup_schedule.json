@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lr_warmup_schedule",
+  "fault_hypothesis": "The learning rate calculation on line 59 is incorrect. It uses `(step + 1)` to compute the warmup progress, which results in a rate that is one step ahead of the expected schedule and is non-zero at `step=0`.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "warmup_steps <= 10 or lr__1 <= base_lr * (step / warmup_steps)"
+      },
+      "intent": "The calculated learning rate should follow the correct linear ramp.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lr__1"
+        }
+      },
+      "spec": {
+        "expr": "warmup_steps <= 10 or abs(lr__1 * warmup_steps - base_lr * step) < 1e-9"
+      },
+      "intent": "The learning rate should be directly proportional to the training step during warmup.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 57,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "warmup_steps <= 10 or lr__1 <= base_lr * (step / warmup_steps)"
+      },
+      "intent": "The state at the end of the warmup branch must be consistent with the correct schedule.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "bug_id": "youtube-dl_35",
+  "function": "unified_strdate",
+  "src_path": "youtube_dl/utils.py",
+  "fn_begin": 868,
+  "fn_end": 912,
+  "n_constraints": 5,
+  "n_tests_passing": 26,
+  "n_tests_failing": 1,
+  "line_scores": [
+    {
+      "line": 903,
+      "score": 1.0
+    },
+    {
+      "line": 904,
+      "score": 1.0
+    },
+    {
+      "line": 908,
+      "score": 1.0
+    },
+    {
+      "line": 910,
+      "score": 1.0
+    },
+    {
+      "line": 912,
+      "score": 1.0
+    },
+    {
+      "line": 872,
+      "score": 0.3
+    }
+  ],
+  "fault_line": 905,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_35/unified_strdate_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_35/violations.jsonl"
+}

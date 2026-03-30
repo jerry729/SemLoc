@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_latency",
+  "fault_hypothesis": "The condition on line 70 is inverted. Clamping is applied when `clamp` is `False` and skipped when it's `True`, which is the opposite of the intended behavior.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "For all passing tests the interpolated value is within the initial latency bounds, while for all failing tests it is outside.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If clamping logic is skipped (the 'else' branch), the interpolated value must already be within the valid y-range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "y__2 == y__1"
+      },
+      "intent": "If clamping is meant to be disabled, the value of y should not be changed by the clamping logic.",
+      "confidence": 1.0
+    }
+  ]
+}

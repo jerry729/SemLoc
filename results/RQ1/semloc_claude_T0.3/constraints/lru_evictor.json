@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lru_evictor",
+  "fault_hypothesis": "The while-loop condition on line 56 uses `>` instead of `>=`, so when `len(order) == capacity` the loop body is never entered and no eviction occurs, violating the requirement that the cache must be strictly under capacity.",
+  "fault_line": 56,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 56
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "After the while loop exits, the order list must be strictly under capacity; this is FALSE when len(order)==capacity because the > condition never triggers eviction.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "At the end of each loop iteration the list should be strictly under capacity, confirming eviction is making progress toward the correct termination condition.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total_evicted__1"
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "Before checking total_evicted for logging, the order list must already be strictly under capacity, which fails when the loop condition was too strict.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) < capacity"
+      },
+      "intent": "The returned list must be strictly under capacity per the docstring contract.",
+      "confidence": 0.75
+    }
+  ]
+}

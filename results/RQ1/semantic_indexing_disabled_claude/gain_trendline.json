@@ -1,0 +1,44 @@
+{
+  "function": "gain_trendline",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    71
+  ],
+  "total_source_lines": 78,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "The condition `if not clamp` is inverted; clamping should occur when `clamp=True`, but the current code clamps when `clamp=False` and skips clamping when `clamp=True`.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "The bug is on line 70: the condition `if not clamp` should be `if clamp`. When `clamp=True`, the code should clamp the value, but currently it clamps when `clamp=False` and does nothing when `clamp=True`.\n\n```json\n{\n  \"function_name\": \"gain_trendline\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"The condition `if not clamp` is inverted; clamping should occur when `clamp=True`, but the current code clamps when `clamp=False` and skips clamping when `clamp=True`.\",\n  \"confidence\": 0.97\n}\n```",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

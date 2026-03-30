@@ -1,0 +1,44 @@
+{
+  "function": "bandwidth_budgeter",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "Line 65 uses `int(x)` which truncates (floors) fractional values instead of rounding, causing the total allocation to be less than `total` when fractional shares exist. The proper implementation should use `round()` or a largest-remainder algorithm to ensure allocations sum to `total`.",
+      "confidence": 0.75,
+      "parse_ok": true,
+      "raw": "Looking at the code, I need to identify the fault in the `bandwidth_budgeter` function.\n\nThe function is supposed to allocate bandwidth units across weighted recipients. When `_INTEGER_ALLOCATION` is True, it rounds to whole numbers. \n\nThe issue is on line 65: `allocations = [int(x) for x in planned]` uses `int()` which truncates (floors) the values rather than properly rounding them. This means the total allocation will typically be less than `total`.\n\nFor example, if `total=10` and `weights=[1,1,1]`, planned shares would be `[3.333, 3.333, 3.333]`, and `int()` would give `[3, 3, 3]` = 9, not 10.\n\nThe proper approach for integer allocation should use a remainder/largest-remainder method to ensure the allocations sum to `total`, or at minimum use `round()` instead of `int()`.\n\nThe faulty line is 65 where `int(x)` truncates instead of rounding, causing the sum of allocations to potentially be less than `total`.\n\n```json\n{\n  \"function_name\": \"bandwidth_budgeter\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"Line 65 uses `int(x)` which truncates (floors) fractional values instead of rounding, causing the total allocation to be less than `total` when fractional shares exist. The proper implementation should use `round()` or a largest-remainder algorithm to ensure allocations sum to `total`.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

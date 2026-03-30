@@ -1,0 +1,44 @@
+{
+  "function": "task_tally",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    53
+  ],
+  "total_source_lines": 59,
+  "runs": [
+    {
+      "faulty_lines": [
+        55
+      ],
+      "explanation": "When the new value exceeds max_value, it should be clamped to max_value itself, but the code sets it to max_value - 1, which is one less than the intended ceiling.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"task_tally\",\n  \"faulty_lines\": [55],\n  \"explanation\": \"When the new value exceeds max_value, it should be clamped to max_value itself, but the code sets it to max_value - 1, which is one less than the intended ceiling.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        55
+      ],
+      "valid_preds": [
+        55
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 55,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

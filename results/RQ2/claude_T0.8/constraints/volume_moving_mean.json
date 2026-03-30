@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "volume_moving_mean",
+  "fault_hypothesis": "On line 60, the mean is computed by dividing total by `window` (the maximum window size) instead of dividing by `len(recent)` (the actual number of samples). When fewer samples exist than the window, this produces an incorrect (too-small) mean.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The computed mean must equal total divided by the actual sample count, not by window size.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window or abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing mean, mean * len(recent) should equal total when samples < window.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "total__1 / len(recent__1) == total__1 / window or len(recent__1) == window"
+      },
+      "intent": "Before using mean, dividing by window is only correct when len(recent) equals window.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - round(sum(_extract_recent_window(values, window)) / len(_extract_recent_window(values, window)), _PRECISION_DIGITS)) < 1e-9"
+      },
+      "intent": "The returned mean should be based on the count of actual samples, not the window size.",
+      "confidence": 0.75
+    }
+  ]
+}

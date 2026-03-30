@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "weights_union",
+  "fault_hypothesis": "The conditional pop at line 75 incorrectly removes the last element from the `merged` list when it's common to both input streams, violating the requirement to preserve all duplicates.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The merge operation should not lose any elements; the size of the merged list should be the sum of the input list sizes.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(1 for x in merged__1 if x == left[-1]) >= sum(1 for x in left if x == left[-1]) + sum(1 for x in right if x == right[-1])"
+      },
+      "intent": "The count of a shared last element in the merged list must equal the sum of its counts in the input lists.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The number of elements before filtering must equal the total number of input elements.",
+      "confidence": 0.9
+    }
+  ]
+}

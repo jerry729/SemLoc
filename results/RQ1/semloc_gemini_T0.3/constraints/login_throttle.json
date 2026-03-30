@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "login_throttle",
+  "fault_hypothesis": "The condition on line 69 should be `len(recent) >= limit` instead of `len(recent) > limit`. This causes the function to incorrectly allow logins when the number of recent attempts exactly equals the limit.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The case where recent attempts exactly equals the limit is the boundary condition handled incorrectly by this line.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the login attempt is allowed (by falling through the 'if'), the number of recent attempts must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "limit - len(recent__1) > 0"
+      },
+      "intent": "If a login is allowed, the number of remaining attempts must be greater than zero.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == True) == (len(recent) < limit)"
+      },
+      "intent": "A login should be allowed if and only if the number of recent attempts is strictly less than the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

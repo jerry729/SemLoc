@@ -1,0 +1,32 @@
+{
+  "bug_id": "scrapy_39",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.spiders.__init__.Spider.start_requests",
+    "buggy_methods": [
+      "scrapy.spiders.__init__.Spider.start_requests"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.spiders.__init__.Spider.start_requests",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/spiders/__init__.py": [
+      69,
+      71,
+      72,
+      73
+    ],
+    "tests/test_spider.py": [
+      348,
+      403,
+      404
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

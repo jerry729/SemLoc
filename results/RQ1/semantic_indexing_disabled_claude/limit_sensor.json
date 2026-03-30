@@ -1,0 +1,44 @@
+{
+  "function": "limit_sensor",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    64
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        64
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the issue is on line 64. The condition `if len(active) > limit` should be `if len(active) >= limit`. When `len(active) == limit`, the sensor has already reached the limit and should not be allowed to act (remaining would be 0), but the current code returns `True, 0` instead of `False, 0`. This means when exactly at the limit, the function incorrectly allows the action.\n\n{\n  \"function_name\": \"limit_sensor\",\n  \"faulty_lines\": [64],\n  \"explanation\": \"The condition on line 64 uses `>` instead of `>=`. When the number of active timestamps equals the limit, the sensor should be denied (remaining = 0), but the current code incorrectly returns `(True, 0)` instead of `(False, 0)`.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        64
+      ],
+      "valid_preds": [
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 64,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

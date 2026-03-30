@@ -1,0 +1,20 @@
+{
+  "bug_id": "pandas_128",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.io.json._json.read_json",
+    "buggy_methods": [
+      "pandas.io.json._json.read_json"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.io.json._json.read_json",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

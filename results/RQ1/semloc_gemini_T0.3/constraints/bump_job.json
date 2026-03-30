@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_job",
+  "fault_hypothesis": "When a counter exceeds its cap, it is incorrectly clamped to `cap - 1` on line 57. It should be clamped to `cap` to ensure it saturates at the cap value.",
+  "fault_line": 57,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 57
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "When clamped, the counter should be set to the cap value, not a value below it.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 56,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After the clamping logic is applied, the counter's value should be exactly the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (cap == 1 and __cbfl_result == 0)"
+      },
+      "intent": "With a cap of 1, the counter should saturate at 1, not drop to 0.",
+      "confidence": 0.8
+    }
+  ]
+}

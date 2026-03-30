@@ -1,0 +1,16 @@
+{
+  "bug_id": "luigi_22",
+  "function": "__init__",
+  "src_path": "luigi/scheduler.py",
+  "fn_begin": 227,
+  "fn_end": 233,
+  "n_constraints": 4,
+  "n_tests_passing": 5,
+  "n_tests_failing": 1,
+  "line_scores": [],
+  "fault_line": 130,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/luigi_22/__init___constraints.json",
+  "report_path": "/tmp/bip_semloc/luigi_22/violations.jsonl"
+}

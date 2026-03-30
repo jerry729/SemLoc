@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shard_assignment",
+  "fault_hypothesis": "The function docstring promises that each shard's list of keys will be sorted, but the implementation on line 65 returns the `buckets` without sorting them first.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "all(b == sorted(b) for b in buckets__1)"
+      },
+      "intent": "Each bucket in the final list must be sorted before returning.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "buckets__1"
+        }
+      },
+      "spec": {
+        "expr": "all(b == sorted(b) for b in buckets__1)"
+      },
+      "intent": "The collection of buckets must be sorted by sub-list before being returned.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buckets__1"
+        }
+      },
+      "spec": {
+        "expr": "len(buckets__1) == shards and all(b == [] for b in buckets__1)"
+      },
+      "intent": "Buckets must be initialized as a list of empty lists with length equal to shards.",
+      "confidence": 0.8
+    }
+  ]
+}

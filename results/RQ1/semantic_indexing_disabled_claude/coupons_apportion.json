@@ -1,0 +1,47 @@
+{
+  "function": "coupons_apportion",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    80
+  ],
+  "total_source_lines": 82,
+  "runs": [
+    {
+      "faulty_lines": [
+        81,
+        47
+      ],
+      "explanation": "Line 81 uses int() (truncation) to floor shares, which causes the sum of allocations to be less than total since remainders are discarded without redistribution. Line 47 uses strict '>' comparison instead of '>=' which may incorrectly apply the minimum when a portion exactly equals the minimum.",
+      "confidence": 0.72,
+      "parse_ok": true,
+      "raw": "Looking at this function, I need to identify the bug in `coupons_apportion`.\n\nThe function is supposed to distribute `total` units among recipients proportionally, ensuring each gets at least `minimum` units, and when `floor_to_int=True`, round to whole units.\n\nThe issue with rounding to integers: when you have proportional shares and floor them with `int()`, the sum of floors can be less than `total`. A correct implementation would typically use a \"largest remainder method\" to ensure the allocations sum to `total`.\n\nBut looking more carefully at the specific lines:\n\n1. Line 81: `return [int(v) for v in shares]` - This uses `int()` which truncates (floors) the values. The sum of allocations may not equal `total`. A proper apportionment should redistribute the remainder.\n\n2. Line 47: `shares.append(portion if portion > minimum else minimum)` - The condition uses `>` (strictly greater than), but it should probably use `>=` or just `max(portion, minimum)`. However, this is a minor edge case.\n\n3. The bigger issue is that after enforcing minimums in `_compute_raw_shares`, the total of shares can exceed `total` if many recipients have portions below `minimum`. There's no adjustment for this.\n\n4. Line 81: Using `int()` (truncation) rather than proper rounding with remainder redistribution means the sum of integer allocations will generally not equal `total`.\n\nThe most clearly faulty line is **81** where `int(v)` truncates instead of properly apportioning remainders to ensure the sum equals `total`. This is a classic implementation bug in apportionment algorithms.\n\nAlso line 47 uses `>` instead of `>=` which could be considered a fault, but the primary bug is line 81.\n\n```json\n{\n  \"function_name\": \"coupons_apportion\",\n  \"faulty_lines\": [81, 47],\n  \"explanation\": \"Line 81 uses int() (truncation) to floor shares, which causes the sum of allocations to be less than total since remainders are discarded without redistribution. Line 47 uses strict '>' comparison instead of '>=' which may incorrectly apply the minimum when a portion exactly equals the minimum.\",\n  \"confidence\": 0.72\n}\n```",
+      "predicted": [
+        81,
+        47
+      ],
+      "valid_preds": [
+        81,
+        47
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 81,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

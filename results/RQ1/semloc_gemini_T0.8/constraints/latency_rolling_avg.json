@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "latency_rolling_avg",
+  "fault_hypothesis": "The average on line 69 is calculated by dividing the sum of samples by `window`. This is incorrect when the number of available samples, `len(tail)`, is less than `window`, as the denominator should be `len(tail)`.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min__1) or (abs(avg__1 - (total__1 / len(tail__1))) < 1e-9)"
+      },
+      "intent": "The average must be the sum of samples divided by the actual number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min__1) or (abs(avg__1 - (total__1 / len(tail__1))) < 1e-9)"
+      },
+      "intent": "The computed average `avg` must be consistent with `total` and `len(tail)`.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "A returned average must be the correct arithmetic mean of the samples.",
+      "confidence": 0.9
+    }
+  ]
+}

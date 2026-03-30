@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_bonus_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 72, rather than once from the total bonus pool before distribution. This results in the fee being deducted multiple times, once for each participant.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the total amount minus the single fee, floored at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(ratios) <= 1 or fee == 0 or amount <= fee * len(ratios)"
+      },
+      "intent": "Deducting a fee per-share only works if there's one share, no fee, or if clamping makes the payouts zero anyway.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(ratios) <= 1 or fee == 0 or amount <= fee * len(ratios)"
+      },
+      "intent": "The input conditions must be such that the flawed per-share fee logic on line 72 will produce a correct result.",
+      "confidence": 0.9
+    }
+  ]
+}

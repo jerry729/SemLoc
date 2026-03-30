@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sensor_window_avg",
+  "fault_hypothesis": "The mean is calculated by dividing the total by the window size, which is incorrect when the number of available samples is less than the window size. The division on line 73 should use the actual number of recent samples, `len(recent)`, as the divisor.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the total sum divided by the actual number of recent samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "The product of the mean and the number of recent samples must equal the total sum.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window"
+      },
+      "intent": "The divisor `window` is only correct if the number of recent samples equals the window size.",
+      "confidence": 0.9
+    }
+  ]
+}

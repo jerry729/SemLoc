@@ -1,0 +1,71 @@
+{
+  "bug_id": "matplotlib_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.figure.Figure.tight_layout",
+    "buggy_methods": [
+      "lib.matplotlib.figure.Figure.tight_layout"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.figure.Figure.tight_layout",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/backend_bases.py": [
+      1505,
+      1510,
+      1511,
+      1512,
+      1513,
+      1532,
+      1533,
+      1534,
+      1535,
+      1536,
+      1537,
+      2096,
+      2097,
+      2098
+    ],
+    "lib/matplotlib/figure.py": [
+      2405,
+      2406,
+      2407
+    ],
+    "lib/matplotlib/tight_layout.py": [
+      176
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      2405,
+      2406,
+      2407
+    ],
+    "best_rank": null,
+    "fn_lines": 46,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 2408,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "matplotlib_1",
+    "function": "tight_layout",
+    "src_path": "lib/matplotlib/figure.py",
+    "fn_begin": 2364,
+    "fn_end": 2409,
+    "n_constraints": 4,
+    "n_tests_passing": 0,
+    "n_tests_failing": 3,
+    "line_scores": [],
+    "fault_line": 2408,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/matplotlib_1/tight_layout_constraints.json",
+    "report_path": "/tmp/bip_semloc/matplotlib_1/violations.jsonl"
+  }
+}

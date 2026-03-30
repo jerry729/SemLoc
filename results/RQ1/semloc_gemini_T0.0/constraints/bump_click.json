@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_click",
+  "fault_hypothesis": "The counter is incorrectly clamped to `cap - 1` instead of `cap` when the cap is exceeded. The bug on line 64 should set the value to `cap`.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "The counter value should be exactly the cap after being clamped.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "When the cap is exceeded, the counter must be set to the cap value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "cap is None or counters__1[key__1] < cap"
+      },
+      "intent": "A counter should not be incremented if it has already reached its cap.",
+      "confidence": 0.9
+    }
+  ]
+}

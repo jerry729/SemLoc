@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "downtime_booking",
+  "fault_hypothesis": "The `overlaps` function on line 64 incorrectly handles adjacent time windows. It uses `<=` and `>=` which treats windows that touch at their boundaries as non-overlapping, when they should be considered overlapping.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "(b[1] <= a[0] or b[0] >= a[1]) == (b[1] < a[0] or b[0] > a[1])"
+      },
+      "intent": "The buggy non-overlap logic should be equivalent to the correct logic that uses strict inequalities for boundary checks.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "If the loop continues to the next iteration, the candidate must not overlap with the current slot, including touching boundaries.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the candidate is merged into the schedule, it must not have overlapped (including at boundaries) with any existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == False or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If a candidate is accepted, the resulting schedule must not contain any overlapping or adjacent windows.",
+      "confidence": 0.8
+    }
+  ]
+}

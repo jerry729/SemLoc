@@ -1,0 +1,38 @@
+{
+  "function": "maintenance_booking",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    76
+  ],
+  "total_source_lines": 81,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, I need to identify potential bugs.\n\nThe overlap detection logic on line 77:\n```python\nif any(not (b <= s or a >= e) for s, e in timeline):\n```\n\nThis checks if there's any overlap. Two intervals (a,b) and (s,e) overlap if NOT (b <= s OR a >= e). This is actually the correct overlap detection logic.\n\nWait, let me think about the `_MIN_WINDOW_DURATION = 0`. On line 29:\n```python\nif b - a <= _MIN_WINDOW_DURATION:\n```\n\nSince `_MIN_WINDOW_DURATION = 0`, this means if `b - a <= 0`, raise ValueError. But line 27 already checks `if a >= b`, which means `b - a <= 0`. So line 29 would never be reached because line 27 catches the same condition. This is redundant but not a bug per se.\n\nLooking more carefully at line 77 - the overlap condition:\n- `b <= s`: new window ends before or at existing start (no overlap)\n- `a >= e`: new window starts at or after existing end (no overlap)\n\nThis is correct. The negation means overlap exists.\n\nBut wait - what about touching windows? If `b == s`, then `b <= s` is True, so no overlap. If `a == e`, then `a >= e` is True, so no overlap. This seems intentional for non-strict conflicts.\n\nThe `_CONFLICT_STRICT = False` variable is defined but never used. This might indicate that the conflict detection should behave differently based on this flag, but it's ignored.\n\nActually, looking at the overlap check: with `_CONFLICT_STRICT = False`, touching windows (where b==s or a==e) should not be conflicts. The current logic `b <= s or a >= e` handles this correctly for non-strict mode.\n\nBut if `_CONFLICT_STRICT` were True, touching windows would also be conflicts, requiring `b < s or a > e`. The code ignores `_CONFLICT_STRICT`, which is a bug.\n\nThe most likely bug is that `_CONFLICT_STRICT` is defined but unused, and the overlap check on line 77 doesn't use it properly.\n\n{\n  \"function_name\": \"maintenance_booking\",\n  \"faulty_lines\": [77, 8],\n  \"explanation\": \"The variable `_CONFLICT_STRICT` is defined but never used in the overlap check on line 77. The conflict detection logic should vary based on `_CONFLICT_STRICT`: when True, touching windows (b==s or a==e) should also be conflicts, requiring `b < s or a > e` instead of `b <= s or a >= e`.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

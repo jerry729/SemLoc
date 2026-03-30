@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_points_share",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers using `int()` on line 74, which truncates the values. This causes the sum of the allocated points to be less than the total budget when fractional shares are involved, violating the budget preservation requirement.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not _INTEGER_ALLOCATION or (abs(sum(shares__1) - total) > 0.001) or (sum(list(map(int, shares__1))) == total)"
+      },
+      "intent": "The sum of integer shares must equal the total, unless the minimum floor already inflated the sum of float shares.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "all(s >= minimum for s in shares__1)"
+      },
+      "intent": "Every calculated share must be at least the specified minimum value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 0.001 or sum(shares__1) > total"
+      },
+      "intent": "The sum of float shares should be close to the total, or greater if the minimum floor was applied.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or len(__cbfl_result) == len(weights)"
+      },
+      "intent": "The number of allocations in the result must match the number of weights provided.",
+      "confidence": 0.3
+    }
+  ]
+}

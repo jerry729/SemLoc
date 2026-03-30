@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_requests",
+  "fault_hypothesis": "On line 65, the average is computed by dividing `total` by `window` instead of `len(tail)`. When the series has fewer elements than the window, this produces an incorrectly small average.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "After computing avg, it should equal total divided by the actual number of samples in tail, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "avg must equal total divided by the actual tail length, not the window size.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before avg is returned or logged, it should only equal total/window when tail is exactly window-sized; otherwise it should be total/len(tail).",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - sum(series[-window:]) / len(series[-window:])) < 1e-9"
+      },
+      "intent": "The returned average should be the mean of the actual tail samples, not total divided by window.",
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_82",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.concat._get_empty_dtype_and_na",
+    "buggy_methods": [
+      "pandas.core.internals.concat._get_empty_dtype_and_na"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.concat._get_empty_dtype_and_na",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/internals/concat.py": [
+      353
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

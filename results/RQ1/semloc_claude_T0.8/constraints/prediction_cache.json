@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "prediction_cache",
+  "fault_hypothesis": "The expiration check on line 73 uses strict greater-than (`now > deadline`) instead of greater-than-or-equal (`now >= deadline`), so an entry is incorrectly returned as valid when `now == deadline`.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "now >= deadline__1"
+      },
+      "intent": "When now equals the deadline the condition must be true so the expired branch is taken; strict > misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "now >= deadline__1 or now < deadline__1"
+      },
+      "intent": "Verify the relationship between now and deadline__1 is correctly captured before the comparison; equality must not be silently excluded from the expired branch.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < deadline__1"
+      },
+      "intent": "In the else branch (cache hit path) now must be strictly less than deadline; if now == deadline the else branch should not be reached.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (now >= deadline__1 and __cbfl_result is not None and __cbfl_result != default)"
+      },
+      "intent": "The function must never return the cached value when now has reached or passed the deadline.",
+      "confidence": 0.8
+    }
+  ]
+}

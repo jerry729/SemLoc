@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_76",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.io.json._json.Parser._try_convert_data",
+    "buggy_methods": [
+      "pandas.io.json._json.Parser._try_convert_data"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.io.json._json.Parser._try_convert_data",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/io/json/_json.py": [
+      945
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_140",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.generic._recast_datetimelike_result",
+    "buggy_methods": [
+      "pandas.core.groupby.generic._recast_datetimelike_result"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.generic._recast_datetimelike_result",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/generic.py": [
+      1916
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "bug_id": "matplotlib_19",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.projections.polar.RadialLocator.view_limits",
+    "buggy_methods": [
+      "lib.matplotlib.projections.polar.RadialLocator.view_limits"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.projections.polar.RadialLocator.view_limits",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

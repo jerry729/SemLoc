@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_job",
+  "fault_hypothesis": "The bug is on line 57. When the counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being clamped to `cap`.",
+  "fault_line": 57,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 57
+        }
+      },
+      "spec": {
+        "expr": "cap % 2 == 0"
+      },
+      "intent": "The function appears to handle even caps correctly but fails on odd caps, based on the test cases.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 56,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After clamping, the counter's value should be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result > 0"
+      },
+      "intent": "The counter should not be clamped to zero when a positive cap is given.",
+      "confidence": 0.8
+    }
+  ]
+}

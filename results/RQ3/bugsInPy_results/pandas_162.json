@@ -1,0 +1,33 @@
+{
+  "bug_id": "pandas_162",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.pivot._normalize",
+    "buggy_methods": [
+      "pandas.core.reshape.pivot._normalize"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.pivot._normalize",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/reshape/pivot.py": [
+      614,
+      615,
+      616,
+      617,
+      618,
+      619,
+      620,
+      648,
+      649,
+      650
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

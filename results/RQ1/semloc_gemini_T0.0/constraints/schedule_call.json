@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_call",
+  "fault_hypothesis": "The overlap detection logic defined on line 72 is incorrect because it uses non-strict inequalities (`<=`, `>=`), failing to treat adjacent (touching) time slots as overlapping. This incorrect logic is used in the `if` condition on line 76, causing the program to incorrectly accept adjacent time slots.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (effective[1] == candidate[0] or candidate[1] == effective[0]) or (not (candidate[1] <= effective[0] or candidate[0] >= effective[1]))"
+      },
+      "intent": "If two time slots are adjacent (touching), they must be considered overlapping.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (effective[1] == candidate[0] or candidate[1] == effective[0]) or (not (candidate[1] <= effective[0] or candidate[0] >= effective[1]))"
+      },
+      "intent": "During each iteration, the overlap check must correctly handle adjacent slots.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(s[1] == candidate[0] or s[0] == candidate[1] for s in existing)"
+      },
+      "intent": "A candidate should not be merged into the schedule if it is merely adjacent to an existing slot.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] and any(s[1] == candidate[0] or s[0] == candidate[1] for s in existing))"
+      },
+      "intent": "If a candidate is accepted, it must not be adjacent to any previously existing time slot.",
+      "confidence": 0.8
+    }
+  ]
+}

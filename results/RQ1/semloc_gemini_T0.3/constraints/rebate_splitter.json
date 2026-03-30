@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rebate_splitter",
+  "fault_hypothesis": "The proportional split on line 62 is calculated using the total `amount` instead of the distributable amount (`amount - fee`). This causes the fee to be incorrectly handled on line 64, effectively multiplying it by the number of recipients.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or amount <= fee"
+      },
+      "intent": "The current logic is only correct if there is no fee or if the fee makes the entire payout zero, which hides the bug.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive for a valid distribution.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of the base shares, before fee deduction, must equal the total initial amount.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(amount - fee <= 0 and abs(sum(__cbfl_result)) < 1e-9) or (amount - fee > 0 and abs(sum(__cbfl_result) - (amount - fee)) < 1e-9)"
+      },
+      "intent": "The sum of final payouts must equal the total amount less the fee, clamped at zero.",
+      "confidence": 1.0
+    }
+  ]
+}

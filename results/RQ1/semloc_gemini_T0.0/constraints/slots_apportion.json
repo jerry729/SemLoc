@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "slots_apportion",
+  "fault_hypothesis": "The function incorrectly truncates planned allocations to integers on line 70, discarding the fractional parts. This causes the sum of the final allocations to be less than the original total when the division is uneven, violating the principle of apportionment.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "The sum of integer allocations must equal the rounded sum of the planned fractional allocations.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "len(planned__1) == len(weights)"
+      },
+      "intent": "The number of planned allocations must match the number of weights provided.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "all(p >= minimum for p in planned__1)"
+      },
+      "intent": "Each planned allocation must be at least the specified minimum.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total if minimum == 0 else True"
+      },
+      "intent": "The sum of the final allocations should equal the original total when no minimum is applied.",
+      "confidence": 0.7
+    }
+  ]
+}

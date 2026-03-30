@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_storage",
+  "fault_hypothesis": "The conversion from floating-point `planned` allocations to integers on line 66 uses simple truncation via `int()`, which discards remainders. This causes the sum of the final `allocations` to be less than the total that was meant to be distributed, violating the function's contract.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "The sum of integer allocations must equal the rounded sum of the planned floating-point values.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the intermediate planned allocations must be consistent with the input total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) >= int(total)"
+      },
+      "intent": "The sum of integer allocations after conversion must not be less than the integer part of the total.",
+      "confidence": 0.9
+    }
+  ]
+}

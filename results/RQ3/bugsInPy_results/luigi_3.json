@@ -1,0 +1,25 @@
+{
+  "bug_id": "luigi_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.parameter.TupleParameter.parse",
+    "buggy_methods": [
+      "luigi.parameter.TupleParameter.parse"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.parameter.TupleParameter.parse",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/parameter.py": [
+      1117,
+      1118
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

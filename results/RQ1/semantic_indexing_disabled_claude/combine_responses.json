@@ -1,0 +1,47 @@
+{
+  "function": "combine_responses",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [
+        71,
+        72
+      ],
+      "explanation": "Lines 71-72 incorrectly remove the last element from the merged result when both left and right end with the same value, but a correct merge should keep all elements (including duplicates). This causes the merged list to be missing one occurrence of the shared last element.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"combine_responses\",\n  \"faulty_lines\": [71, 72],\n  \"explanation\": \"Lines 71-72 incorrectly remove the last element from the merged result when both left and right end with the same value, but a correct merge should keep all elements (including duplicates). This causes the merged list to be missing one occurrence of the shared last element.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        71,
+        72
+      ],
+      "valid_preds": [
+        71,
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 71,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

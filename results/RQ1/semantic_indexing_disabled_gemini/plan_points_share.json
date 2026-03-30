@@ -1,0 +1,47 @@
+{
+  "function": "plan_points_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        67,
+        74
+      ],
+      "explanation": "The logic on line 67 for enforcing a minimum value is flawed, as applying it to each lane independently can cause the sum of allocations to exceed the total budget. A secondary fault on line 74 uses `int()` to truncate floating-point shares, which consistently causes the allocated total to be less than the available budget when there are fractional results.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"plan_points_share\",\n  \"faulty_lines\": [\n    67,\n    74\n  ],\n  \"explanation\": \"The logic on line 67 for enforcing a minimum value is flawed, as applying it to each lane independently can cause the sum of allocations to exceed the total budget. A secondary fault on line 74 uses `int()` to truncate floating-point shares, which consistently causes the allocated total to be less than the available budget when there are fractional results.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        67,
+        74
+      ],
+      "valid_preds": [
+        67,
+        74
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

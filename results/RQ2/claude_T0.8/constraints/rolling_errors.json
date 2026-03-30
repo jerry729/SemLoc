@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_errors",
+  "fault_hypothesis": "On line 62, the mean is computed by dividing the total by `window` instead of `len(recent)`. When fewer values exist than the window size, this produces a smaller (incorrect) mean because the divisor is too large.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window or mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "When fewer samples than window exist, mean must be total divided by actual sample count, not window size.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "Mean should equal total divided by the actual number of recent samples, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "mean__1 * len(recent__1) == total__1"
+      },
+      "intent": "Before mean is returned or logged, mean * sample_count must equal total to confirm correct divisor was used.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(__cbfl_result - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "The returned mean must be the average over actual recent samples, not over the full window size.",
+      "confidence": 0.9
+    }
+  ]
+}

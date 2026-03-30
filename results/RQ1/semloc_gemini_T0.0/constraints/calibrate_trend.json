@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_trend",
+  "fault_hypothesis": "The condition for clamping the result is inverted on line 63. The code enters the clamping logic when `clamp` is `False` and skips it when `clamp` is `True`, which is the opposite of the documented behavior.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= t__1 <= 1.0"
+      },
+      "intent": "All failing tests involve extrapolation (t is outside [0,1]), which this conditional should handle, but its logic is inverted.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "min(y0, y1) <= y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamp=True (this branch is taken), an extrapolated value should be clamped, but here the value is out of bounds and is not being modified.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__2 == y__1"
+      },
+      "intent": "When clamp=False (this branch is taken), the value should not be clamped, but this code incorrectly modifies the extrapolated value y__1.",
+      "confidence": 0.9
+    }
+  ]
+}

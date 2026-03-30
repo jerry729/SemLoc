@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_band",
+  "fault_hypothesis": "The `overlaps` function on line 68 uses non-strict inequalities (`<=`, `>=`) to check for non-overlapping bands, which incorrectly classifies adjacent (touching) bands as non-overlapping.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] == a[0] or b[0] == a[1])"
+      },
+      "intent": "Bands considered non-overlapping must have a clear gap between them, not just touch at a boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "Each existing band that is checked and does not cause an early return must be strictly non-overlapping with the candidate.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the candidate is added to the list, it must not have overlapped (including touching) any existing band.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == False or all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "A successful reservation implies the candidate did not overlap (including touching) any of the original bands.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "job_queue_priority",
+  "fault_hypothesis": "The condition on line 67 uses a strict greater-than `>` comparison, but the logic requires greater-than-or-equal-to `>=`. This causes batches with a size exactly equal to `max_jobs` to be incorrectly accepted.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(len(job_list__1) > max_jobs) or (len(job_list__1) < max_jobs)"
+      },
+      "intent": "If the decision is made at this line, the number of jobs must not be exactly equal to the maximum.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(job_list__1) < max_jobs"
+      },
+      "intent": "In the execution path where a batch is accepted, its size must be strictly less than the capacity.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "batch_size__1"
+        }
+      },
+      "spec": {
+        "expr": "batch_size__1 != max_jobs"
+      },
+      "intent": "The batch size should not be exactly equal to the maximum capacity, which is the specific boundary case that fails.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result == (len(job_list) < max_jobs)"
+      },
+      "intent": "The function should accept a batch if and only if its size is strictly less than the maximum capacity.",
+      "confidence": 0.8
+    }
+  ]
+}

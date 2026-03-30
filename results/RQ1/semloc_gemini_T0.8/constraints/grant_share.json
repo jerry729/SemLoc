@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "grant_share",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each individual share on line 65, rather than from the total amount before distribution. This causes the total fee to be multiplied by the number of recipients, which is only correct when there is one recipient or the fee is zero.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([max(0, s - fee) for s in base__1]) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts should equal the distributable amount (total grant minus one fee), floored at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([max(0, s - fee) for s in base__1]) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The base shares computed on line 63 must be such that the subsequent flawed fee logic on line 65 still produces a correct total payout.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive for a meaningful distribution.",
+      "confidence": 1.0
+    }
+  ]
+}

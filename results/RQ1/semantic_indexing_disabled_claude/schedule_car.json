@@ -1,0 +1,47 @@
+{
+  "function": "schedule_car",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        56,
+        55
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify what's buggy.\n\nThe function validates `window` at line 55-57 with `if a >= b: raise ValueError(\"empty window\")`. But `_validate_window` at line 17 checks `if b - a < _MIN_BOOKING_DURATION`. With `_MIN_BOOKING_DURATION = 1`, these are equivalent. However, the function doesn't call `_validate_window` - it does its own validation inline.\n\nThe overlap check at line 61: `any(not (b <= s or a >= e) for s, e in timeline)` - this checks if there's any conflict. The condition `not (b <= s or a >= e)` means \"b > s AND a < e\", which is a standard overlap detection. This looks correct.\n\nWait, let me reconsider. The `_ADJACENCY_TOLERANCE = 0` variable is defined but never used. This might be intentional or a hint that adjacency should be considered.\n\nLooking at the overlap condition more carefully: `b <= s` means the new booking ends before or exactly at the start of existing. `a >= e` means the new booking starts at or after the end of existing. These are non-overlapping conditions. So `not (b <= s or a >= e)` means they DO overlap. This seems correct for standard interval scheduling.\n\nBut wait - the issue might be that `_validate_window` is defined but `schedule_car` does its own validation. The function at line 56 checks `a >= b` which is equivalent to `b - a <= 0`, but `_MIN_BOOKING_DURATION = 1` means minimum duration should be 1, so `b - a >= 1` means `b > a`, which is `a < b`. The check `a >= b` catches `a == b` (duration 0) and `a > b`. This seems correct.\n\nActually, the real issue: line 56 checks `a >= b` but the window variable `a, b = window` unpacks from `window`, not from `_validate_window`. The function should call `_validate_window(window)` instead of doing inline validation. The inline check `a >= b` doesn't use `_MIN_BOOKING_DURATION` at all, so if `_MIN_BOOKING_DURATION` were changed to something > 1, the validation would be wrong.\n\nThe faulty line is 56 - it should call `_validate_window` instead of doing its own check, and the check `a >= b` doesn't use `_MIN_BOOKING_DURATION`.\n\n{\n  \"function_name\": \"schedule_car\",\n  \"faulty_lines\": [56, 55],\n  \"explanation\": \"The function does its own inline validation at line 56 (`if a >= b`) instead of calling `_validate_window(window)`, and critically does not use `_MIN_BOOKING_DURATION` in its check, making the validation inconsistent with the module-level constant.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [
+        56,
+        55
+      ],
+      "valid_preds": [
+        56,
+        55
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 56,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

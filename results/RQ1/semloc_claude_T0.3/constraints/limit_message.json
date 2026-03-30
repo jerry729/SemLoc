@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_message",
+  "fault_hypothesis": "Line 73 uses a strict greater-than comparison (`> limit`) instead of `>= limit`, so when `len(recent) == limit` the function incorrectly returns `True` (allowed) with `remaining == 0` instead of `False, 0`.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) > limit)"
+      },
+      "intent": "When recent count equals the limit, the condition must be true so the function returns False,0 \u2014 this is violated by the strict > instead of >=.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "limit - len(recent__1) > 0"
+      },
+      "intent": "In the else branch (allowed=True), remaining must be strictly positive; if len(recent)==limit, remaining would be 0 which contradicts allowing the message.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) <= limit or len(recent__1) > limit"
+      },
+      "intent": "Sanity check that the comparison covers the equality case \u2014 the bug is that equality is not handled by the > operator.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= 0 and len(recent__1) <= len(timestamps)"
+      },
+      "intent": "Verify recent is a valid subset of timestamps before the comparison is made.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(recent__1) >= limit)"
+      },
+      "intent": "The function should deny (return False) whenever recent count is at or above the limit, catching the off-by-one in the comparison.",
+      "confidence": 0.85
+    }
+  ]
+}

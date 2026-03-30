@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_lift",
+  "fault_hypothesis": "The condition on line 63 is `if not clamp:`, which is the inverse of the correct logic. Clamping is incorrectly applied when `clamp=False` and skipped when `clamp=True`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__3 >= min(y0, y1) and y__3 <= max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "After the conditional, the value of y must be clamped if and only if clamp is true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamping is enabled (but the logic is missing), the value must be within the y-range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__2 == y__1"
+      },
+      "intent": "When not clamping, the value of y should be the unaltered interpolated value.",
+      "confidence": 0.9
+    }
+  ]
+}

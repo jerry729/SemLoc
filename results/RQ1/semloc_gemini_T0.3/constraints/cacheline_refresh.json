@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cacheline_refresh",
+  "fault_hypothesis": "The function calculates the new expiration time on line 70 but assigns it to a local variable. It fails to update the `store` dictionary with this new expiration time before returning.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "store[key] == (value__1, now + ttl__1)"
+      },
+      "intent": "The store must be updated with the refreshed entry after calculating the new expiration time.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__2"
+        }
+      },
+      "spec": {
+        "expr": "store[key][1] == expires_at__2"
+      },
+      "intent": "The newly computed expiration time must be persisted in the store.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "value__1"
+        }
+      },
+      "spec": {
+        "expr": "store[key][1] == expires_at__2"
+      },
+      "intent": "The store must be updated with the new expiration time before the cached value is returned.",
+      "confidence": 0.9
+    }
+  ]
+}

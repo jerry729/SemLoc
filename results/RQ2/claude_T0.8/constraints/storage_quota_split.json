@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "storage_quota_split",
+  "fault_hypothesis": "On line 66, the fee is not deducted from the total before computing shares. The formula computes `(r / total_ratio) * total` instead of `(r / total_ratio) * (total - fee)`, so the fee is subtracted per-share on line 70 rather than once from the pool.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) > 1e-9 or fee == 0.0"
+      },
+      "intent": "After computing shares, their sum should equal (total - fee), not total, when fee > 0.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (total - fee)) < 1e-9"
+      },
+      "intent": "The raw shares should sum to (total - fee) since the fee is a one-time pool deduction.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "floored__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(floored__1) - (total - fee)) < 1e-9 or (total - fee) <= 0.0"
+      },
+      "intent": "The floored shares should sum to (total - fee) before being returned.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, total - fee)) < 1e-9"
+      },
+      "intent": "The returned shares must sum to total minus fee (or zero if that is negative).",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "bug_id": "pandas_32",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.io.sas.sas_xport.XportReader.__init__",
+    "buggy_methods": [
+      "pandas.io.sas.sas_xport.XportReader.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.io.sas.sas_xport.XportReader.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/io/sas/sas_xport.py": [
+      12,
+      266,
+      267,
+      268,
+      269,
+      270,
+      271,
+      272
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

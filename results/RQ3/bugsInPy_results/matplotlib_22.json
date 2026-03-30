@@ -1,0 +1,20 @@
+{
+  "bug_id": "matplotlib_22",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axes._axes.Axes.hist",
+    "buggy_methods": [
+      "lib.matplotlib.axes._axes.Axes.hist"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axes._axes.Axes.hist",
+  "autofl_matched_info": [],
+  "faulty_lines": {},
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "bug_id": "luigi_17",
+  "function": "create_local_scheduler",
+  "src_path": "luigi/interface.py",
+  "fn_begin": 133,
+  "fn_end": 134,
+  "n_constraints": 4,
+  "n_tests_passing": 6,
+  "n_tests_failing": 1,
+  "line_scores": [],
+  "fault_line": 134,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/luigi_17/create_local_scheduler_constraints.json",
+  "report_path": "/tmp/bip_semloc/luigi_17/violations.jsonl"
+}

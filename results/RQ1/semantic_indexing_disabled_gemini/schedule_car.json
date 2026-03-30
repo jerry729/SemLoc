@@ -1,0 +1,50 @@
+{
+  "function": "schedule_car",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        56,
+        55,
+        57
+      ],
+      "explanation": "The validation logic on lines 55-57 incorrectly duplicates logic from the helper function `_validate_window`. The condition `a >= b` on line 56 hardcodes the assumption that the minimum duration is 1, failing to use the `_MIN_BOOKING_DURATION` constant, which would cause incorrect behavior if the constant's value were changed.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"schedule_car\",\n  \"faulty_lines\": [\n    56,\n    55,\n    57\n  ],\n  \"explanation\": \"The validation logic on lines 55-57 incorrectly duplicates logic from the helper function `_validate_window`. The condition `a >= b` on line 56 hardcodes the assumption that the minimum duration is 1, failing to use the `_MIN_BOOKING_DURATION` constant, which would cause incorrect behavior if the constant's value were changed.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        56,
+        55,
+        57
+      ],
+      "valid_preds": [
+        56,
+        55,
+        57
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 3,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 56,
+  "best_rank_ever": null,
+  "mean_n_predicted": 3.0
+}

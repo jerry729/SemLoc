@@ -1,0 +1,44 @@
+{
+  "bug_id": "black_6",
+  "autofl": {
+    "top1": true,
+    "prediction": "blib2to3.pgen2.driver.Driver.__init__",
+    "buggy_methods": [
+      "blib2to3.pgen2.driver.Driver.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "blib2to3.pgen2.driver.Driver.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      142,
+      143,
+      144,
+      145,
+      751,
+      755,
+      756,
+      757,
+      761,
+      764,
+      772,
+      773
+    ],
+    "blib2to3/pgen2/driver.py": [
+      32,
+      100,
+      114
+    ],
+    "blib2to3/pgen2/tokenize.py": [
+      337,
+      509
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

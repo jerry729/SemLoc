@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "coupons_apportion",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers by truncating them with `int()`. This causes the sum of the final allocations to be less than the `total` when the shares have fractional parts, violating a key invariant that the sum must be preserved.",
+  "fault_line": 81,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 81
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "The sum of integer allocations returned from this branch must equal the total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "The sum of the raw floating-point shares must equal the total before any integer conversion.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not floor_to_int or (total - sum(int(s) for s in shares__1)) == 0"
+      },
+      "intent": "For integer allocation, the sum of truncated shares must equal the total; otherwise, simple truncation is incorrect.",
+      "confidence": 0.9
+    }
+  ]
+}

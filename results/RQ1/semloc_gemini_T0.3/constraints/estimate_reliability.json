@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_reliability",
+  "fault_hypothesis": "The clamping logic is inverted. The condition on line 68 should be `if clamp:` but is `if not clamp:`, causing clamping to occur only when it's disabled and vice-versa.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(y__1 >= min(y0, y1)) and (y__1 <= max(y0, y1))"
+      },
+      "intent": "The interpolated value must be within the calibration bounds, as the subsequent clamping logic is faulty.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "(y__4 >= min(y0, y1)) and (y__4 <= max(y0, y1))"
+      },
+      "intent": "When clamping is enabled, the value after this branch should have been clamped to the valid range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 == y__1"
+      },
+      "intent": "When clamping is disabled, the value should not be modified by the (incorrectly executed) clamping logic.",
+      "confidence": 0.9
+    }
+  ]
+}

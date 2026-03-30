@@ -1,0 +1,58 @@
+{
+  "bug_id": "youtube-dl_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.YoutubeDL.YoutubeDL._build_format_filter",
+    "buggy_methods": [
+      "youtube_dl.YoutubeDL.YoutubeDL._build_format_filter"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.YoutubeDL.YoutubeDL._build_format_filter",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "test/test_YoutubeDL.py": [
+      265,
+      275,
+      279
+    ],
+    "youtube_dl/YoutubeDL.py": [
+      1081
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      1081
+    ],
+    "best_rank": 1,
+    "fn_lines": 62,
+    "pct_suspicious": 1.6129032258064515,
+    "top1": true,
+    "top3": true,
+    "top5": true,
+    "fault_line": 1081,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "youtube-dl_12",
+    "function": "_build_format_filter",
+    "src_path": "youtube_dl/YoutubeDL.py",
+    "fn_begin": 1032,
+    "fn_end": 1093,
+    "n_constraints": 4,
+    "n_tests_passing": 21,
+    "n_tests_failing": 1,
+    "line_scores": [
+      {
+        "line": 1081,
+        "score": 1.0
+      }
+    ],
+    "fault_line": 1081,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/youtube-dl_12/_build_format_filter_constraints.json",
+    "report_path": "/tmp/bip_semloc/youtube-dl_12/violations.jsonl"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "bug_id": "ansible_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.module_utils.network.eos.config.vlans.vlans.generate_commands",
+    "buggy_methods": [
+      "lib.ansible.module_utils.network.eos.config.vlans.vlans.generate_commands"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.module_utils.network.eos.config.vlans.vlans.generate_commands",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/module_utils/network/eos/config/vlans/vlans.py": [
+      217,
+      218,
+      219,
+      222
+    ],
+    "test/units/modules/network/eos/test_eos_vlans.py": [
+      105,
+      106,
+      110
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

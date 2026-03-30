@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_api",
+  "fault_hypothesis": "The condition on line 66 uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal (`>=`). This causes an off-by-one error, allowing a request when the number of recent requests exactly equals the limit.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent requests should not be exactly at the limit when this check is performed, as this is the ambiguous case the code handles incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "The branch that allows a request should only be taken if the number of recent requests is strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(limit - len(recent__1)) != 0"
+      },
+      "intent": "This line, which returns that the request is allowed, should not be reached if the remaining capacity is zero.",
+      "confidence": 0.9
+    }
+  ]
+}

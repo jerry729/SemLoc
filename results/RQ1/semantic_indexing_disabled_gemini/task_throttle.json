@@ -1,0 +1,47 @@
+{
+  "function": "task_throttle",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        62,
+        64
+      ],
+      "explanation": "The rate limit check is off-by-one, using `len(recent) > limit` which allows `limit + 1` tasks when the limit should be strictly enforced. Consequently, the calculation of the remaining permitted tasks is also off by one, as it does not account for the current task being approved.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"task_throttle\",\n  \"faulty_lines\": [\n    62,\n    64\n  ],\n  \"explanation\": \"The rate limit check is off-by-one, using `len(recent) > limit` which allows `limit + 1` tasks when the limit should be strictly enforced. Consequently, the calculation of the remaining permitted tasks is also off by one, as it does not account for the current task being approved.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        62,
+        64
+      ],
+      "valid_preds": [
+        62,
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

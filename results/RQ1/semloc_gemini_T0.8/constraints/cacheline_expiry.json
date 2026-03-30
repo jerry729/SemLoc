@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cacheline_expiry",
+  "fault_hypothesis": "The expiry check on line 67 uses a strict greater-than comparison (`>`), which incorrectly treats an item as valid when the current time is exactly equal to its expiry time. The check should be non-strict (`>=`) to correctly expire items on the boundary.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "For an item to be considered valid and returned, the current time must be strictly less than its adjusted expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "If the expiry check condition is false, it must be because the item is not expired, meaning `now` is strictly less than `adjusted_ttl`.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "A payload should only be prepared for return if the item is not expired, which requires the current time to be strictly before the TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (key in cache and now < _adjust_ttl_for_skew(cache[key][1]))"
+      },
+      "intent": "A non-None result implies the cache entry for the key exists and its TTL is strictly after the current time.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "bug_id": "keras_2",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.backend.numpy_backend.binary_crossentropy",
+    "buggy_methods": [
+      "keras.backend.numpy_backend.binary_crossentropy"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.backend.numpy_backend.binary_crossentropy",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/keras/backend/backend_test.py": [
+      1169,
+      1172,
+      1187
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_replica",
+  "fault_hypothesis": "The function calculates blended allocations but omits the final normalization step, causing the returned list to not sum to 1.0 when the inputs are not normalized. The bug is the missing normalization before the return on line 60.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "len(adjusted__1) == 0 or abs(sum(adjusted__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list of allocations must be normalized to sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "sum(adjusted__1) <= 1.0"
+      },
+      "intent": "The partial sum of adjusted allocations should stay within the normalized range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 57
+        }
+      },
+      "spec": {
+        "expr": "0 <= (c + (t - c) * damping) <= 1.0"
+      },
+      "intent": "The blended value for an individual allocation should remain within the [0, 1] range.",
+      "confidence": 0.85
+    }
+  ]
+}

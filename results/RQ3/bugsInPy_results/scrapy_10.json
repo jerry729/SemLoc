@@ -1,0 +1,32 @@
+{
+  "bug_id": "scrapy_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.downloadermiddlewares.redirect.RedirectMiddleware.process_response",
+    "buggy_methods": [
+      "scrapy.downloadermiddlewares.redirect.RedirectMiddleware.process_response"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.downloadermiddlewares.redirect.RedirectMiddleware.process_response",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/downloadermiddlewares/redirect.py": [
+      6,
+      68,
+      69
+    ],
+    "tests/test_downloadermiddleware_redirect.py": [
+      160,
+      163,
+      165,
+      168
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

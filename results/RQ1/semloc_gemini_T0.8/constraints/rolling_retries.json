@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_retries",
+  "fault_hypothesis": "The rolling mean on line 62 is calculated by dividing the total by the fixed window size, which is incorrect when the number of available values is less than the window. The divisor should be the actual number of values in the tail.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "not (len(tail__1) >= warmup_min) or (len(tail__1) == window)"
+      },
+      "intent": "If a mean is to be returned, the number of samples must equal the window size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or (min(tail__1) <= mean__1 and mean__1 <= max(tail__1))"
+      },
+      "intent": "The calculated mean must fall within the range of the values being averaged.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "A numeric mean should only be returned when the tail contains a full window of data.",
+      "confidence": 0.9
+    }
+  ]
+}

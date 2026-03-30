@@ -1,0 +1,16 @@
+{
+  "bug_id": "ansible_4",
+  "function": "_load_collections",
+  "src_path": "lib/ansible/playbook/collectionsearch.py",
+  "fn_begin": 37,
+  "fn_end": 44,
+  "n_constraints": 4,
+  "n_tests_passing": 0,
+  "n_tests_failing": 1,
+  "line_scores": [],
+  "fault_line": 39,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/ansible_4/_load_collections_constraints.json",
+  "report_path": "/tmp/bip_semloc/ansible_4/violations.jsonl"
+}

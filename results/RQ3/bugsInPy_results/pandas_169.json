@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_169",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.frame.DataFrame.quantile",
+    "buggy_methods": [
+      "pandas.core.frame.DataFrame.quantile"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.frame.DataFrame.quantile",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/tests/frame/test_quantile.py": [
+      442
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

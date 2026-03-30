@@ -1,0 +1,38 @@
+{
+  "bug_id": "pandas_103",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.groupby.GroupBy.pct_change",
+    "buggy_methods": [
+      "pandas.core.groupby.groupby.GroupBy.pct_change"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.groupby.GroupBy.pct_change",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/tests/groupby/test_transform.py": [
+      880,
+      881,
+      882,
+      883,
+      884,
+      885,
+      886,
+      887,
+      888,
+      889,
+      890,
+      891,
+      892,
+      894,
+      900
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

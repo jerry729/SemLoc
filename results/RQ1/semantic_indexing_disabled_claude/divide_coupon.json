@@ -1,0 +1,38 @@
+{
+  "function": "divide_coupon",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the bug is on line 65. The `base` calculation uses `amount` instead of `amount - fee`. The fee should be deducted from the total amount before distributing, but instead the full `amount` is distributed and then `fee` is subtracted from each individual payout on line 67. This means the fee is subtracted per-participant rather than once from the total, which is incorrect behavior.\n\nThe correct line 65 should be:\n```python\nbase = list(map(lambda r: (r / total_ratio) * (amount - fee), ratios))\n```\n\nAnd line 67 should simply be:\n```python\nresult = [_clamp_payout(b) for b in base]\n```\n\n{\n  \"function_name\": \"divide_coupon\",\n  \"faulty_lines\": [65, 67],\n  \"explanation\": \"The fee should be deducted from the total amount before proportional distribution (line 65 should use `amount - fee`), but instead the full `amount` is distributed and then `fee` is subtracted from each individual participant's share on line 67, causing the fee to be applied multiple times rather than once.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

@@ -1,0 +1,47 @@
+{
+  "function": "latencies_merge",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    83
+  ],
+  "total_source_lines": 90,
+  "runs": [
+    {
+      "faulty_lines": [
+        86,
+        87
+      ],
+      "explanation": "Lines 86-87 incorrectly remove the last element when both streams share the same final value, but the docstring states duplicates should be preserved from both sources. This post-processing step contradicts the intended merge behavior and breaks correctness for cases where both streams end with equal values.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the code, lines 86-87 contain suspicious logic that removes the last element when both streams end with the same value. This is incorrect behavior - if both streams contain the same final value, both copies should be preserved (as stated in the docstring: \"Duplicate values that appear in both streams are preserved (one copy from each source)\"). This post-processing step incorrectly removes one of the duplicate entries.\n\n```json\n{\n  \"function_name\": \"latencies_merge\",\n  \"faulty_lines\": [86, 87],\n  \"explanation\": \"Lines 86-87 incorrectly remove the last element when both streams share the same final value, but the docstring states duplicates should be preserved from both sources. This post-processing step contradicts the intended merge behavior and breaks correctness for cases where both streams end with equal values.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        86,
+        87
+      ],
+      "valid_preds": [
+        86,
+        87
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 86,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

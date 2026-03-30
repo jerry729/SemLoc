@@ -1,0 +1,44 @@
+{
+  "function": "retry_backoff_window",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    66
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "When the raw delay exceeds max_delay, the code sets delay to max_delay + base instead of simply max_delay, causing the returned value to exceed the upper bound that should be enforced.",
+      "confidence": 0.98,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"retry_backoff_window\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"When the raw delay exceeds max_delay, the code sets delay to max_delay + base instead of simply max_delay, causing the returned value to exceed the upper bound that should be enforced.\",\n  \"confidence\": 0.98\n}",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

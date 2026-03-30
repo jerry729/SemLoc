@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_score",
+  "fault_hypothesis": "The condition on line 65, `if not clamp:`, incorrectly inverts the logic for clamping. Clamping is performed when `clamp` is false and skipped when it's true, which is the opposite of the intended behavior.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0.0 and t__1 <= 1.0"
+      },
+      "intent": "The interpolation parameter should be within [0, 1] for all passing tests, but this is violated by all failing tests.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))) or ((not clamp) and y__5 == y__1)"
+      },
+      "intent": "The final value should be clamped within the range [y0, y1] if clamping is requested, and should be the original interpolated value otherwise.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "If clamping is requested but the clamping logic is (incorrectly) skipped, the value must already be within the desired range.",
+      "confidence": 0.9
+    }
+  ]
+}

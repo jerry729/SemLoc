@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "upload_gate",
+  "fault_hypothesis": "The condition at line 74 should be `len(active) >= limit` instead of `len(active) > limit`. The current strict inequality fails to block uploads when the number of active uploads is exactly equal to the limit.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (len(active__1) == limit)"
+      },
+      "intent": "This check should not be executed if the active upload count is exactly at the limit, because the gate should be closed in that case.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "If the gate is allowed to proceed (the 'else' path of the check), the number of active uploads must be strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "Just before calculating the remaining slots, the count of active uploads must be strictly under the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] is False) == (len(active) >= limit)"
+      },
+      "intent": "The gate should be closed (allowed is False) if and only if the number of active uploads has reached or exceeded the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

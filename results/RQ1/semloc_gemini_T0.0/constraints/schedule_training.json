@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_training",
+  "fault_hypothesis": "The overlap detection on line 67 is incorrect. It uses non-strict inequalities (`<=`, `>=`), which fails to detect conflicts when intervals touch at their boundaries, causing them to be incorrectly accepted.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(end <= s or start >= e) == (end < s or start > e)"
+      },
+      "intent": "The non-overlap condition should use strict inequalities to correctly handle boundary cases where intervals touch.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end < s or start > e"
+      },
+      "intent": "If an iteration completes without finding a conflict, the new interval must be strictly non-overlapping with the current existing interval.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If the loop finishes without returning, it implies the new interval does not conflict with any existing one.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not __cbfl_result[0] or all(__cbfl_result[1][i][1] < __cbfl_result[1][i+1][0] for i in range(len(__cbfl_result[1]) - 1))"
+      },
+      "intent": "If an interval is successfully added, the resulting schedule must not contain any overlapping or touching intervals.",
+      "confidence": 0.9
+    }
+  ]
+}

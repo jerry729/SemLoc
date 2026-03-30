@@ -1,0 +1,29 @@
+{
+  "bug_id": "pandas_139",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.groupby.grouper.Grouping.__init__",
+    "buggy_methods": [
+      "pandas.core.groupby.grouper.Grouping.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.groupby.grouper.Grouping.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/groupby/grouper.py": [
+      333
+    ],
+    "pandas/tests/groupby/test_categorical.py": [
+      677,
+      687,
+      688
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

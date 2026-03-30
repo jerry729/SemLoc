@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_expiry",
+  "fault_hypothesis": "The bug is on line 77. The expiry check `now > adjusted_expiry` uses a strict greater-than comparison, which incorrectly considers an entry valid when the current time is exactly equal to the expiry time. It should use `>=` to correctly treat the entry as expired at the boundary.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1)"
+      },
+      "intent": "An entry should not be treated as valid if the current time is exactly its expiry time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "If an entry is served, the current time must be strictly before its expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= 0.0"
+      },
+      "intent": "A validated expiration timestamp must be non-negative.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_expiry__1 >= expires_at__1"
+      },
+      "intent": "The clock-skew adjusted expiry must not be earlier than the original expiry.",
+      "confidence": 0.9
+    }
+  ]
+}

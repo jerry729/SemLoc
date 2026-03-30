@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "feature_flag_rollout",
+  "fault_hypothesis": "The comparison on line 63 uses `>` instead of `<`, so a user is enrolled when their bucket is GREATER than the percentage rather than less than it. This inverts the rollout logic: at 100% rollout some users are excluded, at 0% some are included, and the monotonicity property is violated.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(percentage == 1.0 and __cbfl_result == True) or (percentage == 0.0 and __cbfl_result == False) or (percentage > 0.0 and percentage < 1.0)"
+      },
+      "intent": "At 100% rollout the result must be True and at 0% rollout the result must be False; the > operator violates both boundary conditions.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "not (percentage == 1.0 and bucket__1 > percentage)"
+      },
+      "intent": "When percentage is 1.0, no bucket value in [0,1) should be greater than it, so the enrolled check bucket > percentage would wrongly return False for some users.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "bucket__1"
+        }
+      },
+      "spec": {
+        "expr": "bucket__1 >= 0.0 and bucket__1 < 1.0"
+      },
+      "intent": "The computed bucket must be in [0, 1) so that `bucket < percentage` (not `bucket > percentage`) correctly implements the rollout fraction.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (percentage == 0.0 and __cbfl_result == True)"
+      },
+      "intent": "With a 0% rollout no user should ever be enrolled; the inverted comparison causes some users with bucket > 0.0 to be incorrectly enrolled.",
+      "confidence": 0.88
+    }
+  ]
+}

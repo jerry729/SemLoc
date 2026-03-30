@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_coupon",
+  "fault_hypothesis": "On line 67, the fee is subtracted from each participant's individual share (b - fee) instead of being deducted from the total amount before distribution. The fee should be applied to the total amount first, then shares computed proportionally.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "base shares should sum to the full amount before fee deduction, not to amount minus fee",
+      "confidence": 0.85
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee)) < 1e-6"
+      },
+      "intent": "sum of payouts should equal amount minus the single fee, not amount minus n*fee",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "base proportional shares must sum to the full amount before any fee is applied",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "returned payouts must sum to amount minus fee (single deduction), not amount minus n*fee",
+      "confidence": 0.9
+    }
+  ]
+}

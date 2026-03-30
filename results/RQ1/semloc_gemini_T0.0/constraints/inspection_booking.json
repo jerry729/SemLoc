@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "inspection_booking",
+  "fault_hypothesis": "The overlap check on line 65 is incorrect. It uses non-strict inequalities (`<=`, `>=`), which incorrectly treats adjacent time slots as non-overlapping, while the test cases require them to be treated as conflicts.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(b[1] <= a[0] or b[0] >= a[1]) == (b[1] < a[0] or b[0] > a[1])"
+      },
+      "intent": "The buggy non-overlap condition should be equivalent to the correct strict-inequality condition.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "candidate[1] < slot[0] or candidate[0] > slot[1]"
+      },
+      "intent": "If no overlap is detected for a slot, the candidate and slot must not be adjacent or overlapping.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(candidate[1] < s[0] or candidate[0] > s[1] for s in existing)"
+      },
+      "intent": "If the candidate is accepted, it must not have had any overlaps (including adjacent) with existing slots.",
+      "confidence": 0.9
+    }
+  ]
+}

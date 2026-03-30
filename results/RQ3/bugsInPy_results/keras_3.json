@@ -1,0 +1,29 @@
+{
+  "bug_id": "keras_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.models._clone_functional_model",
+    "buggy_methods": [
+      "keras.models._clone_functional_model"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.models._clone_functional_model",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/models.py": [
+      140,
+      141,
+      142,
+      153,
+      154,
+      155
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

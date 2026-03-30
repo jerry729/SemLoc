@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "fuel_moving_mean",
+  "fault_hypothesis": "The mean on line 65 is calculated by dividing by the fixed `window` size, instead of the actual number of recent samples. This causes an incorrect result when the number of values is smaller than the window.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (abs(mean__1 - (total__1 / len(recent__1))) < 1e-9)"
+      },
+      "intent": "If a mean is to be returned, it must be the total sum divided by the actual number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "When returning a numeric result, the calculated mean must be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (window == len(recent__1))"
+      },
+      "intent": "If a mean is computed, the window size used for division must match the actual number of samples.",
+      "confidence": 0.9
+    }
+  ]
+}

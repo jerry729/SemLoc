@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_lift",
+  "fault_hypothesis": "The condition on line 63 is inverted: `if not clamp` applies clamping when clamp is False and skips clamping when clamp is True. It should be `if clamp:` to clamp when clamping is requested.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or (clamp == False and True)"
+      },
+      "intent": "When clamp=True, the branch that restricts y should be entered; the condition `not clamp` is inverted so clamping happens when clamp=False instead of True.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of `if not clamp` should only execute when clamp is False; if clamp is True we should not be here.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "y__2 (the clamped value) is only computed when `not clamp` is True, meaning clamping is applied when clamp=False \u2014 the opposite of the intended behavior.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (min(y0,y1) <= __cbfl_result <= max(y0,y1) or abs(__cbfl_result - y0) < 1e-9 or abs(__cbfl_result - y1) < 1e-9)"
+      },
+      "intent": "When clamp=True the returned value should be within the y-range of the segment endpoints.",
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "dataloader_shard_merge",
+  "fault_hypothesis": "The condition on line 73 incorrectly identifies cases where a legitimate duplicate element at the end of the merged list should be removed. This causes the subsequent pop() on line 74 to corrupt the result when both input lists share the same final element.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left_ids and right_ids and merged__1[-1] == left_ids[-1] == right_ids[-1])"
+      },
+      "intent": "The special-case logic to remove a shared tail element should not trigger.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left_ids) + len(right_ids)"
+      },
+      "intent": "The merged list must contain all elements from both inputs before striding.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "This branch, which incorrectly removes a legitimate element, should never be taken.",
+      "confidence": 1.0
+    }
+  ]
+}

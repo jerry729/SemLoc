@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "packets_window_avg",
+  "fault_hypothesis": "The mean is calculated by dividing the sum of recent samples by the fixed window size, even when the number of available samples is smaller than the window. The division on line 63 should use the actual number of samples, `len(recent)`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (abs(mean__1 - (total__1 / len(recent__1))) < 1e-9)"
+      },
+      "intent": "The mean must be calculated correctly, unless the result is discarded because the warmup threshold has not been met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "If a mean is returned, it must be correctly calculated based on the number of available samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) < window) or (len(recent__1) < warmup_min)"
+      },
+      "intent": "A partial window of samples should only be processed if it's below the warmup threshold.",
+      "confidence": 0.8
+    }
+  ]
+}

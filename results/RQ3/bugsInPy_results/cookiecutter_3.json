@@ -1,0 +1,27 @@
+{
+  "bug_id": "cookiecutter_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "cookiecutter.prompt.read_user_choice",
+    "buggy_methods": [
+      "cookiecutter.prompt.read_user_choice"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "cookiecutter.prompt.read_user_choice",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "cookiecutter/prompt.py": [
+      91
+    ],
+    "tests/test_read_user_choice.py": [
+      32
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

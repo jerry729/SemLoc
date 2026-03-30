@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_153",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.blocks.Block.to_native_types",
+    "buggy_methods": [
+      "pandas.core.internals.blocks.Block.to_native_types"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.blocks.Block.to_native_types",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/internals/blocks.py": [
+      10,
+      709
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

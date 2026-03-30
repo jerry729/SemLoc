@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_payout",
+  "fault_hypothesis": "The fee is deducted from each individual share in the return statement (line 73) instead of being deducted once from the total pool before distribution. This causes the total fee deducted to be fee * len(ratios) instead of fee.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([s - fee for s in shares__1]) - (amount - fee)) < 1e-6 or fee == 0.0"
+      },
+      "intent": "The total distributed should equal amount minus fee (once), not amount minus fee*n.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6 or amount < 1e-9"
+      },
+      "intent": "Before fee deduction, shares should sum to the full amount (fee not yet applied).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) <= len(ratios)"
+      },
+      "intent": "Each iteration appends exactly one share proportional to ratio, not adjusted by fee.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-6 or amount < 1e-9"
+      },
+      "intent": "The sum of all returned payouts must equal amount minus fee (deducted once total).",
+      "confidence": 0.92
+    }
+  ]
+}

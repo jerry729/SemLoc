@@ -1,0 +1,25 @@
+{
+  "bug_id": "luigi_7",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.scheduler.Scheduler.add_task",
+    "buggy_methods": [
+      "luigi.scheduler.Scheduler.add_task"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.scheduler.Scheduler.add_task",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/scheduler.py": [
+      826,
+      827
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

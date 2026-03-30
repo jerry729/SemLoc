@@ -1,0 +1,31 @@
+{
+  "bug_id": "fastapi_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.security.http.HTTPBearer.__call__",
+    "buggy_methods": [
+      "fastapi.security.http.HTTPBearer.__call__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.security.http.HTTPBearer.__call__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/security/http.py": [
+      115,
+      116,
+      117,
+      118
+    ],
+    "tests/test_security_http_bearer_optional.py": [
+      67,
+      68
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

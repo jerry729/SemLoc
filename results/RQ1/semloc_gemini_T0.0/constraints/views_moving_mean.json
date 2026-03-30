@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "views_moving_mean",
+  "fault_hypothesis": "The calculation of the mean on line 62 is incorrect. It always divides the total by the fixed `window` size, but it should divide by the actual number of samples collected in `recent`, which can be smaller.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The mean must be the total sum divided by the actual number of recent samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "min(recent__1) <= mean__1 <= max(recent__1)"
+      },
+      "intent": "The calculated mean must fall within the range of the values being averaged.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(total__1 - (mean__1 * len(recent__1))) < 1e-9"
+      },
+      "intent": "The total must equal the mean multiplied by the number of recent samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(mean - (sum(recent) / len(recent))) < 1e-9"
+      },
+      "intent": "The unrounded mean must be correctly calculated from the available samples before returning.",
+      "confidence": 0.8
+    }
+  ]
+}

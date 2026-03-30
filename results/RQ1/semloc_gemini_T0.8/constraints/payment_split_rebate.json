@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_split_rebate",
+  "fault_hypothesis": "The function incorrectly calculates shares from the gross total on line 62, instead of the total net of rebate. This leads to the rebate being wrongly subtracted from each individual share on line 66, effectively multiplying the rebate amount by the number of participants.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(ratios) <= 1) or (abs(sum(shares__1) - max(0, total - rebate)) < 1e-9)"
+      },
+      "intent": "The sum of intermediate shares should be based on the distributable total (post-rebate), unless the bug has no effect.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(ratios) <= 1) or (abs(sum(shares__1) - max(0, total - rebate)) < 1e-9)"
+      },
+      "intent": "The defined value of the intermediate shares must sum to the correct distributable amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs((sum(shares__1) - len(shares__1) * rebate) - max(0, total - rebate)) < 1e-9"
+      },
+      "intent": "Before using shares to calculate final payouts, verify the resulting sum will be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, total - rebate)) < 1e-9"
+      },
+      "intent": "The sum of all final payouts must equal the total amount minus the rebate.",
+      "confidence": 0.8
+    }
+  ]
+}

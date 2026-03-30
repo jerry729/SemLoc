@@ -1,0 +1,28 @@
+[
+  {
+    "cid": "C2",
+    "status": "Irrelevant",
+    "patch": "updated.append(max(_MIN_WEIGHT, current[idx] + (target[idx] - current[idx]) * damping))",
+    "original_failing": [
+      "test_unequal_current_sum_still_normalised"
+    ],
+    "patched_failing": [
+      "test_unequal_current_sum_still_normalised"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  },
+  {
+    "cid": "C3",
+    "status": "OverApproximate",
+    "patch": "",
+    "original_failing": [
+      "test_unequal_current_sum_still_normalised"
+    ],
+    "patched_failing": [
+      "test_unequal_current_sum_still_normalised"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  }
+]

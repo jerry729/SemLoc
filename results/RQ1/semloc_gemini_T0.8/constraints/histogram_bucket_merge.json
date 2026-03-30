@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "histogram_bucket_merge",
+  "fault_hypothesis": "The function incorrectly removes a duplicate edge value if it appears as the last element in both input lists. This happens on line 78, which violates the documented behavior that all copies of shared edges should be retained.",
+  "fault_line": 78,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The total number of merged edges must equal the sum of the input edge counts.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "When the last elements are identical, both copies must be retained, so the list length should not be reduced.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__2"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__2) == len(left) + len(right)"
+      },
+      "intent": "The final list must contain a number of elements equal to the sum of the lengths of the inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

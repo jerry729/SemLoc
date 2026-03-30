@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_74",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.timedeltas.TimedeltaIndex.__new__",
+    "buggy_methods": [
+      "pandas.core.indexes.timedeltas.TimedeltaIndex.__new__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.timedeltas.TimedeltaIndex.__new__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/timedeltas.py": [
+      166
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

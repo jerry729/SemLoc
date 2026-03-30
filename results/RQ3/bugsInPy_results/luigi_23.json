@@ -1,0 +1,39 @@
+{
+  "bug_id": "luigi_23",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.scheduler.Worker.__init__",
+    "buggy_methods": [
+      "luigi.scheduler.Worker.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.scheduler.Worker.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/interface.py": [
+      112
+    ],
+    "luigi/scheduler.py": [
+      230
+    ],
+    "test/worker_external_task_test.py": [
+      83,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

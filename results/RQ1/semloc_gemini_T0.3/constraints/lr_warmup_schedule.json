@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lr_warmup_schedule",
+  "fault_hypothesis": "The learning rate calculation on line 59 is incorrect. It uses `step + 1` instead of `step`, causing the calculated rate to be consistently higher than expected during the warmup phase.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "warmup_steps < 100"
+      },
+      "intent": "The calculation fails for the larger warmup step values used in failing tests, but passes for the smaller value in the passing test.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lr__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(lr__1 - (base_lr * step / warmup_steps)) < 1e-9"
+      },
+      "intent": "The calculated learning rate should be directly proportional to the current step.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 57,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "step > 0 or lr__1 < 1e-7"
+      },
+      "intent": "At step 0, the initial learning rate should be effectively zero.",
+      "confidence": 0.95
+    }
+  ]
+}

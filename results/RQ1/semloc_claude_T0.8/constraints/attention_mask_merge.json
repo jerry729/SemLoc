@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "attention_mask_merge",
+  "fault_hypothesis": "On line 67, the merge uses `a or b` (disjunction) instead of `a and b` (conjunction), producing True whenever either mask is True rather than only when both are True.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "merged[-1] == (a and b)"
+      },
+      "intent": "After appending, the last element must equal the conjunction of a and b, not the disjunction.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "merged[-1] == (a and b)"
+      },
+      "intent": "At the end of every loop iteration the appended value must be the logical AND of a and b.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all(merged__1[i] == (mask_a[i] and mask_b[i]) for i in range(len(merged__1)))"
+      },
+      "intent": "The merged list must be the element-wise AND of both input masks.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(__cbfl_result[i] == (mask_a[i] and mask_b[i]) for i in range(len(__cbfl_result)))"
+      },
+      "intent": "The returned mask must be the conjunction of both input masks at every position.",
+      "confidence": 0.9
+    }
+  ]
+}

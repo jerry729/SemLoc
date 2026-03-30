@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_release",
+  "fault_hypothesis": "The counter capping logic is incorrect on line 60. When an updated counter exceeds the cap, it is set to `cap - 1` instead of being clamped to the cap value itself.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The capped value should be exactly the cap, not less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 59,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 == cap"
+      },
+      "intent": "After the counter exceeds the cap, its value should be clamped to the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__3"
+        }
+      },
+      "spec": {
+        "expr": "cap is None or ((updated__1 <= cap and updated__3 == updated__1) or (updated__1 > cap and updated__3 == cap))"
+      },
+      "intent": "The value after the capping logic must correctly reflect either the incremented value or the cap itself.",
+      "confidence": 0.9
+    }
+  ]
+}

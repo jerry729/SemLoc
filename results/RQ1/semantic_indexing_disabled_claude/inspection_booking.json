@@ -1,0 +1,38 @@
+{
+  "function": "inspection_booking",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `overlaps` function on line 65:\n\n```python\nreturn not (b[1] <= a[0] or b[0] >= a[1])\n```\n\nWhen `_CONFLICT_STRICT` is `False`, adjacent windows sharing only an endpoint should **not** conflict. The current condition `b[1] <= a[0]` means if b ends exactly where a starts, they don't overlap (correct). And `b[0] >= a[1]` means if b starts exactly where a ends, they don't overlap (correct).\n\nWait, let me re-examine. The docstring says \"adjacent windows that share only an endpoint are **not** considered conflicting\" when `_CONFLICT_STRICT` is `False`. \n\nThe current overlap check: `not (b[1] <= a[0] or b[0] >= a[1])` - this uses strict inequalities for non-overlap conditions, meaning endpoints touching are NOT considered overlapping. This seems correct for the non-strict case.\n\nBut the function never uses `_CONFLICT_STRICT` at all! The overlap logic is hardcoded. If `_CONFLICT_STRICT` were `True`, adjacent windows sharing an endpoint should be considered conflicting, which would require `b[1] < a[0] or b[0] > a[1]` for non-overlap. The code doesn't respect `_CONFLICT_STRICT`.\n\nHowever, since `_CONFLICT_STRICT = False` by default and the current behavior matches the non-strict case, this may work correctly for most tests. Let me think about what other bugs there might be...\n\nThe overlap function parameters: `overlaps(slot, candidate)` where `a=slot` and `b=candidate`. The check `not (b[1] <= a[0] or b[0] >= a[1])` correctly identifies overlap. This looks correct.\n\nThe main issue is line 65 doesn't account for `_CONFLICT_STRICT`. When `_CONFLICT_STRICT=True`, touching endpoints should conflict, requiring `<` instead of `<=`.\n\n{\n  \"function_name\": \"inspection_booking\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The `overlaps` function on line 65 ignores the `_CONFLICT_STRICT` flag entirely. When `_CONFLICT_STRICT` is `True`, adjacent windows sharing only an endpoint should be considered conflicting, requiring `b[1] < a[0] or b[0] > a[1]` for non-overlap instead of the current strict-inequality conditions.\",\n  \"confidence\": 0.55\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

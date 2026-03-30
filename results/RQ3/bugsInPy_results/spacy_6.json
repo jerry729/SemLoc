@@ -1,0 +1,24 @@
+{
+  "bug_id": "spacy_6",
+  "autofl": {
+    "top1": true,
+    "prediction": "spacy.language.Language.remove_pipe",
+    "buggy_methods": [
+      "spacy.language.Language.remove_pipe"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "spacy.language.Language.remove_pipe",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "spacy/language.py": [
+      407
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

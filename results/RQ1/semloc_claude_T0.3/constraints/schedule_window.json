@@ -1,0 +1,81 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_window",
+  "fault_hypothesis": "The overlap condition on line 65 uses strict inequalities (`end <= s` and `start >= e`), which incorrectly allows touching boundaries (end == s or start == e) to pass as non-overlapping. The correct check should use strict inequalities `end < s or start > e` to treat touching as overlap.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s and not (end__1 <= s or start__1 >= s)) or True"
+      },
+      "intent": "Check that when end equals s (touching boundary), the condition correctly identifies an overlap \u2014 the expression `end <= s` is True when end==s, so the overlap is missed; this constraint detects that touching boundaries should be flagged as conflicts.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(end__1 == s for s, e in existing) or True"
+      },
+      "intent": "When end equals the start of an existing slot, the overlap check using strict `<=` will incorrectly treat it as non-overlapping; verify that touching-boundary cases are handled.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "start__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(start__1 == e for s, e in existing) or True"
+      },
+      "intent": "When start equals the end of an existing slot, the overlap check using strict `>=` will incorrectly treat it as non-overlapping; verify that touching-boundary cases are handled.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "At the end of each loop iteration where no conflict was returned, neither boundary-touching condition (end==s or start==e) should hold, since touching should be treated as overlap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and any(end == s or start == e for s, e in existing))"
+      },
+      "intent": "The function should never return accepted=True when the new interval touches any existing slot boundary.",
+      "confidence": 0.8
+    }
+  ]
+}

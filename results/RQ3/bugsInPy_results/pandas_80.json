@@ -1,0 +1,31 @@
+{
+  "bug_id": "pandas_80",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexing.check_bool_indexer",
+    "buggy_methods": [
+      "pandas.core.indexing.check_bool_indexer"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexing.check_bool_indexer",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/generic.py": [
+      1396,
+      1397
+    ],
+    "pandas/core/indexing.py": [
+      2236
+    ],
+    "pandas/tests/extension/base/__init__.py": [
+      52
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

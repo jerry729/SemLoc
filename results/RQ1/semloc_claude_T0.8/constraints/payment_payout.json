@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_payout",
+  "fault_hypothesis": "The fee is subtracted from each individual share on line 73 instead of being deducted from the total pool before distribution. The fee should be deducted once from the amount before computing shares, not subtracted from every participant's share.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([s - fee for s in shares__1]) - (amount - fee)) < 1e-6 or len(ratios) != 1"
+      },
+      "intent": "When fee is subtracted from each share, the total distributed equals amount - len(ratios)*fee, not amount - fee; check that the return value sums correctly to amount - fee.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (amount - fee)) < 1e-3 or fee == 0.0"
+      },
+      "intent": "After computing shares (before fee subtraction), the sum of shares should already account for the fee deduction if it were applied to the pool, not per-share.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= 0.0 for s in shares__1)"
+      },
+      "intent": "Each share appended during the loop should be non-negative since it is derived from a non-negative amount and ratio.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-3"
+      },
+      "intent": "The total distributed should equal amount minus fee (once), not amount minus fee times number of participants.",
+      "confidence": 0.9
+    }
+  ]
+}

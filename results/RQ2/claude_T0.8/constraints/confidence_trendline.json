@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "confidence_trendline",
+  "fault_hypothesis": "The condition on line 77 is inverted: clamping is applied when `not clamp` is True (i.e., clamp=False), but it should be applied when clamp=True. The `if not clamp:` should be `if clamp:`.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "clamp == (not (not clamp))"
+      },
+      "intent": "When clamp=True the branch body (clamping logic) should execute, but the inverted condition causes it to execute only when clamp=False",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch (clamping) should only execute when clamp is False under current buggy logic, but should execute when clamp is True",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "After the clamping block, if clamp=True then y should be within [min(y0,y1), max(y0,y1)]",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "clamp == (y__4 == max(min(y__1, max(y0, y1)), min(y0, y1)))"
+      },
+      "intent": "When clamp=True, y__4 should equal the clamped value of y__1 to [min(y0,y1), max(y0,y1)]",
+      "confidence": 0.85
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result <= max(y0, y1) + 1e-9 and __cbfl_result >= min(y0, y1) - 1e-9)"
+      },
+      "intent": "When clamp=True the returned value must be within the reference point range",
+      "confidence": 0.8
+    }
+  ]
+}

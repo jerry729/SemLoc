@@ -1,0 +1,119 @@
+{
+  "bug_id": "scrapy_33",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.pipelines.media.MediaPipeline.item_completed",
+    "buggy_methods": [
+      "scrapy.pipelines.media.MediaPipeline.item_completed"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.pipelines.media.MediaPipeline.item_completed",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/core/engine.py": [
+      19,
+      138,
+      141,
+      144,
+      156,
+      271
+    ],
+    "scrapy/core/scraper.py": [
+      13,
+      110,
+      156,
+      205,
+      230
+    ],
+    "scrapy/downloadermiddlewares/robotstxt.py": [
+      62
+    ],
+    "scrapy/extensions/feedexport.py": [
+      187
+    ],
+    "scrapy/log.py": [
+      51
+    ],
+    "scrapy/pipelines/files.py": [
+      215
+    ],
+    "scrapy/pipelines/media.py": [
+      73,
+      130
+    ],
+    "scrapy/utils/log.py": [
+      3,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      61,
+      62,
+      63,
+      64,
+      65,
+      69
+    ],
+    "scrapy/utils/signal.py": [
+      50
+    ],
+    "tests/test_pipeline_media.py": [
+      69
+    ],
+    "tests/test_utils_log.py": [
+      3,
+      11,
+      16,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      44,
+      45,
+      46,
+      48,
+      49,
+      50
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

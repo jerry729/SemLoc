@@ -1,0 +1,27 @@
+{
+  "bug_id": "tornado_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.web.StaticFileHandler.get",
+    "buggy_methods": [
+      "tornado.web.StaticFileHandler.get"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.web.StaticFileHandler.get",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/web.py": [
+      2603,
+      2606,
+      2611,
+      2612
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "limit_message",
+  "fault_hypothesis": "Line 73 uses a strict greater-than comparison (`> limit`) instead of greater-than-or-equal (`>= limit`), so when `len(recent) == limit` the function incorrectly returns `True` with `remaining=0` instead of `False, 0`.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) > limit)"
+      },
+      "intent": "When recent count equals the limit, the condition must be True to enter the denial branch; the strict > misses this case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed=True), recent count must be strictly less than limit; if equal, we should have denied.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) >= limit) or (len(recent__1) > limit)"
+      },
+      "intent": "Before using recent__1 in the comparison, if count >= limit the strict > check is insufficient to catch the equality case.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True) or (__cbfl_result[1] > 0)"
+      },
+      "intent": "If allowed is True, remaining must be positive; returning True with remaining=0 indicates the off-by-one boundary error.",
+      "confidence": 0.88
+    }
+  ]
+}

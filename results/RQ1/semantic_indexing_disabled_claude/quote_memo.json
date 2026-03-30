@@ -1,0 +1,38 @@
+{
+  "function": "quote_memo",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    59
+  ],
+  "total_source_lines": 63,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the key logic is on line 61:\n\n```python\nif now > effective:\n    return None\n```\n\nThe docstring says the entry expires at `ttl` (the epoch-second at which the entry expires). So the entry is valid when `now <= ttl` (or `now <= effective`), and expired when `now > effective`. This seems correct at first glance.\n\nHowever, the typical convention for cache expiration is that an entry is expired when `now >= ttl` (i.e., at the moment of expiration, it's no longer valid). The current code uses strict `>`, meaning an entry where `now == effective` would still be returned as valid (not expired). This is a subtle off-by-one: the entry should be expired when `now >= effective`, not just when `now > effective`.\n\nThe condition should be `if now >= effective` to correctly handle the case where the current time equals the expiration time.\n\n```json\n{\n  \"function_name\": \"quote_memo\",\n  \"faulty_lines\": [61],\n  \"explanation\": \"The expiration check uses strict greater-than (`now > effective`) instead of greater-than-or-equal (`now >= effective`), meaning entries are incorrectly considered valid at the exact moment of their expiration timestamp.\",\n  \"confidence\": 0.72\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

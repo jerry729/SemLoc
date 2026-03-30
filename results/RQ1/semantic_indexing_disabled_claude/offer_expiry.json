@@ -1,0 +1,44 @@
+{
+  "function": "offer_expiry",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    66
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the key issue is on line 66: `if now > effective_deadline:` should likely be `if now >= effective_deadline:` to properly handle the case where `now` equals the deadline (the offer should be expired at exactly the deadline, not still valid).\n\nHowever, without specific test failure information, I need to reason about what's most likely wrong. The condition `now > effective_deadline` means an offer is still valid when `now == deadline`, but typically an offer expires AT the deadline, not after. This is a common off-by-one error in expiry logic.\n\n{\n  \"function_name\": \"offer_expiry\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"The expiry condition uses strict greater-than (`now > effective_deadline`), meaning offers are considered valid when `now == deadline`. The correct behavior is typically to expire at the deadline, requiring `now >= effective_deadline`.\",\n  \"confidence\": 0.72\n}",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,47 @@
+{
+  "function": "cached_metric",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        61,
+        59
+      ],
+      "explanation": "The function incorrectly compares an absolute timestamp (`now`) with a value (`ttl`) that, by convention, represents a relative duration. This comparison on line 61 is logically flawed because it treats a time-to-live value as an absolute expiry timestamp, causing valid cache entries to be incorrectly identified as expired.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"cached_metric\",\n  \"faulty_lines\": [\n    61,\n    59\n  ],\n  \"explanation\": \"The function incorrectly compares an absolute timestamp (`now`) with a value (`ttl`) that, by convention, represents a relative duration. This comparison on line 61 is logically flawed because it treats a time-to-live value as an absolute expiry timestamp, causing valid cache entries to be incorrectly identified as expired.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        61,
+        59
+      ],
+      "valid_preds": [
+        61,
+        59
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 61,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

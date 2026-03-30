@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "water_allocator",
+  "fault_hypothesis": "The function uses simple int() truncation (floor) on line 29 without applying the largest-remainder method to correct for rounding losses, causing the sum of allocations to be less than total when weights don't divide evenly.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == int(total)"
+      },
+      "intent": "After computing integer allocations via truncation, their sum must equal the total (fails when remainder is discarded).",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(s >= 0 for s in shares__1)"
+      },
+      "intent": "Each share appended in the loop must be non-negative.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == 0"
+      },
+      "intent": "Immediately after initialization, shares must be empty before the loop fills it.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 28,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The returned integer list must sum to the original total, catching the largest-remainder omission.",
+      "confidence": 0.88
+    }
+  ]
+}

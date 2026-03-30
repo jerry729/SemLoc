@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "token_expiry_check",
+  "fault_hypothesis": "The bug is on line 69. The expiry check `now > adjusted_expiry` uses a strict greater-than comparison, which incorrectly considers a token valid when the current time is exactly equal to its expiry time. It should use `>=` to correctly invalidate tokens at the moment of expiry.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "A token should only be considered valid if the current time is strictly before its adjusted expiry.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_expiry__1 >= expires_at__1"
+      },
+      "intent": "The adjusted expiry time must be greater than or equal to the original expiry time to account for clock skew.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "expires_at__1 >= 0"
+      },
+      "intent": "The token expiry timestamp must be a non-negative value.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result is None) or (key in tokens)"
+      },
+      "intent": "If a token value is returned, the key must exist in the token store.",
+      "confidence": 0.9
+    }
+  ]
+}

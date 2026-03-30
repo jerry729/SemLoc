@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reservation_overlap_check",
+  "fault_hypothesis": "The non-overlap check on line 69 uses non-strict inequalities (`<=`, `>=`), causing it to fail for intervals that share a single endpoint. It should use strict inequalities (`<`, `>`) to correctly identify these boundary cases as overlaps.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (c_end == start or c_start == end)"
+      },
+      "intent": "The buggy overlap logic works correctly only when the intervals do not share an endpoint.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "c_end < start or c_start > end"
+      },
+      "intent": "If the function determines there is no overlap, the intervals must be strictly disjoint.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "c_end < start or c_start > end"
+      },
+      "intent": "As long as the loop continues, it implies no overlap has been found, so the candidate must be strictly disjoint from the current reservation.",
+      "confidence": 0.9
+    }
+  ]
+}

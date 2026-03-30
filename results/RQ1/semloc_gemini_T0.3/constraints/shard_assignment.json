@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shard_assignment",
+  "fault_hypothesis": "The function's documentation promises that each returned shard list will be sorted, but the implementation omits this sorting step. The unsorted lists are returned on line 65.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "all(b == sorted(b) for b in __cbfl_result)"
+      },
+      "intent": "Each returned shard list must be sorted in ascending order.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buckets__1"
+        }
+      },
+      "spec": {
+        "expr": "len(buckets__1) == shards and all(len(b) == 0 for b in buckets__1)"
+      },
+      "intent": "The `buckets` structure must be initialized with the correct number of empty shards.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "key in buckets__1[_compute_bucket_index(key, shards)]"
+      },
+      "intent": "After each iteration, the current key must be present in its assigned shard.",
+      "confidence": 0.8
+    }
+  ]
+}

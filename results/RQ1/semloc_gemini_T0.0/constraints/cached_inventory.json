@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_inventory",
+  "fault_hypothesis": "The bug is on line 70. The check for an expired cache entry uses a strict greater-than comparison (`>`), but it should be greater-than-or-equal-to (`>=`) to correctly handle cases where the current time is exactly at the deadline.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(now > adjusted_deadline__1) == (now >= adjusted_deadline__1)"
+      },
+      "intent": "The buggy comparison's result should match that of an inclusive comparison.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_deadline__1"
+      },
+      "intent": "If an item is considered valid (not expired), the current time must be strictly before its adjusted deadline.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(record__1) == 2"
+      },
+      "intent": "A record successfully retrieved from the store must be a tuple of size 2.",
+      "confidence": 0.8
+    }
+  ]
+}

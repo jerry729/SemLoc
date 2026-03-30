@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cacheline_expiry",
+  "fault_hypothesis": "The expiry check on line 67 uses a strict `>` comparison, which fails to expire cache entries when the current time is exactly equal to the TTL. The comparison should be `>=` to correctly handle the boundary case.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(now > adjusted_ttl__1) == (now >= adjusted_ttl__1)"
+      },
+      "intent": "The strict inequality check behaves differently from the correct non-strict check only at the boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "If the expiry check passes, the current time must be strictly less than the adjusted TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_ttl__1"
+      },
+      "intent": "Before returning the payload, we must ensure the entry has not expired by being strictly before the TTL.",
+      "confidence": 1.0
+    }
+  ]
+}

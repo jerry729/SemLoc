@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_errors",
+  "fault_hypothesis": "The mean on line 62 is calculated by dividing the total sum by the fixed `window` size. It should instead divide by the actual number of samples (`len(recent)`), which can be smaller than the window.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (abs(mean__1 * len(recent__1) - total__1) < 1e-9)"
+      },
+      "intent": "The calculated mean should be correct unless the warmup condition is not met, in which case the value is irrelevant.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "If a mean is returned, it must be correctly calculated from the sum and count of available samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == min(len(values), window)"
+      },
+      "intent": "The number of recent samples should be the number of available values, capped by the window size.",
+      "confidence": 0.8
+    }
+  ]
+}

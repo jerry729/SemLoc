@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_budget_cut",
+  "fault_hypothesis": "The fee is subtracted per-participant in the list comprehension on line 67 (`s - fee`), but it should be deducted once from the total pool before splitting. The correct approach is to compute `net = amount - fee` and distribute that, not subtract `fee` from each individual share.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(s - fee) for s in shares__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts should equal amount minus the single fee deduction, not amount minus fee*n.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (len(shares__1) / len(ratios)) * amount) < 1e-6"
+      },
+      "intent": "After each iteration, the partial sum of shares should be proportional to amount (not net amount), confirming fee is not yet deducted inside the loop.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before the return comprehension uses shares, their sum should equal the full amount (fee not yet deducted); the deduction should happen once on the total, not per element.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "After computing total_ratio, it must be positive to allow valid proportional distribution.",
+      "confidence": 0.7
+    }
+  ]
+}

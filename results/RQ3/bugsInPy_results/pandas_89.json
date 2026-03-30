@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_89",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.reshape.reshape._unstack_multiple",
+    "buggy_methods": [
+      "pandas.core.reshape.reshape._unstack_multiple"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.reshape.reshape._unstack_multiple",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/reshape/reshape.py": [
+      361
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

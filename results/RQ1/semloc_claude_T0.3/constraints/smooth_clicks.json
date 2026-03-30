@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_clicks",
+  "fault_hypothesis": "On line 58, the mean is computed by dividing by `window` instead of `len(tail)`. When the window is larger than the available data, `tail` has fewer elements than `window`, so dividing by `window` produces a value that is too small.",
+  "fault_line": 58,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 58
+        }
+      },
+      "spec": {
+        "expr": "mean__1 == total__1 / len(tail__1)"
+      },
+      "intent": "The mean must be total divided by the actual number of tail elements, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "After computing mean, verify it equals total divided by actual sample count.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "Before returning mean, confirm it was computed using len(tail) not window.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - round(sum(values[-window:]) / len(values[-window:]), 2)) < 1e-9"
+      },
+      "intent": "The returned value should match the mean of actual tail elements, not window-divided mean.",
+      "confidence": 0.75
+    }
+  ]
+}

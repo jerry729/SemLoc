@@ -1,0 +1,44 @@
+{
+  "function": "catalog_cache",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [
+        64
+      ],
+      "explanation": "The expiration check `now > adjusted_expiry` incorrectly treats an entry as valid when the current time is exactly equal to the expiration time. The comparison should be `>=` to correctly handle this boundary case and consider the entry expired at the exact moment of its expiration.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"catalog_cache\",\n  \"faulty_lines\": [\n    64\n  ],\n  \"explanation\": \"The expiration check `now > adjusted_expiry` incorrectly treats an entry as valid when the current time is exactly equal to the expiration time. The comparison should be `>=` to correctly handle this boundary case and consider the entry expired at the exact moment of its expiration.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        64
+      ],
+      "valid_preds": [
+        64
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 64,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

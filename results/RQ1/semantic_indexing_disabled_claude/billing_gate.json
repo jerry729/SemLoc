@@ -1,0 +1,44 @@
+{
+  "function": "billing_gate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    72
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        72
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, I need to identify the bug.\n\nThe function should return `False` when the number of active timestamps equals or exceeds the limit. The condition on line 72 is `if len(active) > limit`, but it should be `if len(active) >= limit`.\n\nWhen `len(active) == limit`, the window is already full (no more actions are allowed), so it should return `False, 0`. But the current code returns `True, 0` instead.\n\nAlso, line 74: `limit - len(active)` would return 0 when `len(active) == limit`, which is technically correct for remaining, but the `allowed` should be `False` in that case.\n\nThe bug is on line 72 where `>` should be `>=`.\n\n{\n  \"function_name\": \"billing_gate\",\n  \"faulty_lines\": [72],\n  \"explanation\": \"The condition `len(active) > limit` should be `len(active) >= limit`. When the number of active timestamps equals the limit, no more actions should be allowed, but the current code incorrectly returns `True, 0` instead of `False, 0`.\",\n  \"confidence\": 0.9\n}",
+      "predicted": [
+        72
+      ],
+      "valid_preds": [
+        72
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 72,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

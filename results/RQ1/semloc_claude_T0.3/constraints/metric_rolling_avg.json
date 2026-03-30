@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "metric_rolling_avg",
+  "fault_hypothesis": "On line 70, the average is computed by dividing `total` by `window` instead of `len(tail)`. When fewer values than `window` are available, this produces an incorrect (too small) average.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "avg should equal total divided by the actual number of tail elements, not by window",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing avg, avg * len(tail) should equal total when tail is non-empty",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) >= window or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before returning avg, if tail is shorter than window the avg must be based on len(tail) not window",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - sum(values[-window:]) / len(values[-window:])) < 1e-9"
+      },
+      "intent": "The returned average must equal the mean of the actual tail elements, not total/window",
+      "confidence": 0.85
+    }
+  ]
+}

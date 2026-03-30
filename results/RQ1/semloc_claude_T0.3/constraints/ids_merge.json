@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ids_merge",
+  "fault_hypothesis": "Lines 67-68 incorrectly remove the last element when both inputs share the same last value, but a correct merge should keep all duplicates. The pop() logic is entirely wrong and should not exist.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After the pop, the merged list length must still equal the sum of both input lengths \u2014 this is violated when the pop incorrectly removes a duplicate.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After executing the then-branch (the pop), the merged list length must equal the total input length.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1]) or len(merged__1) > len(left) + len(right)"
+      },
+      "intent": "The condition triggering the pop should never be true for a correctly merged list of the right length \u2014 if it fires, it indicates a bug.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned merged list must always have length equal to the sum of both input lengths.",
+      "confidence": 0.95
+    }
+  ]
+}

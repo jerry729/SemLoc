@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "billing_gate",
+  "fault_hypothesis": "The condition on line 72 uses strict greater-than (`>`) instead of greater-than-or-equal (`>=`), so when `len(active) == limit` the function incorrectly returns True (allowed) instead of False (denied).",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit or len(active__1) > limit or (len(active__1) == limit)"
+      },
+      "intent": "When len(active) equals limit, the branch condition must be true so the function returns False,0; the bug is that `>` should be `>=`.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) < limit"
+      },
+      "intent": "After the else branch (not denied), the number of active actions must be strictly less than limit; equality should have been caught by the if-branch.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "active__1"
+        }
+      },
+      "spec": {
+        "expr": "len(active__1) != limit or limit > 0"
+      },
+      "intent": "Before using active in the comparison, if len(active)==limit the gate should deny \u2014 this constraint flags the boundary case that the strict inequality misses.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(active__1) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when the number of active actions is at or above the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "function": "backlog_rolling_avg",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    59
+  ],
+  "total_source_lines": 66,
+  "runs": [
+    {
+      "faulty_lines": [
+        59
+      ],
+      "explanation": "The mean is computed by dividing `total` by `window` (the requested window size) rather than by `len(recent)` (the actual number of samples). When fewer samples than `window` are available, this produces an incorrect (too-small) average instead of the true mean of the available samples.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"backlog_rolling_avg\",\n  \"faulty_lines\": [59],\n  \"explanation\": \"The mean is computed by dividing `total` by `window` (the requested window size) rather than by `len(recent)` (the actual number of samples). When fewer samples than `window` are available, this produces an incorrect (too-small) average instead of the true mean of the available samples.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        59
+      ],
+      "valid_preds": [
+        59
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 59,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

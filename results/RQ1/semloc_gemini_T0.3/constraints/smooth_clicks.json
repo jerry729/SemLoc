@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_clicks",
+  "fault_hypothesis": "The rolling mean at line 58 is calculated by dividing by the fixed `window` size. It should instead divide by the actual number of samples in `tail` (`len(tail)`), which can be smaller than `window`.",
+  "fault_line": 58,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 58
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the sum of tail elements divided by the count of tail elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "The formula used for the mean is only correct if the number of samples equals the window size.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "If a numeric value is to be returned, the computed mean must be correct.",
+      "confidence": 0.9
+    }
+  ]
+}

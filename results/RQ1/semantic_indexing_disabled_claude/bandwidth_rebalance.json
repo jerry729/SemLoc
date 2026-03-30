@@ -1,0 +1,44 @@
+{
+  "function": "bandwidth_rebalance",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 65,
+  "runs": [
+    {
+      "faulty_lines": [
+        65
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, it's supposed to normalize the weights so they sum to 1.0, but the normalization step is missing. The function computes the updated weights but never divides by their sum before returning.\n\n{\n  \"function_name\": \"bandwidth_rebalance\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The function is documented to return weights that sum to 1.0, but the normalization step (dividing each weight by the total sum) is missing before the return statement. The function returns the raw interpolated weights without normalizing them.\",\n  \"confidence\": 0.9\n}",
+      "predicted": [
+        65
+      ],
+      "valid_preds": [
+        65
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

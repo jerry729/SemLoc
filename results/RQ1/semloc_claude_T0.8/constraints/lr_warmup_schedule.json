@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lr_warmup_schedule",
+  "fault_hypothesis": "Line 59 uses `(step + 1) / warmup_steps` instead of `step / warmup_steps`, causing the learning rate to be off by one step (e.g., step 0 returns base_lr/warmup_steps instead of 0, and step 50 returns 51/100 instead of 50/100).",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "abs(lr__1 - base_lr * (step / warmup_steps)) < 1e-12"
+      },
+      "intent": "After computing lr, it should equal base_lr * step/warmup_steps, not base_lr * (step+1)/warmup_steps.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lr__1"
+        }
+      },
+      "spec": {
+        "expr": "lr__1 >= 0.0 and lr__1 <= base_lr * (step / warmup_steps) + 1e-12"
+      },
+      "intent": "lr must not exceed the fraction step/warmup_steps of base_lr during warmup.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "lr__1"
+        }
+      },
+      "spec": {
+        "expr": "step == 0 or abs(lr__1 / base_lr - step / warmup_steps) < 1e-9"
+      },
+      "intent": "The ratio lr/base_lr must equal step/warmup_steps (not (step+1)/warmup_steps) before lr is used in the return.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "step >= warmup_steps or abs(__cbfl_result - max(base_lr * step / warmup_steps, MIN_LR_FLOOR)) < 1e-9"
+      },
+      "intent": "The returned learning rate during warmup should be base_lr * step/warmup_steps (clamped), not base_lr * (step+1)/warmup_steps.",
+      "confidence": 0.88
+    }
+  ]
+}

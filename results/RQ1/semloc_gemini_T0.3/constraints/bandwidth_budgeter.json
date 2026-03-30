@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bandwidth_budgeter",
+  "fault_hypothesis": "The function at line 65 converts floating-point shares to integers via truncation (`int()`), which discards fractional remainders. This causes the sum of allocations to be less than the total budget, violating the budget conservation principle.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "(minimum > 0) or (sum(allocations__1) == total)"
+      },
+      "intent": "The sum of integer allocations should equal the total budget, unless a minimum is being enforced (which has a weaker test).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "planned__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(planned__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the computed floating-point shares must precisely equal the total budget.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "allocations__3"
+        }
+      },
+      "spec": {
+        "expr": "(minimum > 0) or (sum(allocations__3) == total)"
+      },
+      "intent": "The final returned allocations must sum to the total budget, except when minimums are applied.",
+      "confidence": 0.9
+    }
+  ]
+}

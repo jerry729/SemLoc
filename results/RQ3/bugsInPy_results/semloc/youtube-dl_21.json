@@ -1,0 +1,16 @@
+{
+  "bug_id": "youtube-dl_21",
+  "function": "urljoin",
+  "src_path": "youtube_dl/utils.py",
+  "fn_begin": 1750,
+  "fn_end": 1757,
+  "n_constraints": 5,
+  "n_tests_passing": 73,
+  "n_tests_failing": 1,
+  "line_scores": [],
+  "fault_line": 1751,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_21/urljoin_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_21/violations.jsonl"
+}

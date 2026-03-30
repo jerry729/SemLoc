@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "config_interpolate",
+  "fault_hypothesis": "The condition on line 68 is `if not clamp` but it should be `if clamp`. The clamping logic is executed when clamp=False (no clamping desired) and skipped when clamp=True (clamping desired), which is the exact opposite of the intended behavior.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True the clamping branch should be entered, so the condition guarding it must be True when clamp is True \u2014 but `not clamp` is False when clamp is True, meaning the branch is skipped incorrectly.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "After the clamping branch executes, the result must lie within the anchor range [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, y__5 must be within the anchor range; when clamp is False, extrapolation is allowed.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "Immediately before returning y__5, if clamping was requested the value must be within bounds.",
+      "confidence": 0.88
+    }
+  ]
+}

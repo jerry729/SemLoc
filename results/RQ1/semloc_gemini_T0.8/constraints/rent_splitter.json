@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rent_splitter",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 65, instead of being deducted from the total amount before splitting. This causes the fee to be effectively multiplied by the number of participants.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(ratios) == 1 or all(s <= fee for s in base__1)"
+      },
+      "intent": "The buggy fee logic is harmless only if the fee is zero, there's one participant, or all shares are zeroed out by the fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "(amount >= fee and abs(sum(shares__1) - (amount - fee)) < 1e-6) or (amount < fee and sum(shares__1) == 0)"
+      },
+      "intent": "The sum of shares must equal the distributable amount after the fee is deducted, clamping to zero if needed.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "fee == 0 or len(ratios) == 1 or all(s <= fee for s in base__1)"
+      },
+      "intent": "The base shares are computed without accounting for the fee, which is a logic flaw that is masked only under specific conditions.",
+      "confidence": 0.8
+    }
+  ]
+}

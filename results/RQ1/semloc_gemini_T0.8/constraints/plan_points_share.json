@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_points_share",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers using simple truncation at line 74. This discards fractional parts, causing the sum of allocated points to be less than the total budget, which violates the test's expectation that the entire budget is distributed.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "sum(int(s) for s in shares__1) >= total"
+      },
+      "intent": "The sum of integer-allocated points must not be less than the total budget.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(shares__1) >= total"
+      },
+      "intent": "The sum of intermediate floating-point shares should be at least the total budget.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "all(s >= minimum for s in shares__1)"
+      },
+      "intent": "Every computed share must be at least the specified minimum.",
+      "confidence": 1.0
+    }
+  ]
+}

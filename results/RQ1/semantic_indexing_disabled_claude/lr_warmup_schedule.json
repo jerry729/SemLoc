@@ -1,0 +1,44 @@
+{
+  "function": "lr_warmup_schedule",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    57
+  ],
+  "total_source_lines": 62,
+  "runs": [
+    {
+      "faulty_lines": [
+        59
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the docstring says the learning rate increases linearly from MIN_LR_FLOOR to base_lr \"During the warmup phase (step 0 through warmup_steps)\". \n\nThe condition on line 57 `if step >= warmup_steps` returns `base_lr` when step equals warmup_steps, which means the warmup phase is steps 0 to warmup_steps-1. At step 0, the formula gives `base_lr * (1/warmup_steps)`, not MIN_LR_FLOOR (0.0). At step warmup_steps-1, it gives `base_lr * (warmup_steps/warmup_steps) = base_lr`.\n\nThe issue is that at step 0, the LR should start at MIN_LR_FLOOR (0.0), but the formula `base_lr * ((step + 1) / warmup_steps)` gives `base_lr/warmup_steps` instead. The correct formula should be `base_lr * (step / warmup_steps)` to start at 0 when step=0, reaching base_lr at step=warmup_steps.\n\nHowever, with `step / warmup_steps`, at step=warmup_steps-1 we'd get `base_lr * (warmup_steps-1)/warmup_steps`, not quite base_lr. The `(step+1)` formula reaches base_lr at step=warmup_steps-1 (last warmup step), which might be intentional.\n\nThe docstring says \"from MIN_LR_FLOOR to base_lr\" suggesting step 0 should give MIN_LR_FLOOR=0.0, but the formula gives `base_lr * (1/warmup_steps)` at step 0. The `+1` on line 59 is the fault.\n\n{\n  \"function_name\": \"lr_warmup_schedule\",\n  \"faulty_lines\": [59],\n  \"explanation\": \"The formula uses `(step + 1) / warmup_steps`, which gives `base_lr/warmup_steps` at step 0 instead of MIN_LR_FLOOR (0.0). According to the docstring, the learning rate should increase linearly from MIN_LR_FLOOR at step 0, so the formula should be `base_lr * (step / warmup_steps)` without the `+1`.\",\n  \"confidence\": 0.72\n}",
+      "predicted": [
+        59
+      ],
+      "valid_preds": [
+        59
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 59,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

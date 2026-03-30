@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "event_gate",
+  "fault_hypothesis": "The condition on line 62 uses a strict greater-than comparison ('>') instead of greater-than-or-equal ('>='). This causes the gate to remain open when the number of recent events exactly equals the limit, whereas it should close.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) > limit) == (len(recent__1) >= limit)"
+      },
+      "intent": "The actual branching behavior should match the intended logic, which is to block when recent events are greater than or equal to the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "The 'allowed' branch should only be taken when the number of recent events is strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > limit"
+      },
+      "intent": "The 'denied' branch should be taken only when the number of recent events strictly exceeds the limit.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_preference",
+  "fault_hypothesis": "On line 85, the expiry check uses strict greater-than (`now > ttl + _CLOCK_SKEW_TOLERANCE`), so when `now == ttl` the entry is incorrectly considered valid. The condition should be `now >= ttl + _CLOCK_SKEW_TOLERANCE` (or equivalently `now >= ttl` when tolerance is 0) to expire entries at the exact TTL boundary.",
+  "fault_line": 85,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 85
+        }
+      },
+      "spec": {
+        "expr": "not (now == ttl__1 + _CLOCK_SKEW_TOLERANCE and payload__1 is not None)"
+      },
+      "intent": "When now equals exactly ttl + tolerance, the function must not return the payload (entry should be expired).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= ttl__1 + _CLOCK_SKEW_TOLERANCE) or True"
+      },
+      "intent": "Verify that the expiry condition correctly treats now >= ttl+tolerance as expired, not just now > ttl+tolerance.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 85,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1 + _CLOCK_SKEW_TOLERANCE"
+      },
+      "intent": "After the expiry branch is not taken (else branch), now must be strictly less than ttl+tolerance; if now==ttl the else branch should not be reached.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is not None and now >= ttl__1 + _CLOCK_SKEW_TOLERANCE)"
+      },
+      "intent": "The function must never return a non-None payload when now is at or past the TTL boundary.",
+      "confidence": 0.88
+    }
+  ]
+}

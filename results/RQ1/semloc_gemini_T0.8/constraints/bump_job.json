@@ -1,0 +1,74 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bump_job",
+  "fault_hypothesis": "The bug is on line 57. When the counter value exceeds the cap, it is incorrectly set to `cap - 1` instead of being clamped to `cap`.",
+  "fault_line": 57,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 57
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After clamping, the counter's value should be exactly the cap.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 56,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "When a counter is capped, its value should become exactly the cap at the end of the clamping logic.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "TEMPORAL_CALL_SNAPSHOT",
+      "instrument": {
+        "region": "ON_EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "guard": "key in counters and cap is not None",
+        "snapshot": [
+          {
+            "name": "old_count",
+            "expr": "counters[key]"
+          }
+        ],
+        "require": "__cbfl_result >= old_count"
+      },
+      "intent": "The counter value should not decrease after a bump operation.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_CALL",
+        "anchor": {
+          "callee": "_log.debug"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After the capping logic and logging, the counter's value should be exactly the cap.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "function": "storage_quota_split",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        70,
+        66
+      ],
+      "explanation": "The fee is subtracted from each individual share on line 70, causing the total deducted fee to be `fee * num_participants` instead of a single one-time fee. The fee should be deducted from the total pool before computing shares on line 66.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "The bug is on line 70. The fee should be deducted from the total before distributing shares (as stated in the docstring: \"The one-time fee is subtracted from the pool before distributing shares\"), but instead the fee is being subtracted from each individual share. This means the total fee deducted is `fee * len(ratios)` instead of just `fee`.\n\nThe correct implementation should be: `pool = total - fee` then `shares = [(r / total_ratio) * pool for r in ratios]`, or equivalently subtract the fee once from the total before computing shares (line 66).\n\n```json\n{\n  \"function_name\": \"storage_quota_split\",\n  \"faulty_lines\": [70, 66],\n  \"explanation\": \"The fee is subtracted from each individual share on line 70, causing the total deducted fee to be `fee * num_participants` instead of a single one-time fee. The fee should be deducted from the total pool before computing shares on line 66.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        70,
+        66
+      ],
+      "valid_preds": [
+        70,
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

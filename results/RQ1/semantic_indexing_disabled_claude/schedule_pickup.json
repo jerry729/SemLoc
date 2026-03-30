@@ -1,0 +1,38 @@
+{
+  "function": "schedule_pickup",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at this function, I need to identify what's buggy.\n\nThe conflict detection logic on line 62:\n```python\nif any(not (b <= s or a >= e) for s, e in timeline):\n```\n\nThis checks if the new window [a, b) overlaps with any existing slot [s, e). The condition `not (b <= s or a >= e)` means \"not (new ends before slot starts OR new starts after slot ends)\", which is the standard overlap detection. This seems correct.\n\nHowever, let me think about edge cases. The `_validate_window` function on line 21:\n```python\nif b - a <= _MIN_WINDOW_DURATION:\n```\nwhere `_MIN_WINDOW_DURATION = 0`. This means if `b - a <= 0`, it raises ValueError. So `b - a > 0` is required, meaning `b > a`. This seems correct.\n\nWait, let me reconsider the conflict check. The standard non-overlap condition is `b <= s or a >= e`. This means:\n- New window ends at or before existing slot starts: no overlap\n- New window starts at or after existing slot ends: no overlap\n\nThis is correct for half-open intervals. But what about touching intervals? If `b == s`, they touch but don't overlap - that's correctly handled as no conflict.\n\nThe issue might be with `_SORT_KEY_INDEX = 0` on line 11 - that's used correctly.\n\nActually, let me look at `_MIN_WINDOW_DURATION = 0` again. The check is `b - a <= _MIN_WINDOW_DURATION` (i.e., `b - a <= 0`). This means windows with `b == a` (zero duration) are rejected. That seems intentional.\n\nWait - looking more carefully at the conflict check: `not (b <= s or a >= e)`. This is equivalent to `b > s and a < e`, which is the correct overlap condition. So if there IS an overlap, it returns False. Correct.\n\nThe bug might be subtle. Let me reconsider `_CONFLICT_STRICT = False` - it's defined but not actually used in any logic (only in the log message). This seems like it should affect behavior but doesn't.\n\nActually, the most likely bug is on line 62 - the conflict detection might be using wrong comparison. With touching windows where `b == s`, `b <= s` is True (no conflict), which is correct. But if the intent was strict overlap (touching = conflict), then it should be `b < s or a > e`.\n\nGiven `_CONFLICT_STRICT = False` is defined but unused, the bug is likely that the conflict check doesn't use `_CONFLICT_STRICT` to determine whether touching windows should conflict.\n\nBut the most concrete fault is that `_CONFLICT_STRICT` is defined but never used in the actual logic - it only appears in a log message on line 63.\n\n{\n  \"function_name\": \"schedule_pickup\",\n  \"faulty_lines\": [62, 8],\n  \"explanation\": \"The variable `_CONFLICT_STRICT` is defined but never used in the actual conflict detection logic on line 62; it only appears in a debug log message. The conflict check should likely use `_CONFLICT_STRICT` to determine whether touching windows (where b==s or a==e) constitute a conflict, but the logic is hardcoded to treat them as non-conflicting regardless.\",\n  \"confidence\": 0.45\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

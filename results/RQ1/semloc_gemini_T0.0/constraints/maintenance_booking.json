@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "maintenance_booking",
+  "fault_hypothesis": "The overlap detection on line 77 incorrectly uses non-strict inequalities (`<=`, `>=`), treating touching intervals as non-overlapping. The logic should use strict inequalities (`<`, `>`) to correctly identify adjacent windows as conflicts.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 <= s or a__1 >= e) for s, e in timeline) == any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "The buggy overlap condition should yield the same result as the correct condition where touching intervals conflict.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "If a booking is made (i.e., no conflict is detected), the new window must not have any overlap with existing ones, including touching boundaries.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "a__1 < b__1"
+      },
+      "intent": "The start time of a valid window must be strictly less than its end time.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == (not any(not (window[1] < s or window[0] > e) for s, e in timeline))"
+      },
+      "intent": "The success status must correctly reflect whether an overlap exists according to the specification (touching is a conflict).",
+      "confidence": 0.9
+    }
+  ]
+}

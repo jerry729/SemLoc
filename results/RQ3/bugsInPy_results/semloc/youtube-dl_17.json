@@ -1,0 +1,21 @@
+{
+  "bug_id": "youtube-dl_17",
+  "function": "cli_bool_option",
+  "src_path": "youtube_dl/utils.py",
+  "fn_begin": 2734,
+  "fn_end": 2739,
+  "n_constraints": 4,
+  "n_tests_passing": 75,
+  "n_tests_failing": 1,
+  "line_scores": [
+    {
+      "line": 2735,
+      "score": 1.0
+    }
+  ],
+  "fault_line": 2738,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_17/cli_bool_option_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_17/violations.jsonl"
+}

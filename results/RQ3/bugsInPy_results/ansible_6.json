@@ -1,0 +1,72 @@
+{
+  "bug_id": "ansible_6",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.ansible.galaxy.collection.CollectionRequirement._meets_requirements",
+    "buggy_methods": [
+      "lib.ansible.galaxy.collection.CollectionRequirement._meets_requirements"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.ansible.galaxy.collection.CollectionRequirement._meets_requirements",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/ansible/galaxy/collection.py": [
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      289,
+      880
+    ],
+    "test/units/galaxy/test_collection_install.py": [
+      168,
+      174,
+      191,
+      192,
+      500,
+      504,
+      505,
+      506
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      289,
+      880
+    ],
+    "best_rank": null,
+    "fn_lines": 37,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 213,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "ansible_6",
+    "function": "_meets_requirements",
+    "src_path": "lib/ansible/galaxy/collection.py",
+    "fn_begin": 199,
+    "fn_end": 235,
+    "n_constraints": 4,
+    "n_tests_passing": 35,
+    "n_tests_failing": 5,
+    "line_scores": [],
+    "fault_line": 213,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/ansible_6/_meets_requirements_constraints.json",
+    "report_path": "/tmp/bip_semloc/ansible_6/violations.jsonl"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "function": "tip_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 63,
+  "runs": [
+    {
+      "faulty_lines": [
+        62,
+        60
+      ],
+      "explanation": "The platform fee is incorrectly deducted from each recipient's individual share (line 62), rather than from the total amount before the shares are calculated (line 60), contradicting the function's documentation.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"tip_share\",\n  \"faulty_lines\": [\n    62,\n    60\n  ],\n  \"explanation\": \"The platform fee is incorrectly deducted from each recipient's individual share (line 62), rather than from the total amount before the shares are calculated (line 60), contradicting the function's documentation.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        62,
+        60
+      ],
+      "valid_preds": [
+        62,
+        60
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

@@ -1,0 +1,47 @@
+{
+  "function": "subsidy_payout",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        71,
+        69
+      ],
+      "explanation": "The administrative fee is incorrectly deducted from each participant's individual share after shares are calculated, rather than from the total amount before distribution. This contradicts the function's documentation and results in the fee being multiplied by the number of participants.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"subsidy_payout\",\n  \"faulty_lines\": [\n    71,\n    69\n  ],\n  \"explanation\": \"The administrative fee is incorrectly deducted from each participant's individual share after shares are calculated, rather than from the total amount before distribution. This contradicts the function's documentation and results in the fee being multiplied by the number of participants.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        71,
+        69
+      ],
+      "valid_preds": [
+        71,
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 71,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

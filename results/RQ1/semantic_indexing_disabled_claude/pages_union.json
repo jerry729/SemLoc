@@ -1,0 +1,50 @@
+{
+  "function": "pages_union",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    79
+  ],
+  "total_source_lines": 82,
+  "runs": [
+    {
+      "faulty_lines": [
+        73,
+        79,
+        80
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the code, the bug is in the equal case handling (lines 72-75) and the post-processing fix attempt (lines 79-80).\n\nWhen `a == b`, a union should only include the value once, but the code appends both `a` and `b` (duplicating the value). Then lines 79-80 try to fix this with a hack that only removes the last duplicate if both streams end with the same value - this is clearly wrong as a general fix.\n\nThe correct behavior for union when `a == b` is to append the value once and advance both pointers.\n\n{\n  \"function_name\": \"pages_union\",\n  \"faulty_lines\": [73, 79, 80],\n  \"explanation\": \"When left[i] == right[j], the union should append the value only once, but the code appends it twice (lines 72-73). Lines 79-80 attempt a partial fix but only handle the special case where both streams end with the same value, leaving all other duplicate cases unfixed.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        73,
+        79,
+        80
+      ],
+      "valid_preds": [
+        73,
+        79,
+        80
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 3,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 3.0
+}

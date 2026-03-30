@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "grades_union",
+  "fault_hypothesis": "The condition on line 76 is incorrect, causing the code to enter the branch and execute line 77, which wrongly removes a duplicate element when both input lists share the same last value.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left__1 and right__1 and merged__1[-1] == left__1[-1] == right__1[-1])"
+      },
+      "intent": "This special case for removing a duplicate tail element should not be triggered.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final merged list must contain all elements from both inputs.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left__1) + len(right__1)"
+      },
+      "intent": "In the common case where the special pop is not triggered, the length should be correct.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged) == i + j"
+      },
+      "intent": "The number of items in the merged list must equal the number of items consumed from the inputs.",
+      "confidence": 0.9
+    }
+  ]
+}

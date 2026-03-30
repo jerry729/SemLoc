@@ -1,0 +1,38 @@
+{
+  "function": "schedule_window",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    67
+  ],
+  "total_source_lines": 73,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the conflict detection logic on line 65:\n\n```python\nif not (end <= s or start >= e):\n```\n\nThis checks if the proposed interval does NOT (end before existing starts OR start after existing ends). This is the standard overlap detection for half-open intervals `[start, end)`.\n\nHowever, the issue depends on whether intervals are meant to be inclusive or exclusive. If `end == s` (proposed ends exactly when existing starts), `end <= s` is True, so no conflict \u2014 that seems correct for non-overlapping adjacent windows.\n\nWait, let me reconsider. The condition `not (end <= s or start >= e)` means overlap exists when `end > s AND start < e`. This is correct for detecting overlap in half-open intervals.\n\nActually, looking more carefully, this logic appears correct for standard interval scheduling. The function looks logically sound for the described purpose.\n\nBut wait - if we think about it differently: `end <= s` means the new window ends at or before the existing one starts (no overlap), and `start >= e` means the new window starts at or after the existing one ends (no overlap). The negation gives overlap. This is correct.\n\nThe code seems functionally correct. However, there might be a subtle issue: the `existing` list might not be sorted, but the function assumes it is. The `_merge_sorted` function sorts after inserting, but the conflict check iterates `existing` assuming sorted order (though it checks all elements anyway, so sorting doesn't matter for correctness of the check).\n\nActually, I don't see a clear bug from static analysis alone. The most suspicious line would be line 65 if there's an off-by-one in boundary conditions - perhaps adjacent windows (touching but not overlapping) should be allowed, and `end <= s` handles that correctly. Or perhaps the intent was strict inequality (`end < s`), which would flag touching windows as conflicts.\n\nGiven the test failure information isn't provided explicitly, the most suspicious line is 65 with the overlap condition.\n\n```json\n{\n  \"function_name\": \"schedule_window\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The overlap condition `not (end <= s or start >= e)` uses `<=` and `>=` which correctly allows touching intervals, but if the specification requires that touching intervals (where end == s) should be considered conflicts, the condition should use `<` instead of `<=` (i.e., `not (end < s or start > e)`).\",\n  \"confidence\": 0.4\n}\n```",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

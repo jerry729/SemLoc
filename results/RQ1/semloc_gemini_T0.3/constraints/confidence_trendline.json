@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "confidence_trendline",
+  "fault_hypothesis": "The conditional on line 77 is inverted. The clamping logic is incorrectly executed when `clamp` is `False` instead of when it is `True`, and vice-versa.",
+  "fault_line": 77,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__4 >= min(y0, y1) and y__4 <= max(y0, y1)) or (not clamp and y__4 == y__1)"
+      },
+      "intent": "After the conditional block, y should be clamped to the range [y0, y1] if and only if the clamp parameter is true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "The clamping logic branch should only be executed when the clamp parameter is True.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__4 >= min(y0, y1) and y__4 <= max(y0, y1)) or (not clamp and y__4 == y__1)"
+      },
+      "intent": "The value of y before the final clamp must reflect the optional clamping logic based on the 'clamp' parameter.",
+      "confidence": 0.9
+    }
+  ]
+}

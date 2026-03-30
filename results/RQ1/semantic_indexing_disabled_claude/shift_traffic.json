@@ -1,0 +1,47 @@
+{
+  "function": "shift_traffic",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 69,
+  "runs": [
+    {
+      "faulty_lines": [
+        69,
+        63
+      ],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the `shift_traffic` function, I need to identify what's wrong.\n\nThe function is supposed to return weights normalized to sum to 1.0 (as stated in the docstring: \"A new list of weights normalised to sum to 1.0\"). However, the function never normalizes the output - it just returns the blended weights directly without dividing by the sum.\n\nThe `updated` list is computed correctly as a blend, but it's returned without normalization. The fix would be to normalize `updated` before returning it.\n\nThe faulty line is line 69 where `updated` is returned without normalization. The normalization step is missing entirely - there should be code to divide each element by the sum of `updated` before returning.\n\n{\n  \"function_name\": \"shift_traffic\",\n  \"faulty_lines\": [69, 63],\n  \"explanation\": \"The function claims to return weights 'normalised to sum to 1.0' but never performs normalization before returning. The `updated` list should be divided by its total sum before being returned.\",\n  \"confidence\": 0.85\n}",
+      "predicted": [
+        69,
+        63
+      ],
+      "valid_preds": [
+        69,
+        63
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

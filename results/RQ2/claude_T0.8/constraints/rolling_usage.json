@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_usage",
+  "fault_hypothesis": "On line 67, the average is computed by dividing `total` by `window` instead of `len(tail)`. When the series is shorter than the window, this produces a smaller-than-correct average because the denominator is larger than the actual number of samples.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - (total__1 / len(tail__1))) < 1e-12"
+      },
+      "intent": "The average must equal total divided by actual tail length, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing avg, avg multiplied by actual sample count should equal total.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before avg is used in rounding/logging, it must reflect division by actual tail length.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result * len(series[-window:]) - sum(series[-window:])) < 1e-6"
+      },
+      "intent": "The returned value must correspond to dividing the tail sum by actual tail length.",
+      "confidence": 0.8
+    }
+  ]
+}

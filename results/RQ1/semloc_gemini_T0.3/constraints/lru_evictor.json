@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lru_evictor",
+  "fault_hypothesis": "The `while` loop condition on line 56 uses `>` instead of the correct `>=`, causing it to not run when `len(order) == capacity`. This violates the documented postcondition that the final list size must be strictly less than the capacity.",
+  "fault_line": 56,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 56
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "The loop must ensure the final list size is strictly less than the capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "If no entries were evicted, the list size must have already been under capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "If entries were evicted, the final list size must still be brought under capacity.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "ENTRY",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "capacity >= 0"
+      },
+      "intent": "Capacity must be a non-negative integer.",
+      "confidence": 0.9
+    }
+  ]
+}

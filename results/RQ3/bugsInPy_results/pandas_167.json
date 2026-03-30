@@ -1,0 +1,26 @@
+{
+  "bug_id": "pandas_167",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexing._LocIndexer._is_scalar_access",
+    "buggy_methods": [
+      "pandas.core.indexing._LocIndexer._is_scalar_access"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexing._LocIndexer._is_scalar_access",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexing.py": [
+      1722,
+      1732,
+      2337
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

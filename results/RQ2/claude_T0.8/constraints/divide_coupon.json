@@ -1,0 +1,81 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "divide_coupon",
+  "fault_hypothesis": "On line 67, the fee is subtracted per-participant from each base share (b - fee), but the correct behavior is to deduct the total fee from the amount before distribution. The fee should be deducted once from the total, not from each individual share.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "After computing base shares, their sum should equal the full amount (fee not yet deducted); this holds correctly here.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee)) < 1e-9"
+      },
+      "intent": "After computing result, the sum of payouts should equal amount minus the single total fee, not amount minus fee*n.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([b - fee for b in base__1]) - (amount - fee)) < 1e-9 or len(base__1) == 1"
+      },
+      "intent": "Subtracting fee from each base share reduces total by fee*n, not fee once; this expression is false when n > 1 and fee > 0.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "Before using base to compute result, its sum must equal the full amount since fee has not been deducted yet.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "fee == 0.0 or abs(sum(__cbfl_result) - (amount - fee)) < 1e-9"
+      },
+      "intent": "When a non-zero fee is provided, the total payout must equal amount minus fee exactly once.",
+      "confidence": 0.9
+    }
+  ]
+}

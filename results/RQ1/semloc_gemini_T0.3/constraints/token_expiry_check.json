@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "token_expiry_check",
+  "fault_hypothesis": "The bug is on line 69. The expiry check `now > adjusted_expiry` uses a strict greater-than comparison, which incorrectly considers a token valid when the current time is exactly equal to its expiry time. The comparison should be `now >= adjusted_expiry` to correctly invalidate tokens at the moment they expire.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_expiry__1)"
+      },
+      "intent": "A token's validity should be definitively resolved, not sit on the exact expiry boundary.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_expiry__1"
+      },
+      "intent": "If the expiry check is bypassed, it must be because the token is strictly not expired.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "now != adjusted_expiry__1"
+      },
+      "intent": "The current time should not be exactly equal to the expiry time before the final check.",
+      "confidence": 1.0
+    }
+  ]
+}

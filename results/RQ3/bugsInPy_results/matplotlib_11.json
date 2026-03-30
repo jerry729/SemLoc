@@ -1,0 +1,35 @@
+{
+  "bug_id": "matplotlib_11",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.text.Text.get_window_extent",
+    "buggy_methods": [
+      "lib.matplotlib.text.Text.get_window_extent"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.text.Text.get_window_extent",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/text.py": [
+      894,
+      895,
+      896,
+      898,
+      899,
+      908,
+      909,
+      910,
+      911,
+      912,
+      913,
+      914
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "bug_id": "keras_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.sequential.Sequential.__init__",
+    "buggy_methods": [
+      "keras.engine.sequential.Sequential.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.sequential.Sequential.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/sequential.py": [
+      222,
+      223,
+      274,
+      276,
+      280,
+      284,
+      285
+    ],
+    "tests/keras/test_sequential_model.py": [
+      171,
+      173,
+      237,
+      430
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

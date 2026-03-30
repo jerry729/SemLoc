@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.dtypes.common.is_string_dtype",
+    "buggy_methods": [
+      "pandas.core.dtypes.common.is_string_dtype"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.dtypes.common.is_string_dtype",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/dtypes/common.py": [
+      602
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

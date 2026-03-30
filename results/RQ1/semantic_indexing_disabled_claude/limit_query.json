@@ -1,0 +1,44 @@
+{
+  "function": "limit_query",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        69
+      ],
+      "explanation": "The condition `len(active) > limit` should be `len(active) >= limit`. When the number of active queries equals the limit, the new query should be denied (returning False, 0), but the current condition incorrectly allows it and returns remaining=0, which is contradictory.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "Looking at the code, I need to identify the bugs:\n\n1. Line 64: `cutoff = now - window` \u2014 The cutoff should use `>` (strictly greater than) or the filter should use `> cutoff` to exclude the boundary. But more importantly, the cutoff is `now - window`, which means timestamps exactly at the boundary are included. This seems intentional for a sliding window.\n\n2. Line 69: `if len(active) > limit` \u2014 This should be `>= limit`. If there are exactly `limit` active queries, a new query should NOT be allowed (the limit has been reached). The condition `> limit` would allow one more query than the limit.\n\n3. Line 71: `return True, limit - len(active)` \u2014 If `len(active) == limit`, this returns `(True, 0)` which means allowed but 0 remaining. That's contradictory \u2014 if 0 remaining, the query shouldn't be allowed.\n\nThe main bug is on line 69: using `> limit` instead of `>= limit`. When `len(active) == limit`, the current code incorrectly allows the query and returns `remaining = 0`, when it should deny the query.\n\n```json\n{\n  \"function_name\": \"limit_query\",\n  \"faulty_lines\": [69],\n  \"explanation\": \"The condition `len(active) > limit` should be `len(active) >= limit`. When the number of active queries equals the limit, the new query should be denied (returning False, 0), but the current condition incorrectly allows it and returns remaining=0, which is contradictory.\",\n  \"confidence\": 0.92\n}\n```",
+      "predicted": [
+        69
+      ],
+      "valid_preds": [
+        69
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

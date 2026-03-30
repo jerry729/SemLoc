@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "checkout_rate",
+  "fault_hypothesis": "The rate limit check on line 66 uses a strict greater-than comparison (`>`), but it should use greater-than-or-equal-to (`>=`) to deny checkouts when the number of recent events is exactly at the limit.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The number of recent events should not be exactly at the limit, as this boundary case is handled incorrectly.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the code decides to allow the checkout, it must be because the number of recent events is strictly less than the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and __cbfl_result[1] == 0)"
+      },
+      "intent": "A checkout should not be allowed if there is no remaining capacity.",
+      "confidence": 0.9
+    }
+  ]
+}

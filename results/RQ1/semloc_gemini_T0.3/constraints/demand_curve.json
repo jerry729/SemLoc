@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_curve",
+  "fault_hypothesis": "The condition on line 60, `if not clamp:`, is inverted. The clamping logic should execute when `clamp` is `True`, but it currently executes when `clamp` is `False`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "0.0 <= t__1 and t__1 <= 1.0"
+      },
+      "intent": "The logic for handling extrapolation (when t is outside [0,1]) is faulty, as all failing tests involve extrapolation.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamping is enabled (the 'else' branch of the faulty 'if'), the value should be clamped, but it is not.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__2 == y__1"
+      },
+      "intent": "When clamping is disabled (the 'then' branch of the faulty 'if'), the value should not be clamped, but it is.",
+      "confidence": 0.9
+    }
+  ]
+}

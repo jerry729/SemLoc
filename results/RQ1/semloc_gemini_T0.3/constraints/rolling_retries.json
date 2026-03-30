@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "rolling_retries",
+  "fault_hypothesis": "The fault is on line 62. The rolling mean is always calculated by dividing by the `window` size, which is incorrect when the number of available values (`len(tail)`) is less than the window. The denominator should be `len(tail)`.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (len(tail__1) == window)"
+      },
+      "intent": "The divisor `window` is only correct if the tail is full, unless the result is discarded due to warmup.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "If a mean is returned, the tail must be full, meaning its length equals the window size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (abs(mean__1 * len(tail__1) - total__1) < 1e-9 if len(tail__1) > 0 else True)"
+      },
+      "intent": "The mean must equal the total divided by the actual number of samples, unless the result is discarded.",
+      "confidence": 1.0
+    }
+  ]
+}

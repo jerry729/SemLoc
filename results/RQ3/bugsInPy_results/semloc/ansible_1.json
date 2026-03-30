@@ -1,0 +1,16 @@
+{
+  "bug_id": "ansible_1",
+  "function": "verify_collections",
+  "src_path": "lib/ansible/galaxy/collection.py",
+  "fn_begin": 650,
+  "fn_end": 697,
+  "n_constraints": 4,
+  "n_tests_passing": 17,
+  "n_tests_failing": 36,
+  "line_scores": [],
+  "fault_line": 690,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/ansible_1/verify_collections_constraints.json",
+  "report_path": "/tmp/bip_semloc/ansible_1/violations.jsonl"
+}

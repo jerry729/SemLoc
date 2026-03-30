@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_supply",
+  "fault_hypothesis": "The function computes blended weights but omits the final normalization step. The list of weights should be normalized to sum to 1.0 before being returned on line 64.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list of weights must be normalized to sum to 1.0 just before being returned.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The 'updated' list should be normalized before its final use in the return statement.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "idx != len(current) - 1 or abs(sum(updated) - 1.0) < 1e-9"
+      },
+      "intent": "After the final loop iteration, the accumulated list of weights should sum to 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == 0 or abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The function's final output must be a list of weights summing to 1.0.",
+      "confidence": 0.8
+    }
+  ]
+}

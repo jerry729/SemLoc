@@ -1,0 +1,27 @@
+{
+  "bug_id": "pandas_149",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.io.parquet.FastParquetImpl.write",
+    "buggy_methods": [
+      "pandas.io.parquet.FastParquetImpl.write"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.io.parquet.FastParquetImpl.write",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/io/parquet.py": [
+      10,
+      162,
+      163,
+      167
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

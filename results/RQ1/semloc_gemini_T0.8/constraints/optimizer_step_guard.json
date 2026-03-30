@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "optimizer_step_guard",
+  "fault_hypothesis": "The boolean logic on line 62 is incorrect. It fails to reject NaN loss values because `loss_value == loss_value` is false for NaN, causing the entire `and` condition to evaluate to false and skip the intended logic block.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "loss_value == loss_value"
+      },
+      "intent": "The check for loss magnitude is only meaningful for finite numbers (non-NaN).",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 62,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "loss_value == loss_value"
+      },
+      "intent": "If the function proceeds without returning false, the loss value must be a finite number.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "loss_value == loss_value and loss_value <= max_loss"
+      },
+      "intent": "If the function is about to return True, the loss must be finite and not exceed the maximum.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (loss_value != loss_value) or (__cbfl_result == False)"
+      },
+      "intent": "A NaN loss value must always result in the step being skipped (return False).",
+      "confidence": 0.8
+    }
+  ]
+}

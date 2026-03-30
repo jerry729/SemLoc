@@ -1,0 +1,28 @@
+{
+  "bug_id": "pandas_129",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.datetimelike.DatetimeLikeArrayMixin.__rsub__",
+    "buggy_methods": [
+      "pandas.core.arrays.datetimelike.DatetimeLikeArrayMixin.__rsub__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.datetimelike.DatetimeLikeArrayMixin.__rsub__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/tests/arithmetic/test_timedelta64.py": [
+      899,
+      900,
+      901,
+      902,
+      903
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

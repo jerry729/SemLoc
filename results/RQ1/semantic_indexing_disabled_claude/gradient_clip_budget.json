@@ -1,0 +1,44 @@
+{
+  "function": "gradient_clip_budget",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    64
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "The scale factor should be `max_norm / norm` to clip gradients so their L2 norm equals `max_norm`, but instead it computes `max_norm / (norm + 1)`, which incorrectly adds 1 to the denominator and produces a wrong scaling factor.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"gradient_clip_budget\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"The scale factor should be `max_norm / norm` to clip gradients so their L2 norm equals `max_norm`, but instead it computes `max_norm / (norm + 1)`, which incorrectly adds 1 to the denominator and produces a wrong scaling factor.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

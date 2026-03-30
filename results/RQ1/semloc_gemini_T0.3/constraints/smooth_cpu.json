@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_cpu",
+  "fault_hypothesis": "The mean is calculated by dividing the total by the requested window size on line 68, even when fewer samples are available. It should instead divide by the actual number of samples used, which is `len(tail)`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The calculated mean, when multiplied by the number of samples, should equal the total sum.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "The number of samples taken should match the window size for the subsequent division to be correct.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "window <= len(tail__1)"
+      },
+      "intent": "The divisor for the mean should not be greater than the number of samples being averaged.",
+      "confidence": 0.9
+    }
+  ]
+}

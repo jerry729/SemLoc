@@ -1,0 +1,23 @@
+[
+  {
+    "cid": "C2",
+    "status": "Irrelevant",
+    "patch": "adjusted__1 = []",
+    "original_failing": [
+      "TestNormalizationWithSkewedInputs::test_current_not_summing_to_one_gets_normalized"
+    ],
+    "patched_failing": [
+      "TestNormalization::test_equal_weights_sum_to_one",
+      "TestNormalization::test_unequal_current_target_sum_to_one",
+      "TestNormalization::test_three_asset_normalization",
+      "TestNormalization::test_damping_one_snaps_to_target_normalized",
+      "TestNormalization::test_individual_weights_are_normalized",
+      "TestNormalizationWithSkewedInputs::test_current_not_summing_to_one_gets_normalized",
+      "TestNormalizationWithSkewedInputs::test_damping_zero_preserves_current_normalized",
+      "TestNormalizationWithSkewedInputs::test_small_damping_sum_to_one",
+      "TestBasicBehavior::test_returns_list"
+    ],
+    "pruned": false,
+    "prune_reason": ""
+  }
+]

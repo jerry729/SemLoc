@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "lru_evictor",
+  "fault_hypothesis": "The while loop condition on line 56 uses `>` (strictly greater than) instead of `>=`, so when `len(order) == capacity` the loop body is never entered and no eviction occurs.",
+  "fault_line": 56,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 56
+        }
+      },
+      "spec": {
+        "expr": "len(order) >= capacity"
+      },
+      "intent": "After the while guard is evaluated, if len(order)==capacity the loop should be entered but with '>' it is not; this expression being true indicates the bug is present (loop was skipped when it should not have been).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(order) < capacity"
+      },
+      "intent": "After each loop iteration the list should be strictly under capacity if eviction is working correctly.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) < capacity"
+      },
+      "intent": "The returned list must be strictly under capacity after eviction sweep when the input length was >= capacity.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_evicted__1"
+        }
+      },
+      "spec": {
+        "expr": "total_evicted__1 == 0"
+      },
+      "intent": "Initially total_evicted is 0; if the loop is never entered (due to wrong condition) it stays 0 even when eviction was needed.",
+      "confidence": 0.7
+    }
+  ]
+}

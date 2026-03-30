@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "award_payout",
+  "fault_hypothesis": "On line 67, the fee is not deducted before splitting; instead the full `amount` is distributed per-share and then `fee` is subtracted from each individual share, which is wrong. The fee should be deducted from the total pool first: `(amount - fee)` should be distributed, not `amount` with per-share fee subtraction.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - (sum(r2 / total_ratio * amount for r2 in ratios[:len(shares)])) ) < 1e-9 and abs(sum(shares) - (len(shares) / len(ratios)) * (amount - fee)) < 1e-9"
+      },
+      "intent": "After appending to shares, the running sum should reflect (amount - fee) distributed proportionally, not amount.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares) - (len(shares) / len(ratios)) * (amount - fee)) < 1e-9"
+      },
+      "intent": "At each loop iteration, the cumulative shares should sum to the proportional fraction of (amount - fee), not amount.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == 0"
+      },
+      "intent": "shares__1 is initialized as an empty list before the loop.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-9 or sum(__cbfl_result) == 0.0"
+      },
+      "intent": "The total payout must equal amount minus fee (or zero if fee exceeds amount), not amount minus n*fee.",
+      "confidence": 0.9
+    }
+  ]
+}

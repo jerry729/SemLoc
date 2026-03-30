@@ -1,0 +1,32 @@
+{
+  "bug_id": "pandas_151",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.numpy_.PandasArray.__setitem__",
+    "buggy_methods": [
+      "pandas.core.arrays.numpy_.PandasArray.__setitem__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.numpy_.PandasArray.__setitem__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/numpy_.py": [
+      238,
+      239,
+      240,
+      241,
+      242,
+      243,
+      244,
+      245,
+      246
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

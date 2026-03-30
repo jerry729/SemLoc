@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "growth_trendline",
+  "fault_hypothesis": "The condition on line 66 is inverted: clamping is applied when `clamp` is False and skipped when `clamp` is True. It should be `if clamp:` not `if not clamp:`.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or clamp == False"
+      },
+      "intent": "When clamp=True the branch should be entered (clamping applied); the inverted condition means clamping happens only when clamp=False, which is wrong.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "The then-branch of the clamp guard should only execute when clamp is True; if it executes when clamp is False the condition is inverted.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "lo__1"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "lo and hi should only be computed when clamping is requested (clamp=True); computing them when clamp=False indicates the branch condition is inverted.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp=True the final y value must lie within [min(y0,y1), max(y0,y1)]; if clamping is skipped for clamp=True this will be violated.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_upgrade_slot",
+  "fault_hypothesis": "The overlap detection logic on line 63 is incorrect. It uses non-strict inequalities (`<=`, `>=`) which allows adjacent/touching time windows, but the requirements imply that touching windows should be considered an overlap and be rejected.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 <= s or a__1 >= e) for s, e in timeline) == any(not (b__1 < s or a__1 > e) for s, e in timeline)"
+      },
+      "intent": "The result of the buggy overlap check should match the result of a correct check that rejects touching intervals.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "If the code determines there is no overlap, there should also be no touching windows.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1)-1))"
+      },
+      "intent": "The updated timeline must not contain any overlapping or touching slots.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not any(window[1] == s or window[0] == e for s, e in timeline) or (__cbfl_result[0] is False)"
+      },
+      "intent": "If the new window touches an existing one, the operation must fail.",
+      "confidence": 0.9
+    }
+  ]
+}

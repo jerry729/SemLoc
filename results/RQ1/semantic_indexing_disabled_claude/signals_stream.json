@@ -1,0 +1,47 @@
+{
+  "function": "signals_stream",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 75,
+  "runs": [
+    {
+      "faulty_lines": [
+        69,
+        70
+      ],
+      "explanation": "Lines 69-70 incorrectly remove the last element when both sequences share the same last value, causing the merged result to be missing one occurrence of that value. A standard merge should include all elements from both sequences without any post-processing removal.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"signals_stream\",\n  \"faulty_lines\": [69, 70],\n  \"explanation\": \"Lines 69-70 incorrectly remove the last element when both sequences share the same last value, causing the merged result to be missing one occurrence of that value. A standard merge should include all elements from both sequences without any post-processing removal.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        69,
+        70
+      ],
+      "valid_preds": [
+        69,
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

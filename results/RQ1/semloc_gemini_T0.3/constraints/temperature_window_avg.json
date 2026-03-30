@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "temperature_window_avg",
+  "fault_hypothesis": "The average on line 67 is calculated by dividing the sum by the `window` size. This is incorrect when the number of available values (`len(tail)`) is less than the window size, as the division should be by `len(tail)`.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The mean must be calculated using the actual number of samples in the tail, not the window size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(tail__1) < warmup_min) or (window == len(tail__1))"
+      },
+      "intent": "The divisor `window` is only correct if it equals the number of tail samples, which is not true for failing cases that pass the warmup check.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The mean value about to be returned must be the correct average of the tail samples.",
+      "confidence": 0.9
+    }
+  ]
+}

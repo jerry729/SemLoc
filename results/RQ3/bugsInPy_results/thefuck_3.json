@@ -1,0 +1,28 @@
+{
+  "bug_id": "thefuck_3",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.shells.fish.Fish.info",
+    "buggy_methods": [
+      "thefuck.shells.fish.Fish.info"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.shells.fish.Fish.info",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/shells/test_fish.py": [
+      117
+    ],
+    "thefuck/shells/fish.py": [
+      108,
+      110
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

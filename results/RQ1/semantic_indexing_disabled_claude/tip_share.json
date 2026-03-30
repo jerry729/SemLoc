@@ -1,0 +1,47 @@
+{
+  "function": "tip_share",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    62
+  ],
+  "total_source_lines": 63,
+  "runs": [
+    {
+      "faulty_lines": [
+        60,
+        62
+      ],
+      "explanation": "The fee should be deducted from the total amount before splitting (net = amount - fee), but instead the full amount is split on line 60 and then the fee is incorrectly subtracted from each individual share on line 62.",
+      "confidence": 0.85,
+      "parse_ok": true,
+      "raw": "Looking at the code, the bug is on line 60 where the fee is not deducted before splitting. The docstring says \"The platform fee is deducted before distributing shares,\" meaning the fee should be subtracted from `amount` first, then the remainder split by ratios. Instead, the code splits the full `amount` by ratios and then subtracts `fee` from each individual share on line 62, which is incorrect behavior.\n\nThe correct implementation should be:\n- `base = amount - fee` (deduct fee first)\n- Then split `base` among recipients by ratios\n\nInstead, line 60 uses the full `amount` and line 62 subtracts `fee` from each share individually.\n\n```json\n{\n  \"function_name\": \"tip_share\",\n  \"faulty_lines\": [60, 62],\n  \"explanation\": \"The fee should be deducted from the total amount before splitting (net = amount - fee), but instead the full amount is split on line 60 and then the fee is incorrectly subtracted from each individual share on line 62.\",\n  \"confidence\": 0.85\n}\n```",
+      "predicted": [
+        60,
+        62
+      ],
+      "valid_preds": [
+        60,
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 2,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 60,
+  "best_rank_ever": 2,
+  "mean_n_predicted": 2.0
+}

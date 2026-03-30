@@ -1,0 +1,44 @@
+{
+  "function": "demand_forecast_curve",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 72,
+  "runs": [
+    {
+      "faulty_lines": [
+        66
+      ],
+      "explanation": "The condition `if not clamp:` is inverted. Clamping should occur when `clamp=True`, but the current code clamps when `clamp=False` and does no clamping when `clamp=True`.",
+      "confidence": 0.98,
+      "parse_ok": true,
+      "raw": "The bug is on line 66: the condition `if not clamp:` is inverted. When `clamp=True`, the clamping should be applied, but the current code applies clamping when `clamp=False` and skips it when `clamp=True`.\n\n```json\n{\n  \"function_name\": \"demand_forecast_curve\",\n  \"faulty_lines\": [66],\n  \"explanation\": \"The condition `if not clamp:` is inverted. Clamping should occur when `clamp=True`, but the current code clamps when `clamp=False` and does no clamping when `clamp=True`.\",\n  \"confidence\": 0.98\n}\n```",
+      "predicted": [
+        66
+      ],
+      "valid_preds": [
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

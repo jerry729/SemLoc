@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "adjust_supply",
+  "fault_hypothesis": "The function does not normalise the blended weights before returning; it appends raw blended values to `updated` but never divides by their total sum, so the output only sums to 1.0 when the inputs happen to already sum to 1.0. The bug is on line 64 (return statement) \u2014 or more precisely, the normalisation step is entirely missing after the loop.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The list being returned must already sum to 1.0; if normalisation is missing this will be false for non-unit-sum inputs.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) > 0 and all(v >= 0 for v in updated__1)"
+      },
+      "intent": "Each appended blended weight should be non-negative throughout the loop.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "updated__1 == []"
+      },
+      "intent": "After initialisation, updated__1 must be an empty list before the loop fills it.",
+      "confidence": 0.6
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 regardless of input magnitudes.",
+      "confidence": 0.9
+    }
+  ]
+}

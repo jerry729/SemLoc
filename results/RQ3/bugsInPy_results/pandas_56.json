@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_56",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.frame.DataFrame._get_value",
+    "buggy_methods": [
+      "pandas.core.frame.DataFrame._get_value"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.frame.DataFrame._get_value",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/frame.py": [
+      2625,
+      2626
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

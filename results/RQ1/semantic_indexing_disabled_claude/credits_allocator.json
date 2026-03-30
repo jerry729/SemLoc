@@ -1,0 +1,44 @@
+{
+  "function": "credits_allocator",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 74,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "Line 70 uses `int(x)` which truncates (floors) the planned allocations, causing the sum of allocations to be less than `total`. The correct approach would use the largest remainder method or proper rounding to ensure the allocations sum to exactly `total`.",
+      "confidence": 0.75,
+      "parse_ok": true,
+      "raw": "Looking at this function, the main issue is in the integer allocation step. When `_INTEGER_ALLOCATION` is True, the code uses `int(x)` which truncates (floors) the values rather than rounding properly. This means the sum of allocations will typically be less than `total`.\n\nThe standard approach for discrete allocation (like the largest remainder method) would be to:\n1. Floor all values\n2. Distribute remaining credits to recipients with the largest fractional parts\n\nInstead, line 70 simply truncates with `int(x)`, losing credits. This is the bug - it should use proper rounding or the largest remainder method to ensure the sum equals `total`.\n\n```json\n{\n  \"function_name\": \"credits_allocator\",\n  \"faulty_lines\": [70],\n  \"explanation\": \"Line 70 uses `int(x)` which truncates (floors) the planned allocations, causing the sum of allocations to be less than `total`. The correct approach would use the largest remainder method or proper rounding to ensure the allocations sum to exactly `total`.\",\n  \"confidence\": 0.75\n}\n```",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

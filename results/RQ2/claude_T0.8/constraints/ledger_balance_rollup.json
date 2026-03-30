@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ledger_balance_rollup",
+  "fault_hypothesis": "On line 66, the debit branch incorrectly adds the amount (`balance += amount`) instead of subtracting it (`balance -= amount`), causing debits to increase the balance rather than decrease it.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "kind != 'debit' or balance < balance + amount"
+      },
+      "intent": "After executing the debit branch, balance should have decreased (i.e., amount was subtracted), not increased.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "balance <= 0.0 or any(k == 'credit' for _, k in entries)"
+      },
+      "intent": "After processing a debit-only ledger, balance should not be positive.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "balance == sum(a if k == 'credit' else -a for a, k in entries[:idx+1])"
+      },
+      "intent": "At the end of each loop iteration, the running balance must equal credits minus debits processed so far.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result <= sum(a for a, k in entries if k == 'credit')"
+      },
+      "intent": "The final balance cannot exceed the total of all credits when debits are present.",
+      "confidence": 0.8
+    }
+  ]
+}

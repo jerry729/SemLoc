@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gain_trendline",
+  "fault_hypothesis": "The condition for clamping the output on line 70 is inverted. The clamping logic is executed when `clamp` is `False`, but it should be executed when `clamp` is `True`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))) or (not clamp and y__5 == y__1)"
+      },
+      "intent": "The final gain y must be clamped if requested, and unclamped otherwise.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__5 == y__1"
+      },
+      "intent": "If clamping is disabled (the 'then' branch of 'if not clamp'), the calculated gain should not be modified.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__5 >= min(y0, y1) and y__5 <= max(y0, y1)"
+      },
+      "intent": "If clamping is enabled (the 'else' branch of 'if not clamp'), the result must be within the endpoint gain range.",
+      "confidence": 0.9
+    }
+  ]
+}

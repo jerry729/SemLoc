@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "kv_snapshot_reader",
+  "fault_hypothesis": "The early-termination condition on line 70 uses `k < key` instead of `k > key`. Since the snapshot is sorted ascending, we should break when the current key is GREATER than the target key, not less. This causes the loop to break prematurely when it encounters a key that comes before the target.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (k < key)"
+      },
+      "intent": "The break condition should only trigger when k > key (past the target), never when k < key (before the target); this expression is FALSE when the buggy break fires on a key that precedes the target.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "k <= key"
+      },
+      "intent": "At the end of each loop iteration that has not yet returned, the current key k must be less than or equal to the target key (we have not passed the target yet); a break on k < key violates this by breaking too early.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "k > key"
+      },
+      "intent": "The break branch should only be entered when k > key (past the target in the sorted sequence), not when k < key.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is not None or all(k != key for k, v in snapshot)"
+      },
+      "intent": "The function should only return None (default) when the key genuinely does not exist in the snapshot.",
+      "confidence": 0.8
+    }
+  ]
+}

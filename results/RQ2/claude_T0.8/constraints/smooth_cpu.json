@@ -1,0 +1,81 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_cpu",
+  "fault_hypothesis": "On line 68, the mean is computed by dividing by `window` instead of `len(tail)`. When fewer samples than `window` are available, this produces a deflated result rather than the true average of available samples.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "mean should be total divided by the number of available samples, not by window",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "after computing mean, mean * len(tail) should equal total",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or (mean__1 >= total__1 / window if len(tail__1) == window else mean__1 >= total__1 / window)"
+      },
+      "intent": "when tail is shorter than window, dividing by window underestimates the mean",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) > 0 and (len(tail__1) == window or len(tail__1) < window)"
+      },
+      "intent": "detect case where tail is shorter than window so division denominator matters",
+      "confidence": 0.7
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result - sum([_clamp_sample(v) for v in values[-window:]]) / len(values[-window:])) < 1e-9"
+      },
+      "intent": "return value must equal the mean of available clamped tail samples",
+      "confidence": 0.85
+    }
+  ]
+}

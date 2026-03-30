@@ -1,0 +1,44 @@
+{
+  "function": "probability_curve",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    73
+  ],
+  "total_source_lines": 81,
+  "runs": [
+    {
+      "faulty_lines": [
+        73
+      ],
+      "explanation": "The condition `if not clamp:` is inverted. The clamping logic should execute when `clamp=True`, but as written it only clamps when `clamp=False`, meaning the output is never clamped when the user requests it and always clamped when they don't.",
+      "confidence": 0.97,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"probability_curve\",\n  \"faulty_lines\": [73],\n  \"explanation\": \"The condition `if not clamp:` is inverted. The clamping logic should execute when `clamp=True`, but as written it only clamps when `clamp=False`, meaning the output is never clamped when the user requests it and always clamped when they don't.\",\n  \"confidence\": 0.97\n}",
+      "predicted": [
+        73
+      ],
+      "valid_preds": [
+        73
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 73,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

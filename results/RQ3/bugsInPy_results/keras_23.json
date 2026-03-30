@@ -1,0 +1,25 @@
+{
+  "bug_id": "keras_23",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.engine.sequential.Sequential.add",
+    "buggy_methods": [
+      "keras.engine.sequential.Sequential.add"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.engine.sequential.Sequential.add",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/engine/sequential.py": [
+      152,
+      153
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

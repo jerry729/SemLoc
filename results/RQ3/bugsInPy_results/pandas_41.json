@@ -1,0 +1,48 @@
+{
+  "bug_id": "pandas_41",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.blocks.Block.set",
+    "buggy_methods": [
+      "pandas.core.internals.blocks.Block.set"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.blocks.Block.set",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/internals/blocks.py": [
+      343,
+      345,
+      346,
+      347,
+      796,
+      1636,
+      1639,
+      1641,
+      1752,
+      2058,
+      2076,
+      2095,
+      2242,
+      2243,
+      2244,
+      2247,
+      2248,
+      2249,
+      2250,
+      2251,
+      2484,
+      2485,
+      2486,
+      2528,
+      2620
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

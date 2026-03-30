@@ -1,0 +1,24 @@
+{
+  "bug_id": "pandas_28",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.strings.StringMethods._get_series_list",
+    "buggy_methods": [
+      "pandas.core.strings.StringMethods._get_series_list"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.strings.StringMethods._get_series_list",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/strings.py": [
+      2300
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

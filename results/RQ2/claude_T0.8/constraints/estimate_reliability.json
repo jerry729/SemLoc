@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "estimate_reliability",
+  "fault_hypothesis": "The condition on line 68 is inverted: the clamping block executes when `clamp` is False instead of when `clamp` is True, so clamping is applied when it shouldn't be and skipped when it should be.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp is True the branch body (clamping logic) should be entered, but the inverted condition `not clamp` means it is skipped.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 >= min(y0, y1) and y__4 <= max(y0, y1)"
+      },
+      "intent": "After the clamping branch executes, y should be within [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "clamp == False or (y__1 >= min(y0, y1) and y__1 <= max(y0, y1)) or y__1 != y__1 + 0"
+      },
+      "intent": "When clamp is True and x is outside [x0,x1], y__1 will be out of range and must be corrected by the clamp block.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__4"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, the final y value must be within the calibration range [min(y0,y1), max(y0,y1)].",
+      "confidence": 0.92
+    }
+  ]
+}

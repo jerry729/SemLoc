@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "search_result_pager",
+  "fault_hypothesis": "The slice indexing on line 72 is incorrect. The upper bound `end + 1` is off by one, causing one too many elements to be returned when the page is not the last one.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) <= page_size"
+      },
+      "intent": "The returned page must not be larger than the requested page size.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 + 1 > len(results)"
+      },
+      "intent": "The bug is only triggered when the intended slice range is fully within the bounds of the results list.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "len(results[start__1:end__1 + 1]) == len(results[start__1:end__1])"
+      },
+      "intent": "The off-by-one in the slice upper bound should not change the number of elements returned.",
+      "confidence": 1.0
+    }
+  ]
+}

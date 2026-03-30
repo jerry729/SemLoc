@@ -1,0 +1,25 @@
+{
+  "bug_id": "thefuck_21",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.git_fix_stash.match",
+    "buggy_methods": [
+      "thefuck.rules.git_fix_stash.match"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.git_fix_stash.match",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "thefuck/rules/git_fix_stash.py": [
+      8,
+      9
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

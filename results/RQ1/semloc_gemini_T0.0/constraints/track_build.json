@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "track_build",
+  "fault_hypothesis": "On line 53, when a counter exceeds its cap, it is incorrectly clamped to `cap - 1` instead of being set to `cap`. This causes the counter to be set to a value below the cap, leading to incorrect behavior on subsequent calls.",
+  "fault_line": 53,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 53
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "The counter should be set to the cap value when clamped.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 52,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "counters__1[key__1] == cap"
+      },
+      "intent": "After the clamping logic is applied, the counter's value must be exactly the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "cap is None or __cbfl_result <= cap"
+      },
+      "intent": "The final returned value must never exceed the specified cap.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 52,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "cap is None or counters__1[key__1] <= cap"
+      },
+      "intent": "If the clamping logic is not triggered, the counter value must be at or below the cap.",
+      "confidence": 0.8
+    }
+  ]
+}

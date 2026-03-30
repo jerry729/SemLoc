@@ -1,0 +1,47 @@
+{
+  "function": "quota_for_fuel",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 70,
+  "runs": [
+    {
+      "faulty_lines": [
+        33,
+        66
+      ],
+      "explanation": "Applying the minimum to each share independently on line 33 can cause the total allocated amount to exceed the available fuel. Furthermore, converting shares to integers via truncation on line 66 discards remainders, leading to an under-allocation that fails to distribute the entire total.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"quota_for_fuel\",\n  \"faulty_lines\": [\n    33,\n    66\n  ],\n  \"explanation\": \"Applying the minimum to each share independently on line 33 can cause the total allocated amount to exceed the available fuel. Furthermore, converting shares to integers via truncation on line 66 discards remainders, leading to an under-allocation that fails to distribute the entire total.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        33,
+        66
+      ],
+      "valid_preds": [
+        33,
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 33,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

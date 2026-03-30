@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "reserve_slot",
+  "fault_hypothesis": "The `overlaps` function on line 61 uses strict inequalities (`b[1] <= a[0]` and `b[0] >= a[1]`), which means touching boundaries (where end of one equals start of another) are not considered overlapping. The tests require that touching boundaries ARE considered overlapping, so the condition should use strict less-than (`b[1] < a[0]` or `b[0] > a[1]`).",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "not (b[1] < a[0] or b[0] > a[1]) == (not (b[1] <= a[0] or b[0] >= a[1]))"
+      },
+      "intent": "The overlaps function incorrectly uses <= and >= instead of < and > for boundary checks; touching slots should be considered overlapping.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == effective_candidate__3[0] or slot[0] == effective_candidate__3[1])"
+      },
+      "intent": "When no overlap is detected, the slot boundaries should not be touching the candidate boundaries (touching should have been flagged as overlap).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (slot[1] == candidate[0]) and not (slot[0] == candidate[1])"
+      },
+      "intent": "At the end of each loop iteration where no conflict was returned, the current slot must not touch the candidate at a boundary point.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and any(s[1] == candidate[0] or s[0] == candidate[1] for s in existing))"
+      },
+      "intent": "If the candidate was successfully reserved, no existing slot should touch the candidate at a boundary.",
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "invoice_merge_stream",
+  "fault_hypothesis": "The code on line 84 incorrectly removes the last element from the `merged` list when it is the same as the last element of both input streams. This violates the requirement to preserve all duplicates.",
+  "fault_line": 84,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 84
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left__1) + len(right__1)"
+      },
+      "intent": "After the pop operation, the total number of elements should still be the sum of the lengths of the input lists.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left__1) + len(right__1)"
+      },
+      "intent": "Inside the branch that removes an element, the list length invariant must still hold.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 83
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left__1 and right__1 and merged__1[-1] == left__1[-1] == right__1[-1])"
+      },
+      "intent": "The condition that incorrectly triggers the removal of a duplicate element should not be true.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned list must contain exactly the sum of the number of elements from the input lists.",
+      "confidence": 0.8
+    }
+  ]
+}

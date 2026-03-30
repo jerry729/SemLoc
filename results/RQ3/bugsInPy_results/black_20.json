@@ -1,0 +1,53 @@
+{
+  "bug_id": "black_20",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.format_file_in_place",
+    "buggy_methods": [
+      "black.format_file_in_place"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.format_file_in_place",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      344,
+      345
+    ],
+    "tests/test_black.py": [
+      203
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      344,
+      345
+    ],
+    "best_rank": null,
+    "fn_lines": 37,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 340,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "black_20",
+    "function": "format_file_in_place",
+    "src_path": "black.py",
+    "fn_begin": 318,
+    "fn_end": 354,
+    "n_constraints": 4,
+    "n_tests_passing": 34,
+    "n_tests_failing": 5,
+    "line_scores": [],
+    "fault_line": 340,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/black_20/format_file_in_place_constraints.json",
+    "report_path": "/tmp/bip_semloc/black_20/violations.jsonl"
+  }
+}

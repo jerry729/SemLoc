@@ -1,0 +1,1259 @@
+{
+  "n_programs": 250,
+  "top1_accuracy": 0.08,
+  "top3_accuracy": 0.176,
+  "top5_accuracy": 0.324,
+  "mean_pct_suspicious": 43.6,
+  "per_program": {
+    "adjust_allocation": {
+      "best_rank": 6,
+      "pct_suspicious": 45.1,
+      "n_suspicious": 23
+    },
+    "ad_mix": {
+      "best_rank": 5,
+      "pct_suspicious": 43.1,
+      "n_suspicious": 22
+    },
+    "adjust_portfolio": {
+      "best_rank": 7,
+      "pct_suspicious": 44.2,
+      "n_suspicious": 23
+    },
+    "adjust_queue": {
+      "best_rank": 8,
+      "pct_suspicious": 42.3,
+      "n_suspicious": 22
+    },
+    "allocate_budget_cut": {
+      "best_rank": 8,
+      "pct_suspicious": 46.9,
+      "n_suspicious": 23
+    },
+    "adjust_supply": {
+      "best_rank": 8,
+      "pct_suspicious": 46.9,
+      "n_suspicious": 23
+    },
+    "allocate_bonus_cut": {
+      "best_rank": 12,
+      "pct_suspicious": 46.3,
+      "n_suspicious": 25
+    },
+    "allocate_bounty_cut": {
+      "best_rank": 5,
+      "pct_suspicious": 43.8,
+      "n_suspicious": 21
+    },
+    "audit_window_filter": {
+      "best_rank": 5,
+      "pct_suspicious": 35.8,
+      "n_suspicious": 19
+    },
+    "api_rate_guard": {
+      "best_rank": 7,
+      "pct_suspicious": 36.8,
+      "n_suspicious": 21
+    },
+    "award_payout": {
+      "best_rank": 11,
+      "pct_suspicious": 49.0,
+      "n_suspicious": 25
+    },
+    "bandwidth_apportion": {
+      "best_rank": 9,
+      "pct_suspicious": 45.1,
+      "n_suspicious": 23
+    },
+    "allocate_prize_cut": {
+      "best_rank": 11,
+      "pct_suspicious": 45.6,
+      "n_suspicious": 26
+    },
+    "allocate_pool_cut": {
+      "best_rank": 7,
+      "pct_suspicious": 46.2,
+      "n_suspicious": 24
+    },
+    "bandwidth_budgeter": {
+      "best_rank": 7,
+      "pct_suspicious": 47.2,
+      "n_suspicious": 25
+    },
+    "backlog_rolling_avg": {
+      "best_rank": 5,
+      "pct_suspicious": 43.8,
+      "n_suspicious": 21
+    },
+    "bandwidth_rebalance": {
+      "best_rank": 8,
+      "pct_suspicious": 44.9,
+      "n_suspicious": 22
+    },
+    "billing_gate": {
+      "best_rank": 6,
+      "pct_suspicious": 32.8,
+      "n_suspicious": 19
+    },
+    "attention_mask_merge": {
+      "best_rank": 8,
+      "pct_suspicious": 44.0,
+      "n_suspicious": 22
+    },
+    "blend_orders": {
+      "best_rank": 22,
+      "pct_suspicious": 63.8,
+      "n_suspicious": 37
+    },
+    "bill_payout": {
+      "best_rank": 8,
+      "pct_suspicious": 48.1,
+      "n_suspicious": 25
+    },
+    "batch_tally": {
+      "best_rank": 2,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 20
+    },
+    "blend_margins": {
+      "best_rank": 21,
+      "pct_suspicious": 59.3,
+      "n_suspicious": 35
+    },
+    "batchnorm_running_mean": {
+      "best_rank": 4,
+      "pct_suspicious": 35.2,
+      "n_suspicious": 19
+    },
+    "batch_rate": {
+      "best_rank": 8,
+      "pct_suspicious": 39.2,
+      "n_suspicious": 20
+    },
+    "blend_supplies": {
+      "best_rank": 11,
+      "pct_suspicious": 55.4,
+      "n_suspicious": 31
+    },
+    "blend_levels": {
+      "best_rank": 16,
+      "pct_suspicious": 55.2,
+      "n_suspicious": 32
+    },
+    "bump_purchase": {
+      "best_rank": 2,
+      "pct_suspicious": 41.2,
+      "n_suspicious": 21
+    },
+    "cached_inventory": {
+      "best_rank": null,
+      "pct_suspicious": 37.5,
+      "n_suspicious": 21
+    },
+    "bump_job": {
+      "best_rank": 6,
+      "pct_suspicious": 43.2,
+      "n_suspicious": 19
+    },
+    "budget_budgeter": {
+      "best_rank": 10,
+      "pct_suspicious": 47.3,
+      "n_suspicious": 26
+    },
+    "bump_conversion": {
+      "best_rank": 2,
+      "pct_suspicious": 44.7,
+      "n_suspicious": 21
+    },
+    "budget_mix": {
+      "best_rank": 10,
+      "pct_suspicious": 42.6,
+      "n_suspicious": 23
+    },
+    "cache_entry_ttl": {
+      "best_rank": 5,
+      "pct_suspicious": 35.7,
+      "n_suspicious": 20
+    },
+    "cached_metric": {
+      "best_rank": 6,
+      "pct_suspicious": 46.8,
+      "n_suspicious": 22
+    },
+    "bump_refund": {
+      "best_rank": 1,
+      "pct_suspicious": 45.7,
+      "n_suspicious": 21
+    },
+    "bump_click": {
+      "best_rank": 4,
+      "pct_suspicious": 42.0,
+      "n_suspicious": 21
+    },
+    "cached_route": {
+      "best_rank": 5,
+      "pct_suspicious": 40.4,
+      "n_suspicious": 19
+    },
+    "cached_manifest": {
+      "best_rank": 4,
+      "pct_suspicious": 36.0,
+      "n_suspicious": 18
+    },
+    "cached_preference": {
+      "best_rank": null,
+      "pct_suspicious": 32.8,
+      "n_suspicious": 20
+    },
+    "calibrate_latency": {
+      "best_rank": null,
+      "pct_suspicious": 39.3,
+      "n_suspicious": 22
+    },
+    "calendar_slot_insert": {
+      "best_rank": 8,
+      "pct_suspicious": 38.6,
+      "n_suspicious": 22
+    },
+    "calibrate_loss": {
+      "best_rank": 3,
+      "pct_suspicious": 45.5,
+      "n_suspicious": 25
+    },
+    "calibrate_pressure": {
+      "best_rank": 2,
+      "pct_suspicious": 37.5,
+      "n_suspicious": 21
+    },
+    "cacheline_expiry": {
+      "best_rank": 6,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 20
+    },
+    "calibrate_lift": {
+      "best_rank": 1,
+      "pct_suspicious": 42.0,
+      "n_suspicious": 21
+    },
+    "cacheline_refresh": {
+      "best_rank": 2,
+      "pct_suspicious": 40.7,
+      "n_suspicious": 22
+    },
+    "calibrate_score": {
+      "best_rank": 2,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 24
+    },
+    "combine_responses": {
+      "best_rank": 1,
+      "pct_suspicious": 53.4,
+      "n_suspicious": 31
+    },
+    "calibrate_trend": {
+      "best_rank": 1,
+      "pct_suspicious": 40.8,
+      "n_suspicious": 20
+    },
+    "confidence_trendline": {
+      "best_rank": 2,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 26
+    },
+    "cluster_rebalance_weights": {
+      "best_rank": 3,
+      "pct_suspicious": 36.7,
+      "n_suspicious": 18
+    },
+    "checkout_rate": {
+      "best_rank": 10,
+      "pct_suspicious": 42.3,
+      "n_suspicious": 22
+    },
+    "calibrate_quality": {
+      "best_rank": 8,
+      "pct_suspicious": 41.4,
+      "n_suspicious": 24
+    },
+    "combine_requests": {
+      "best_rank": 5,
+      "pct_suspicious": 58.1,
+      "n_suspicious": 36
+    },
+    "catalog_cache": {
+      "best_rank": null,
+      "pct_suspicious": 41.7,
+      "n_suspicious": 20
+    },
+    "cost_trendline": {
+      "best_rank": 2,
+      "pct_suspicious": 44.4,
+      "n_suspicious": 24
+    },
+    "combine_scores": {
+      "best_rank": 1,
+      "pct_suspicious": 54.5,
+      "n_suspicious": 30
+    },
+    "config_interpolate": {
+      "best_rank": 10,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 24
+    },
+    "coverage_interp": {
+      "best_rank": null,
+      "pct_suspicious": 44.6,
+      "n_suspicious": 25
+    },
+    "combine_offsets": {
+      "best_rank": 17,
+      "pct_suspicious": 55.6,
+      "n_suspicious": 30
+    },
+    "credits_allocator": {
+      "best_rank": 6,
+      "pct_suspicious": 43.9,
+      "n_suspicious": 25
+    },
+    "config_expiry": {
+      "best_rank": null,
+      "pct_suspicious": 36.2,
+      "n_suspicious": 21
+    },
+    "credit_share": {
+      "best_rank": 7,
+      "pct_suspicious": 49.0,
+      "n_suspicious": 25
+    },
+    "combine_depths": {
+      "best_rank": 17,
+      "pct_suspicious": 56.2,
+      "n_suspicious": 36
+    },
+    "cpu_allocator": {
+      "best_rank": 6,
+      "pct_suspicious": 41.8,
+      "n_suspicious": 23
+    },
+    "coupons_apportion": {
+      "best_rank": 10,
+      "pct_suspicious": 41.8,
+      "n_suspicious": 28
+    },
+    "fee_splitter": {
+      "best_rank": null,
+      "pct_suspicious": 50.0,
+      "n_suspicious": 24
+    },
+    "grant_share": {
+      "best_rank": 5,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 21
+    },
+    "energy_window_avg": {
+      "best_rank": 10,
+      "pct_suspicious": 44.1,
+      "n_suspicious": 26
+    },
+    "demand_forecast_curve": {
+      "best_rank": null,
+      "pct_suspicious": 41.1,
+      "n_suspicious": 23
+    },
+    "guard_write": {
+      "best_rank": null,
+      "pct_suspicious": 37.3,
+      "n_suspicious": 19
+    },
+    "estimate_supply": {
+      "best_rank": 1,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 24
+    },
+    "download_rate": {
+      "best_rank": null,
+      "pct_suspicious": 36.2,
+      "n_suspicious": 21
+    },
+    "estimate_temperature": {
+      "best_rank": null,
+      "pct_suspicious": 36.4,
+      "n_suspicious": 20
+    },
+    "demands_union": {
+      "best_rank": 1,
+      "pct_suspicious": 55.8,
+      "n_suspicious": 29
+    },
+    "feature_cache": {
+      "best_rank": null,
+      "pct_suspicious": 44.2,
+      "n_suspicious": 23
+    },
+    "downtime_booking": {
+      "best_rank": 9,
+      "pct_suspicious": 46.3,
+      "n_suspicious": 25
+    },
+    "dataloader_shard_merge": {
+      "best_rank": 14,
+      "pct_suspicious": 52.5,
+      "n_suspicious": 32
+    },
+    "email_send_quota": {
+      "best_rank": null,
+      "pct_suspicious": 38.5,
+      "n_suspicious": 20
+    },
+    "growth_trendline": {
+      "best_rank": 9,
+      "pct_suspicious": 44.6,
+      "n_suspicious": 25
+    },
+    "divide_coupon": {
+      "best_rank": 5,
+      "pct_suspicious": 43.4,
+      "n_suspicious": 23
+    },
+    "estimate_reliability": {
+      "best_rank": 8,
+      "pct_suspicious": 41.4,
+      "n_suspicious": 24
+    },
+    "demand_curve": {
+      "best_rank": 20,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 21
+    },
+    "feature_flag_rollout": {
+      "best_rank": null,
+      "pct_suspicious": 39.1,
+      "n_suspicious": 18
+    },
+    "embedding_lookup_cache": {
+      "best_rank": 3,
+      "pct_suspicious": 41.1,
+      "n_suspicious": 23
+    },
+    "guard_search": {
+      "best_rank": null,
+      "pct_suspicious": 36.2,
+      "n_suspicious": 21
+    },
+    "gradient_clip_budget": {
+      "best_rank": null,
+      "pct_suspicious": 48.1,
+      "n_suspicious": 25
+    },
+    "fuel_moving_mean": {
+      "best_rank": 4,
+      "pct_suspicious": 40.4,
+      "n_suspicious": 21
+    },
+    "gain_trendline": {
+      "best_rank": 1,
+      "pct_suspicious": 43.3,
+      "n_suspicious": 26
+    },
+    "draft_cache": {
+      "best_rank": 3,
+      "pct_suspicious": 37.3,
+      "n_suspicious": 19
+    },
+    "divide_refund": {
+      "best_rank": 8,
+      "pct_suspicious": 47.9,
+      "n_suspicious": 23
+    },
+    "grades_union": {
+      "best_rank": 38,
+      "pct_suspicious": 63.9,
+      "n_suspicious": 39
+    },
+    "file_chunk_stitch": {
+      "best_rank": 7,
+      "pct_suspicious": 41.0,
+      "n_suspicious": 25
+    },
+    "guard_email": {
+      "best_rank": 7,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 20
+    },
+    "event_gate": {
+      "best_rank": 7,
+      "pct_suspicious": 43.8,
+      "n_suspicious": 21
+    },
+    "donation_share": {
+      "best_rank": null,
+      "pct_suspicious": 48.9,
+      "n_suspicious": 22
+    },
+    "error_meter": {
+      "best_rank": 1,
+      "pct_suspicious": 40.8,
+      "n_suspicious": 20
+    },
+    "gpu_memory_pool": {
+      "best_rank": null,
+      "pct_suspicious": 48.3,
+      "n_suspicious": 28
+    },
+    "inspection_booking": {
+      "best_rank": 2,
+      "pct_suspicious": 43.6,
+      "n_suspicious": 24
+    },
+    "kv_snapshot_reader": {
+      "best_rank": null,
+      "pct_suspicious": 38.2,
+      "n_suspicious": 21
+    },
+    "heartbeat_throttle": {
+      "best_rank": 7,
+      "pct_suspicious": 35.2,
+      "n_suspicious": 19
+    },
+    "histogram_bucket_merge": {
+      "best_rank": 20,
+      "pct_suspicious": 55.6,
+      "n_suspicious": 35
+    },
+    "latencies_merge": {
+      "best_rank": 31,
+      "pct_suspicious": 52.1,
+      "n_suspicious": 38
+    },
+    "job_queue_priority": {
+      "best_rank": 6,
+      "pct_suspicious": 40.4,
+      "n_suspicious": 21
+    },
+    "invoice_merge_stream": {
+      "best_rank": null,
+      "pct_suspicious": 56.1,
+      "n_suspicious": 37
+    },
+    "limit_message": {
+      "best_rank": null,
+      "pct_suspicious": 35.2,
+      "n_suspicious": 19
+    },
+    "metric_rolling_avg": {
+      "best_rank": null,
+      "pct_suspicious": 44.6,
+      "n_suspicious": 25
+    },
+    "lru_evictor": {
+      "best_rank": 2,
+      "pct_suspicious": 52.1,
+      "n_suspicious": 25
+    },
+    "latency_rolling_avg": {
+      "best_rank": 6,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 24
+    },
+    "load_rolling_avg": {
+      "best_rank": 5,
+      "pct_suspicious": 41.1,
+      "n_suspicious": 23
+    },
+    "limit_api": {
+      "best_rank": null,
+      "pct_suspicious": 38.5,
+      "n_suspicious": 20
+    },
+    "login_throttle": {
+      "best_rank": null,
+      "pct_suspicious": 36.4,
+      "n_suspicious": 20
+    },
+    "limit_job": {
+      "best_rank": null,
+      "pct_suspicious": 35.6,
+      "n_suspicious": 21
+    },
+    "limit_ping": {
+      "best_rank": null,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 20
+    },
+    "ids_merge": {
+      "best_rank": 1,
+      "pct_suspicious": 59.3,
+      "n_suspicious": 32
+    },
+    "maintenance_booking": {
+      "best_rank": null,
+      "pct_suspicious": 37.1,
+      "n_suspicious": 23
+    },
+    "log_sampling_decider": {
+      "best_rank": 3,
+      "pct_suspicious": 34.0,
+      "n_suspicious": 17
+    },
+    "memory_moving_mean": {
+      "best_rank": null,
+      "pct_suspicious": 38.6,
+      "n_suspicious": 22
+    },
+    "ledger_balance_rollup": {
+      "best_rank": 1,
+      "pct_suspicious": 41.1,
+      "n_suspicious": 23
+    },
+    "limit_query": {
+      "best_rank": null,
+      "pct_suspicious": 38.9,
+      "n_suspicious": 21
+    },
+    "limit_sensor": {
+      "best_rank": 6,
+      "pct_suspicious": 38.0,
+      "n_suspicious": 19
+    },
+    "load_mix": {
+      "best_rank": null,
+      "pct_suspicious": 42.3,
+      "n_suspicious": 22
+    },
+    "invoice_meter": {
+      "best_rank": 4,
+      "pct_suspicious": 44.2,
+      "n_suspicious": 23
+    },
+    "machine_booking": {
+      "best_rank": 5,
+      "pct_suspicious": 44.0,
+      "n_suspicious": 22
+    },
+    "login_tally": {
+      "best_rank": 2,
+      "pct_suspicious": 38.6,
+      "n_suspicious": 22
+    },
+    "message_counter": {
+      "best_rank": 6,
+      "pct_suspicious": 43.5,
+      "n_suspicious": 20
+    },
+    "model_confidence_clamp": {
+      "best_rank": 8,
+      "pct_suspicious": 37.7,
+      "n_suspicious": 23
+    },
+    "offer_expiry": {
+      "best_rank": 5,
+      "pct_suspicious": 38.0,
+      "n_suspicious": 19
+    },
+    "notification_gate": {
+      "best_rank": 8,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 21
+    },
+    "lr_warmup_schedule": {
+      "best_rank": 4,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 18
+    },
+    "optimizer_step_guard": {
+      "best_rank": null,
+      "pct_suspicious": 39.2,
+      "n_suspicious": 20
+    },
+    "packets_window_avg": {
+      "best_rank": 4,
+      "pct_suspicious": 42.3,
+      "n_suspicious": 22
+    },
+    "plan_delivery_slot": {
+      "best_rank": 6,
+      "pct_suspicious": 43.4,
+      "n_suspicious": 23
+    },
+    "payment_payout": {
+      "best_rank": null,
+      "pct_suspicious": 45.5,
+      "n_suspicious": 25
+    },
+    "pages_union": {
+      "best_rank": 36,
+      "pct_suspicious": 57.8,
+      "n_suspicious": 37
+    },
+    "plan_conference_slot": {
+      "best_rank": 4,
+      "pct_suspicious": 40.9,
+      "n_suspicious": 27
+    },
+    "plan_appointment_slot": {
+      "best_rank": 8,
+      "pct_suspicious": 42.3,
+      "n_suspicious": 22
+    },
+    "percentile_estimator": {
+      "best_rank": 2,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 18
+    },
+    "payment_split_rebate": {
+      "best_rank": null,
+      "pct_suspicious": 44.9,
+      "n_suspicious": 22
+    },
+    "prediction_cache": {
+      "best_rank": 3,
+      "pct_suspicious": 31.0,
+      "n_suspicious": 18
+    },
+    "plan_tickets_share": {
+      "best_rank": 12,
+      "pct_suspicious": 43.1,
+      "n_suspicious": 28
+    },
+    "profile_expiry": {
+      "best_rank": 5,
+      "pct_suspicious": 34.5,
+      "n_suspicious": 19
+    },
+    "quota_allocator_service": {
+      "best_rank": null,
+      "pct_suspicious": 39.3,
+      "n_suspicious": 22
+    },
+    "plan_upgrade_slot": {
+      "best_rank": 6,
+      "pct_suspicious": 45.1,
+      "n_suspicious": 23
+    },
+    "plan_seats_share": {
+      "best_rank": 14,
+      "pct_suspicious": 43.3,
+      "n_suspicious": 29
+    },
+    "plan_points_share": {
+      "best_rank": 13,
+      "pct_suspicious": 50.0,
+      "n_suspicious": 28
+    },
+    "probability_curve": {
+      "best_rank": 6,
+      "pct_suspicious": 33.3,
+      "n_suspicious": 21
+    },
+    "quota_for_inventory": {
+      "best_rank": null,
+      "pct_suspicious": 46.2,
+      "n_suspicious": 24
+    },
+    "quota_for_storage": {
+      "best_rank": 8,
+      "pct_suspicious": 45.3,
+      "n_suspicious": 24
+    },
+    "plan_memo": {
+      "best_rank": 3,
+      "pct_suspicious": 34.0,
+      "n_suspicious": 17
+    },
+    "plan_jobs_share": {
+      "best_rank": 12,
+      "pct_suspicious": 49.1,
+      "n_suspicious": 28
+    },
+    "price_cache": {
+      "best_rank": 5,
+      "pct_suspicious": 44.4,
+      "n_suspicious": 20
+    },
+    "plan_desk_slot": {
+      "best_rank": 1,
+      "pct_suspicious": 35.9,
+      "n_suspicious": 23
+    },
+    "probability_rebalance": {
+      "best_rank": 4,
+      "pct_suspicious": 43.2,
+      "n_suspicious": 19
+    },
+    "quota_for_capacity": {
+      "best_rank": 10,
+      "pct_suspicious": 43.8,
+      "n_suspicious": 28
+    },
+    "queue_window_avg": {
+      "best_rank": null,
+      "pct_suspicious": 41.5,
+      "n_suspicious": 22
+    },
+    "prices_stream": {
+      "best_rank": null,
+      "pct_suspicious": 52.2,
+      "n_suspicious": 35
+    },
+    "priority_mix": {
+      "best_rank": 7,
+      "pct_suspicious": 47.8,
+      "n_suspicious": 22
+    },
+    "quote_memo": {
+      "best_rank": 4,
+      "pct_suspicious": 43.5,
+      "n_suspicious": 20
+    },
+    "rating_curve": {
+      "best_rank": 7,
+      "pct_suspicious": 36.4,
+      "n_suspicious": 20
+    },
+    "quota_for_memory": {
+      "best_rank": null,
+      "pct_suspicious": 44.1,
+      "n_suspicious": 26
+    },
+    "quota_for_fuel": {
+      "best_rank": 6,
+      "pct_suspicious": 46.3,
+      "n_suspicious": 25
+    },
+    "read_throttle": {
+      "best_rank": null,
+      "pct_suspicious": 35.7,
+      "n_suspicious": 20
+    },
+    "redis_like_expiry": {
+      "best_rank": 8,
+      "pct_suspicious": 36.5,
+      "n_suspicious": 23
+    },
+    "realign_cache": {
+      "best_rank": 4,
+      "pct_suspicious": 43.5,
+      "n_suspicious": 20
+    },
+    "reserve_band": {
+      "best_rank": 24,
+      "pct_suspicious": 39.7,
+      "n_suspicious": 25
+    },
+    "rebate_splitter": {
+      "best_rank": null,
+      "pct_suspicious": 44.7,
+      "n_suspicious": 21
+    },
+    "request_token_bucket": {
+      "best_rank": 1,
+      "pct_suspicious": 51.0,
+      "n_suspicious": 26
+    },
+    "realign_power": {
+      "best_rank": 5,
+      "pct_suspicious": 47.7,
+      "n_suspicious": 21
+    },
+    "retry_tally": {
+      "best_rank": 5,
+      "pct_suspicious": 43.9,
+      "n_suspicious": 18
+    },
+    "schedule_pickup": {
+      "best_rank": null,
+      "pct_suspicious": 42.3,
+      "n_suspicious": 22
+    },
+    "reservation_booking": {
+      "best_rank": 1,
+      "pct_suspicious": 38.3,
+      "n_suspicious": 23
+    },
+    "rent_splitter": {
+      "best_rank": 8,
+      "pct_suspicious": 44.9,
+      "n_suspicious": 22
+    },
+    "royalty_payout": {
+      "best_rank": null,
+      "pct_suspicious": 48.1,
+      "n_suspicious": 25
+    },
+    "rolling_usage": {
+      "best_rank": null,
+      "pct_suspicious": 38.2,
+      "n_suspicious": 21
+    },
+    "reservation_overlap_check": {
+      "best_rank": 6,
+      "pct_suspicious": 35.7,
+      "n_suspicious": 20
+    },
+    "retry_backoff_window": {
+      "best_rank": 1,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 20
+    },
+    "rolling_requests": {
+      "best_rank": 4,
+      "pct_suspicious": 39.3,
+      "n_suspicious": 22
+    },
+    "revenue_share": {
+      "best_rank": null,
+      "pct_suspicious": 47.2,
+      "n_suspicious": 25
+    },
+    "room_reservation": {
+      "best_rank": 8,
+      "pct_suspicious": 40.7,
+      "n_suspicious": 24
+    },
+    "replica_sync_offsets": {
+      "best_rank": null,
+      "pct_suspicious": 54.4,
+      "n_suspicious": 31
+    },
+    "sales_window_avg": {
+      "best_rank": 6,
+      "pct_suspicious": 38.2,
+      "n_suspicious": 21
+    },
+    "rolling_errors": {
+      "best_rank": 5,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 20
+    },
+    "schedule_shift_allocator": {
+      "best_rank": null,
+      "pct_suspicious": 42.0,
+      "n_suspicious": 21
+    },
+    "reserve_lane": {
+      "best_rank": 1,
+      "pct_suspicious": 45.5,
+      "n_suspicious": 25
+    },
+    "realign_replica": {
+      "best_rank": 6,
+      "pct_suspicious": 47.8,
+      "n_suspicious": 22
+    },
+    "schedule_call": {
+      "best_rank": 23,
+      "pct_suspicious": 39.3,
+      "n_suspicious": 24
+    },
+    "rolling_retries": {
+      "best_rank": null,
+      "pct_suspicious": 41.2,
+      "n_suspicious": 21
+    },
+    "reserve_slot": {
+      "best_rank": 10,
+      "pct_suspicious": 47.2,
+      "n_suspicious": 25
+    },
+    "schedule_car": {
+      "best_rank": null,
+      "pct_suspicious": 38.0,
+      "n_suspicious": 19
+    },
+    "schedule_demo": {
+      "best_rank": 6,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 24
+    },
+    "schedule_window": {
+      "best_rank": null,
+      "pct_suspicious": 41.4,
+      "n_suspicious": 24
+    },
+    "scores_apportion": {
+      "best_rank": 10,
+      "pct_suspicious": 44.6,
+      "n_suspicious": 25
+    },
+    "schedule_training": {
+      "best_rank": 8,
+      "pct_suspicious": 35.0,
+      "n_suspicious": 21
+    },
+    "search_result_pager": {
+      "best_rank": 4,
+      "pct_suspicious": 38.2,
+      "n_suspicious": 21
+    },
+    "session_memo": {
+      "best_rank": null,
+      "pct_suspicious": 36.8,
+      "n_suspicious": 21
+    },
+    "sensor_window_avg": {
+      "best_rank": 7,
+      "pct_suspicious": 39.0,
+      "n_suspicious": 23
+    },
+    "shard_assignment": {
+      "best_rank": 7,
+      "pct_suspicious": 39.6,
+      "n_suspicious": 19
+    },
+    "shift_demand": {
+      "best_rank": 4,
+      "pct_suspicious": 42.6,
+      "n_suspicious": 20
+    },
+    "shares_apportion": {
+      "best_rank": 5,
+      "pct_suspicious": 43.6,
+      "n_suspicious": 24
+    },
+    "shift_feature": {
+      "best_rank": 5,
+      "pct_suspicious": 44.4,
+      "n_suspicious": 20
+    },
+    "shift_traffic": {
+      "best_rank": null,
+      "pct_suspicious": 49.1,
+      "n_suspicious": 26
+    },
+    "smooth_clicks": {
+      "best_rank": 5,
+      "pct_suspicious": 42.6,
+      "n_suspicious": 20
+    },
+    "shift_risk": {
+      "best_rank": null,
+      "pct_suspicious": 45.8,
+      "n_suspicious": 22
+    },
+    "slots_apportion": {
+      "best_rank": null,
+      "pct_suspicious": 44.4,
+      "n_suspicious": 24
+    },
+    "signals_stream": {
+      "best_rank": 16,
+      "pct_suspicious": 55.4,
+      "n_suspicious": 31
+    },
+    "shift_weight": {
+      "best_rank": null,
+      "pct_suspicious": 44.9,
+      "n_suspicious": 22
+    },
+    "smooth_throughput": {
+      "best_rank": 5,
+      "pct_suspicious": 42.0,
+      "n_suspicious": 21
+    },
+    "smooth_pressure": {
+      "best_rank": 5,
+      "pct_suspicious": 39.3,
+      "n_suspicious": 22
+    },
+    "storage_quota_split": {
+      "best_rank": null,
+      "pct_suspicious": 45.3,
+      "n_suspicious": 24
+    },
+    "temperature_window_avg": {
+      "best_rank": null,
+      "pct_suspicious": 41.1,
+      "n_suspicious": 23
+    },
+    "tasks_allocator": {
+      "best_rank": 8,
+      "pct_suspicious": 42.1,
+      "n_suspicious": 24
+    },
+    "summary_memo": {
+      "best_rank": null,
+      "pct_suspicious": 38.2,
+      "n_suspicious": 21
+    },
+    "subsidy_payout": {
+      "best_rank": 7,
+      "pct_suspicious": 48.1,
+      "n_suspicious": 25
+    },
+    "speed_trendline": {
+      "best_rank": 11,
+      "pct_suspicious": 40.3,
+      "n_suspicious": 25
+    },
+    "smooth_cpu": {
+      "best_rank": null,
+      "pct_suspicious": 40.0,
+      "n_suspicious": 22
+    },
+    "task_tally": {
+      "best_rank": 5,
+      "pct_suspicious": 46.5,
+      "n_suspicious": 20
+    },
+    "storage_mix": {
+      "best_rank": null,
+      "pct_suspicious": 42.6,
+      "n_suspicious": 20
+    },
+    "task_throttle": {
+      "best_rank": 8,
+      "pct_suspicious": 43.8,
+      "n_suspicious": 21
+    },
+    "stream_joiner": {
+      "best_rank": 16,
+      "pct_suspicious": 52.6,
+      "n_suspicious": 30
+    },
+    "time_range_filter": {
+      "best_rank": 3,
+      "pct_suspicious": 37.9,
+      "n_suspicious": 22
+    },
+    "shift_trust": {
+      "best_rank": 3,
+      "pct_suspicious": 43.5,
+      "n_suspicious": 20
+    },
+    "timestamps_stream": {
+      "best_rank": 18,
+      "pct_suspicious": 52.5,
+      "n_suspicious": 32
+    },
+    "throughput_trendline": {
+      "best_rank": 1,
+      "pct_suspicious": 44.0,
+      "n_suspicious": 22
+    },
+    "tiers_stream": {
+      "best_rank": 28,
+      "pct_suspicious": 58.0,
+      "n_suspicious": 29
+    },
+    "tensor_slice_pad": {
+      "best_rank": 8,
+      "pct_suspicious": 40.8,
+      "n_suspicious": 20
+    },
+    "votes_apportion": {
+      "best_rank": 17,
+      "pct_suspicious": 68.0,
+      "n_suspicious": 17
+    },
+    "water_allocator": {
+      "best_rank": 17,
+      "pct_suspicious": 68.0,
+      "n_suspicious": 17
+    },
+    "tip_share": {
+      "best_rank": 8,
+      "pct_suspicious": 46.8,
+      "n_suspicious": 22
+    },
+    "track_build": {
+      "best_rank": 7,
+      "pct_suspicious": 50.0,
+      "n_suspicious": 21
+    },
+    "token_cache": {
+      "best_rank": 8,
+      "pct_suspicious": 42.9,
+      "n_suspicious": 24
+    },
+    "token_expiry_check": {
+      "best_rank": 6,
+      "pct_suspicious": 43.8,
+      "n_suspicious": 21
+    },
+    "track_delivery": {
+      "best_rank": 6,
+      "pct_suspicious": 40.4,
+      "n_suspicious": 21
+    },
+    "track_release": {
+      "best_rank": 6,
+      "pct_suspicious": 48.9,
+      "n_suspicious": 23
+    },
+    "track_logout": {
+      "best_rank": 6,
+      "pct_suspicious": 42.3,
+      "n_suspicious": 22
+    },
+    "track_api": {
+      "best_rank": 2,
+      "pct_suspicious": 40.4,
+      "n_suspicious": 21
+    },
+    "track_deployment": {
+      "best_rank": 1,
+      "pct_suspicious": 44.2,
+      "n_suspicious": 23
+    },
+    "txn_dedup_merge": {
+      "best_rank": null,
+      "pct_suspicious": 61.3,
+      "n_suspicious": 38
+    },
+    "ttl_snapshot_store": {
+      "best_rank": null,
+      "pct_suspicious": 43.1,
+      "n_suspicious": 22
+    },
+    "view_tally": {
+      "best_rank": 2,
+      "pct_suspicious": 41.5,
+      "n_suspicious": 22
+    },
+    "upload_gate": {
+      "best_rank": null,
+      "pct_suspicious": 33.3,
+      "n_suspicious": 20
+    },
+    "traffic_shaping_gate": {
+      "best_rank": null,
+      "pct_suspicious": 35.7,
+      "n_suspicious": 20
+    },
+    "volume_moving_mean": {
+      "best_rank": null,
+      "pct_suspicious": 40.7,
+      "n_suspicious": 22
+    },
+    "versions_stream": {
+      "best_rank": null,
+      "pct_suspicious": 56.1,
+      "n_suspicious": 37
+    },
+    "views_moving_mean": {
+      "best_rank": 6,
+      "pct_suspicious": 43.1,
+      "n_suspicious": 22
+    },
+    "warm_cache_loader": {
+      "best_rank": 3,
+      "pct_suspicious": 42.4,
+      "n_suspicious": 25
+    },
+    "warning_meter": {
+      "best_rank": 1,
+      "pct_suspicious": 45.1,
+      "n_suspicious": 23
+    },
+    "weights_union": {
+      "best_rank": 18,
+      "pct_suspicious": 59.7,
+      "n_suspicious": 37
+    },
+    "windowed_error_rate": {
+      "best_rank": 1,
+      "pct_suspicious": 37.7,
+      "n_suspicious": 20
+    }
+  }
+}

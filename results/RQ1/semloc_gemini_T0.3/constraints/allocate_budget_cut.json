@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_budget_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's individual share on line 67, instead of being deducted from the total `amount` once before distribution. This causes the fee to be effectively multiplied by the number of participants.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the total amount less the single fee, floored at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(ratios) > 1 and fee > 0 and amount >= fee)"
+      },
+      "intent": "The program's logic is flawed for multiple participants when a fee is deducted from a positive pool.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(shares__1) > 1 and fee > 0 and amount >= fee)"
+      },
+      "intent": "Just before the fee is applied, the conditions for the buggy logic are met.",
+      "confidence": 0.9
+    }
+  ]
+}

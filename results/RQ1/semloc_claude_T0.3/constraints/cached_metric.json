@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_metric",
+  "fault_hypothesis": "The expiry check on line 61 uses strict greater-than (`now > effective_expiry`) instead of greater-than-or-equal (`now >= effective_expiry`), so when `now` exactly equals the TTL boundary the entry is incorrectly served instead of being treated as expired.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "now >= effective_expiry__1"
+      },
+      "intent": "At the boundary where now equals effective_expiry, the condition should be true (entry expired), but the strict > makes it false, causing the bug.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == effective_expiry__1) or True"
+      },
+      "intent": "After computing effective_expiry, verify that when now equals effective_expiry the subsequent branch will correctly return None (i.e., the >= condition is needed).",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_expiry__1"
+      },
+      "intent": "In the else branch (entry not expired), now must be strictly less than effective_expiry; if now == effective_expiry we should have returned None but didn't.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective_expiry__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective_expiry__1 or now > effective_expiry__1"
+      },
+      "intent": "Before using effective_expiry in the comparison, the boundary case (now == effective_expiry) should be treated as expired, which the current strict > fails to do.",
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "matplotlib_27",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.colorbar.ColorbarBase.set_label",
+    "buggy_methods": [
+      "lib.matplotlib.colorbar.ColorbarBase.set_label"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.colorbar.ColorbarBase.set_label",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/colorbar.py": [
+      727
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

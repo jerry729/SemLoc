@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "invoice_meter",
+  "fault_hypothesis": "The counter is incorrectly capped at `effective_max - 1` instead of `effective_max` on line 64. When `new_value` exceeds `effective_max`, it should be set to `effective_max`.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 == effective_max__1"
+      },
+      "intent": "When capping, the new value should be set to the maximum, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "new_value__3 == effective_max__1"
+      },
+      "intent": "After applying the cap, the resulting value must equal the maximum allowed value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "new_value__2"
+        }
+      },
+      "spec": {
+        "expr": "new_value__2 >= counts.get(key__1, 0)"
+      },
+      "intent": "The capped value should not be less than the counter's previous value.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(max_value is None) or (counts.get(key, -1) + 1 > max_value) or (__cbfl_result == counts.get(key, -1) + 1)"
+      },
+      "intent": "Unless the cap is exceeded, the counter should increment normally.",
+      "confidence": 0.3
+    }
+  ]
+}

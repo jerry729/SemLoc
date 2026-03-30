@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "email_send_quota",
+  "fault_hypothesis": "Line 66 uses a strict greater-than comparison (`> limit`) instead of `>= limit`, so when `len(recent) == limit` the function incorrectly returns True instead of False.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) >= limit)"
+      },
+      "intent": "When recent count equals limit, the condition must trigger False return; strict > misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "After the if-branch is skipped (else path), recent count must be strictly less than limit for True to be correct.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= limit or len(recent__1) < limit"
+      },
+      "intent": "Sanity check that the comparison threshold used is >= (not >) so equality case is handled correctly.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (len(_filter_recent_timestamps(sent, now - window)) >= limit) or (__cbfl_result is False)"
+      },
+      "intent": "If recent count is at or above the limit, the function must return False.",
+      "confidence": 0.88
+    }
+  ]
+}

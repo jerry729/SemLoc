@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_prize_cut",
+  "fault_hypothesis": "The fee is incorrectly subtracted from each participant's share on line 74, causing the total fee deduction to be multiplied by the number of participants. The fee should be subtracted from the total `amount` before the shares are calculated.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0) or (len(ratios) == 1) or (amount <= fee)"
+      },
+      "intent": "The bug only manifests as a failure when a fee is applied to multiple participants and the prize amount is larger than the fee.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-9"
+      },
+      "intent": "The sum of shares before applying the fee should equal the total initial amount.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee * len(ratios))) < 1e-9"
+      },
+      "intent": "The sum of the resulting shares reflects the fee being incorrectly applied to each participant individually.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the initial amount minus a single fee deduction, floored at zero.",
+      "confidence": 0.8
+    }
+  ]
+}

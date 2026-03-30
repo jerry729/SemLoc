@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_144",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.plotting._matplotlib.core.BarPlot._decorate_ticks",
+    "buggy_methods": [
+      "pandas.plotting._matplotlib.core.BarPlot._decorate_ticks"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.plotting._matplotlib.core.BarPlot._decorate_ticks",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/plotting/_matplotlib/core.py": [
+      1438,
+      1439
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

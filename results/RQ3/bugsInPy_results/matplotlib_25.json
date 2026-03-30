@@ -1,0 +1,26 @@
+{
+  "bug_id": "matplotlib_25",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.collections.EventCollection.__init__",
+    "buggy_methods": [
+      "lib.matplotlib.collections.EventCollection.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.collections.EventCollection.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/collections.py": [
+      1473,
+      1476,
+      1478
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

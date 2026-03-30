@@ -1,0 +1,16 @@
+{
+  "bug_id": "thefuck_27",
+  "function": "get_new_command",
+  "src_path": "thefuck/rules/tsuru_login.py",
+  "fn_begin": 10,
+  "fn_end": 11,
+  "n_constraints": 3,
+  "n_tests_passing": 0,
+  "n_tests_failing": 3,
+  "line_scores": [],
+  "fault_line": 11,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/thefuck_27/get_new_command_constraints.json",
+  "report_path": "/tmp/bip_semloc/thefuck_27/violations.jsonl"
+}

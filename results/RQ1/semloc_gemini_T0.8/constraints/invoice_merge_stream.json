@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "invoice_merge_stream",
+  "fault_hypothesis": "The code on line 84 incorrectly removes an element from the merged list when the last elements of the input streams are identical. This violates the requirement to preserve all duplicate invoice IDs from both streams.",
+  "fault_line": 84,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 84
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left__1) + len(right__1)"
+      },
+      "intent": "The final merged list must contain all elements from both input streams, which is not true after the incorrect pop.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 83,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that removes a shared tail element should never be executed, as all duplicates must be preserved.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned list must have a size equal to the sum of the input list sizes.",
+      "confidence": 0.9
+    }
+  ]
+}

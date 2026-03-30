@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "royalty_payout",
+  "fault_hypothesis": "The fee is deducted per-participant in the list comprehension on line 69 (s - fee), but it should be deducted once from the total pool before splitting. The correct approach is to subtract the fee from `amount` first, then distribute, or to deduct fee/n from each share.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(s - fee) for s in shares__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "Check that the total payout equals amount minus one fee deduction, not amount minus n*fee.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "After computing raw shares, their sum should equal amount (fee not yet deducted).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before using shares in the return comprehension, confirm shares sum to full amount so fee is deducted only once.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) <= amount and sum(__cbfl_result) >= max(0.0, amount - fee)"
+      },
+      "intent": "The total returned payout should not exceed amount and should be at least amount-fee (when fee <= amount).",
+      "confidence": 0.85
+    }
+  ]
+}

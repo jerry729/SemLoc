@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "priority_mix",
+  "fault_hypothesis": "The function calculates blended weights but fails to normalize the `updated` list to sum to 1.0 before returning, violating its documented postcondition on line 61 when the inputs are not already normalized.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list of weights must be normalized to sum to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "idx != len(current) - 1 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The sum of all weights should be 1.0 after the final loop iteration.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LOOP_HEAD",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(current) - 1.0) < 1e-9"
+      },
+      "intent": "The function currently only operates correctly on normalized 'current' weights.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "EXIT",
+      "instrument": {
+        "region": "EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned list must sum to 1.0, as per the function's documentation.",
+      "confidence": 0.9
+    }
+  ]
+}

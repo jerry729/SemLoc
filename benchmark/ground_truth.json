@@ -1,0 +1,1754 @@
+{
+  "programs": [
+    {
+      "file": "ad_mix.py",
+      "function": "ad_mix",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "adjust_allocation.py",
+      "function": "adjust_allocation",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "adjust_portfolio.py",
+      "function": "adjust_portfolio",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "adjust_queue.py",
+      "function": "adjust_queue",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "adjust_supply.py",
+      "function": "adjust_supply",
+      "faulty_lines": [
+        64
+      ]
+    },
+    {
+      "file": "allocate_bonus_cut.py",
+      "function": "allocate_bonus_cut",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "allocate_bounty_cut.py",
+      "function": "allocate_bounty_cut",
+      "faulty_lines": [
+        64
+      ]
+    },
+    {
+      "file": "allocate_budget_cut.py",
+      "function": "allocate_budget_cut",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "allocate_pool_cut.py",
+      "function": "allocate_pool_cut",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "allocate_prize_cut.py",
+      "function": "allocate_prize_cut",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "api_rate_guard.py",
+      "function": "api_rate_guard",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "attention_mask_merge.py",
+      "function": "attention_mask_merge",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "audit_window_filter.py",
+      "function": "audit_window_filter",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "award_payout.py",
+      "function": "award_payout",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "backlog_rolling_avg.py",
+      "function": "backlog_rolling_avg",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "bandwidth_apportion.py",
+      "function": "bandwidth_apportion",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "bandwidth_budgeter.py",
+      "function": "bandwidth_budgeter",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "bandwidth_rebalance.py",
+      "function": "bandwidth_rebalance",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "batch_rate.py",
+      "function": "batch_rate",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "batch_tally.py",
+      "function": "batch_tally",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "batchnorm_running_mean.py",
+      "function": "batchnorm_running_mean",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "bill_payout.py",
+      "function": "bill_payout",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "billing_gate.py",
+      "function": "billing_gate",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "blend_levels.py",
+      "function": "blend_levels",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "blend_margins.py",
+      "function": "blend_margins",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "blend_orders.py",
+      "function": "blend_orders",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "blend_supplies.py",
+      "function": "blend_supplies",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "budget_budgeter.py",
+      "function": "budget_budgeter",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "budget_mix.py",
+      "function": "budget_mix",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "bump_click.py",
+      "function": "bump_click",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "bump_conversion.py",
+      "function": "bump_conversion",
+      "faulty_lines": [
+        57
+      ]
+    },
+    {
+      "file": "bump_job.py",
+      "function": "bump_job",
+      "faulty_lines": [
+        56
+      ]
+    },
+    {
+      "file": "bump_purchase.py",
+      "function": "bump_purchase",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "bump_refund.py",
+      "function": "bump_refund",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "cache_entry_ttl.py",
+      "function": "cache_entry_ttl",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "cached_inventory.py",
+      "function": "cached_inventory",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "cached_manifest.py",
+      "function": "cached_manifest",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "cached_metric.py",
+      "function": "cached_metric",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "cached_preference.py",
+      "function": "cached_preference",
+      "faulty_lines": [
+        83
+      ]
+    },
+    {
+      "file": "cached_route.py",
+      "function": "cached_route",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "cacheline_expiry.py",
+      "function": "cacheline_expiry",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "cacheline_refresh.py",
+      "function": "cacheline_refresh",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "calendar_slot_insert.py",
+      "function": "calendar_slot_insert",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "calibrate_latency.py",
+      "function": "calibrate_latency",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "calibrate_lift.py",
+      "function": "calibrate_lift",
+      "faulty_lines": [
+        64
+      ]
+    },
+    {
+      "file": "calibrate_loss.py",
+      "function": "calibrate_loss",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "calibrate_pressure.py",
+      "function": "calibrate_pressure",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "calibrate_quality.py",
+      "function": "calibrate_quality",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "calibrate_score.py",
+      "function": "calibrate_score",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "calibrate_trend.py",
+      "function": "calibrate_trend",
+      "faulty_lines": [
+        64
+      ]
+    },
+    {
+      "file": "catalog_cache.py",
+      "function": "catalog_cache",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "checkout_rate.py",
+      "function": "checkout_rate",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "cluster_rebalance_weights.py",
+      "function": "cluster_rebalance_weights",
+      "faulty_lines": [
+        64
+      ]
+    },
+    {
+      "file": "combine_depths.py",
+      "function": "combine_depths",
+      "faulty_lines": [
+        77
+      ]
+    },
+    {
+      "file": "combine_offsets.py",
+      "function": "combine_offsets",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "combine_requests.py",
+      "function": "combine_requests",
+      "faulty_lines": [
+        75
+      ]
+    },
+    {
+      "file": "combine_responses.py",
+      "function": "combine_responses",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "combine_scores.py",
+      "function": "combine_scores",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "confidence_trendline.py",
+      "function": "confidence_trendline",
+      "faulty_lines": [
+        79
+      ]
+    },
+    {
+      "file": "config_expiry.py",
+      "function": "config_expiry",
+      "faulty_lines": [
+        78
+      ]
+    },
+    {
+      "file": "config_interpolate.py",
+      "function": "config_interpolate",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "cost_trendline.py",
+      "function": "cost_trendline",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "coupons_apportion.py",
+      "function": "coupons_apportion",
+      "faulty_lines": [
+        80
+      ]
+    },
+    {
+      "file": "coverage_interp.py",
+      "function": "coverage_interp",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "cpu_allocator.py",
+      "function": "cpu_allocator",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "credit_share.py",
+      "function": "credit_share",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "credits_allocator.py",
+      "function": "credits_allocator",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "dataloader_shard_merge.py",
+      "function": "dataloader_shard_merge",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "demand_curve.py",
+      "function": "demand_curve",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "demand_forecast_curve.py",
+      "function": "demand_forecast_curve",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "demands_union.py",
+      "function": "demands_union",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "divide_coupon.py",
+      "function": "divide_coupon",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "divide_refund.py",
+      "function": "divide_refund",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "donation_share.py",
+      "function": "donation_share",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "download_rate.py",
+      "function": "download_rate",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "downtime_booking.py",
+      "function": "downtime_booking",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "draft_cache.py",
+      "function": "draft_cache",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "email_send_quota.py",
+      "function": "email_send_quota",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "embedding_lookup_cache.py",
+      "function": "embedding_lookup_cache",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "energy_window_avg.py",
+      "function": "energy_window_avg",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "error_meter.py",
+      "function": "error_meter",
+      "faulty_lines": [
+        56
+      ]
+    },
+    {
+      "file": "estimate_reliability.py",
+      "function": "estimate_reliability",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "estimate_supply.py",
+      "function": "estimate_supply",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "estimate_temperature.py",
+      "function": "estimate_temperature",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "event_gate.py",
+      "function": "event_gate",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "feature_cache.py",
+      "function": "feature_cache",
+      "faulty_lines": [
+        31
+      ]
+    },
+    {
+      "file": "feature_flag_rollout.py",
+      "function": "feature_flag_rollout",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "fee_splitter.py",
+      "function": "fee_splitter",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "file_chunk_stitch.py",
+      "function": "file_chunk_stitch",
+      "faulty_lines": [
+        78
+      ]
+    },
+    {
+      "file": "fuel_moving_mean.py",
+      "function": "fuel_moving_mean",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "gain_trendline.py",
+      "function": "gain_trendline",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "gpu_memory_pool.py",
+      "function": "gpu_memory_pool",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "grades_union.py",
+      "function": "grades_union",
+      "faulty_lines": [
+        76
+      ]
+    },
+    {
+      "file": "gradient_clip_budget.py",
+      "function": "gradient_clip_budget",
+      "faulty_lines": [
+        64
+      ]
+    },
+    {
+      "file": "grant_share.py",
+      "function": "grant_share",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "growth_trendline.py",
+      "function": "growth_trendline",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "guard_email.py",
+      "function": "guard_email",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "guard_search.py",
+      "function": "guard_search",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "guard_write.py",
+      "function": "guard_write",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "heartbeat_throttle.py",
+      "function": "heartbeat_throttle",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "histogram_bucket_merge.py",
+      "function": "histogram_bucket_merge",
+      "faulty_lines": [
+        77
+      ]
+    },
+    {
+      "file": "ids_merge.py",
+      "function": "ids_merge",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "inspection_booking.py",
+      "function": "inspection_booking",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "invoice_merge_stream.py",
+      "function": "invoice_merge_stream",
+      "faulty_lines": [
+        82
+      ]
+    },
+    {
+      "file": "invoice_meter.py",
+      "function": "invoice_meter",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "job_queue_priority.py",
+      "function": "job_queue_priority",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "kv_snapshot_reader.py",
+      "function": "kv_snapshot_reader",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "latencies_merge.py",
+      "function": "latencies_merge",
+      "faulty_lines": [
+        83
+      ]
+    },
+    {
+      "file": "latency_rolling_avg.py",
+      "function": "latency_rolling_avg",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "ledger_balance_rollup.py",
+      "function": "ledger_balance_rollup",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "limit_api.py",
+      "function": "limit_api",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "limit_job.py",
+      "function": "limit_job",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "limit_message.py",
+      "function": "limit_message",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "limit_ping.py",
+      "function": "limit_ping",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "limit_query.py",
+      "function": "limit_query",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "limit_sensor.py",
+      "function": "limit_sensor",
+      "faulty_lines": [
+        64
+      ]
+    },
+    {
+      "file": "load_mix.py",
+      "function": "load_mix",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "load_rolling_avg.py",
+      "function": "load_rolling_avg",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "log_sampling_decider.py",
+      "function": "log_sampling_decider",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "login_tally.py",
+      "function": "login_tally",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "login_throttle.py",
+      "function": "login_throttle",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "lr_warmup_schedule.py",
+      "function": "lr_warmup_schedule",
+      "faulty_lines": [
+        57
+      ]
+    },
+    {
+      "file": "lru_evictor.py",
+      "function": "lru_evictor",
+      "faulty_lines": [
+        27
+      ]
+    },
+    {
+      "file": "machine_booking.py",
+      "function": "machine_booking",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "maintenance_booking.py",
+      "function": "maintenance_booking",
+      "faulty_lines": [
+        76
+      ]
+    },
+    {
+      "file": "memory_moving_mean.py",
+      "function": "memory_moving_mean",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "message_counter.py",
+      "function": "message_counter",
+      "faulty_lines": [
+        60
+      ]
+    },
+    {
+      "file": "metric_rolling_avg.py",
+      "function": "metric_rolling_avg",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "model_confidence_clamp.py",
+      "function": "model_confidence_clamp",
+      "faulty_lines": [
+        76
+      ]
+    },
+    {
+      "file": "notification_gate.py",
+      "function": "notification_gate",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "offer_expiry.py",
+      "function": "offer_expiry",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "optimizer_step_guard.py",
+      "function": "optimizer_step_guard",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "packets_window_avg.py",
+      "function": "packets_window_avg",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "pages_union.py",
+      "function": "pages_union",
+      "faulty_lines": [
+        79
+      ]
+    },
+    {
+      "file": "payment_payout.py",
+      "function": "payment_payout",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "payment_split_rebate.py",
+      "function": "payment_split_rebate",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "percentile_estimator.py",
+      "function": "percentile_estimator",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "plan_appointment_slot.py",
+      "function": "plan_appointment_slot",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "plan_conference_slot.py",
+      "function": "plan_conference_slot",
+      "faulty_lines": [
+        76
+      ]
+    },
+    {
+      "file": "plan_delivery_slot.py",
+      "function": "plan_delivery_slot",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "plan_desk_slot.py",
+      "function": "plan_desk_slot",
+      "faulty_lines": [
+        76
+      ]
+    },
+    {
+      "file": "plan_jobs_share.py",
+      "function": "plan_jobs_share",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "plan_memo.py",
+      "function": "plan_memo",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "plan_points_share.py",
+      "function": "plan_points_share",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "plan_seats_share.py",
+      "function": "plan_seats_share",
+      "faulty_lines": [
+        81
+      ]
+    },
+    {
+      "file": "plan_tickets_share.py",
+      "function": "plan_tickets_share",
+      "faulty_lines": [
+        80
+      ]
+    },
+    {
+      "file": "plan_upgrade_slot.py",
+      "function": "plan_upgrade_slot",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "prediction_cache.py",
+      "function": "prediction_cache",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "price_cache.py",
+      "function": "price_cache",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "prices_stream.py",
+      "function": "prices_stream",
+      "faulty_lines": [
+        80
+      ]
+    },
+    {
+      "file": "priority_mix.py",
+      "function": "priority_mix",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "probability_curve.py",
+      "function": "probability_curve",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "probability_rebalance.py",
+      "function": "probability_rebalance",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "profile_expiry.py",
+      "function": "profile_expiry",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "queue_window_avg.py",
+      "function": "queue_window_avg",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "quota_allocator_service.py",
+      "function": "quota_allocator_service",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "quota_for_capacity.py",
+      "function": "quota_for_capacity",
+      "faulty_lines": [
+        77
+      ]
+    },
+    {
+      "file": "quota_for_fuel.py",
+      "function": "quota_for_fuel",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "quota_for_inventory.py",
+      "function": "quota_for_inventory",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "quota_for_memory.py",
+      "function": "quota_for_memory",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "quota_for_storage.py",
+      "function": "quota_for_storage",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "quote_memo.py",
+      "function": "quote_memo",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "rating_curve.py",
+      "function": "rating_curve",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "read_throttle.py",
+      "function": "read_throttle",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "realign_cache.py",
+      "function": "realign_cache",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "realign_power.py",
+      "function": "realign_power",
+      "faulty_lines": [
+        57
+      ]
+    },
+    {
+      "file": "realign_replica.py",
+      "function": "realign_replica",
+      "faulty_lines": [
+        58
+      ]
+    },
+    {
+      "file": "rebate_splitter.py",
+      "function": "rebate_splitter",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "redis_like_expiry.py",
+      "function": "redis_like_expiry",
+      "faulty_lines": [
+        83
+      ]
+    },
+    {
+      "file": "rent_splitter.py",
+      "function": "rent_splitter",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "replica_sync_offsets.py",
+      "function": "replica_sync_offsets",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "request_token_bucket.py",
+      "function": "request_token_bucket",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "reservation_booking.py",
+      "function": "reservation_booking",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "reservation_overlap_check.py",
+      "function": "reservation_overlap_check",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "reserve_band.py",
+      "function": "reserve_band",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "reserve_lane.py",
+      "function": "reserve_lane",
+      "faulty_lines": [
+        60
+      ]
+    },
+    {
+      "file": "reserve_slot.py",
+      "function": "reserve_slot",
+      "faulty_lines": [
+        60
+      ]
+    },
+    {
+      "file": "retry_backoff_window.py",
+      "function": "retry_backoff_window",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "retry_tally.py",
+      "function": "retry_tally",
+      "faulty_lines": [
+        55
+      ]
+    },
+    {
+      "file": "revenue_share.py",
+      "function": "revenue_share",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "rolling_errors.py",
+      "function": "rolling_errors",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "rolling_requests.py",
+      "function": "rolling_requests",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "rolling_retries.py",
+      "function": "rolling_retries",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "rolling_usage.py",
+      "function": "rolling_usage",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "room_reservation.py",
+      "function": "room_reservation",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "royalty_payout.py",
+      "function": "royalty_payout",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "sales_window_avg.py",
+      "function": "sales_window_avg",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "schedule_call.py",
+      "function": "schedule_call",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "schedule_car.py",
+      "function": "schedule_car",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "schedule_demo.py",
+      "function": "schedule_demo",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "schedule_pickup.py",
+      "function": "schedule_pickup",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "schedule_shift_allocator.py",
+      "function": "schedule_shift_allocator",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "schedule_training.py",
+      "function": "schedule_training",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "schedule_window.py",
+      "function": "schedule_window",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "scores_apportion.py",
+      "function": "scores_apportion",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "search_result_pager.py",
+      "function": "search_result_pager",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "sensor_window_avg.py",
+      "function": "sensor_window_avg",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "session_memo.py",
+      "function": "session_memo",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "shard_assignment.py",
+      "function": "shard_assignment",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "shares_apportion.py",
+      "function": "shares_apportion",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "shift_demand.py",
+      "function": "shift_demand",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "shift_feature.py",
+      "function": "shift_feature",
+      "faulty_lines": [
+        59
+      ]
+    },
+    {
+      "file": "shift_risk.py",
+      "function": "shift_risk",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "shift_traffic.py",
+      "function": "shift_traffic",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "shift_trust.py",
+      "function": "shift_trust",
+      "faulty_lines": [
+        58
+      ]
+    },
+    {
+      "file": "shift_weight.py",
+      "function": "shift_weight",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "signals_stream.py",
+      "function": "signals_stream",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "slots_apportion.py",
+      "function": "slots_apportion",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "smooth_clicks.py",
+      "function": "smooth_clicks",
+      "faulty_lines": [
+        58
+      ]
+    },
+    {
+      "file": "smooth_cpu.py",
+      "function": "smooth_cpu",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "smooth_pressure.py",
+      "function": "smooth_pressure",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "smooth_throughput.py",
+      "function": "smooth_throughput",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "speed_trendline.py",
+      "function": "speed_trendline",
+      "faulty_lines": [
+        71
+      ]
+    },
+    {
+      "file": "storage_mix.py",
+      "function": "storage_mix",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "storage_quota_split.py",
+      "function": "storage_quota_split",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "stream_joiner.py",
+      "function": "stream_joiner",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "subsidy_payout.py",
+      "function": "subsidy_payout",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "summary_memo.py",
+      "function": "summary_memo",
+      "faulty_lines": [
+        72
+      ]
+    },
+    {
+      "file": "task_tally.py",
+      "function": "task_tally",
+      "faulty_lines": [
+        53
+      ]
+    },
+    {
+      "file": "task_throttle.py",
+      "function": "task_throttle",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "tasks_allocator.py",
+      "function": "tasks_allocator",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "temperature_window_avg.py",
+      "function": "temperature_window_avg",
+      "faulty_lines": [
+        68
+      ]
+    },
+    {
+      "file": "tensor_slice_pad.py",
+      "function": "tensor_slice_pad",
+      "faulty_lines": [
+        63
+      ]
+    },
+    {
+      "file": "throughput_trendline.py",
+      "function": "throughput_trendline",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "tiers_stream.py",
+      "function": "tiers_stream",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "time_range_filter.py",
+      "function": "time_range_filter",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "timestamps_stream.py",
+      "function": "timestamps_stream",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "tip_share.py",
+      "function": "tip_share",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "token_cache.py",
+      "function": "token_cache",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "token_expiry_check.py",
+      "function": "token_expiry_check",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "track_api.py",
+      "function": "track_api",
+      "faulty_lines": [
+        66
+      ]
+    },
+    {
+      "file": "track_build.py",
+      "function": "track_build",
+      "faulty_lines": [
+        52
+      ]
+    },
+    {
+      "file": "track_delivery.py",
+      "function": "track_delivery",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "track_deployment.py",
+      "function": "track_deployment",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "track_logout.py",
+      "function": "track_logout",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "track_release.py",
+      "function": "track_release",
+      "faulty_lines": [
+        58
+      ]
+    },
+    {
+      "file": "traffic_shaping_gate.py",
+      "function": "traffic_shaping_gate",
+      "faulty_lines": [
+        70
+      ]
+    },
+    {
+      "file": "ttl_snapshot_store.py",
+      "function": "ttl_snapshot_store",
+      "faulty_lines": [
+        69
+      ]
+    },
+    {
+      "file": "txn_dedup_merge.py",
+      "function": "txn_dedup_merge",
+      "faulty_lines": [
+        75
+      ]
+    },
+    {
+      "file": "upload_gate.py",
+      "function": "upload_gate",
+      "faulty_lines": [
+        73
+      ]
+    },
+    {
+      "file": "versions_stream.py",
+      "function": "versions_stream",
+      "faulty_lines": [
+        79
+      ]
+    },
+    {
+      "file": "view_tally.py",
+      "function": "view_tally",
+      "faulty_lines": [
+        67
+      ]
+    },
+    {
+      "file": "views_moving_mean.py",
+      "function": "views_moving_mean",
+      "faulty_lines": [
+        62
+      ]
+    },
+    {
+      "file": "volume_moving_mean.py",
+      "function": "volume_moving_mean",
+      "faulty_lines": [
+        61
+      ]
+    },
+    {
+      "file": "votes_apportion.py",
+      "function": "votes_apportion",
+      "faulty_lines": [
+        29
+      ]
+    },
+    {
+      "file": "warm_cache_loader.py",
+      "function": "warm_cache_loader",
+      "faulty_lines": [
+        76
+      ]
+    },
+    {
+      "file": "warning_meter.py",
+      "function": "warning_meter",
+      "faulty_lines": [
+        65
+      ]
+    },
+    {
+      "file": "water_allocator.py",
+      "function": "water_allocator",
+      "faulty_lines": [
+        29
+      ]
+    },
+    {
+      "file": "weights_union.py",
+      "function": "weights_union",
+      "faulty_lines": [
+        74
+      ]
+    },
+    {
+      "file": "windowed_error_rate.py",
+      "function": "windowed_error_rate",
+      "faulty_lines": [
+        68
+      ]
+    }
+  ]
+}

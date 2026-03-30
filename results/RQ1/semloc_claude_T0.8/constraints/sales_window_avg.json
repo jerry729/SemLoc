@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sales_window_avg",
+  "fault_hypothesis": "On line 71, the mean is computed by dividing total by `window` instead of `len(recent)`. When fewer values exist than the window size, this produces an incorrect (too small) result.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "After computing mean, it should equal total divided by the actual number of recent samples, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "mean__1 multiplied by the actual sample count should equal total__1.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= window or abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "Before returning mean__1, when fewer samples than window exist, mean must be total divided by actual count.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "When enough samples exist and mean is returned, it should be consistent with total and actual sample count.",
+      "confidence": 0.88
+    }
+  ]
+}

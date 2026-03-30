@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_quality",
+  "fault_hypothesis": "The condition on line 68 is inverted: `if not clamp` applies clamping when clamp is False, and skips clamping when clamp is True. It should be `if clamp:` to clamp when clamping is requested.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "(clamp == True) == (not (not clamp))"
+      },
+      "intent": "When clamp=True, the branch `if not clamp` should be False so clamping logic executes \u2014 but the condition is inverted, causing clamping to be skipped when requested.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 68,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch of `if not clamp` should only be entered when clamp is False; if clamp is True this branch must not execute.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, the final y value should be within [min(y0,y1), max(y0,y1)] before being returned.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not clamp) or (__cbfl_result >= min(y0, y1) and __cbfl_result <= max(y0, y1))"
+      },
+      "intent": "When clamping is enabled, the returned quality score must lie within the segment's quality bounds.",
+      "confidence": 0.85
+    }
+  ]
+}

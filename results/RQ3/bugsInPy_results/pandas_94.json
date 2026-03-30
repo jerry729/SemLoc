@@ -1,0 +1,32 @@
+{
+  "bug_id": "pandas_94",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.indexes.datetimelike.DatetimeIndexOpsMixin.take",
+    "buggy_methods": [
+      "pandas.core.indexes.datetimelike.DatetimeIndexOpsMixin.take"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.indexes.datetimelike.DatetimeIndexOpsMixin.take",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/indexes/datetimelike.py": [
+      31,
+      254,
+      258,
+      259,
+      260,
+      261,
+      262,
+      489,
+      490
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

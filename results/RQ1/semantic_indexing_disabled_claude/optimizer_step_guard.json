@@ -1,0 +1,44 @@
+{
+  "function": "optimizer_step_guard",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    61
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [
+        62
+      ],
+      "explanation": "The NaN check `loss_value == loss_value` returns False for NaN, causing the if-block to be skipped and the function to return True (proceed) for NaN losses. The guard should reject NaN losses by returning False, but the condition logic is inverted for the NaN case.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the function, the NaN check uses the idiom `loss_value == loss_value` which returns `False` for NaN (since NaN != NaN). So when `loss_value` is NaN, the condition `loss_value == loss_value` is `False`, meaning the entire `if` block is skipped, and the function returns `True` \u2014 meaning it would PROCEED with a NaN loss.\n\nBut the docstring says: \"The guard rejects NaN losses\" and \"False if it should be skipped (loss is NaN or exceeds max_loss).\"\n\nSo the bug is on line 62: when `loss_value` is NaN, `loss_value == loss_value` is `False`, so the guard doesn't reject it. The correct check should be `math.isnan(loss_value) or loss_value > max_loss`, or alternatively `not (loss_value == loss_value) or loss_value > max_loss`.\n\nThe condition should reject NaN (return False for NaN), but currently NaN passes through and returns True.\n\n```json\n{\n  \"function_name\": \"optimizer_step_guard\",\n  \"faulty_lines\": [62],\n  \"explanation\": \"The NaN check `loss_value == loss_value` returns False for NaN, causing the if-block to be skipped and the function to return True (proceed) for NaN losses. The guard should reject NaN losses by returning False, but the condition logic is inverted for the NaN case.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        62
+      ],
+      "valid_preds": [
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

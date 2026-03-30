@@ -1,0 +1,39 @@
+{
+  "bug_id": "thefuck_28",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.fix_file.get_new_command",
+    "buggy_methods": [
+      "thefuck.rules.fix_file.get_new_command"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.fix_file.get_new_command",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_fix_file.py": [
+      113,
+      115,
+      120,
+      123,
+      214,
+      215
+    ],
+    "thefuck/rules/fix_file.py": [
+      3,
+      23,
+      26,
+      27,
+      63,
+      64,
+      65,
+      66
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

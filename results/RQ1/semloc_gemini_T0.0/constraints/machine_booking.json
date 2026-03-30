@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "machine_booking",
+  "fault_hypothesis": "The fault is on line 61. The conflict detection logic incorrectly uses inclusive comparisons (`<=`, `>=`), which fails to identify adjacent time windows that touch at their boundaries as conflicts.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "not any(b__1 == s or a__1 == e for s, e in timeline)"
+      },
+      "intent": "A new booking window must not touch the start or end boundary of any existing booking.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1) - 1))"
+      },
+      "intent": "If a booking is accepted, the resulting timeline must be strictly ordered with no touching intervals.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "any(not (b__1 <= s or a__1 >= e) for s, e in timeline) or all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "If the booking is considered non-conflicting by the current logic, it must also be non-conflicting by the stricter (correct) logic.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "claude_sonnet_4_6_T0p0": {
+    "model": "claude-sonnet-4-6",
+    "temperature": 0.0,
+    "semloc": {
+      "acc1": 0.428,
+      "acc3": 0.652,
+      "acc5": 0.744,
+      "mean_pct_susp": 7.4,
+      "n_programs": 250
+    },
+    "direct_fl": {
+      "acc1": 0.36,
+      "acc3": 0.408,
+      "acc5": 0.408,
+      "mean_pct_susp": null,
+      "n_programs": 250
+    }
+  },
+  "claude_sonnet_4_6_T0p3": {
+    "model": "claude-sonnet-4-6",
+    "temperature": 0.3,
+    "semloc": {
+      "acc1": 0.424,
+      "acc3": 0.66,
+      "acc5": 0.756,
+      "mean_pct_susp": 7.5,
+      "n_programs": 250
+    },
+    "direct_fl": {
+      "acc1": 0.352,
+      "acc3": 0.428,
+      "acc5": 0.428,
+      "mean_pct_susp": null,
+      "n_programs": 250
+    }
+  },
+  "claude_sonnet_4_6_T0p8": {
+    "model": "claude-sonnet-4-6",
+    "temperature": 0.8,
+    "semloc": {
+      "acc1": 0.428,
+      "acc3": 0.68,
+      "acc5": 0.768,
+      "mean_pct_susp": 7.6,
+      "n_programs": 250
+    },
+    "direct_fl": {
+      "acc1": 0.352,
+      "acc3": 0.412,
+      "acc5": 0.412,
+      "mean_pct_susp": null,
+      "n_programs": 250
+    }
+  },
+  "gemini_25_pro_T0p0": {
+    "model": "gemini-2.5-pro",
+    "temperature": 0.0,
+    "semloc": {
+      "acc1": 0.396,
+      "acc3": 0.656,
+      "acc5": 0.756,
+      "mean_pct_susp": 7.4,
+      "n_programs": 250
+    },
+    "direct_fl": {
+      "acc1": 0.364,
+      "acc3": 0.436,
+      "acc5": 0.436,
+      "mean_pct_susp": null,
+      "n_programs": 250
+    }
+  },
+  "gemini_25_pro_T0p3": {
+    "model": "gemini-2.5-pro",
+    "temperature": 0.3,
+    "semloc": {
+      "acc1": 0.408,
+      "acc3": 0.66,
+      "acc5": 0.752,
+      "mean_pct_susp": 7.4,
+      "n_programs": 250
+    },
+    "direct_fl": {
+      "acc1": 0.376,
+      "acc3": 0.44,
+      "acc5": 0.44,
+      "mean_pct_susp": null,
+      "n_programs": 250
+    }
+  },
+  "gemini_25_pro_T0p8": {
+    "model": "gemini-2.5-pro",
+    "temperature": 0.8,
+    "semloc": {
+      "acc1": 0.398,
+      "acc3": 0.647,
+      "acc5": 0.735,
+      "mean_pct_susp": 7.3,
+      "n_programs": 249
+    },
+    "direct_fl": {
+      "acc1": 0.372,
+      "acc3": 0.432,
+      "acc5": 0.432,
+      "mean_pct_susp": null,
+      "n_programs": 250
+    }
+  }
+}

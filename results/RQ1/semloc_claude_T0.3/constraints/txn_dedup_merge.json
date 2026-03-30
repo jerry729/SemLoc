@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "txn_dedup_merge",
+  "fault_hypothesis": "Lines 76-77 incorrectly pop the last element when both lists share the same last element, but the merge already correctly includes both copies (one from each list). This post-processing removal is wrong and causes the last shared element to be dropped.",
+  "fault_line": 76,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 76
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After the merge loop and extend calls, merged must contain exactly len(left)+len(right) elements before any pop.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 76,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "After popping, the merged list should still have len(left)+len(right) elements, but the pop incorrectly removes one.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == i__1 + j"
+      },
+      "intent": "At each loop iteration end, the number of elements appended equals i+j (the total indices advanced).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1]) or len(merged__1) > len(left) + len(right) - 1"
+      },
+      "intent": "The condition triggering the pop should never be true for a correctly merged list where both last elements are already included.",
+      "confidence": 0.9
+    }
+  ]
+}

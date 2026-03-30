@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_bounty_cut",
+  "fault_hypothesis": "On line 64, the fee is subtracted per-recipient (once per share), but the docstring says the fee is a flat deduction from the total before splitting. The fee should be deducted from `amount` before computing proportional shares (on line 62), not subtracted from each individual share.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_payout(share - fee) for share in base__1]) - max(0.0, amount - fee * len(ratios))) < 1e-6 or abs(sum([_clamp_payout(share - fee) for share in base__1]) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The total payout should equal amount minus fee (flat deduction), not amount minus fee*num_recipients; this expression is false when fee is applied per-recipient.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < 1e-9"
+      },
+      "intent": "After computing base shares proportionally from amount, their sum must equal amount before any fee deduction.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "all((r / sum(ratios)) * amount >= 0 for r in ratios)"
+      },
+      "intent": "Each base share must be non-negative since ratios and amount are non-negative; the fee should not be mixed into individual shares.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts should equal the bounty minus the single flat fee, not the fee multiplied by the number of recipients.",
+      "confidence": 0.95
+    }
+  ]
+}

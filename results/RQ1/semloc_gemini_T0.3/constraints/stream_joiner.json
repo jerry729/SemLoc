@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "stream_joiner",
+  "fault_hypothesis": "The statement on line 73 unnecessarily removes an element from the output list when both input streams happen to end with the same value, violating the requirement to include all elements.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(out__1) == len(left) + len(right)"
+      },
+      "intent": "After the pop operation, the total number of elements should still equal the sum of input lengths.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "This de-duplication branch should never be taken, as it incorrectly removes valid elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (out__1 and left and right and out__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the erroneous pop operation should never be true before the check.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN"
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned list must contain the sum of elements from both input streams.",
+      "confidence": 1.0
+    }
+  ]
+}

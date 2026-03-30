@@ -1,0 +1,47 @@
+{
+  "function": "tiers_stream",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        65,
+        66
+      ],
+      "explanation": "Lines 65-66 incorrectly remove the last element from the merged result when the last elements of both left and right are equal, which is not part of a standard merge algorithm and causes incorrect output by dropping a duplicate element.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"tiers_stream\",\n  \"faulty_lines\": [65, 66],\n  \"explanation\": \"Lines 65-66 incorrectly remove the last element from the merged result when the last elements of both left and right are equal, which is not part of a standard merge algorithm and causes incorrect output by dropping a duplicate element.\",\n  \"confidence\": 0.95\n}",
+      "predicted": [
+        65,
+        66
+      ],
+      "valid_preds": [
+        65,
+        66
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 65,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

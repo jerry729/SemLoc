@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "login_throttle",
+  "fault_hypothesis": "Line 69 uses a strict greater-than comparison (`>`) instead of greater-than-or-equal (`>=`), so when the number of recent attempts exactly equals the limit, the attempt is incorrectly allowed instead of denied.",
+  "fault_line": 69,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 69
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) == limit) or (len(recent__1) >= limit)"
+      },
+      "intent": "When recent attempts equal the limit, the condition must trigger denial (>= not >).",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 69,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "In the else branch (allowed path), recent count must be strictly less than limit, not equal.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(recent__1) >= limit) or len(recent__1) > 0"
+      },
+      "intent": "After filtering, if recent count meets or exceeds limit, it must be positive (sanity check that the boundary case is handled).",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] is True and len(recent__1) >= limit)"
+      },
+      "intent": "The function must never return allowed=True when recent attempts meet or exceed the limit.",
+      "confidence": 0.95
+    }
+  ]
+}

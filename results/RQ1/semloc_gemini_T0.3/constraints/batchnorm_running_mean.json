@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "batchnorm_running_mean",
+  "fault_hypothesis": "The coefficients for `current_mean` and `batch_mean` are swapped in the exponential moving average calculation on line 70. The weight for `current_mean` should be `momentum`, not `1 - momentum`.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9"
+      },
+      "intent": "The updated mean should be a weighted average with momentum applied to the current mean.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(updated__1 - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9"
+      },
+      "intent": "The calculated updated mean must follow the correct exponential moving average formula.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "(momentum > 0.5 and abs(updated__1 - current_mean) <= abs(updated__1 - batch_mean)) or (momentum < 0.5 and abs(updated__1 - current_mean) >= abs(updated__1 - batch_mean)) or (momentum == 0.5 and abs(updated__1 - current_mean) == abs(updated__1 - batch_mean))"
+      },
+      "intent": "The updated mean should be closer to the input mean with the higher weight.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(__cbfl_result - (momentum * current_mean + (1 - momentum) * batch_mean)) < 1e-9 if abs(momentum * current_mean + (1 - momentum) * batch_mean) > 1e-12 else __cbfl_result == 0.0"
+      },
+      "intent": "The function must return the correctly calculated EMA, clamped to zero if necessary.",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "function": "prices_stream",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    80
+  ],
+  "total_source_lines": 85,
+  "runs": [
+    {
+      "faulty_lines": [
+        81,
+        82
+      ],
+      "explanation": "Lines 81-82 incorrectly remove the last element from the merged result when both streams end with the same value. The function is supposed to preserve duplicates that appear in both streams (they should appear twice), but this post-processing step removes one of those duplicates from the tail, breaking the invariant described in the docstring.",
+      "confidence": 0.92,
+      "parse_ok": true,
+      "raw": "{\n  \"function_name\": \"prices_stream\",\n  \"faulty_lines\": [81, 82],\n  \"explanation\": \"Lines 81-82 incorrectly remove the last element from the merged result when both streams end with the same value. The function is supposed to preserve duplicates that appear in both streams (they should appear twice), but this post-processing step removes one of those duplicates from the tail, breaking the invariant described in the docstring.\",\n  \"confidence\": 0.92\n}",
+      "predicted": [
+        81,
+        82
+      ],
+      "valid_preds": [
+        81,
+        82
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 81,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

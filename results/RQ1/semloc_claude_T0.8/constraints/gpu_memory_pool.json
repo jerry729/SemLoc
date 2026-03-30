@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gpu_memory_pool",
+  "fault_hypothesis": "On line 75, the comparison uses strict `>` instead of `>=`, so when `used + request` exactly equals `effective_cap` the function incorrectly returns `True` instead of `False`.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "(used__1 + request > effective_cap__1) == (used__1 + request >= effective_cap__1)"
+      },
+      "intent": "The strict-greater-than branch condition must be equivalent to greater-than-or-equal when they diverge at the boundary (used+request == effective_cap), catching the off-by-one.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "used__1"
+        }
+      },
+      "spec": {
+        "expr": "not (used__1 + request == effective_cap__1) or (used__1 + request >= effective_cap__1)"
+      },
+      "intent": "Immediately after computing used, if used+request equals effective_cap then the deny condition (>=) must trigger.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "used__1 + request < effective_cap__1"
+      },
+      "intent": "In the else branch (returning True), used+request must be strictly less than effective_cap, not merely less-than-or-equal.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result == (used__1 + request < effective_cap__1)"
+      },
+      "intent": "The return value should be True only when used+request is strictly less than effective_cap.",
+      "confidence": 0.88
+    }
+  ]
+}

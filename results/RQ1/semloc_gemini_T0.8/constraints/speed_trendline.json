@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "speed_trendline",
+  "fault_hypothesis": "The condition `if not clamp:` on line 71 is inverted. It causes the function to clamp the output when `clamp=False` and not clamp when `clamp=True`, which is the opposite of the intended behavior.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (y__4 >= min(y0, y1) and y__4 <= max(y0, y1))) or (not clamp and y__4 == y__1)"
+      },
+      "intent": "If clamp is true, the value y must be within the bounds of y0 and y1; otherwise, it must remain the original interpolated value.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 == y__1"
+      },
+      "intent": "When clamping is disabled (the 'then' branch of 'if not clamp'), the interpolated value y must not be modified.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__4 >= min(y0, y1) and y__4 <= max(y0, y1)"
+      },
+      "intent": "When clamping is enabled (the 'else' branch of 'if not clamp'), the resulting y value must be within the [min(y0, y1), max(y0, y1)] range.",
+      "confidence": 0.9
+    }
+  ]
+}

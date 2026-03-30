@@ -1,0 +1,48 @@
+{
+  "bug_id": "youtube-dl_13",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.urljoin",
+    "buggy_methods": [
+      "youtube_dl.utils.urljoin"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.urljoin",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "youtube_dl/utils.py": [
+      1871
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      1871
+    ],
+    "best_rank": null,
+    "fn_lines": 13,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 1875,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "youtube-dl_13",
+    "function": "urljoin",
+    "src_path": "youtube_dl/utils.py",
+    "fn_begin": 1866,
+    "fn_end": 1878,
+    "n_constraints": 4,
+    "n_tests_passing": 80,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 1875,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/youtube-dl_13/urljoin_constraints.json",
+    "report_path": "/tmp/bip_semloc/youtube-dl_13/violations.jsonl"
+  }
+}

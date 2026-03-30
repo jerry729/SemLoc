@@ -1,0 +1,70 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "growth_trendline",
+  "fault_hypothesis": "The condition on line 66 is inverted. The clamping logic is executed when `clamp` is false and skipped when `clamp` is true, which is the opposite of the intended behavior.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "(not clamp and y__5 == y__1) or (clamp and y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "After the conditional block, the value of y must be consistent with the clamp flag: unclamped if false, within the [y0, y1] range if true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "y__4 == y__1"
+      },
+      "intent": "When not clamping (i.e., inside the 'if not clamp:' branch), the value of y should not be modified.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 66,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamping is enabled (i.e., inside the else branch), the value of y must be within the allowed range.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(y__1 - (y0 + t__1 * (y1 - y0))) < 1e-9"
+      },
+      "intent": "The initial interpolated value y should be correctly calculated based on the parameter t.",
+      "confidence": 0.8
+    }
+  ]
+}

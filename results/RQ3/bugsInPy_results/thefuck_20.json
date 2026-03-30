@@ -1,0 +1,25 @@
+{
+  "bug_id": "thefuck_20",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.dirty_unzip._zip_file",
+    "buggy_methods": [
+      "thefuck.rules.dirty_unzip._zip_file"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.dirty_unzip._zip_file",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "thefuck/rules/dirty_unzip.py": [
+      16,
+      31
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

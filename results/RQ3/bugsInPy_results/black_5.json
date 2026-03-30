@@ -1,0 +1,59 @@
+{
+  "bug_id": "black_5",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.Line.maybe_remove_trailing_comma",
+    "buggy_methods": [
+      "black.Line.maybe_remove_trailing_comma"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.Line.maybe_remove_trailing_comma",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      1355,
+      2491,
+      2492,
+      2493
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      1355,
+      2491,
+      2492,
+      2493
+    ],
+    "best_rank": null,
+    "fn_lines": 53,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 1342,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "black_5",
+    "function": "maybe_remove_trailing_comma",
+    "src_path": "black.py",
+    "fn_begin": 1311,
+    "fn_end": 1363,
+    "n_constraints": 4,
+    "n_tests_passing": 85,
+    "n_tests_failing": 2,
+    "line_scores": [
+      {
+        "line": 1342,
+        "score": 0.19639610121239315
+      }
+    ],
+    "fault_line": 1342,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/black_5/maybe_remove_trailing_comma_constraints.json",
+    "report_path": "/tmp/bip_semloc/black_5/violations.jsonl"
+  }
+}

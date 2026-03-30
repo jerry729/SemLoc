@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_lift",
+  "fault_hypothesis": "The condition on line 63 is inverted. It should be `if clamp:` to apply clamping when requested, but it is `if not clamp:`, which applies clamping when extrapolation is desired and vice-versa.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(clamp and y__3 == min(max(y__1, min(y0, y1)), max(y0, y1))) or (not clamp and y__3 == y__1)"
+      },
+      "intent": "The final value should be clamped if and only if clamping is requested.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 63,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "clamp"
+      },
+      "intent": "This branch, which performs clamping, should only be executed when clamping is enabled.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "t__1"
+        }
+      },
+      "spec": {
+        "expr": "not ((x0 <= x and x <= x1) or (x1 <= x and x <= x0)) or (0.0 <= t__1 and t__1 <= 1.0)"
+      },
+      "intent": "The interpolation factor t should be between 0 and 1 if and only if x is within the segment [x0, x1].",
+      "confidence": 0.8
+    }
+  ]
+}

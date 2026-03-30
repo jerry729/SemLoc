@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_latency",
+  "fault_hypothesis": "The condition on line 70 is inverted. The clamping logic is applied when `clamp` is `False` and skipped when `clamp` is `True`, which is the opposite of the intended behavior.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0 and t__1 <= 1"
+      },
+      "intent": "Failures occur only when extrapolating, i.e., when the interpolation parameter t is outside the [0, 1] range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "(clamp and (min(y0, y1) <= y__3 <= max(y0, y1))) or ((not clamp) and abs(y__3 - y__1) < 1e-9)"
+      },
+      "intent": "The value of y should be clamped if and only if the clamp parameter is True.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "min(y0, y1) <= y__1 <= max(y0, y1)"
+      },
+      "intent": "When clamping is requested, the interpolated value must be within the clamping range for the result to be correct without explicit clamping.",
+      "confidence": 0.9
+    }
+  ]
+}

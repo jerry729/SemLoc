@@ -1,0 +1,36 @@
+{
+  "bug_id": "scrapy_23",
+  "autofl": {
+    "top1": true,
+    "prediction": "scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware._get_proxy",
+    "buggy_methods": [
+      "scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware._get_proxy"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware._get_proxy",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "scrapy/downloadermiddlewares/httpproxy.py": [
+      12,
+      29,
+      55
+    ],
+    "tests/test_downloadermiddleware_httpproxy.py": [
+      55,
+      63
+    ],
+    "tests/test_downloadermiddleware_retry.py": [
+      24,
+      30,
+      37,
+      59
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

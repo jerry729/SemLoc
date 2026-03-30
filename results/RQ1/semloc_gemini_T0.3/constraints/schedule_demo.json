@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_demo",
+  "fault_hypothesis": "The overlap detection on line 67 is incorrect because it uses non-strict inequalities (`<=`, `>=`). This allows intervals that are adjacent (touching at a boundary) to be scheduled, whereas the specification requires them to be rejected as conflicts.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "(end__1 <= s or start__1 >= e) == (end__1 < s or start__1 > e)"
+      },
+      "intent": "The buggy non-overlap check should be equivalent to a strict non-overlap check.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "end__1 < s or start__1 > e"
+      },
+      "intent": "The new interval must not touch or overlap with any existing slot checked so far.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "start__1"
+        }
+      },
+      "spec": {
+        "expr": "start__1 < end__1"
+      },
+      "intent": "The start of an interval must be strictly less than its end.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result[0] == False or all(interval[1] < s or interval[0] > e for s, e in existing)"
+      },
+      "intent": "If an interval is accepted, it must not overlap (including touching) any of the originally existing slots.",
+      "confidence": 0.8
+    }
+  ]
+}

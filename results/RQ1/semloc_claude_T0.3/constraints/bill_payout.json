@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "bill_payout",
+  "fault_hypothesis": "On line 70, the fee is subtracted from each participant's share individually, causing a total deduction of fee*N instead of fee once. The fee should be deducted from the total pool before splitting (line 68 should use amount-fee), not per-share at line 70.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "abs(sum([_clamp_share(s - fee) for s in shares__1]) - (amount - fee)) < 1e-6"
+      },
+      "intent": "The sum of all payouts must equal amount minus fee (once), not amount minus fee*N.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (sum(ratios[:len(shares__1)]) / total_ratio__1) * amount) < 1e-6"
+      },
+      "intent": "After each iteration, accumulated shares should reflect proportional split of the full amount (before any fee deduction).",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount) < 1e-6"
+      },
+      "intent": "Before the return list comprehension uses shares, their sum should equal amount (fee not yet deducted per-share).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-6"
+      },
+      "intent": "The returned payouts must sum to amount minus the single fee deduction.",
+      "confidence": 0.9
+    }
+  ]
+}

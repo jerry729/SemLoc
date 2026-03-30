@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "packets_window_avg",
+  "fault_hypothesis": "The fault is on line 63. The mean is calculated by dividing the total by the fixed `window` size, but it should be divided by the actual number of samples (`len(recent)`), which is incorrect when `len(values) < window`.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < warmup_min) or (len(recent__1) > 0 and abs(mean__1 - total__1 / len(recent__1)) < 1e-9)"
+      },
+      "intent": "The calculated mean must be arithmetically correct, unless it will be discarded because the warmup threshold is not met.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0 and abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "When a mean value is returned, it must be arithmetically consistent with the sum and the actual sample count.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "recent__1"
+        }
+      },
+      "spec": {
+        "expr": "(len(recent__1) < window) implies (len(recent__1) < warmup_min)"
+      },
+      "intent": "A partial window of samples (fewer than the window size) should only occur if the warmup threshold has not been met.",
+      "confidence": 0.9
+    }
+  ]
+}

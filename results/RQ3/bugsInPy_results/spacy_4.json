@@ -1,0 +1,24 @@
+{
+  "bug_id": "spacy_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "spacy.cli.converters.conllu2json.read_conllx",
+    "buggy_methods": [
+      "spacy.cli.converters.conllu2json.read_conllx"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "spacy.cli.converters.conllu2json.read_conllx",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "spacy/cli/converters/conllu2json.py": [
+      73
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

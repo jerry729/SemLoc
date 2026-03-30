@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "votes_apportion",
+  "fault_hypothesis": "The function on line 29 uses `int()` to truncate fractional shares, which causes the sum of the apportioned values to be less than the total when the discarded fractions sum to 1.0 or more.",
+  "fault_line": 29,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 29
+        }
+      },
+      "spec": {
+        "expr": "sum([int(v) for v in shares__1]) == total"
+      },
+      "intent": "The sum of the final integer shares must equal the original total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 28,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(v % 1 for v in shares__1) < 1.0"
+      },
+      "intent": "The total value lost to truncation across all shares must be less than 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "not any(v > int(v) for v in shares__1) or sum([int(v) for v in shares__1]) == total"
+      },
+      "intent": "If any shares have fractional parts, the sum after truncation must still equal the total.",
+      "confidence": 0.8
+    }
+  ]
+}

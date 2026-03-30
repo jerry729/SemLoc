@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "attention_mask_merge",
+  "fault_hypothesis": "The function uses logical OR (`or`) on line 67 to combine mask elements, but the specification requires an element-wise conjunction (logical AND).",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "merged[-1] == (a and b)"
+      },
+      "intent": "The newly appended element must be the logical AND of the corresponding input elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "(not a or not b) implies not merged[-1]"
+      },
+      "intent": "If either input element for the current position is False, the merged element must also be False.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "all((x and y) == z for x, y, z in zip(mask_a, mask_b, merged__1))"
+      },
+      "intent": "The final list must be the element-wise logical AND of the input masks before it is returned.",
+      "confidence": 0.9
+    }
+  ]
+}

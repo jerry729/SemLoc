@@ -1,0 +1,38 @@
+{
+  "bug_id": "thefuck_14",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.shells.fish.Fish._get_overridden_aliases",
+    "buggy_methods": [
+      "thefuck.shells.fish.Fish._get_overridden_aliases"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.shells.fish.Fish._get_overridden_aliases",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/shells/test_fish.py": [
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "thefuck/shells/fish.py": [
+      10,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

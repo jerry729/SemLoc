@@ -1,0 +1,47 @@
+{
+  "function": "limit_query",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    68
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        69,
+        71
+      ],
+      "explanation": "The condition on line 69 contains an off-by-one error, using `>` instead of `>=`. This allows a new query to proceed even when the window is full, exceeding the rate limit by one. Consequently, the calculation for the remaining queries on line 71 is also incorrect, as it doesn't account for the currently approved query.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"limit_query\",\n  \"faulty_lines\": [\n    69,\n    71\n  ],\n  \"explanation\": \"The condition on line 69 contains an off-by-one error, using `>` instead of `>=`. This allows a new query to proceed even when the window is full, exceeding the rate limit by one. Consequently, the calculation for the remaining queries on line 71 is also incorrect, as it doesn't account for the currently approved query.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        69,
+        71
+      ],
+      "valid_preds": [
+        69,
+        71
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 69,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

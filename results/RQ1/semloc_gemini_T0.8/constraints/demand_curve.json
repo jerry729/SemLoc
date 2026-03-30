@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_curve",
+  "fault_hypothesis": "The condition on line 60 is inverted. Clamping is applied when `clamp` is `False` instead of when it is `True`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (t__1 >= 0.0 and t__1 <= 1.0)"
+      },
+      "intent": "If clamping is enabled, the result can only be correct if no extrapolation occurred (i.e., t is in [0,1]), because the clamping logic is erroneously skipped.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "t__1 >= 0.0 and t__1 <= 1.0"
+      },
+      "intent": "When entering this branch (clamp is True), the result is only correct if no clamping was needed in the first place.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or ((y0 <= y1 and __cbfl_result >= y0 and __cbfl_result <= y1) or (y1 < y0 and __cbfl_result >= y1 and __cbfl_result <= y0))"
+      },
+      "intent": "The final return value must be within the vertical range of the segment [y0, y1] if clamping is enabled.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__1"
+        }
+      },
+      "spec": {
+        "expr": "not (clamp and (t__1 < 0.0 or t__1 > 1.0))"
+      },
+      "intent": "An unclamped, extrapolated value (t outside [0,1]) is invalid if clamping was requested.",
+      "confidence": 0.9
+    }
+  ]
+}

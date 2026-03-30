@@ -1,0 +1,44 @@
+{
+  "function": "model_confidence_clamp",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    76
+  ],
+  "total_source_lines": 84,
+  "runs": [
+    {
+      "faulty_lines": [
+        76
+      ],
+      "explanation": "The clamping logic is incorrectly triggered when `clamp` is `False` instead of `True`. The condition `if not clamp:` inverts the intended behavior described in the function's docstring.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"model_confidence_clamp\",\n  \"faulty_lines\": [\n    76\n  ],\n  \"explanation\": \"The clamping logic is incorrectly triggered when `clamp` is `False` instead of `True`. The condition `if not clamp:` inverts the intended behavior described in the function's docstring.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        76
+      ],
+      "valid_preds": [
+        76
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 76,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 1.0
+}

@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "realign_power",
+  "fault_hypothesis": "The function calculates the interpolated weights but fails to renormalize them to sum to 1.0. The bug is the missing normalization step before the return statement on line 59.",
+  "fault_line": 59,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0 or abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list of weights must be a valid probability distribution summing to 1.0.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 59
+        }
+      },
+      "spec": {
+        "expr": "all(x >= 0 and x <= 1.0 for x in updated__1)"
+      },
+      "intent": "All weights in a valid probability distribution must be between 0.0 and 1.0.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "idx < len(current) - 1 or abs(sum(updated) - 1.0) < 1e-9"
+      },
+      "intent": "The list of weights should represent a valid distribution by the time the loop finishes.",
+      "confidence": 0.8
+    }
+  ]
+}

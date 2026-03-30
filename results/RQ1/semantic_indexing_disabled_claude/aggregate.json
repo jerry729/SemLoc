@@ -1,0 +1,1514 @@
+{
+  "model": "claude-sonnet-4-6",
+  "n_programs": 250,
+  "n_runs_per_program": 1,
+  "aggregate": {
+    "mean_top1_accuracy": 0.352,
+    "mean_top3_accuracy": 0.412,
+    "mean_any_correct": 0.412,
+    "mean_hallucination_rate": 0.0,
+    "mean_consistency": 0.868
+  },
+  "per_program": {
+    "ad_mix": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "adjust_allocation": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "adjust_portfolio": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "adjust_queue": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "adjust_supply": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "allocate_bonus_cut": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "allocate_bounty_cut": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "allocate_budget_cut": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "allocate_pool_cut": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "allocate_prize_cut": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "api_rate_guard": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "attention_mask_merge": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "audit_window_filter": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "award_payout": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "backlog_rolling_avg": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bandwidth_apportion": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bandwidth_budgeter": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bandwidth_rebalance": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "batch_rate": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "batch_tally": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "batchnorm_running_mean": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "bill_payout": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "billing_gate": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "blend_levels": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "blend_margins": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "blend_orders": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "blend_supplies": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "budget_budgeter": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "budget_mix": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bump_click": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bump_conversion": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bump_job": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bump_purchase": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "bump_refund": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cache_entry_ttl": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cached_inventory": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "cached_manifest": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "cached_metric": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cached_preference": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "cached_route": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cacheline_expiry": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cacheline_refresh": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "calendar_slot_insert": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "calibrate_latency": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "calibrate_lift": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "calibrate_loss": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "calibrate_pressure": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "calibrate_quality": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "calibrate_score": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "calibrate_trend": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "catalog_cache": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "checkout_rate": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cluster_rebalance_weights": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "combine_depths": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "combine_offsets": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "combine_requests": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "combine_responses": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "combine_scores": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "confidence_trendline": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "config_expiry": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "config_interpolate": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cost_trendline": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "coupons_apportion": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "coverage_interp": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "cpu_allocator": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "credit_share": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "credits_allocator": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "dataloader_shard_merge": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "demand_curve": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "demand_forecast_curve": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "demands_union": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "divide_coupon": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "divide_refund": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "donation_share": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "download_rate": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "downtime_booking": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "draft_cache": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "email_send_quota": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "embedding_lookup_cache": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "energy_window_avg": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "error_meter": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "estimate_reliability": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "estimate_supply": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "estimate_temperature": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "event_gate": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "feature_cache": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "feature_flag_rollout": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "fee_splitter": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "file_chunk_stitch": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "fuel_moving_mean": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "gain_trendline": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "gpu_memory_pool": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "grades_union": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "gradient_clip_budget": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "grant_share": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "growth_trendline": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "guard_email": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "guard_search": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "guard_write": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "heartbeat_throttle": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "histogram_bucket_merge": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "ids_merge": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "inspection_booking": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "invoice_merge_stream": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "invoice_meter": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "job_queue_priority": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "kv_snapshot_reader": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "latencies_merge": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "latency_rolling_avg": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "ledger_balance_rollup": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "limit_api": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "limit_job": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "limit_message": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "limit_ping": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "limit_query": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "limit_sensor": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "load_mix": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "load_rolling_avg": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "log_sampling_decider": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "login_tally": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "login_throttle": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "lr_warmup_schedule": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "lru_evictor": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "machine_booking": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "maintenance_booking": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "memory_moving_mean": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "message_counter": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "metric_rolling_avg": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "model_confidence_clamp": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "notification_gate": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "offer_expiry": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "optimizer_step_guard": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "packets_window_avg": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "pages_union": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "payment_payout": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "payment_split_rebate": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "percentile_estimator": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "plan_appointment_slot": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "plan_conference_slot": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "plan_delivery_slot": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "plan_desk_slot": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "plan_jobs_share": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "plan_memo": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "plan_points_share": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "plan_seats_share": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "plan_tickets_share": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "plan_upgrade_slot": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "prediction_cache": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "price_cache": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "prices_stream": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "priority_mix": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "probability_curve": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "probability_rebalance": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "profile_expiry": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "queue_window_avg": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "quota_allocator_service": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "quota_for_capacity": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "quota_for_fuel": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "quota_for_inventory": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "quota_for_memory": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "quota_for_storage": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "quote_memo": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "rating_curve": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "read_throttle": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "realign_cache": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "realign_power": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "realign_replica": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "rebate_splitter": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "redis_like_expiry": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "rent_splitter": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "replica_sync_offsets": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "request_token_bucket": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "reservation_booking": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "reservation_overlap_check": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "reserve_band": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "reserve_lane": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "reserve_slot": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "retry_backoff_window": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "retry_tally": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "revenue_share": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "rolling_errors": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "rolling_requests": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "rolling_retries": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "rolling_usage": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "room_reservation": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "royalty_payout": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "sales_window_avg": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "schedule_call": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "schedule_car": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "schedule_demo": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "schedule_pickup": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "schedule_shift_allocator": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "schedule_training": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "schedule_window": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "scores_apportion": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "search_result_pager": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "sensor_window_avg": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "session_memo": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shard_assignment": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shares_apportion": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shift_demand": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shift_feature": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shift_risk": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shift_traffic": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shift_trust": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "shift_weight": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "signals_stream": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "slots_apportion": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "smooth_clicks": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "smooth_cpu": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "smooth_pressure": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "smooth_throughput": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "speed_trendline": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "storage_mix": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "storage_quota_split": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "stream_joiner": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "subsidy_payout": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "summary_memo": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "task_tally": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "task_throttle": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "tasks_allocator": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "temperature_window_avg": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "tensor_slice_pad": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "throughput_trendline": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "tiers_stream": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "time_range_filter": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "timestamps_stream": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "tip_share": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "token_cache": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 0.0
+    },
+    "token_expiry_check": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "track_api": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "track_build": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "track_delivery": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "track_deployment": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "track_logout": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "track_release": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "traffic_shaping_gate": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "ttl_snapshot_store": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "txn_dedup_merge": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "upload_gate": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "versions_stream": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "view_tally": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "views_moving_mean": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "volume_moving_mean": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "votes_apportion": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "warm_cache_loader": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "warning_meter": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "water_allocator": {
+      "top1": 0.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "weights_union": {
+      "top1": 1.0,
+      "top3": 1.0,
+      "hall": 0.0,
+      "cons": 1.0
+    },
+    "windowed_error_rate": {
+      "top1": 0.0,
+      "top3": 0.0,
+      "hall": 0.0,
+      "cons": 1.0
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_storage",
+  "fault_hypothesis": "On line 66, `int(x)` truncates (floors) each planned value instead of using a largest-remainder rounding method, so the sum of allocations does not equal the intended total when weights don't divide evenly.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) == round(sum(planned__1))"
+      },
+      "intent": "After building integer allocations via int(), their sum must equal round(sum(planned)) \u2014 violated when truncation loses remainders.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "allocations__1"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__1) >= sum(int(x) for x in planned__1) and sum(allocations__1) <= sum(int(x) for x in planned__1) + len(planned__1)"
+      },
+      "intent": "The integer allocations must lie between the floor-sum and floor-sum plus number of recipients, and actually equal the target total.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(allocations__3) == round(sum(planned__1))"
+      },
+      "intent": "At the end of the integer-allocation branch, the total allocated must match the rounded planned total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == round(sum(planned__1))"
+      },
+      "intent": "The returned allocations must sum to the intended total, catching any loss due to truncation.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "bug_id": "tornado_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "tornado.web.RequestHandler.finish",
+    "buggy_methods": [
+      "tornado.web.RequestHandler.finish"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "tornado.web.RequestHandler.finish",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tornado/test/websocket_test.py": [
+      171
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

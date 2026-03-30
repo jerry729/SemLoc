@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "load_rolling_avg",
+  "fault_hypothesis": "On line 68, the average is computed by dividing `total` by `window` instead of by `len(tail)`. When the series has fewer elements than the window, this produces an incorrectly low result.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "The computed average must equal total divided by the actual number of samples, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing avg, verify it is consistent with total divided by actual sample count.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) >= 1 and abs(avg__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before returning avg, confirm it equals total/len(tail) not total/window.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) <= window"
+      },
+      "intent": "The tail can have at most window elements; when shorter, dividing by window gives a wrong (smaller) result.",
+      "confidence": 0.85
+    }
+  ]
+}

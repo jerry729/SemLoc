@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "room_reservation",
+  "fault_hypothesis": "The overlap condition on line 70 uses strict inequalities (`end <= s` and `start >= e`), so touching intervals (where `end == s` or `start == e`) are incorrectly treated as non-overlapping. The boundary check should use strict less-than (`end < s` or `start > e`) to flag shared endpoints as conflicts.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s and start__1 <= s) and not (start__1 == e and end__1 >= e)"
+      },
+      "intent": "After evaluating the overlap condition, touching boundary cases (end==s or start==e) should be flagged as overlapping, not as non-overlapping.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) and not (start__1 == e)"
+      },
+      "intent": "At each loop iteration tail, intervals that touch at a single point should have already triggered a rejection, so end==s or start==e should not reach this point without returning False.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 > start__1"
+      },
+      "intent": "Before end__1 is used in the overlap check, confirm it is strictly greater than start__1 (a valid interval), ensuring the boundary logic is applied correctly.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The 'then' branch of the overlap check (not overlapping) is taken; this should NOT be entered when end__1==s or start__1==e (touching boundary). This constraint being always-false highlights that the branch is taken incorrectly for touching intervals.",
+      "confidence": 0.8
+    }
+  ]
+}

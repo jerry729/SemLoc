@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "cached_inventory",
+  "fault_hypothesis": "The expiry condition on line 70 uses strict greater-than (`now > adjusted_deadline`) instead of greater-than-or-equal (`now >= adjusted_deadline`), so an entry accessed exactly at its deadline is incorrectly treated as still valid.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_deadline__1) or (now >= adjusted_deadline__1)"
+      },
+      "intent": "When now equals adjusted_deadline the condition should be true (entry expired), but the strict > misses the equality case.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == adjusted_deadline__1) or True"
+      },
+      "intent": "After computing adjusted_deadline, if now equals it the next branch must treat the entry as expired (now >= adjusted_deadline__1 should trigger expiry).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "adjusted_deadline__1"
+        }
+      },
+      "spec": {
+        "expr": "now != adjusted_deadline__1 or now >= adjusted_deadline__1"
+      },
+      "intent": "Immediately before using adjusted_deadline in the comparison, if now equals it the expiry condition (>=) should hold.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < adjusted_deadline__1"
+      },
+      "intent": "In the else-branch (entry not expired), now must be strictly less than adjusted_deadline; equality should have taken the then-branch.",
+      "confidence": 0.92
+    }
+  ]
+}

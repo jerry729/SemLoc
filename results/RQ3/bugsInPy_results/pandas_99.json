@@ -1,0 +1,25 @@
+{
+  "bug_id": "pandas_99",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.tools.datetimes._convert_listlike_datetimes",
+    "buggy_methods": [
+      "pandas.core.tools.datetimes._convert_listlike_datetimes"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.tools.datetimes._convert_listlike_datetimes",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/tools/datetimes.py": [
+      319,
+      320
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "price_cache",
+  "fault_hypothesis": "The expiry check on line 61 uses a strict greater-than comparison (`>`), which incorrectly treats an entry as valid when the adjusted current time is exactly equal to the TTL. The comparison should be `>=` to correctly expire entries at the boundary.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 < ttl__1"
+      },
+      "intent": "A cached entry is valid only if the adjusted current time is strictly less than its TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 < ttl__1"
+      },
+      "intent": "If the expiry check does not trigger, the adjusted time must be strictly less than the TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "adjusted_now__1"
+        }
+      },
+      "spec": {
+        "expr": "adjusted_now__1 <= now"
+      },
+      "intent": "The adjusted time used for expiry checks should not be after the current time, assuming non-negative clock skew tolerance.",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result is not None and cache.get(key) is not None) or (now < cache.get(key)[1])"
+      },
+      "intent": "A non-None result implies the entry exists in the cache and the current time is strictly before its TTL.",
+      "confidence": 0.8
+    }
+  ]
+}

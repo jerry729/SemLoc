@@ -1,0 +1,44 @@
+{
+  "function": "metric_rolling_avg",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    69
+  ],
+  "total_source_lines": 76,
+  "runs": [
+    {
+      "faulty_lines": [
+        70
+      ],
+      "explanation": "The average is calculated by dividing the sum of values by the configured window size, instead of the actual number of values in the tail, which can be smaller and leads to an incorrect result.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"metric_rolling_avg\",\n  \"faulty_lines\": [\n    70\n  ],\n  \"explanation\": \"The average is calculated by dividing the sum of values by the configured window size, instead of the actual number of values in the tail, which can be smaller and leads to an incorrect result.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        70
+      ],
+      "valid_preds": [
+        70
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 70,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

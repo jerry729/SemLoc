@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "sensor_window_avg",
+  "fault_hypothesis": "On line 73, the mean is computed by dividing total by `window` (the requested window size) instead of `len(recent)` (the actual number of samples available), causing incorrect results when fewer samples exist than the window size.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "The mean should be total divided by the actual number of recent samples, not by the window size.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window or abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing mean, mean * len(recent) should equal total unless window equals len(recent).",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) >= min_samples and abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "Before returning mean, it must equal total divided by the count of actual recent samples.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(recent__1) - total__1) < 1e-9"
+      },
+      "intent": "When enough samples are present, the returned mean must be consistent with total/len(recent).",
+      "confidence": 0.88
+    }
+  ]
+}

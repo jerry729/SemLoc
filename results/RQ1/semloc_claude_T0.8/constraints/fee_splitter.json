@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "fee_splitter",
+  "fault_hypothesis": "On line 61, the fee is deducted from each individual participant's base payout (b - fee), which effectively deducts fee*N total instead of a single flat fee. The fee should be deducted from the total amount before splitting, not from each participant's share.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee)) < _PRECISION"
+      },
+      "intent": "After computing payouts, their sum should equal amount minus one flat fee, not amount minus fee*N.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "payouts__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(payouts__1) - (amount - fee)) < _PRECISION or all(p == 0.0 for p in payouts__1)"
+      },
+      "intent": "The sum of payouts should reflect a single fee deduction, not per-participant deductions.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(base__1) - amount) < _PRECISION"
+      },
+      "intent": "Before computing payouts, base shares should sum to the full amount (fee not yet deducted from individual shares).",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, amount - fee)) < _PRECISION"
+      },
+      "intent": "The returned payouts should sum to amount minus a single flat fee.",
+      "confidence": 0.8
+    }
+  ]
+}

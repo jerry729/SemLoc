@@ -1,0 +1,22 @@
+# SemLoc artifact dependencies
+# Install with:  pip install -r requirements.txt
+
+# --- AST / Instrumentation ---
+tree-sitter>=0.25
+tree-sitter-python>=0.25
+
+# --- LLM APIs ---
+anthropic>=0.40
+google-generativeai>=0.8
+openai>=1.0
+
+# Optional: Claude via Google Cloud Vertex AI
+# anthropic[vertex]>=0.40
+
+# --- Testing ---
+pytest>=7.0
+pytest-xdist>=3.0
+coverage>=7.0
+
+# --- Utilities ---
+python-dotenv>=1.0

@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tip_share",
+  "fault_hypothesis": "The platform fee is incorrectly subtracted from each recipient's individual share on line 62. This causes the fee to be deducted multiple times; it should be subtracted once from the total `amount` before the shares are calculated on line 60.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - max(0, amount - fee)) < 1e-9"
+      },
+      "intent": "The sum of all payouts should equal the total amount less the single fee, floored at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "len(base__1) == len(ratios)"
+      },
+      "intent": "The number of calculated shares must match the number of ratios provided.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive for a meaningful split.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(share >= 0 for share in __cbfl_result)"
+      },
+      "intent": "All final payout amounts must be non-negative.",
+      "confidence": 0.7
+    }
+  ]
+}

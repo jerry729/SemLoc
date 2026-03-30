@@ -1,0 +1,25 @@
+{
+  "bug_id": "keras_31",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.backend.tensorflow_backend.ctc_batch_cost",
+    "buggy_methods": [
+      "keras.backend.tensorflow_backend.ctc_batch_cost"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.backend.tensorflow_backend.ctc_batch_cost",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/backend/tensorflow_backend.py": [
+      3945,
+      3946
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

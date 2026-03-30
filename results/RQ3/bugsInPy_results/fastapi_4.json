@@ -1,0 +1,24 @@
+{
+  "bug_id": "fastapi_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.openapi.utils.get_openapi_path",
+    "buggy_methods": [
+      "fastapi.openapi.utils.get_openapi_path"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.openapi.utils.get_openapi_path",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/openapi/utils.py": [
+      183
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

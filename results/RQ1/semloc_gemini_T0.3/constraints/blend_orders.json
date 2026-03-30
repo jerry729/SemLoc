@@ -1,0 +1,55 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "blend_orders",
+  "fault_hypothesis": "The code at line 73 incorrectly removes the last element from the merged list when the input lists share the same final value. This violates the function's contract to preserve all original elements.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "The total number of elements in the merged list must equal the sum of elements from the input lists.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "This branch, which incorrectly removes a legitimate duplicate element, should never be executed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 72,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(1 for x in merged__1 if x == left[-1]) == sum(1 for x in left if x == left[-1]) + sum(1 for x in right if x == right[-1])"
+      },
+      "intent": "The count of the final element in the merged list must equal the sum of its counts in the inputs.",
+      "confidence": 1.0
+    }
+  ]
+}

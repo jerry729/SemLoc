@@ -1,0 +1,44 @@
+{
+  "function": "confidence_trendline",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    79
+  ],
+  "total_source_lines": 86,
+  "runs": [
+    {
+      "faulty_lines": [
+        77
+      ],
+      "explanation": "The condition for clamping the output is inverted; it checks for `not clamp` instead of `clamp`, causing clamping to occur when it should be disabled and vice-versa, directly contradicting the function's documentation.",
+      "confidence": 1.0,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"confidence_trendline\",\n  \"faulty_lines\": [\n    77\n  ],\n  \"explanation\": \"The condition for clamping the output is inverted; it checks for `not clamp` instead of `clamp`, causing clamping to occur when it should be disabled and vice-versa, directly contradicting the function's documentation.\",\n  \"confidence\": 1.0\n}\n```",
+      "predicted": [
+        77
+      ],
+      "valid_preds": [
+        77
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 77,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

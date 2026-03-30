@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calendar_slot_insert",
+  "fault_hypothesis": "The overlap condition on line 73 uses strict inequalities (`end <= s` and `start >= e`), which allows adjacent slots (where end == s or start == e) to be inserted. The tests require adjacent slots to be rejected, so the condition should use strict inequalities in the other direction or change to `end < s or start > e` to treat adjacency as a conflict.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s) and not (start__1 == e)"
+      },
+      "intent": "At the overlap check, adjacent slots (end==s or start==e) must be treated as conflicts and not pass the condition as non-overlapping.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (end__1 == s or start__1 == e)"
+      },
+      "intent": "At the end of each loop iteration, if we haven't returned False yet, the new slot must not be adjacent to the current existing slot (adjacency should trigger rejection).",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "end__1"
+        }
+      },
+      "spec": {
+        "expr": "end__1 > start__1"
+      },
+      "intent": "Before end__1 is used in the overlap check, it must be strictly greater than start__1 (valid slot invariant).",
+      "confidence": 0.7
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and any(b == end or a == start for a, b in __cbfl_result[1][:-1]))"
+      },
+      "intent": "If insertion succeeded, the resulting schedule should not contain any slot adjacent to the inserted slot's boundaries.",
+      "confidence": 0.75
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "combine_requests",
+  "fault_hypothesis": "Lines 74-75 incorrectly remove a duplicate element when both streams share the same last element, but the strategy should keep both copies. This pop() is erroneous and causes the result to be missing one copy of the shared last element.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The pop() on line 75 should never execute because it incorrectly removes a duplicate that should be kept according to the keep_both strategy.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) >= len(left) + len(right)"
+      },
+      "intent": "After the conditional block, merged should still contain all elements from both streams; the pop removes a required duplicate.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == len(left) + len(right)"
+      },
+      "intent": "Before the spurious pop, merged length should equal the combined length of both input streams since keep_both strategy retains all duplicates.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The returned merged list must contain exactly len(left)+len(right) elements since keep_both never discards any element.",
+      "confidence": 0.88
+    }
+  ]
+}

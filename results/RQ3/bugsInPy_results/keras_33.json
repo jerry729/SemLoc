@@ -1,0 +1,27 @@
+{
+  "bug_id": "keras_33",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.preprocessing.text.text_to_word_sequence",
+    "buggy_methods": [
+      "keras.preprocessing.text.text_to_word_sequence"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.preprocessing.text.text_to_word_sequence",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/preprocessing/text.py": [
+      41,
+      42,
+      44,
+      46
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

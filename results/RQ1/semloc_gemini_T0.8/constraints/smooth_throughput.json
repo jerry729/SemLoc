@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_throughput",
+  "fault_hypothesis": "The average throughput on line 61 is incorrectly calculated by dividing the sum of the tail by the fixed `window` size. It should instead be divided by the actual number of samples in the tail, `len(tail)`, which can be smaller than the window.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 - (total__1 / len(tail__1))) < 1e-9"
+      },
+      "intent": "The average must be the sum of tail elements divided by the actual number of tail elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "avg__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or (min(tail__1) <= avg__1 <= max(tail__1))"
+      },
+      "intent": "The calculated average must fall within the range of the samples it was calculated from.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == window"
+      },
+      "intent": "The division on the next line implicitly assumes the number of samples in the tail equals the window size.",
+      "confidence": 0.9
+    }
+  ]
+}

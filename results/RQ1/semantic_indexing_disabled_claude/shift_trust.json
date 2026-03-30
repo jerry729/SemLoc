@@ -1,0 +1,44 @@
+{
+  "function": "shift_trust",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    58
+  ],
+  "total_source_lines": 62,
+  "runs": [
+    {
+      "faulty_lines": [
+        62
+      ],
+      "explanation": "The function is missing the renormalization step before returning. The docstring states the result should sum to 1.0, but line 62 returns the clamped adjusted values without dividing by their total sum.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "Looking at the function, I can see that after computing the adjusted values and clamping them, the function returns `adjusted` without renormalizing the values to sum to 1.0. The docstring explicitly states \"The result is renormalized so the returned weights sum to 1.0\", but line 62 simply returns the adjusted list without any normalization step.\n\n```json\n{\n  \"function_name\": \"shift_trust\",\n  \"faulty_lines\": [62],\n  \"explanation\": \"The function is missing the renormalization step before returning. The docstring states the result should sum to 1.0, but line 62 returns the clamped adjusted values without dividing by their total sum.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        62
+      ],
+      "valid_preds": [
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 62,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

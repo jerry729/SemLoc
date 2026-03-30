@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "ledger_balance_rollup",
+  "fault_hypothesis": "On line 66, the debit branch incorrectly uses `balance += amount` instead of `balance -= amount`, so debit entries increase the balance rather than decreasing it.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "balance < balance + amount"
+      },
+      "intent": "After a debit entry, balance should have decreased (i.e., the new balance is less than balance+amount), which is violated when += is used instead of -=.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "not (kind == 'debit') or balance <= 0.0 or balance < amount"
+      },
+      "intent": "After each debit iteration, balance should not have grown by the debit amount; if it did, the wrong operator was used.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 65,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "balance <= 0.0 or kind != 'debit'"
+      },
+      "intent": "After the debit branch executes with a starting balance of 0, the result should be non-positive, confirming subtraction was applied.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(kind != 'debit' or __cbfl_result <= 0.0 for _, kind in entries) or any(kind == 'credit' for _, kind in entries)"
+      },
+      "intent": "If all entries are debits, the returned balance should be non-positive.",
+      "confidence": 0.75
+    }
+  ]
+}

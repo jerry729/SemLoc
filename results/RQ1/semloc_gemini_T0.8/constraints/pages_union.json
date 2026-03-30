@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "pages_union",
+  "fault_hypothesis": "The condition on line 79 incorrectly identifies cases where the last element is shared between both lists, causing line 80 to erroneously remove a required duplicate element.",
+  "fault_line": 79,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 79
+        }
+      },
+      "spec": {
+        "expr": "not (merged and left and right and merged[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers removal of a shared last element should never be true.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 77
+        }
+      },
+      "spec": {
+        "expr": "len(merged) == len(left) + len(right)"
+      },
+      "intent": "Before the final incorrect adjustment, the merged list must contain all elements.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 79,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The branch that removes a duplicate last element should never be executed.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == len(left) + len(right)"
+      },
+      "intent": "The final list must contain all elements from both inputs combined.",
+      "confidence": 0.9
+    }
+  ]
+}

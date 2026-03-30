@@ -1,0 +1,47 @@
+{
+  "function": "allocate_bounty_cut",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    64
+  ],
+  "total_source_lines": 64,
+  "runs": [
+    {
+      "faulty_lines": [
+        64,
+        62
+      ],
+      "explanation": "The fee is incorrectly subtracted from each individual share (line 64) rather than from the total amount before distribution (line 62). This causes the total deducted fee to be `fee * num_recipients` instead of just `fee`. The fix is to compute `net = amount - fee` on line 62 and use it instead, removing the `- fee` on line 64.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the function, the fee should be deducted from the total amount before distribution, but instead it's being subtracted from each individual share after distribution. The correct implementation should compute `base = amount - fee` first, then distribute proportionally.\n\nAdditionally, the fee subtraction happens per-recipient rather than once from the total, meaning the total deducted fee is `fee * len(ratios)` instead of just `fee`.\n\nThe faulty line is line 62 where `amount` should be `(amount - fee)`, and line 64 where `share - fee` should just be `share`.\n\n```json\n{\n  \"function_name\": \"allocate_bounty_cut\",\n  \"faulty_lines\": [64, 62],\n  \"explanation\": \"The fee is incorrectly subtracted from each individual share (line 64) rather than from the total amount before distribution (line 62). This causes the total deducted fee to be `fee * num_recipients` instead of just `fee`. The fix is to compute `net = amount - fee` on line 62 and use it instead, removing the `- fee` on line 64.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        64,
+        62
+      ],
+      "valid_preds": [
+        64,
+        62
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": true,
+      "top3": true,
+      "top5": true,
+      "any_correct": true,
+      "best_rank": 1,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 1.0,
+  "top3_rate": 1.0,
+  "top5_rate": 1.0,
+  "any_correct_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 64,
+  "best_rank_ever": 1,
+  "mean_n_predicted": 2.0
+}

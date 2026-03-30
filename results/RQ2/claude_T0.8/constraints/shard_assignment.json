@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "shard_assignment",
+  "fault_hypothesis": "The function never sorts the buckets before returning them. The docstring promises sorted output per shard, but line 65 returns `buckets` without any `sort()` call on each bucket.",
+  "fault_line": 65,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 65
+        }
+      },
+      "spec": {
+        "expr": "all(bucket == sorted(bucket) for bucket in buckets__1)"
+      },
+      "intent": "Each bucket in the returned list must be in sorted order before returning.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "all(len(b) == 0 or True for b in buckets__1)"
+      },
+      "intent": "After each iteration, buckets exist and have the right count (placeholder to anchor loop; real check: no bucket exceeds total keys so far).",
+      "confidence": 0.5
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "buckets__1"
+        }
+      },
+      "spec": {
+        "expr": "len(buckets__1) == shards and all(b == [] for b in buckets__1)"
+      },
+      "intent": "Immediately after bucket initialisation, every bucket must be empty and count must equal shards.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "all(__cbfl_result[i] == sorted(__cbfl_result[i]) for i in range(len(__cbfl_result)))"
+      },
+      "intent": "Every returned bucket must be sorted; failing tests violate this.",
+      "confidence": 0.95
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "bug_id": "black_18",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.format_file_in_place",
+    "buggy_methods": [
+      "black.format_file_in_place"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.format_file_in_place",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      468,
+      469,
+      478,
+      487,
+      506,
+      517,
+      521,
+      593,
+      594
+    ],
+    "tests/test_black.py": [
+      6,
+      124,
+      125,
+      142,
+      143,
+      207
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      468,
+      469,
+      478,
+      487,
+      506,
+      517,
+      521,
+      593,
+      594
+    ],
+    "best_rank": null,
+    "fn_lines": 39,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 477,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "black_18",
+    "function": "format_file_in_place",
+    "src_path": "black.py",
+    "fn_begin": 453,
+    "fn_end": 491,
+    "n_constraints": 4,
+    "n_tests_passing": 57,
+    "n_tests_failing": 7,
+    "line_scores": [],
+    "fault_line": 477,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/black_18/format_file_in_place_constraints.json",
+    "report_path": "/tmp/bip_semloc/black_18/violations.jsonl"
+  }
+}

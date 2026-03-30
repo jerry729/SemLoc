@@ -1,0 +1,47 @@
+{
+  "function": "limit_api",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    65
+  ],
+  "total_source_lines": 68,
+  "runs": [
+    {
+      "faulty_lines": [
+        66,
+        68
+      ],
+      "explanation": "The boundary check on line 66 uses the wrong operator (`>`), which allows one more request than the specified limit. Consequentially, the calculation for remaining requests on line 68 is also off-by-one, as it does not account for the current request being granted.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"limit_api\",\n  \"faulty_lines\": [\n    66,\n    68\n  ],\n  \"explanation\": \"The boundary check on line 66 uses the wrong operator (`>`), which allows one more request than the specified limit. Consequentially, the calculation for remaining requests on line 68 is also off-by-one, as it does not account for the current request being granted.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        66,
+        68
+      ],
+      "valid_preds": [
+        66,
+        68
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 2,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 66,
+  "best_rank_ever": null,
+  "mean_n_predicted": 2.0
+}

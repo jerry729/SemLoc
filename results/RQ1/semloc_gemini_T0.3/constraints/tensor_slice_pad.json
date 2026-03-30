@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "tensor_slice_pad",
+  "fault_hypothesis": "The padding logic on line 64 adds one too many elements by using `missing + 1` instead of `missing`. This causes the final list to be longer than the requested `end - start` length.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "len(result__1) == requested_length__1"
+      },
+      "intent": "After padding, the result length should exactly match the requested length.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "missing__1"
+        }
+      },
+      "spec": {
+        "expr": "len(result__1) + missing__1 == requested_length__1"
+      },
+      "intent": "The length of the initial slice plus the number of missing elements must equal the total requested length.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "len(result__1) <= requested_length__1"
+      },
+      "intent": "The initial slice cannot be longer than the total requested length.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) == end - start"
+      },
+      "intent": "The final returned list must have a length equal to the requested slice window size.",
+      "confidence": 1.0
+    }
+  ]
+}

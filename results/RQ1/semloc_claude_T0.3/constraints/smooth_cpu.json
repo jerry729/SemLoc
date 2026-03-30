@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_cpu",
+  "fault_hypothesis": "On line 68, the mean is computed by dividing by `window` instead of `len(tail)`. When fewer samples than `window` are available, this produces an incorrect (too small) result.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "The mean should be total divided by the actual number of tail samples, not by window.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "After computing mean, mean * len(tail) should equal total, not mean * window.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(mean__1 - total__1 / len(tail__1)) < 1e-9"
+      },
+      "intent": "Before returning mean, verify it equals total/len(tail) rather than total/window.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or (len(values) >= window and abs(__cbfl_result - sum(min(max(v, 0), 100) for v in values[-window:]) / window) < 1e-9) or (len(values) < window and abs(__cbfl_result - sum(min(max(v, 0), 100) for v in values) / len(values)) < 1e-9)"
+      },
+      "intent": "When fewer samples than window exist, the returned mean should divide by actual sample count.",
+      "confidence": 0.8
+    }
+  ]
+}

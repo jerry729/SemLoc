@@ -1,0 +1,35 @@
+{
+  "bug_id": "pandas_12",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.frame.DataFrame.corr",
+    "buggy_methods": [
+      "pandas.core.frame.DataFrame.corr"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.frame.DataFrame.corr",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/frame.py": [
+      87,
+      7874,
+      7877,
+      7879,
+      7883,
+      8009,
+      8013,
+      8014,
+      8016,
+      8017,
+      8019,
+      8021
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

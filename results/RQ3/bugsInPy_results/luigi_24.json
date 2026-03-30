@@ -1,0 +1,28 @@
+{
+  "bug_id": "luigi_24",
+  "autofl": {
+    "top1": true,
+    "prediction": "luigi.contrib.spark.SparkSubmitTask._dict_arg",
+    "buggy_methods": [
+      "luigi.contrib.spark.SparkSubmitTask._dict_arg"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "luigi.contrib.spark.SparkSubmitTask._dict_arg",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "luigi/contrib/spark.py": [
+      272
+    ],
+    "test/contrib/spark_test.py": [
+      152,
+      168
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

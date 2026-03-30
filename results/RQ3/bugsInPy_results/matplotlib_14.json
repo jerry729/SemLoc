@@ -1,0 +1,24 @@
+{
+  "bug_id": "matplotlib_14",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.text.Text.update",
+    "buggy_methods": [
+      "lib.matplotlib.text.Text.update"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.text.Text.update",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/text.py": [
+      177
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

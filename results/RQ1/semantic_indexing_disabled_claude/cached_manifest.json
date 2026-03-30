@@ -1,0 +1,38 @@
+{
+  "function": "cached_manifest",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    63
+  ],
+  "total_source_lines": 67,
+  "runs": [
+    {
+      "faulty_lines": [],
+      "explanation": "[parse error: Expecting value: line 1 column 1 (char 0)]",
+      "confidence": 0.0,
+      "parse_ok": false,
+      "raw": "Looking at the function, the key logic is on line 65:\n\n```python\nif now > effective:\n    return None\n```\n\nThe docstring says \"An entry is considered valid only when the current timestamp `now` is strictly before the effective expiry.\" This means an entry is valid when `now < effective`, and expired when `now >= effective`. However, the code only returns None when `now > effective`, meaning when `now == effective`, it returns the value (treats it as valid). This is inconsistent with \"strictly before\" \u2014 at exactly the expiry time, the entry should be considered expired.\n\nThe correct condition should be `if now >= effective:` to properly handle the \"strictly before\" requirement.\n\n{\n  \"function_name\": \"cached_manifest\",\n  \"faulty_lines\": [65],\n  \"explanation\": \"The expiry check uses `now > effective` but the docstring specifies the entry is valid only when `now` is *strictly before* the effective expiry, meaning the condition should be `now >= effective` to correctly expire entries at exactly the expiry timestamp.\",\n  \"confidence\": 0.82\n}",
+      "predicted": [],
+      "valid_preds": [],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 0,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 0.0,
+  "modal_top1": null,
+  "best_rank_ever": null,
+  "mean_n_predicted": 0.0
+}

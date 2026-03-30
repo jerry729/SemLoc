@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "priority_mix",
+  "fault_hypothesis": "The function returns `updated` without normalizing it (dividing each element by the total sum), so when inputs are not already normalized to sum to 1, the output won't sum to 1 either. The return at line 61 is missing a normalization step.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(updated__1) - 1.0) < 1e-9"
+      },
+      "intent": "The returned list must sum to 1.0 after normalization; fails when inputs have large unnormalized values.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) <= len(current)"
+      },
+      "intent": "After each iteration the updated list grows by one element, never exceeding current length.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__1"
+        }
+      },
+      "spec": {
+        "expr": "len(updated__1) == 0"
+      },
+      "intent": "At initialization updated__1 is empty before any blending occurs.",
+      "confidence": 0.4
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - 1.0) < 1e-9"
+      },
+      "intent": "The final returned list must always sum to 1.0 regardless of input magnitudes.",
+      "confidence": 0.9
+    }
+  ]
+}

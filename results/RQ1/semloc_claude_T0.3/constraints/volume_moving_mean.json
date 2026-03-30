@@ -1,0 +1,68 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "volume_moving_mean",
+  "fault_hypothesis": "On line 60, the mean is computed by dividing total by `window` instead of `len(recent)`. When fewer samples exist than the window size, this produces an incorrect (too small) mean.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "mean__1 == total__1 / len(recent__1)"
+      },
+      "intent": "The mean should be total divided by the actual number of samples, not by window.",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(mean__1 - total__1 / len(recent__1)) < 1e-9"
+      },
+      "intent": "After mean is assigned, it must equal total divided by the count of recent samples.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "mean__1 * len(recent__1) == total__1"
+      },
+      "intent": "Before mean is used in the return, verify it reflects the true average of recent samples.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) > 0 and total__1 == sum(recent__1)"
+      },
+      "intent": "After total is computed, confirm it is the sum of recent samples so the divisor can be checked.",
+      "confidence": 0.8
+    }
+  ]
+}

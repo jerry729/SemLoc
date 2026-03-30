@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "draft_cache",
+  "fault_hypothesis": "The expiration check on line 73 uses a strict inequality (`>`), causing entries to be considered valid when the current time is exactly equal to the expiration time. The check should be inclusive (`>=`) to correctly handle this boundary case.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not (now == expires_at__1)"
+      },
+      "intent": "An entry at the exact expiration boundary should be considered expired, not valid.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < expires_at__1"
+      },
+      "intent": "If an entry is considered valid, the current time must be strictly less than its expiration time.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "expires_at__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now == expires_at__1)"
+      },
+      "intent": "The current time should not be exactly equal to the expiration time when performing the validity check.",
+      "confidence": 0.9
+    }
+  ]
+}

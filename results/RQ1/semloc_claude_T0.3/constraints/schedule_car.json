@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "schedule_car",
+  "fault_hypothesis": "The overlap condition on line 61 uses strict inequalities (`b <= s` and `a >= e`), which allows adjacent bookings (where b==s or a==e) to be accepted instead of rejected. The condition should use strict inequalities in the opposite sense: a booking touching an existing one should be considered overlapping.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) for s, e in timeline) == (not any(not (b__1 <= s or a__1 >= e) for s, e in timeline))"
+      },
+      "intent": "Check that the overlap predicate correctly rejects adjacent windows where b==s or a==e; the strict-inequality version should differ from the current implementation for adjacent cases.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) for s, e in timeline) or any(not (b__1 <= s or a__1 >= e) for s, e in timeline) or (b__1 == s for s, e in timeline) == False"
+      },
+      "intent": "Verify that when b equals an existing booking's start, the overlap check correctly identifies it as conflicting.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "all(b__1 < s or a__1 > e for s, e in timeline)"
+      },
+      "intent": "After the non-overlapping branch (booking accepted path), verify that the new window does not touch any existing booking at its boundary, which should be false for adjacent cases.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(result__1[i][1] < result__1[i+1][0] for i in range(len(result__1)-1))"
+      },
+      "intent": "After inserting the new window, verify that no two consecutive bookings in the sorted result are adjacent or overlapping (strict gap required).",
+      "confidence": 0.75
+    }
+  ]
+}

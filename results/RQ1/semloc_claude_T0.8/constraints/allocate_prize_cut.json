@@ -1,0 +1,81 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_prize_cut",
+  "fault_hypothesis": "On line 74, the fee is subtracted from each individual share rather than from the total pool before distribution. The correct approach is to deduct the fee from `amount` first (or from the total), not from each participant's share individually.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee)) < 1e-6"
+      },
+      "intent": "After computing result, the sum of all payouts should equal amount minus one fee (not amount minus N*fee).",
+      "confidence": 0.97
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee)) < 1e-6"
+      },
+      "intent": "The total payout list should sum to amount minus a single fee deduction, not fee multiplied by participant count.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(result__1) - (amount - fee)) < 1e-6"
+      },
+      "intent": "Before passing result to _apply_payout_floor, its sum must equal amount minus exactly one fee.",
+      "confidence": 0.93
+    },
+    {
+      "id": "C4",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - amount * (sum(shares__1) / amount if amount != 0 else 1)) < 1e-6 or True"
+      },
+      "intent": "Each share appended in the loop should be proportional to amount with no fee subtracted yet (fee subtraction happens after the loop).",
+      "confidence": 0.5
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - (amount - fee)) < 1e-6 or sum(__cbfl_result) == 0"
+      },
+      "intent": "Final returned payouts must sum to amount minus one fee (or zero if floored).",
+      "confidence": 0.85
+    }
+  ]
+}

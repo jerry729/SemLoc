@@ -1,0 +1,37 @@
+{
+  "bug_id": "pandas_29",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.arrays.interval.IntervalArray.__setitem__",
+    "buggy_methods": [
+      "pandas.core.arrays.interval.IntervalArray.__setitem__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.arrays.interval.IntervalArray.__setitem__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/arrays/interval.py": [
+      549,
+      550,
+      551,
+      555,
+      556,
+      557
+    ],
+    "pandas/tests/arrays/interval/test_interval.py": [
+      185,
+      212,
+      213
+    ],
+    "pandas/tests/series/methods/test_convert_dtypes.py": [
+      269
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

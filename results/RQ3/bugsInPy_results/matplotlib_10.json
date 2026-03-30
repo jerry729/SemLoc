@@ -1,0 +1,24 @@
+{
+  "bug_id": "matplotlib_10",
+  "autofl": {
+    "top1": true,
+    "prediction": "lib.matplotlib.axis.Axis.set_tick_params",
+    "buggy_methods": [
+      "lib.matplotlib.axis.Axis.set_tick_params"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "lib.matplotlib.axis.Axis.set_tick_params",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "lib/matplotlib/axis.py": [
+      827
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

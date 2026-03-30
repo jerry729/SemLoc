@@ -1,0 +1,24 @@
+{
+  "bug_id": "fastapi_5",
+  "autofl": {
+    "top1": true,
+    "prediction": "fastapi.utils.create_cloned_field",
+    "buggy_methods": [
+      "fastapi.utils.create_cloned_field"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "fastapi.utils.create_cloned_field",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "fastapi/utils.py": [
+      100
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

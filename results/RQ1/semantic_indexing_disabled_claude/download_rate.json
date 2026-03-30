@@ -1,0 +1,44 @@
+{
+  "function": "download_rate",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    74
+  ],
+  "total_source_lines": 77,
+  "runs": [
+    {
+      "faulty_lines": [
+        75
+      ],
+      "explanation": "The condition `len(active) > limit` should be `len(active) >= limit`. When the number of active downloads equals the limit, no more should be allowed, but the current code incorrectly permits one more download and returns `True, 0` instead of `False, 0`.",
+      "confidence": 0.9,
+      "parse_ok": true,
+      "raw": "Looking at the code, the issue is on line 75. The condition `if len(active) > limit` should be `if len(active) >= limit`. \n\nWhen `len(active) == limit`, the download should NOT be allowed (the limit has been reached), but the current code returns `True, 0` instead of `False, 0`. The check should use `>=` to correctly block downloads when the count equals the limit.\n\n```json\n{\n  \"function_name\": \"download_rate\",\n  \"faulty_lines\": [75],\n  \"explanation\": \"The condition `len(active) > limit` should be `len(active) >= limit`. When the number of active downloads equals the limit, no more should be allowed, but the current code incorrectly permits one more download and returns `True, 0` instead of `False, 0`.\",\n  \"confidence\": 0.9\n}\n```",
+      "predicted": [
+        75
+      ],
+      "valid_preds": [
+        75
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 75,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

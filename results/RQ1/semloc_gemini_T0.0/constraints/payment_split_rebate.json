@@ -1,0 +1,51 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "payment_split_rebate",
+  "fault_hypothesis": "The rebate is subtracted from each share on line 66, but the documentation and failing tests imply it should be subtracted from the `total` on line 62 before splitting. This bug causes the total rebate to be multiplied by the number of shares.",
+  "fault_line": 62,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 62
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - len(shares__1) * rebate - max(0, total - rebate)) < 1e-6"
+      },
+      "intent": "The computed shares, when combined with the subsequent per-share rebate logic, must yield the correct total payout.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) == 1 or rebate < 1e-9"
+      },
+      "intent": "The computed shares are only valid for the subsequent rebate logic if there is one share or no rebate.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0, total - rebate)) < 1e-6"
+      },
+      "intent": "The sum of all payouts must equal the total amount minus the single rebate.",
+      "confidence": 0.9
+    }
+  ]
+}

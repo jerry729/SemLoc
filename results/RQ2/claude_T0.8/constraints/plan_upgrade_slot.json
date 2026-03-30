@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_upgrade_slot",
+  "fault_hypothesis": "The overlap condition on line 63 uses strict inequalities (b <= s or a >= e), which treats touching boundaries (e.g., b == s or a == e) as non-overlapping. The tests expect touching boundaries to be considered conflicts, so the condition should use strict inequalities in the opposite direction: the non-overlap condition should be b < s or a > e.",
+  "fault_line": 63,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 63
+        }
+      },
+      "spec": {
+        "expr": "all((b__1 < s or a__1 > e) == (not (b__1 <= s or a__1 >= e)) for s, e in timeline) == False or any(b__1 == s or a__1 == e for s, e in timeline) == False"
+      },
+      "intent": "When the new window touches an existing slot boundary (b==s or a==e), the strict-inequality non-overlap check (b<=s or a>=e) incorrectly classifies it as non-overlapping; the expr is FALSE when touching boundaries exist and the bug is present.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "b__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (b__1 == s) for s, e in timeline) or any(not (b__1 <= s or a__1 >= e) for s, e in timeline)"
+      },
+      "intent": "Before using b__1 in the overlap check, if b__1 equals any existing slot start s, the overlap check should detect a conflict; this is violated when touching is allowed.",
+      "confidence": 0.88
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "result__1"
+        }
+      },
+      "spec": {
+        "expr": "all(not (b__1 == s or a__1 == e) for s, e in timeline)"
+      },
+      "intent": "After result__1 is assigned, no existing slot in the original timeline should touch the new window boundary; if it does, the booking should have been rejected earlier.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (__cbfl_result[0] == True and any(b == s or a == e for s, e in timeline for a, b in [window]))"
+      },
+      "intent": "The function should never return success=True when the new window's boundary touches an existing slot.",
+      "confidence": 0.85
+    }
+  ]
+}

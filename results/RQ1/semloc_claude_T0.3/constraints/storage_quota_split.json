@@ -1,0 +1,66 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "storage_quota_split",
+  "fault_hypothesis": "On line 66, the fee is not deducted from the total before computing shares; the formula should use `(total - fee)` instead of `total`, so that the fee is subtracted from the pool before splitting.",
+  "fault_line": 66,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 66
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (total - fee)) < 1e-6"
+      },
+      "intent": "After computing shares, their sum should equal total minus fee, not total.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (total - fee)) < 1e-6"
+      },
+      "intent": "Immediately after shares are defined, their sum must equal total minus fee.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - (total - fee)) < 1e-6"
+      },
+      "intent": "Before shares are used in the floor application, they must sum to total minus fee.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - max(0.0, total - fee)) < 1e-6 or total - fee < 0"
+      },
+      "intent": "The returned shares should sum to total minus fee (when non-negative).",
+      "confidence": 0.8
+    }
+  ]
+}

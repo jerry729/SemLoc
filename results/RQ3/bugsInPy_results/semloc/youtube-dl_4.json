@@ -1,0 +1,129 @@
+{
+  "bug_id": "youtube-dl_4",
+  "function": "interpret_expression",
+  "src_path": "youtube_dl/jsinterp.py",
+  "fn_begin": 58,
+  "fn_end": 211,
+  "n_constraints": 4,
+  "n_tests_passing": 11,
+  "n_tests_failing": 1,
+  "line_scores": [
+    {
+      "line": 85,
+      "score": 1.0
+    },
+    {
+      "line": 123,
+      "score": 1.0
+    },
+    {
+      "line": 176,
+      "score": 1.0
+    },
+    {
+      "line": 185,
+      "score": 1.0
+    },
+    {
+      "line": 200,
+      "score": 1.0
+    },
+    {
+      "line": 64,
+      "score": 1.0
+    },
+    {
+      "line": 66,
+      "score": 1.0
+    },
+    {
+      "line": 67,
+      "score": 1.0
+    },
+    {
+      "line": 84,
+      "score": 1.0
+    },
+    {
+      "line": 89,
+      "score": 1.0
+    },
+    {
+      "line": 91,
+      "score": 1.0
+    },
+    {
+      "line": 94,
+      "score": 1.0
+    },
+    {
+      "line": 95,
+      "score": 1.0
+    },
+    {
+      "line": 96,
+      "score": 1.0
+    },
+    {
+      "line": 126,
+      "score": 1.0
+    },
+    {
+      "line": 127,
+      "score": 1.0
+    },
+    {
+      "line": 128,
+      "score": 1.0
+    },
+    {
+      "line": 129,
+      "score": 1.0
+    },
+    {
+      "line": 178,
+      "score": 1.0
+    },
+    {
+      "line": 179,
+      "score": 1.0
+    },
+    {
+      "line": 180,
+      "score": 1.0
+    },
+    {
+      "line": 184,
+      "score": 1.0
+    },
+    {
+      "line": 186,
+      "score": 1.0
+    },
+    {
+      "line": 188,
+      "score": 1.0
+    },
+    {
+      "line": 193,
+      "score": 1.0
+    },
+    {
+      "line": 202,
+      "score": 1.0
+    },
+    {
+      "line": 203,
+      "score": 1.0
+    },
+    {
+      "line": 204,
+      "score": 1.0
+    }
+  ],
+  "fault_line": 201,
+  "counterfactual": [],
+  "cf_primary": false,
+  "constraints_path": "/tmp/bip_semloc/youtube-dl_4/interpret_expression_constraints.json",
+  "report_path": "/tmp/bip_semloc/youtube-dl_4/violations.jsonl"
+}

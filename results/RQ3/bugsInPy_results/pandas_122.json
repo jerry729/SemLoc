@@ -1,0 +1,26 @@
+{
+  "bug_id": "pandas_122",
+  "autofl": {
+    "top1": true,
+    "prediction": "pandas.core.internals.managers.BlockManager.equals",
+    "buggy_methods": [
+      "pandas.core.internals.managers.BlockManager.equals"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "pandas.core.internals.managers.BlockManager.equals",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "pandas/core/internals/managers.py": [
+      1397,
+      1398,
+      1402
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

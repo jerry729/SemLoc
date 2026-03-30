@@ -1,0 +1,52 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "guard_email",
+  "fault_hypothesis": "The rate limit check on line 71 is incorrect. It uses `len(recent) > limit` instead of `len(recent) >= limit`, which fails to block a new email when the number of recent sends is exactly equal to the limit.",
+  "fault_line": 71,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 71
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) != limit"
+      },
+      "intent": "The decision to block or allow an email is only correct when the number of recent sends is not exactly equal to the limit.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) < limit"
+      },
+      "intent": "If the logic proceeds to allow an email, the number of recent sends must be strictly less than the limit.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(__cbfl_result[0] == False) or (__cbfl_result[1] > 0)"
+      },
+      "intent": "If an email is allowed (the first element of the returned tuple is True), then there must be more than zero sending slots remaining (the second element is > 0).",
+      "confidence": 0.9
+    }
+  ]
+}

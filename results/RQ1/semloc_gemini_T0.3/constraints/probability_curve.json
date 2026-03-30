@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "probability_curve",
+  "fault_hypothesis": "The condition for clamping the output is inverted on line 73. The code executes the clamping logic when `clamp` is `False` instead of when it is `True`.",
+  "fault_line": 73,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 73
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__1 >= min(y0, y1) and y__1 <= max(y0, y1))"
+      },
+      "intent": "For the current (buggy) logic to produce a correct result, if clamping is enabled, the interpolated value must already be within the anchor range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__5"
+        }
+      },
+      "spec": {
+        "expr": "not clamp or (y__5 >= min(y0, y1) and y__5 <= max(y0, y1))"
+      },
+      "intent": "If clamping is enabled, the value of y after the conditional block must be within the anchor range.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "y__1 >= min(y0, y1) and y__1 <= max(y0, y1)"
+      },
+      "intent": "The 'else' branch (taken when clamping is on) performs no clamping, so the value must already be in range for the result to be correct.",
+      "confidence": 0.9
+    }
+  ]
+}

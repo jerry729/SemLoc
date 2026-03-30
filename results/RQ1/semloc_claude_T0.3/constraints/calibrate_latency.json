@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "calibrate_latency",
+  "fault_hypothesis": "The condition on line 70 is inverted: `if not clamp` applies clamping when clamp is False and skips it when clamp is True, which is the opposite of the intended behavior.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "clamp == True"
+      },
+      "intent": "When clamp=True, the branch that restricts y to [low, high] should be entered; the condition `not clamp` is inverted so this is False on failing tests.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch (clamping logic) should only execute when clamp is False; if clamp is True we should not be here.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "y__2 (the clamped value) should only be computed when clamp is False; its existence when clamp=True indicates the inverted condition bug.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not clamp or (min(y0, y1) - 1e-9 <= __cbfl_result <= max(y0, y1) + 1e-9 or __cbfl_result <= MAX_LATENCY_MS)"
+      },
+      "intent": "When clamp=True, the returned value should be within [min(y0,y1), max(y0,y1)] (or capped at MAX_LATENCY_MS).",
+      "confidence": 0.75
+    }
+  ]
+}

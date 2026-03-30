@@ -1,0 +1,72 @@
+{
+  "bug_id": "black_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "black.gen_python_files_in_dir",
+    "buggy_methods": [
+      "black.gen_python_files_in_dir"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "black.gen_python_files_in_dir",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "black.py": [
+      2948
+    ],
+    "tests/test_black.py": [
+      14
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      2948
+    ],
+    "best_rank": null,
+    "fn_lines": 29,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 2948,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "black_16",
+    "function": "gen_python_files_in_dir",
+    "src_path": "black.py",
+    "fn_begin": 2934,
+    "fn_end": 2962,
+    "n_constraints": 4,
+    "n_tests_passing": 60,
+    "n_tests_failing": 8,
+    "line_scores": [
+      {
+        "line": 2947,
+        "score": 0.35856858280031806
+      },
+      {
+        "line": 2949,
+        "score": 0.35856858280031806
+      },
+      {
+        "line": 2950,
+        "score": 0.35856858280031806
+      },
+      {
+        "line": 2951,
+        "score": 0.35856858280031806
+      },
+      {
+        "line": 2956,
+        "score": 0.35856858280031806
+      }
+    ],
+    "fault_line": 2948,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/black_16/gen_python_files_in_dir_constraints.json",
+    "report_path": "/tmp/bip_semloc/black_16/violations.jsonl"
+  }
+}

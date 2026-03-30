@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "gpu_memory_pool",
+  "fault_hypothesis": "The boundary check at line 75 uses a strict `>` comparison, which incorrectly permits an allocation that exactly consumes the remaining capacity. It should use `>=` to deny such requests, as they leave no available memory.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "not (used__1 + request == effective_cap__1)"
+      },
+      "intent": "An allocation that results in total usage exactly equal to capacity should be denied.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 75,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "used__1 + request < effective_cap__1"
+      },
+      "intent": "The function should only grant a request if the new total usage is strictly less than the effective capacity.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective_cap__1"
+        }
+      },
+      "spec": {
+        "expr": "effective_cap__1 > used__1"
+      },
+      "intent": "If the pool is already full (used equals capacity), no further allocations should be possible, not even zero-sized ones.",
+      "confidence": 0.8
+    }
+  ]
+}

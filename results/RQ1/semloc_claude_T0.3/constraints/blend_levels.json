@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "blend_levels",
+  "fault_hypothesis": "Lines 74-75 incorrectly remove the last element when both inputs share the same last value, but this deduplication is wrong \u2014 all elements from both inputs should be preserved. The condition on line 74 causes an erroneous pop() that removes a valid duplicate.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "not (merged__1 and left and right and merged__1[-1] == left[-1] == right[-1])"
+      },
+      "intent": "The condition that triggers the erroneous pop should never be true when both inputs share the same last value, since all elements must be preserved.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "merged__1"
+        }
+      },
+      "spec": {
+        "expr": "len(merged__1) == 0"
+      },
+      "intent": "After initialization, merged must be empty before any elements are appended.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "The then-branch of the condition on line 74 should never execute because removing the last element is always incorrect behavior for this merge function.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "len(__cbfl_result) >= min(len(left), 1) + min(len(right), 1) or (len(left) == 0 or len(right) == 0)"
+      },
+      "intent": "The result must contain at least one element from each non-empty input.",
+      "confidence": 0.85
+    }
+  ]
+}

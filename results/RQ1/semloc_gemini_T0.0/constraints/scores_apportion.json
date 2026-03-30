@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "scores_apportion",
+  "fault_hypothesis": "The function incorrectly converts floating-point shares to integers via truncation on line 75, causing the sum of allocated scores to be less than the total budget when fractional shares are discarded.",
+  "fault_line": 75,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 75
+        }
+      },
+      "spec": {
+        "expr": "minimum > 0 or sum(list(map(int, shares__1))) == total"
+      },
+      "intent": "The sum of integer-cast shares should equal the total, unless a minimum is enforced.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "minimum > 0 or abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "The sum of the computed floating-point shares should equal the total before integer conversion.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "weight_sum__1"
+        }
+      },
+      "spec": {
+        "expr": "weight_sum__1 > 0"
+      },
+      "intent": "The sum of weights must be positive for apportionment to be meaningful.",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "token_cache",
+  "fault_hypothesis": "Line 67 uses a strict greater-than comparison (`now > effective_ttl`) instead of greater-than-or-equal (`now >= effective_ttl`), so when `now` exactly equals the TTL boundary the token is incorrectly returned instead of treated as expired.",
+  "fault_line": 67,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 67
+        }
+      },
+      "spec": {
+        "expr": "now >= effective_ttl__1 or now < effective_ttl__1"
+      },
+      "intent": "At the expiry check, when now equals effective_ttl the condition must be treated as expired (now >= effective_ttl should trigger return None).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "effective_ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "not (now >= effective_ttl__1) or True"
+      },
+      "intent": "After computing effective_ttl, verify that the subsequent comparison uses >= so that now==effective_ttl is treated as expired; the strict > operator is the bug.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "PRECONDITION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "effective_ttl__1"
+        }
+      },
+      "spec": {
+        "expr": "now != effective_ttl__1 or now > effective_ttl__1"
+      },
+      "intent": "Immediately before effective_ttl is used in the comparison, assert that if now equals effective_ttl the branch will correctly return None (which requires >= not >).",
+      "confidence": 0.88
+    },
+    {
+      "id": "C4",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 67,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < effective_ttl__1"
+      },
+      "intent": "In the else branch (token not expired), now must be strictly less than effective_ttl; if now == effective_ttl we should not reach here.",
+      "confidence": 0.92
+    }
+  ]
+}

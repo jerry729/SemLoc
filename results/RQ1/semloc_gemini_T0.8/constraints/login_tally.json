@@ -1,0 +1,74 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "login_tally",
+  "fault_hypothesis": "When the updated counter exceeds the cap, it is incorrectly set to `cap - 1` instead of being clamped to `cap`. The bug is on line 74 where the assignment should be `updated = cap`.",
+  "fault_line": 74,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 74
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The updated value should be clamped to the cap, not one less.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "updated__2"
+        }
+      },
+      "spec": {
+        "expr": "updated__2 == cap"
+      },
+      "intent": "The capped value should be exactly equal to the cap itself.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 73,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "updated__3 == cap"
+      },
+      "intent": "When the counter exceeds the cap, it should be set exactly to the cap.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "TEMPORAL_CALL_SNAPSHOT",
+      "instrument": {
+        "region": "ON_EXIT",
+        "anchor": {}
+      },
+      "spec": {
+        "guard": "cap is not None",
+        "snapshot": [
+          {
+            "name": "initial_val",
+            "expr": "counters.get(key, 0)"
+          }
+        ],
+        "require": "not (initial_val >= cap) or __cbfl_result == cap"
+      },
+      "intent": "If the counter was already at or above the cap, it should remain at the cap.",
+      "confidence": 0.5
+    }
+  ]
+}

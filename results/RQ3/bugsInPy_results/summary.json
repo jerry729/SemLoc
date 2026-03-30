@@ -1,0 +1,16 @@
+{
+  "n_bugs": 463,
+  "oracle_mode": true,
+  "model": "claude-sonnet-4-6",
+  "temperature": 0.8,
+  "autofl_top1_pct": 100.0,
+  "semloc_valid": 7,
+  "semloc_top1_pct": 57.1,
+  "semloc_top3_pct": 85.7,
+  "semloc_top5_pct": 100.0,
+  "semloc_mean_pct_suspicious": 11.9,
+  "fault_line_valid": 55,
+  "fault_line_hit_pct": 30.9,
+  "cf_valid": 68,
+  "cf_primary_pct": 0.0
+}

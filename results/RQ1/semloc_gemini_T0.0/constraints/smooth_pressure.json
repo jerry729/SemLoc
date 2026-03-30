@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "smooth_pressure",
+  "fault_hypothesis": "The mean calculation on line 68 incorrectly divides by the fixed `window` size instead of the actual number of samples in `recent`. This is wrong when `len(values)` is less than `window`.",
+  "fault_line": 68,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 68
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or abs(mean__1 - (total__1 / len(recent__1))) < 1e-9"
+      },
+      "intent": "The calculated mean must be the total sum divided by the actual number of samples.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "mean__1"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == 0 or (min(recent__1) <= mean__1 and mean__1 <= max(recent__1))"
+      },
+      "intent": "The mean must lie within the inclusive range of the values being averaged.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 70,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "len(recent__1) == window"
+      },
+      "intent": "If a mean is computed and returned, the number of samples should equal the window size.",
+      "confidence": 0.9
+    }
+  ]
+}

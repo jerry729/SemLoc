@@ -1,0 +1,32 @@
+{
+  "bug_id": "keras_15",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.callbacks.CSVLogger.__init__",
+    "buggy_methods": [
+      "keras.callbacks.CSVLogger.__init__"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.callbacks.CSVLogger.__init__",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/callbacks.py": [
+      1125,
+      1133,
+      1135,
+      1159,
+      1161
+    ],
+    "tests/keras/test_callbacks.py": [
+      559,
+      563
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

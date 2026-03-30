@@ -1,0 +1,82 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "quota_for_capacity",
+  "fault_hypothesis": "Line 78 uses a simple `int(v)` (floor) conversion which loses fractional remainders, causing the sum of integer allocations to be less than `total` when weights do not divide evenly. The correct approach should distribute remainders (e.g., largest-remainder method) to preserve the total.",
+  "fault_line": 78,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 78
+        }
+      },
+      "spec": {
+        "expr": "sum(int(v) for v in shares__1) == int(total)"
+      },
+      "intent": "After flooring shares to int, their sum must equal the total (fails when remainders are dropped).",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "Raw shares from _compute_raw_shares must sum exactly to total before flooring.",
+      "confidence": 0.8
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 77,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "False"
+      },
+      "intent": "Placeholder \u2014 the integer branch always produces a sum less than total for uneven splits; this branch should not return without remainder correction.",
+      "confidence": 0.5
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-9"
+      },
+      "intent": "Immediately before shares are consumed by the floor comprehension, their sum must equal total so flooring loses at most len(weights)-1 units.",
+      "confidence": 0.85
+    },
+    {
+      "id": "C5",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not floor_to_int or sum(__cbfl_result) == int(total)"
+      },
+      "intent": "When floor_to_int is True, the returned list must sum to total.",
+      "confidence": 0.9
+    }
+  ]
+}

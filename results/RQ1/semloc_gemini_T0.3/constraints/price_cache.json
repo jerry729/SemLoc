@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "price_cache",
+  "fault_hypothesis": "The expiry check on line 61, which relies on `adjusted_now` from line 59, incorrectly handles the boundary case where `now == ttl`. The combination of subtracting a skew tolerance and using a strict `>` comparison causes the check to evaluate to false when it should be true, leading to stale data being returned.",
+  "fault_line": 61,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 61
+        }
+      },
+      "spec": {
+        "expr": "(adjusted_now__1 > ttl__1) == (now >= ttl__1)"
+      },
+      "intent": "The implemented expiry check should be equivalent to checking if the current time is at or after the TTL.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 61,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "If an entry is considered valid and its payload is about to be returned, the current time must be strictly less than its TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "payload__1"
+        }
+      },
+      "spec": {
+        "expr": "now < ttl__1"
+      },
+      "intent": "Just before returning a cached payload, the current time must be strictly less than the entry's TTL.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "not (key in cache and now == cache[key][1]) or (__cbfl_result is None)"
+      },
+      "intent": "If the current time is exactly the TTL of a cached item, the function must return None.",
+      "confidence": 0.8
+    }
+  ]
+}

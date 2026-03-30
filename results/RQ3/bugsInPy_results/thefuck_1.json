@@ -1,0 +1,56 @@
+{
+  "bug_id": "thefuck_1",
+  "autofl": {
+    "top1": true,
+    "prediction": "thefuck.rules.pip_unknown_command.get_new_command",
+    "buggy_methods": [
+      "thefuck.rules.pip_unknown_command.get_new_command"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "thefuck.rules.pip_unknown_command.get_new_command",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "tests/rules/test_pip_unknown_command.py": [
+      7,
+      8,
+      12,
+      13,
+      22,
+      23,
+      24
+    ],
+    "thefuck/rules/pip_unknown_command.py": [
+      15,
+      17
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [],
+    "best_rank": null,
+    "fn_lines": 2,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 14,
+    "fault_line_hit": false,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "thefuck_1",
+    "function": "get_new_command",
+    "src_path": "thefuck/rules/git_pull_uncommitted_changes.py",
+    "fn_begin": 13,
+    "fn_end": 14,
+    "n_constraints": 3,
+    "n_tests_passing": 0,
+    "n_tests_failing": 3,
+    "line_scores": [],
+    "fault_line": 14,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/thefuck_1/get_new_command_constraints.json",
+    "report_path": "/tmp/bip_semloc/thefuck_1/violations.jsonl"
+  }
+}

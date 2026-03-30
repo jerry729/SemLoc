@@ -1,0 +1,44 @@
+{
+  "function": "reserve_slot",
+  "n_runs": 1,
+  "n_valid_runs": 1,
+  "faulty_lines_gt": [
+    60
+  ],
+  "total_source_lines": 71,
+  "runs": [
+    {
+      "faulty_lines": [
+        67
+      ],
+      "explanation": "The function's docstring promises that the returned schedule is always sorted, but when a scheduling conflict is found, it returns the original `existing` list without sorting it.",
+      "confidence": 0.95,
+      "parse_ok": true,
+      "raw": "```json\n{\n  \"function_name\": \"reserve_slot\",\n  \"faulty_lines\": [\n    67\n  ],\n  \"explanation\": \"The function's docstring promises that the returned schedule is always sorted, but when a scheduling conflict is found, it returns the original `existing` list without sorting it.\",\n  \"confidence\": 0.95\n}\n```",
+      "predicted": [
+        67
+      ],
+      "valid_preds": [
+        67
+      ],
+      "hallucinated": [],
+      "n_hallucinated": 0,
+      "top1": false,
+      "top3": false,
+      "top5": false,
+      "any_correct": false,
+      "best_rank": null,
+      "n_predicted": 1,
+      "run": 1
+    }
+  ],
+  "top1_rate": 0.0,
+  "top3_rate": 0.0,
+  "top5_rate": 0.0,
+  "any_correct_rate": 0.0,
+  "hallucination_rate": 0.0,
+  "consistency": 1.0,
+  "modal_top1": 67,
+  "best_rank_ever": null,
+  "mean_n_predicted": 1.0
+}

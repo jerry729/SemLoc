@@ -1,0 +1,68 @@
+{
+  "bug_id": "youtube-dl_16",
+  "autofl": {
+    "top1": true,
+    "prediction": "youtube_dl.utils.dfxp2srt",
+    "buggy_methods": [
+      "youtube_dl.utils.dfxp2srt"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "youtube_dl.utils.dfxp2srt",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "test/test_utils.py": [
+      1067,
+      1092,
+      1118
+    ],
+    "youtube_dl/postprocessor/ffmpeg.py": [
+      588
+    ],
+    "youtube_dl/utils.py": [
+      2576,
+      2577,
+      2578,
+      2579,
+      2581,
+      2582,
+      2677
+    ]
+  },
+  "semloc": {
+    "ground_truth_lines": [
+      2576,
+      2577,
+      2578,
+      2579,
+      2581,
+      2582,
+      2677
+    ],
+    "best_rank": null,
+    "fn_lines": 155,
+    "pct_suspicious": null,
+    "top1": false,
+    "top3": false,
+    "top5": false,
+    "fault_line": 2677,
+    "fault_line_hit": true,
+    "cf_primary": false
+  },
+  "semloc_detail": {
+    "bug_id": "youtube-dl_16",
+    "function": "dfxp2srt",
+    "src_path": "youtube_dl/utils.py",
+    "fn_begin": 2574,
+    "fn_end": 2728,
+    "n_constraints": 4,
+    "n_tests_passing": 75,
+    "n_tests_failing": 1,
+    "line_scores": [],
+    "fault_line": 2677,
+    "counterfactual": [],
+    "cf_primary": false,
+    "constraints_path": "/tmp/bip_semloc/youtube-dl_16/dfxp2srt_constraints.json",
+    "report_path": "/tmp/bip_semloc/youtube-dl_16/violations.jsonl"
+  }
+}

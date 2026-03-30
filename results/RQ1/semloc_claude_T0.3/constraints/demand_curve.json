@@ -1,0 +1,69 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "demand_curve",
+  "fault_hypothesis": "The condition on line 60 is inverted: clamping is applied when `clamp` is False and skipped when `clamp` is True. The `if not clamp:` should be `if clamp:`.",
+  "fault_line": 60,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "RELATION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 60
+        }
+      },
+      "spec": {
+        "expr": "(not clamp) == False or (clamp == True)"
+      },
+      "intent": "When clamp is True (default), the branch body (clamping logic) should NOT execute; the condition `not clamp` should be False when clamp is True.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 60,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "not clamp"
+      },
+      "intent": "The then-branch (clamping) should only execute when clamp is False, so inside the branch `not clamp` must be True.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "y__2"
+        }
+      },
+      "spec": {
+        "expr": "not clamp and min(y0, y1) <= y__2 <= max(y0, y1)"
+      },
+      "intent": "y__2 is the clamped value and should only be computed (and be within [min(y0,y1), max(y0,y1)]) when clamp is False.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "BEFORE_USE",
+        "anchor": {
+          "var": "y__3"
+        }
+      },
+      "spec": {
+        "expr": "clamp == True or (min(y0, y1) <= y__3 <= max(y0, y1))"
+      },
+      "intent": "When clamp is True, y__3 should equal the unclamped interpolation; when clamp is False, y__3 should be within the segment range.",
+      "confidence": 0.85
+    }
+  ]
+}

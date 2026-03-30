@@ -1,0 +1,24 @@
+{
+  "bug_id": "keras_38",
+  "autofl": {
+    "top1": true,
+    "prediction": "keras.layers.recurrent.StackedRNNCells.build",
+    "buggy_methods": [
+      "keras.layers.recurrent.StackedRNNCells.build"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "keras.layers.recurrent.StackedRNNCells.build",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "keras/layers/recurrent.py": [
+      109
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

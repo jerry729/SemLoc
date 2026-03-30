@@ -1,0 +1,54 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_seats_share",
+  "fault_hypothesis": "The function incorrectly converts float shares to integers using simple truncation on line 82, which discards remainders. This causes the sum of allocated seats to be less than the total.",
+  "fault_line": 82,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 82
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == total"
+      },
+      "intent": "When flooring to integers, the sum of allocated seats must equal the total.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "shares__1"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(shares__1) - total) < 1e-6"
+      },
+      "intent": "The sum of raw proportional shares must be equal to the total.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 81,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - total) < 1e-6"
+      },
+      "intent": "When returning float shares, their sum must equal the total.",
+      "confidence": 0.9
+    }
+  ]
+}

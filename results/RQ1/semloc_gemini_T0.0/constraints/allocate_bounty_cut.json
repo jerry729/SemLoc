@@ -1,0 +1,53 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "allocate_bounty_cut",
+  "fault_hypothesis": "The platform fee is incorrectly subtracted from each recipient's share on line 64. It should be deducted once from the total `amount` before the shares are calculated on line 62.",
+  "fault_line": 64,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 64
+        }
+      },
+      "spec": {
+        "expr": "abs(sum(__cbfl_result) - ((amount - fee) if (amount - fee) > 0 else 0)) < 1e-9"
+      },
+      "intent": "The sum of all payouts must equal the total amount minus the single platform fee, clamped at zero.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "base__1"
+        }
+      },
+      "spec": {
+        "expr": "(fee == 0) or (len(base__1) == 1) or all(s - fee <= 0 for s in base__1)"
+      },
+      "intent": "The buggy fee logic gives a correct result only if there's no fee, one recipient, or if all shares are smaller than the fee.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C3",
+      "category": "VALUE_RANGE",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "total_ratio__1"
+        }
+      },
+      "spec": {
+        "expr": "total_ratio__1 > 0"
+      },
+      "intent": "The sum of ratios must be positive to allow for proportional distribution.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "bug_id": "httpie_4",
+  "autofl": {
+    "top1": true,
+    "prediction": "httpie.models.HTTPRequest.headers",
+    "buggy_methods": [
+      "httpie.models.HTTPRequest.headers"
+    ],
+    "oracle": true
+  },
+  "autofl_prediction": "httpie.models.HTTPRequest.headers",
+  "autofl_matched_info": [],
+  "faulty_lines": {
+    "httpie/models.py": [
+      105,
+      106
+    ]
+  },
+  "semloc": {
+    "error": "No violations report generated"
+  },
+  "semloc_detail": {
+    "error": "No violations report generated"
+  }
+}

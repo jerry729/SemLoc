@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "plan_jobs_share",
+  "fault_hypothesis": "Line 72 uses a simple `int()` (floor) conversion without distributing the remainder, so integer allocations lose fractional parts and do not sum to `total`.",
+  "fault_line": 72,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 72
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "The integer allocations produced by the floor conversion must still sum to total.",
+      "confidence": 0.95
+    },
+    {
+      "id": "C2",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 71,
+          "branch": "then"
+        }
+      },
+      "spec": {
+        "expr": "sum(__cbfl_result) == int(total)"
+      },
+      "intent": "After the floor_to_int branch, the returned list must sum exactly to total.",
+      "confidence": 0.92
+    },
+    {
+      "id": "C3",
+      "category": "INVARIANT_LOOP",
+      "instrument": {
+        "region": "LOOP_TAIL",
+        "anchor": {
+          "loop_id": 1
+        }
+      },
+      "spec": {
+        "expr": "len(shares__1) <= len(weights) and all(v >= minimum for v in shares__1)"
+      },
+      "intent": "Each appended share must be at least the minimum, and the list must not grow beyond the number of weights.",
+      "confidence": 0.75
+    },
+    {
+      "id": "C4",
+      "category": "RELATION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "(not floor_to_int) or (sum(__cbfl_result) == int(total))"
+      },
+      "intent": "Whenever floor_to_int is True, the returned integer list must sum to total.",
+      "confidence": 0.9
+    }
+  ]
+}

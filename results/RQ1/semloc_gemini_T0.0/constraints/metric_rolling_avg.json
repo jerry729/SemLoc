@@ -1,0 +1,67 @@
+{
+  "version": "cbfl-ir-0.1",
+  "function_name": "metric_rolling_avg",
+  "fault_hypothesis": "The average on line 70 is calculated by dividing the total by the fixed window size, but it should be divided by the actual number of samples in the `tail`, which can be smaller than the window.",
+  "fault_line": 70,
+  "constraints": [
+    {
+      "id": "C1",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "LINE",
+        "anchor": {
+          "line": 70
+        }
+      },
+      "spec": {
+        "expr": "len(tail__1) == 0 or abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "The average, when multiplied by the number of samples, should equal the total sum.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C2",
+      "category": "RELATION",
+      "instrument": {
+        "region": "AFTER_DEF",
+        "anchor": {
+          "var": "tail__1"
+        }
+      },
+      "spec": {
+        "expr": "not (len(tail__1) >= min_samples) or (window == len(tail__1))"
+      },
+      "intent": "If an average is to be computed, the window size must match the number of samples available.",
+      "confidence": 1.0
+    },
+    {
+      "id": "C3",
+      "category": "DERIVED_CONSISTENCY",
+      "instrument": {
+        "region": "AFTER_BRANCH",
+        "anchor": {
+          "if_line": 74,
+          "branch": "else"
+        }
+      },
+      "spec": {
+        "expr": "abs(avg__1 * len(tail__1) - total__1) < 1e-9"
+      },
+      "intent": "If an average is returned, it must be correctly calculated from the total and sample count.",
+      "confidence": 0.9
+    },
+    {
+      "id": "C4",
+      "category": "POSTCONDITION",
+      "instrument": {
+        "region": "ANY_RETURN",
+        "anchor": {}
+      },
+      "spec": {
+        "expr": "__cbfl_result is None or abs(__cbfl_result * len(tail) - total) < 1e-9"
+      },
+      "intent": "The returned average must be consistent with the sum and count of the values in the tail.",
+      "confidence": 0.8
+    }
+  ]
+}
