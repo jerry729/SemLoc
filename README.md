@@ -144,6 +144,7 @@ semloc locate --help    # full option reference
 
 ---
 
+<a name="-semfault-250-benchmark"></a>
 ## 🗂️ SemFault-250 Benchmark
 
 The **SemFault-250** benchmark contains 250 Python programs spanning financial systems, rate limiting, cache management, stream processing, and machine learning operations — each with a single semantic fault.
