@@ -22,11 +22,11 @@
       <h2 class="subtitle">Structured Grounding of Free-Form LLM Reasoning<br>for Fault Localization</h2>
 
       <div class="authors">
-        <a href="#" class="author">Zhaorui Yang</a><sup>1</sup>,
-        <a href="#" class="author">Haichao Zhu</a><sup>3</sup>,
-        <a href="#" class="author">Qian Zhang</a><sup>1</sup>,
-        <a href="#" class="author">Rajiv Gupta</a><sup>1</sup>,
-        <a href="#" class="author">Ashish Kundu</a><sup>2</sup>
+        <a href="https://cs.ucr.edu/~zyang247/" class="author">Zhaorui Yang</a><sup>1</sup>,
+        <a href="https://www.linkedin.com/in/haichao-zhu-5120a046/" class="author">Haichao Zhu</a><sup>3</sup>,
+        <a href="https://www.cs.ucr.edu/~qzhang/" class="author">Qian Zhang</a><sup>1</sup>,
+        <a href="https://www.cs.ucr.edu/~gupta/" class="author">Rajiv Gupta</a><sup>1</sup>,
+        <a href="https://sites.google.com/view/ashishkundu/home/" class="author">Ashish Kundu</a><sup>2</sup>
       </div>
       <div class="affiliations">
         <span><sup>1</sup> University of California, Riverside</span>
@@ -35,8 +35,13 @@
         <span><sup>3</sup> Meta</span>
       </div>
 
+      <div class="org-logos">
+        <img src="figures/ucr.png" alt="UC Riverside logo" height="60">
+        <img src="figures/cisco.png" alt="Cisco Research logo" height="60">
+      </div>
+
       <div class="links">
-        <a href="#" class="btn btn-primary">📄 Paper</a>
+        <a href="https://arxiv.org/pdf/2603.29109" class="btn btn-primary">📄 Paper</a>
         <a href="https://github.com/jerry729/SemLoc" class="btn btn-outline">💻 Code</a>
         <a href="#benchmark" class="btn btn-outline">🗂️ Benchmark</a>
         <a href="#quickstart" class="btn btn-outline">🚀 Quick Start</a>
@@ -82,14 +87,6 @@
         scores are derived analogously to coverage-based fault localization. A counterfactual verification step further
         prunes over-approximate constraints, distinguishing primary causal violations from cascading effects and
         providing a structured, verifiable semantic explanation beyond line-level rankings.
-      </p>
-      <p>
-        We evaluate SemLoc on <em>SemFault-250</em>, a derived evaluation corpus of 250 Python programs with single
-        semantic faults, curated from real-world repositories and prior benchmarks. Results show that SemLoc
-        substantially outperforms 5 different coverage, reduction, and LLM-based fault localization baselines, achieving
-        strong Top-1 (42.8%) and Top-3 (68%) localization accuracy while narrowing inspection to 7.6% of executable
-        lines. Counterfactual verification provides a further 12% gain in localization accuracy and, in most cases,
-        isolates a primary causal semantic constraint.
       </p>
     </div>
   </section>
@@ -251,15 +248,15 @@ semloc locate --program my_module.py --tests test_my_module.py \
   <section class="section bg-light" id="citation">
     <div class="container narrow">
       <h3 class="section-title">Citation</h3>
-      <pre class="bibtex"><code>@inproceedings{semloc2026,
-  title     = {SemLoc: Structured Grounding of Free-Form LLM Reasoning
-               for Fault Localization},
-  author    = {Yang, Zhaorui and Zhu, Haichao and Zhang, Qian
-               and Gupta, Rajiv and Kundu, Ashish},
-  booktitle = {Proceedings of the ... International Conference on ...},
-  year      = {2026},
-  doi       = {10.1145/nnnnnnn.nnnnnnn},
-}</code></pre>
+      <pre class="bibtex"><code>@misc{yang2026semlocstructuredgroundingfreeform,
+      title={SemLoc: Structured Grounding of Free-Form LLM Reasoning for Fault Localization},
+      author={Zhaorui Yang and Haichao Zhu and Qian Zhang and Rajiv Gupta and Ashish Kundu},
+      year={2026},
+      eprint={2603.29109},
+      archivePrefix={arXiv},
+      primaryClass={cs.SE},
+      url={https://arxiv.org/abs/2603.29109},
+      }</code></pre>
     </div>
   </section>
 
@@ -269,7 +266,7 @@ semloc locate --program my_module.py --tests test_my_module.py \
       <p>
         SemLoc &nbsp;·&nbsp;
         <a href="https://github.com/jerry729/SemLoc">GitHub</a> &nbsp;·&nbsp;
-        <a href="#">Paper</a>
+        <a href="https://arxiv.org/pdf/2603.29109">Paper</a>
       </p>
     </div>
   </footer>

@@ -6,6 +6,11 @@
 
 ---
 
+<p>
+  <img src="figures/ucr.png" alt="UC Riverside logo" height="60">
+  <img src="figures/cisco.png" alt="Cisco Research logo" height="60">
+</p>
+
 SemLoc is a fault localization framework that replaces syntactic spectra with **semantic spectra** — constraint-by-test violation matrices grounded in program behavior rather than statement coverage.
 
 Given a buggy Python program and a failing test suite, SemLoc:
@@ -30,22 +35,24 @@ SemLoc achieves **42.8% Acc@1** and **68% Acc@3** on the SemFault-250 benchmark,
 
 ## 📄 Paper & Citation
 
-> **[Paper link — coming soon]**
+> **[SemLoc: Structured Grounding of Free-Form LLM Reasoning for Fault Localization](https://arxiv.org/pdf/2603.29109)**
 
 <!-- Replace with actual author list -->
-**Authors:** [Zhaorui Yang](placeholder), [Haichao Zhu](placeholder), [Qian Zhang](placeholder), [Rajiv Gupta](placeholder), [Ashish Kundu](placeholder)
+**Authors:** [Zhaorui Yang](https://cs.ucr.edu/~zyang247/), [Haichao Zhu](https://www.linkedin.com/in/haichao-zhu-5120a046/), [Qian Zhang](https://www.cs.ucr.edu/~qzhang/), [Rajiv Gupta](https://www.cs.ucr.edu/~gupta/), [Ashish Kundu](https://sites.google.com/view/ashishkundu/home/)
 
 
 <details>
 <summary>📋 BibTeX</summary>
 
 ```bibtex
-@inproceedings{semloc2026,
-  title     = {SemLoc: Structured Grounding of Free-Form LLM Reasoning for Fault Localization},
-  author    = {Author, First and Author, Second and Author, Third},
-  booktitle = {Proceedings of the ... Conference on ...},
-  year      = {2026},
-  doi       = {10.1145/nnnnnnn.nnnnnnn},
+@misc{yang2026semlocstructuredgroundingfreeform,
+      title={SemLoc: Structured Grounding of Free-Form LLM Reasoning for Fault Localization}, 
+      author={Zhaorui Yang and Haichao Zhu and Qian Zhang and Rajiv Gupta and Ashish Kundu},
+      year={2026},
+      eprint={2603.29109},
+      archivePrefix={arXiv},
+      primaryClass={cs.SE},
+      url={https://arxiv.org/abs/2603.29109}, 
 }
 ```
 

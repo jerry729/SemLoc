@@ -92,6 +92,17 @@ sup { font-size: 10px; vertical-align: super; }
   margin-bottom: 40px;
 }
 
+/* ─── Org logos ──────────────────────────────────────────────────────────── */
+.org-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 28px;
+  opacity: 0.85;
+}
+.org-logos img { filter: brightness(0) invert(1); }
+
 /* ─── Buttons ────────────────────────────────────────────────────────────── */
 .links { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 
