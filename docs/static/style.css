@@ -97,11 +97,18 @@ sup { font-size: 10px; vertical-align: super; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 20px;
   margin-bottom: 28px;
-  opacity: 0.85;
 }
-/* .org-logos img { filter: brightness(0) invert(1); } */
+.org-logos img {
+  display: block;
+  height: 60px;
+  width: auto;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 10px;
+  object-fit: contain;
+}
 
 /* ─── Buttons ────────────────────────────────────────────────────────────── */
 .links { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
