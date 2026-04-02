@@ -1,4 +1,4 @@
-# 🔍 SemLoc: Semantic Spectra for Fault Localization
+# 🔍 SemLoc: Turning free-form LLM reasoning into structurally traceable and executable verification signals.
 
 > **Structured Grounding of Free-Form LLM Reasoning for Fault Localization**
 >
